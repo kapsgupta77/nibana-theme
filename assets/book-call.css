@@ -273,3 +273,31 @@ main[data-template="page.book-call"] .btn:hover{
 main[data-template="page.book-call"] [id*="__testimonials_"] :is(.flickity-button,.flickity-prev-next-button,.flickity-page-dots){
   display: none !important;
 }
+
+/* === Calendly: inline on desktop, popup on phones === */
+.nb-cal-embed { width: 100%; display: grid; place-items: center; }
+
+.nb-cal-desktop {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.nb-cal-mobile-btn {
+  display: none;
+}
+
+@media (max-width: 768px){
+  .nb-cal-desktop { display: none !important; }
+  .nb-cal-mobile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    background: var(--nb-chocolate, #C86B2A);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  }
+}
