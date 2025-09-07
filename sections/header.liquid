@@ -59,8 +59,9 @@
     content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
   endcapture
 
-  capture actions
+ capture actions
     render 'header-actions'
+    echo '<a href="/pages/book-a-call" class="nb-cta" title="Book a free 20-min call">Book a call</a>'
   endcapture
 
   if shop.customer_accounts_enabled
@@ -617,6 +618,7 @@
       margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
     }
   }
+
 {% endstylesheet %}
 
 {% schema %}
