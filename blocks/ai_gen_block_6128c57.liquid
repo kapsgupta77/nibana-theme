@@ -1,0 +1,763 @@
+{% doc %}
+  @prompt
+    I want to add a section with full width background image and I want to add content block which has title has paragraph and It can be add on banner in any position like top left, top bottom etc... and Please design content block section with unique design. I also want one play button animated icon and which I have to placed in banner anywhere by position so please provide customization setting so that I can move play button position also when I click on play button I want to show youtube video on popup with close icon and please do responsive code on your end, I have added my all info but my section is not showing on frontend please check
+
+{% enddoc %}
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-banner-section-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.banner_height }}px;
+    background-image: url('{{ section.settings.background_image | image_url: width: 2000 }}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .ai-banner-placeholder-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.banner_height }}px;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .ai-banner-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 300px;
+    opacity: 0.3;
+  }
+
+  .ai-banner-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 1;
+  }
+
+  .ai-banner-content-{{ ai_gen_id }} {
+    position: absolute;
+    z-index: 2;
+    max-width: 600px;
+    padding: 40px;
+    background: {{ section.settings.content_background }};
+    border-radius: {{ section.settings.content_border_radius }}px;
+    backdrop-filter: blur({{ section.settings.content_blur }}px);
+    border: 1px solid {{ section.settings.content_border_color }};
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-banner-content-top-left-{{ ai_gen_id }} {
+    top: 40px;
+    left: 40px;
+  }
+
+  .ai-banner-content-top-center-{{ ai_gen_id }} {
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .ai-banner-content-top-right-{{ ai_gen_id }} {
+    top: 40px;
+    right: 40px;
+  }
+
+  .ai-banner-content-center-left-{{ ai_gen_id }} {
+    top: 50%;
+    left: 40px;
+    transform: translateY(-50%);
+  }
+
+  .ai-banner-content-center-center-{{ ai_gen_id }} {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ai-banner-content-center-right-{{ ai_gen_id }} {
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+  }
+
+  .ai-banner-content-bottom-left-{{ ai_gen_id }} {
+    bottom: 40px;
+    left: 40px;
+  }
+
+  .ai-banner-content-bottom-center-{{ ai_gen_id }} {
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .ai-banner-content-bottom-right-{{ ai_gen_id }} {
+    bottom: 40px;
+    right: 40px;
+  }
+
+  .ai-banner-title-{{ ai_gen_id }} {
+    color: {{ section.settings.title_color }};
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .ai-banner-text-{{ ai_gen_id }} {
+    color: {{ section.settings.text_color }};
+    font-size: {{ section.settings.text_size }}px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .ai-play-button-{{ ai_gen_id }} {
+    position: absolute;
+    z-index: 3;
+    width: {{ section.settings.play_button_size }}px;
+    height: {{ section.settings.play_button_size }}px;
+    background: {{ section.settings.play_button_bg }};
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    animation: ai-pulse-{{ ai_gen_id }} 2s infinite;
+  }
+
+  .ai-play-button-{{ ai_gen_id }}:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .ai-play-button-top-left-{{ ai_gen_id }} {
+    top: {{ section.settings.play_button_top }}px;
+    left: {{ section.settings.play_button_left }}px;
+  }
+
+  .ai-play-button-top-center-{{ ai_gen_id }} {
+    top: {{ section.settings.play_button_top }}px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .ai-play-button-top-right-{{ ai_gen_id }} {
+    top: {{ section.settings.play_button_top }}px;
+    right: {{ section.settings.play_button_right }}px;
+  }
+
+  .ai-play-button-center-left-{{ ai_gen_id }} {
+    top: 50%;
+    left: {{ section.settings.play_button_left }}px;
+    transform: translateY(-50%);
+  }
+
+  .ai-play-button-center-center-{{ ai_gen_id }} {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ai-play-button-center-right-{{ ai_gen_id }} {
+    top: 50%;
+    right: {{ section.settings.play_button_right }}px;
+    transform: translateY(-50%);
+  }
+
+  .ai-play-button-bottom-left-{{ ai_gen_id }} {
+    bottom: {{ section.settings.play_button_bottom }}px;
+    left: {{ section.settings.play_button_left }}px;
+  }
+
+  .ai-play-button-bottom-center-{{ ai_gen_id }} {
+    bottom: {{ section.settings.play_button_bottom }}px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .ai-play-button-bottom-right-{{ ai_gen_id }} {
+    bottom: {{ section.settings.play_button_bottom }}px;
+    right: {{ section.settings.play_button_right }}px;
+  }
+
+  .ai-play-icon-{{ ai_gen_id }} {
+    width: calc({{ section.settings.play_button_size }}px * 0.4);
+    height: calc({{ section.settings.play_button_size }}px * 0.4);
+    fill: {{ section.settings.play_button_icon_color }};
+    margin-left: 3px;
+  }
+
+  @keyframes ai-pulse-{{ ai_gen_id }} {
+    0% {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 0 {{ section.settings.play_button_bg }};
+    }
+    70% {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 20px rgba(255, 255, 255, 0);
+    }
+    100% {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+  }
+
+  .ai-video-modal-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .ai-video-modal-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-video-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-video-modal-{{ ai_gen_id }}.active .ai-video-container-{{ ai_gen_id }} {
+    transform: scale(1);
+  }
+
+  .ai-video-iframe-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .ai-close-button-{{ ai_gen_id }} {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+  }
+
+  .ai-close-button-{{ ai_gen_id }}:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-banner-section-{{ ai_gen_id }},
+    .ai-banner-placeholder-{{ ai_gen_id }} {
+      min-height: {{ section.settings.banner_height | times: 0.7 }}px;
+    }
+
+    .ai-banner-content-{{ ai_gen_id }} {
+      max-width: calc(100% - 40px);
+      padding: 24px;
+      margin: 20px;position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      transform: none !important;
+    }
+
+    .ai-banner-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-banner-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.text_size | times: 0.9 }}px;
+    }
+
+    .ai-play-button-{{ ai_gen_id }} {
+      width: {{ section.settings.play_button_size | times: 0.8 }}px;
+      height: {{ section.settings.play_button_size | times: 0.8 }}px;
+    }
+
+    .ai-play-icon-{{ ai_gen_id }} {
+      width: calc({{ section.settings.play_button_size | times: 0.8 }}px * 0.4);
+      height: calc({{ section.settings.play_button_size | times: 0.8 }}px * 0.4);
+    }
+
+    .ai-video-container-{{ ai_gen_id }} {
+      width: 95%;
+    }
+
+    .ai-close-button-{{ ai_gen_id }} {
+      top: -40px;
+      font-size: 24px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-banner-content-{{ ai_gen_id }} {
+      padding: 20px;
+    }
+
+    .ai-play-button-{{ ai_gen_id }} {
+      width: {{ section.settings.play_button_size | times: 0.7 }}px;
+      height: {{ section.settings.play_button_size | times: 0.7 }}px;
+    }
+
+    .ai-play-icon-{{ ai_gen_id }} {
+      width: calc({{ section.settings.play_button_size | times: 0.7 }}px * 0.4);
+      height: calc({{ section.settings.play_button_size | times: 0.7 }}px * 0.4);
+    }
+  }
+{% endstyle %}
+
+<video-banner-{{ ai_gen_id }} class="ai-banner-wrapper-{{ ai_gen_id }}">
+  {% if section.settings.background_image %}
+    <div class="ai-banner-section-{{ ai_gen_id }}">
+  {% else %}
+    <div class="ai-banner-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}{% endif %}
+    
+    {% if section.settings.show_overlay %}
+      <div class="ai-banner-overlay-{{ ai_gen_id }}"></div>
+    {% endif %}
+
+    {% if section.settings.show_content %}
+      <div class="ai-banner-content-{{ ai_gen_id }} ai-banner-content-{{ section.settings.content_position }}-{{ ai_gen_id }}">
+        {% if section.settings.title != blank %}
+          <h2 class="ai-banner-title-{{ ai_gen_id }}">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.text != blank %}
+          <div class="ai-banner-text-{{ ai_gen_id }}">{{ section.settings.text }}</div>
+        {% endif %}</div>
+    {% endif %}
+
+    {% if section.settings.show_play_button and section.settings.youtube_url != blank %}
+      <button 
+        class="ai-play-button-{{ ai_gen_id }} ai-play-button-{{ section.settings.play_button_position }}-{{ ai_gen_id }}"
+        aria-label="Play video"
+        data-video-url="{{ section.settings.youtube_url }}">
+        <svg class="ai-play-icon-{{ ai_gen_id }}" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+
+  {% if section.settings.show_play_button and section.settings.youtube_url != blank %}
+    <div class="ai-video-modal-{{ ai_gen_id }}">
+      <div class="ai-video-container-{{ ai_gen_id }}">
+        <button class="ai-close-button-{{ ai_gen_id }}" aria-label="Close video">×</button>
+        <iframe class="ai-video-iframe-{{ ai_gen_id }}" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  {% endif %}
+</video-banner-{{ ai_gen_id }}><script>
+(function() {
+  class VideoBanner{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.playButton = this.querySelector('.ai-play-button-{{ ai_gen_id }}');
+      this.modal = this.querySelector('.ai-video-modal-{{ ai_gen_id }}');
+      this.closeButton = this.querySelector('.ai-close-button-{{ ai_gen_id }}');
+      this.iframe = this.querySelector('.ai-video-iframe-{{ ai_gen_id }}');
+
+      if (this.playButton && this.modal) {
+        this.setupEventListeners();
+      }
+    }
+
+    setupEventListeners() {
+      this.playButton.addEventListener('click', () => {
+        this.openModal();
+      });
+
+      this.closeButton.addEventListener('click', () => {
+        this.closeModal();
+      });
+
+      this.modal.addEventListener('click', (e) => {
+        if (e.target === this.modal) {
+          this.closeModal();
+        }
+      });document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+          this.closeModal();
+        }
+      });
+    }
+
+    openModal() {
+      const videoUrl = this.playButton.dataset.videoUrl;
+      const embedUrl = this.getYouTubeEmbedUrl(videoUrl);
+      
+      if (embedUrl) {
+        this.iframe.src = embedUrl;
+        this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    closeModal() {
+      this.modal.classList.remove('active');
+      this.iframe.src = '';
+      document.body.style.overflow = '';
+    }
+
+    getYouTubeEmbedUrl(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      
+      if (match && match[2].length === 11) {
+        return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0`;
+      }
+      
+      return null;
+    }
+  }
+
+  customElements.define('video-banner-{{ ai_gen_id }}', VideoBanner{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Video Banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Banner height",
+      "default": 500
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show overlay",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Content Block"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_content",
+      "label": "Show content block",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Amazing Video Content"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Discover our latest collection with this stunning video presentation."
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top Left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top Center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top Right"
+        },
+        {
+          "value": "center-left",
+          "label": "Center Left"
+        },
+        {
+          "value": "center-center",
+          "label": "Center Center"
+        },
+        {
+          "value": "center-right",
+          "label": "Center Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom Left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom Center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom Right"
+        }
+      ],
+      "default": "center-left"
+    },
+    {
+      "type": "color",
+      "id": "content_background",
+      "label": "Content background",
+      "default": "rgba(255, 255, 255, 0.9)"
+    },
+    {
+      "type": "color",
+      "id": "content_border_color",
+      "label": "Content border color",
+      "default": "rgba(255, 255, 255, 0.3)"
+    },
+    {
+      "type": "range",
+      "id": "content_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Content border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "content_blur",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Content backdrop blur",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Play Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_play_button",
+      "label": "Show play button",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "YouTube video URL"
+    },
+    {
+      "type": "select",
+      "id": "play_button_position",
+      "label": "Play button position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top Left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top Center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top Right"
+        },
+        {
+          "value": "center-left",
+          "label": "Center Left"
+        },
+        {
+          "value": "center-center",
+          "label": "Center Center"
+        },
+        {
+          "value": "center-right",
+          "label": "Center Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom Left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom Center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom Right"
+        }
+      ],
+      "default": "center-center"
+    },
+    {
+      "type": "range",
+      "id": "play_button_top",
+      "min": 20,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Distance from top",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_bottom",
+      "min": 20,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Distance from bottom",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_left",
+      "min": 20,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Distance from left",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_right",
+      "min": 20,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Distance from right",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_size",
+      "min": 50,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Play button size",
+      "default": 80
+    },
+    {
+      "type": "color",
+      "id": "play_button_bg",
+      "label": "Play button background",
+      "default": "rgba(255, 255, 255, 0.9)"
+    },
+    {
+      "type": "color",
+      "id": "play_button_icon_color",
+      "label": "Play button icon color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Banner"
+    }
+  ]
+}
+{% endschema %}

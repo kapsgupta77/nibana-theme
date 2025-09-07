@@ -1,0 +1,1411 @@
+{% doc %}
+  @prompt
+    Create a fully responsive full-width banner section with background image and background position controls, customizable content (title, subtitle, description, button), and a play button with play icon and rotating text around it. Include positioning controls to place content and play button anywhere within the banner for desktop, tablet, and mobile views separately. Add responsive customization options for all text sizes, spacing, colors, styling, and background positioning across different screen sizes., just background position top,bottom , center option and currently it should not show banner properly please set this
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-banner-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ block.settings.banner_height_desktop }}px;
+    {% if block.settings.background_image %}
+      background-image: url('{{ block.settings.background_image | image_url: width: 2000 }}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: {{ block.settings.bg_position_desktop }};
+    {% else %}
+      background-color: #f4f4f4;
+    {% endif %}display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .ai-banner-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;}
+
+  .ai-banner-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+    opacity: 0.3;
+  }
+
+  .ai-banner-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};}
+
+  .ai-banner-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: {{ block.settings.content_max_width_desktop }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-banner-content-{{ ai_gen_id }} {
+    position: absolute;
+    top: {{ block.settings.content_position_y_desktop }}%;
+    left: {{ block.settings.content_position_x_desktop }}%;
+    transform: translate(-50%, -50%);
+    text-align: {{ block.settings.content_alignment_desktop }};
+    color: {{ block.settings.text_color }};
+    z-index: 2;
+    max-width: 600px;
+  }
+
+  .ai-banner-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size_desktop }}px;
+    font-weight: {{ block.settings.title_weight }};
+    line-height: 1.2;
+    margin: 0 0 {{ block.settings.title_margin_bottom_desktop }}px 0;
+    color: {{ block.settings.title_color }};
+  }
+
+  .ai-banner-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size_desktop }}px;
+    font-weight: {{ block.settings.subtitle_weight }};
+    line-height: 1.3;
+    margin: 0 0 {{ block.settings.subtitle_margin_bottom_desktop }}px 0;
+    color: {{ block.settings.subtitle_color }};
+  }
+
+  .ai-banner-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size_desktop }}px;
+    line-height: 1.5;
+    margin: 0 0 {{ block.settings.description_margin_bottom_desktop }}px 0;
+    color: {{ block.settings.description_color }};
+  }
+
+  .ai-banner-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_y_desktop }}px {{ block.settings.button_padding_x_desktop }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_text_size_desktop }}px;
+    font-weight: {{ block.settings.button_text_weight }};
+    transition: all 0.3s ease;
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};}
+
+  .ai-banner-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    color: {{ block.settings.button_hover_text_color }};border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-banner-play-button-{{ ai_gen_id }} {
+    position: absolute;
+    top: {{ block.settings.play_button_position_y_desktop }}%;
+    left: {{ block.settings.play_button_position_x_desktop }}%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+  }
+
+  .ai-banner-play-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: {{ block.settings.play_button_size_desktop }}px;
+    height: {{ block.settings.play_button_size_desktop }}px;
+    cursor: pointer;
+  }
+
+  .ai-banner-play-circle-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width:100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: {{ block.settings.play_button_bg_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;border: {{ block.settings.play_button_border_width }}px solid {{ block.settings.play_button_border_color }};
+  }
+
+  .ai-banner-play-circle-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.play_button_hover_bg_color }};
+    border-color: {{ block.settings.play_button_hover_border_color }};
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .ai-banner-play-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.play_icon_size_desktop }}px;
+    height: {{ block.settings.play_icon_size_desktop }}px;
+    color: {{ block.settings.play_icon_color }};
+    margin-left: 2px;
+  }
+
+  .ai-banner-play-text-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: {{ block.settings.play_text_radius_desktop }}px;
+    height: {{ block.settings.play_text_radius_desktop }}px;
+    transform: translate(-50%, -50%);
+    animation: ai-banner-rotate-{{ ai_gen_id }} {{ block.settings.play_text_speed }}s linear infinite;}
+
+  .ai-banner-play-text-{{ ai_gen_id }} span {
+    position: absolute;
+    left: 50%;
+    transform-origin: 0 {{ block.settings.play_text_radius_desktop | divided_by: 2 }}px;
+    font-size: {{ block.settings.play_text_size_desktop }}px;
+    font-weight: {{ block.settings.play_text_weight }};
+    color: {{ block.settings.play_text_color }};
+  }
+
+  @keyframes ai-banner-rotate-{{ ai_gen_id }} {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .ai-banner-{{ ai_gen_id }} {
+      min-height: {{ block.settings.banner_height_tablet }}px;
+      {% if block.settings.background_image %}
+        background-position: {{ block.settings.bg_position_tablet }};
+      {% endif %}
+    }
+
+    .ai-banner-container-{{ ai_gen_id }} {
+      max-width: {{ block.settings.content_max_width_tablet }}px;
+    }
+
+    .ai-banner-content-{{ ai_gen_id }} {
+      top: {{ block.settings.content_position_y_tablet }}%;
+      left: {{ block.settings.content_position_x_tablet }}%;
+      text-align: {{ block.settings.content_alignment_tablet }};}
+
+    .ai-banner-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size_tablet }}px;
+      margin-bottom: {{ block.settings.title_margin_bottom_tablet }}px;
+    }
+
+    .ai-banner-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size_tablet }}px;
+      margin-bottom: {{ block.settings.subtitle_margin_bottom_tablet }}px;
+    }
+
+    .ai-banner-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size_tablet }}px;
+      margin-bottom: {{ block.settings.description_margin_bottom_tablet }}px;
+    }
+
+    .ai-banner-button-{{ ai_gen_id }} {
+      padding: {{ block.settings.button_padding_y_tablet }}px {{ block.settings.button_padding_x_tablet }}px;
+      font-size: {{ block.settings.button_text_size_tablet }}px;
+    }
+
+    .ai-banner-play-button-{{ ai_gen_id }} {
+      top: {{ block.settings.play_button_position_y_tablet }}%;
+      left: {{ block.settings.play_button_position_x_tablet }}%;
+    }
+
+    .ai-banner-play-wrapper-{{ ai_gen_id }} {
+      width: {{ block.settings.play_button_size_tablet }}px;
+      height: {{ block.settings.play_button_size_tablet }}px;
+    }
+
+    .ai-banner-play-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.play_icon_size_tablet }}px;
+      height: {{ block.settings.play_icon_size_tablet }}px;
+    }
+
+    .ai-banner-play-text-{{ ai_gen_id }} {
+      width: {{ block.settings.play_text_radius_tablet }}px;
+      height: {{ block.settings.play_text_radius_tablet }}px;
+    }
+
+    .ai-banner-play-text-{{ ai_gen_id }} span {
+      transform-origin: 0 {{ block.settings.play_text_radius_tablet | divided_by: 2 }}px;
+      font-size: {{ block.settings.play_text_size_tablet }}px;}
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-banner-{{ ai_gen_id }} {
+      min-height: {{ block.settings.banner_height_mobile }}px;
+      {% if block.settings.background_image %}
+        background-position: {{ block.settings.bg_position_mobile }};
+      {% endif %}
+    }
+
+    .ai-banner-container-{{ ai_gen_id }} {
+      max-width: {{ block.settings.content_max_width_mobile }}px;padding: 0 15px;
+    }
+
+    .ai-banner-content-{{ ai_gen_id }} {
+      top: {{ block.settings.content_position_y_mobile }}%;
+      left: {{ block.settings.content_position_x_mobile }}%;
+      text-align: {{ block.settings.content_alignment_mobile }};
+      max-width: 90%;
+    }
+
+    .ai-banner-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size_mobile }}px;
+      margin-bottom: {{ block.settings.title_margin_bottom_mobile }}px;
+    }
+
+    .ai-banner-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size_mobile }}px;
+      margin-bottom: {{ block.settings.subtitle_margin_bottom_mobile }}px;
+    }
+
+    .ai-banner-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size_mobile }}px;
+      margin-bottom: {{ block.settings.description_margin_bottom_mobile }}px;
+    }
+
+    .ai-banner-button-{{ ai_gen_id }} {
+      padding: {{ block.settings.button_padding_y_mobile }}px {{ block.settings.button_padding_x_mobile }}px;
+      font-size: {{ block.settings.button_text_size_mobile }}px;
+    }
+
+    .ai-banner-play-button-{{ ai_gen_id }} {
+      top: {{ block.settings.play_button_position_y_mobile }}%;
+      left: {{ block.settings.play_button_position_x_mobile }}%;
+    }
+
+    .ai-banner-play-wrapper-{{ ai_gen_id }} {
+      width: {{ block.settings.play_button_size_mobile }}px;
+      height: {{ block.settings.play_button_size_mobile }}px;
+    }
+
+    .ai-banner-play-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.play_icon_size_mobile }}px;
+      height: {{ block.settings.play_icon_size_mobile }}px;
+    }
+
+    .ai-banner-play-text-{{ ai_gen_id }} {
+      width: {{ block.settings.play_text_radius_mobile }}px;
+      height: {{ block.settings.play_text_radius_mobile }}px;
+    }
+
+    .ai-banner-play-text-{{ ai_gen_id }} span {
+      transform-origin: 0 {{ block.settings.play_text_radius_mobile | divided_by: 2 }}px;
+      font-size: {{ block.settings.play_text_size_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<ai-banner-{{ ai_gen_id }}
+  class="ai-banner-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% unless block.settings.background_image %}
+    <div class="ai-banner-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}
+    </div>
+  {% endunless %}
+
+  <div class="ai-banner-overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-banner-container-{{ ai_gen_id }}">
+    {% if block.settings.show_content %}
+      <div class="ai-banner-content-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h1 class="ai-banner-title-{{ ai_gen_id }}">{{ block.settings.title }}</h1>
+        {% endif %}
+
+        {% if block.settings.subtitle != blank %}
+          <h2 class="ai-banner-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</h2>
+        {% endif %}
+
+        {% if block.settings.description != blank %}
+          <div class="ai-banner-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+        {% endif %}
+
+        {% if block.settings.button_text != blank and block.settings.button_link != blank %}
+          <a href="{{ block.settings.button_link }}" class="ai-banner-button-{{ ai_gen_id }}">
+            {{ block.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.show_play_button %}
+      <div class="ai-banner-play-button-{{ ai_gen_id }}">
+        <div class="ai-banner-play-wrapper-{{ ai_gen_id }}" data-video-url="{{ block.settings.video_url }}">
+          <div class="ai-banner-play-circle-{{ ai_gen_id }}">
+            <svg class="ai-banner-play-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+
+          {% if block.settings.play_text != blank %}
+            <div class="ai-banner-play-text-{{ ai_gen_id }}">
+              {% assign text_length = block.settings.play_text | size %}
+              {% for i in (0..text_length) %}
+                {% assign char = block.settings.play_text | slice: i %}
+                {% if char != blank %}
+                  {% assign rotation = i | times: 360 | divided_by: text_length %}<span style="transform: rotate({{ rotation }}deg);">{{ char }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</ai-banner-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class AiBanner{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.setupPlayButton();
+    }
+
+    setupPlayButton() {
+      const playButton = this.querySelector('.ai-banner-play-wrapper-{{ ai_gen_id }}');
+      if (!playButton) return;
+
+      playButton.addEventListener('click', () => {
+        const videoUrl = playButton.dataset.videoUrl;
+        if (videoUrl) {
+          window.open(videoUrl, '_blank');
+        }
+      });
+    }
+  }
+
+  customElements.define('ai-banner-{{ ai_gen_id }}', AiBanner{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Full Width Banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Banner Height"
+    },
+    {
+      "type": "range",
+      "id": "banner_height_desktop",
+      "min": 300,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Desktop height",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "banner_height_tablet",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Tablet height",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "banner_height_mobile",
+      "min": 300,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "label": "Mobile height",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Background Position"
+    },
+    {
+      "type": "select",
+      "id": "bg_position_desktop",
+      "label": "Desktop position",
+      "options": [
+        {"value": "center top", "label": "Top"},
+        {"value": "center center", "label": "Center"},
+        {"value": "center bottom", "label": "Bottom"}
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "bg_position_tablet",
+      "label": "Tablet position",
+      "options": [
+        {"value": "center top", "label": "Top"},
+        {"value": "center center", "label": "Center"},
+        {"value": "center bottom", "label": "Bottom"}
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "bg_position_mobile",
+      "label": "Mobile position",
+      "options": [
+        {"value": "center top", "label": "Top"},
+        {"value": "center center", "label": "Center"},
+        {"value": "center bottom", "label": "Bottom"}
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_content",
+      "label": "Show content",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Welcome to Our Store"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Discover Amazing Products"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Experience the best quality products with exceptional service and unbeatable prices."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Content Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Content Max Width"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width_desktop",
+      "min": 800,
+      "max": 1400,
+      "step": 100,
+      "unit": "px",
+      "label": "Desktop max width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "content_max_width_tablet",
+      "min": 600,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Tablet max width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "content_max_width_mobile",
+      "min": 300,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "label": "Mobile max width",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Content Position - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "content_position_x_desktop",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal position",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "content_position_y_desktop",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical position",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_desktop",
+      "label": "Text alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Content Position - Tablet"
+    },
+    {
+      "type": "range",
+      "id": "content_position_x_tablet",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_position_y_tablet",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical position",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_tablet",
+      "label": "Text alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Content Position - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "content_position_x_mobile",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_position_y_mobile",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical position",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_mobile",
+      "label": "Text alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Title Typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Font weight",
+      "options": [
+        {"value": "300", "label": "Light"},
+        {"value": "400", "label": "Regular"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semibold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom_desktop",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Title Typography - Tablet"
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "min": 18,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom_tablet",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Title Typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom_mobile",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Subtitle Typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Font weight",
+      "options": [
+        {"value": "300", "label": "Light"},
+        {"value": "400", "label": "Regular"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semibold"}
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom_desktop",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Subtitle Typography - Tablet"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_tablet",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom_tablet",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Subtitle Typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom_mobile",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Description Typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "description_size_desktop",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_margin_bottom_desktop",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Description Typography - Tablet"
+    },
+    {
+      "type": "range",
+      "id": "description_size_tablet",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "description_margin_bottom_tablet",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Description Typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "description_size_mobile",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "description_margin_bottom_mobile",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Button Style"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "button_text_weight",
+      "label": "Font weight",
+      "options": [
+        {"value": "400", "label": "Regular"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semibold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "500"
+    },
+    {
+      "type": "header",
+      "content": "Button Size - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size_desktop",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x_desktop",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y_desktop",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Button Size - Tablet"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size_tablet",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x_tablet",
+      "min": 14,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y_tablet",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Button Size - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size_mobile",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x_mobile",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y_mobile",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Play Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_play_button",
+      "label": "Show play button",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL"
+    },
+    {
+      "type": "text",
+      "id": "play_text",
+      "label": "Rotating text",
+      "default": "WATCH VIDEO • WATCH VIDEO • "
+    },
+    {
+      "type": "range",
+      "id": "play_text_speed",
+      "min": 5,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "label": "Rotation speed",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Play Button Colors"
+    },
+    {
+      "type": "color",
+      "id": "play_button_bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "play_button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "play_button_border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "play_button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "play_icon_color",
+      "label": "Play icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "play_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "play_button_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "play_text_weight",
+      "label": "Text font weight",
+      "options": [
+        {"value": "300", "label": "Light"},
+        {"value": "400", "label": "Regular"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semibold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "500"
+    },
+    {
+      "type": "header",
+      "content": "Play Button Position - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "play_button_position_x_desktop",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal position",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "play_button_position_y_desktop",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_size_desktop",
+      "min": 60,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Button size",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "play_icon_size_desktop",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "play_text_size_desktop",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "play_text_radius_desktop",
+      "min": 80,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Text radius",
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "Play Button Position - Tablet"
+    },
+    {
+      "type": "range",
+      "id": "play_button_position_x_tablet",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal position",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "play_button_position_y_tablet",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_size_tablet",
+      "min": 50,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Button size",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "play_icon_size_tablet",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "play_text_size_tablet",
+      "min": 6,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "play_text_radius_tablet",
+      "min": 70,
+      "max": 160,
+      "step": 10,
+      "unit": "px",
+      "label": "Text radius",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Play Button Position - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "play_button_position_x_mobile",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_position_y_mobile",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical position",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "play_button_size_mobile",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Button size",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "play_icon_size_mobile",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "play_text_size_mobile",
+      "min": 6,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "play_text_radius_mobile",
+      "min": 50,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Text radius",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Full Width Banner"
+    }
+  ]
+}
+{% endschema %}

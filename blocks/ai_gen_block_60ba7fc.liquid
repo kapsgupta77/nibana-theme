@@ -1,0 +1,1258 @@
+{% doc %}
+  @prompt
+    Create a responsive image slider with text overlay that shows 4 slides per view on desktop and 1 slide on mobile. Include navigation arrows positioned in the top right corner, section title in the top left corner, and advance by 4 slides on desktop (1 on mobile) when arrows are clicked. Each slide should be linkable and include comprehensive customization options for colors, spacing, typography, slider behavior, and layout settings.
+    
+    I want to add slide dynamically
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-image-slider-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-image-slider-container-{{ ai_gen_id }} {
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-image-slider-header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: {{ block.settings.title_spacing }}px;
+  }
+
+  .ai-image-slider-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0;
+    font-weight: {{ block.settings.title_weight }};
+  }
+
+  .ai-image-slider-nav-{{ ai_gen_id }} {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ai-image-slider-nav-btn-{{ ai_gen_id }} {
+    width: {{ block.settings.nav_button_size }}px;
+    height: {{ block.settings.nav_button_size }}px;
+    border: none;
+    border-radius: {{ block.settings.nav_button_radius }}px;
+    background-color: {{ block.settings.nav_button_color }};
+    color: {{ block.settings.nav_button_icon_color }};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .ai-image-slider-nav-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.nav_button_hover_color }};
+    color: {{ block.settings.nav_button_hover_icon_color }};
+  }
+
+  .ai-image-slider-nav-btn-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-image-slider-track-{{ ai_gen_id }} {
+    overflow: hidden;
+    border-radius: {{ block.settings.slider_border_radius }}px;
+  }
+
+  .ai-image-slider-slides-{{ ai_gen_id }} {
+    display: flex;
+    transition: transform 0.5s ease;
+    gap: {{ block.settings.slide_gap }}px;
+  }
+
+  .ai-image-slider-slide-{{ ai_gen_id }} {
+    position: relative;
+    flex: 0 0 calc((100% - (3 * {{ block.settings.slide_gap }}px)) / 4);
+    aspect-ratio: {{ block.settings.slide_aspect_ratio }};
+    border-radius: {{ block.settings.slide_border_radius }}px;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-image-slider-slide-link-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .ai-image-slider-slide-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-image-slider-slide-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    position: relative;
+  }
+
+  .ai-image-slider-slide-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-image-slider-slide-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-image-slider-slide-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      {{ block.settings.overlay_direction }},
+      {{ block.settings.overlay_color_start }},
+      {{ block.settings.overlay_color_end }}
+    );
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+    display: flex;
+    align-items: {{ block.settings.text_vertical_alignment }};
+    justify-content: {{ block.settings.text_horizontal_alignment }};
+    padding: {{ block.settings.text_padding }}px;
+  }
+
+  .ai-image-slider-slide-content-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-image-slider-slide-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.slide_title_size }}px;
+    font-weight: {{ block.settings.slide_title_weight }};
+    margin: 0 0 {{ block.settings.title_bottom_spacing }}px 0;
+    line-height: 1.2;
+  }
+
+  .ai-image-slider-slide-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.slide_description_size }}px;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-image-slider-slide-{{ ai_gen_id }} {
+      flex: 0 0 100%;
+    }
+
+    .ai-image-slider-header-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .ai-image-slider-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-image-slider-slide-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.slide_title_size | times: 0.8 }}px;
+    }
+
+    .ai-image-slider-slide-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.slide_description_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<image-slider-{{ ai_gen_id }}
+  class="ai-image-slider-{{ ai_gen_id }}"
+  data-slides-desktop="4"
+  data-slides-mobile="1"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-image-slider-container-{{ ai_gen_id }}">
+    <div class="ai-image-slider-header-{{ ai_gen_id }}">
+      {% if block.settings.section_title != blank %}
+        <h2 class="ai-image-slider-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      {% endif %}
+      
+      <div class="ai-image-slider-nav-{{ ai_gen_id }}">
+        <button
+          class="ai-image-slider-nav-btn-{{ ai_gen_id }} ai-image-slider-prev-{{ ai_gen_id }}"
+          aria-label="Previous slides"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+          </svg>
+        </button>
+        <button
+          class="ai-image-slider-nav-btn-{{ ai_gen_id }} ai-image-slider-next-{{ ai_gen_id }}"
+          aria-label="Next slides"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9,18 15,12 9,6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ai-image-slider-track-{{ ai_gen_id }}">
+      <div class="ai-image-slider-slides-{{ ai_gen_id }}">
+        {% for i in (1..20) %}
+          {% liquid
+            assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+            assign slide_image_key = 'slide_' | append: i | append: '_image'
+            assign slide_title_key = 'slide_' | append: i | append: '_title'
+            assign slide_description_key = 'slide_' | append: i | append: '_description'
+            assign slide_link_key = 'slide_' | append: i | append: '_link'
+
+            assign slide_enabled = block.settings[slide_enabled_key]
+            assign slide_image = block.settings[slide_image_key]
+            assign slide_title = block.settings[slide_title_key]
+            assign slide_description = block.settings[slide_description_key]
+            assign slide_link = block.settings[slide_link_key]
+          %}
+
+          {% if slide_enabled %}
+            <div class="ai-image-slider-slide-{{ ai_gen_id }}">
+              {% if slide_link != blank %}
+                <a href="{{ slide_link }}" class="ai-image-slider-slide-link-{{ ai_gen_id }}">
+              {% else %}
+                <div class="ai-image-slider-slide-link-{{ ai_gen_id }}">
+              {% endif %}
+                
+                {% if slide_image %}
+                  <img
+                    src="{{ slide_image | image_url: width: 600 }}"
+                    alt="{{ slide_image.alt | escape }}"
+                    class="ai-image-slider-slide-image-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="600"
+                    height="400"
+                  >
+                {% else %}
+                  <div class="ai-image-slider-slide-placeholder-{{ ai_gen_id }}">
+                    {{ 'image' | placeholder_svg_tag }}
+                    <div class="ai-image-slider-slide-empty-state-{{ ai_gen_id }}">
+                      Add image for slide {{ i }}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if slide_title != blank or slide_description != blank %}
+                  <div class="ai-image-slider-slide-overlay-{{ ai_gen_id }}">
+                    <div class="ai-image-slider-slide-content-{{ ai_gen_id }}">
+                      {% if slide_title != blank %}
+                        <h3 class="ai-image-slider-slide-title-{{ ai_gen_id }}">{{ slide_title }}</h3>
+                      {% endif %}
+                      {% if slide_description != blank %}
+                        <p class="ai-image-slider-slide-description-{{ ai_gen_id }}">{{ slide_description }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% if slide_link != blank %}
+                </a>
+              {% else %}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</image-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ImageSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.slidesPerView = 4;
+        this.slidesPerViewMobile = 1;
+      }
+
+      connectedCallback() {
+        this.slidesContainer = this.querySelector('.ai-image-slider-slides-{{ ai_gen_id }}');
+        this.slides = this.querySelectorAll('.ai-image-slider-slide-{{ ai_gen_id }}');
+        this.prevBtn = this.querySelector('.ai-image-slider-prev-{{ ai_gen_id }}');
+        this.nextBtn = this.querySelector('.ai-image-slider-next-{{ ai_gen_id }}');
+        
+        this.totalSlides = this.slides.length;
+        this.updateSlidesPerView();
+        this.setupEventListeners();
+        this.updateSlider();
+        
+        window.addEventListener('resize', () => {
+          this.updateSlidesPerView();
+          this.updateSlider();
+        });
+      }
+
+      updateSlidesPerView() {
+        this.slidesPerView = window.innerWidth <= 768 ? this.slidesPerViewMobile : 4;
+      }
+
+      setupEventListeners() {
+        this.prevBtn.addEventListener('click', () => this.goToPrevious());
+        this.nextBtn.addEventListener('click', () => this.goToNext());}
+
+      goToPrevious() {
+        this.currentIndex = Math.max(0, this.currentIndex - this.slidesPerView);
+        this.updateSlider();
+      }
+
+      goToNext() {
+        const maxIndex = Math.max(0, this.totalSlides - this.slidesPerView);
+        this.currentIndex = Math.min(maxIndex, this.currentIndex + this.slidesPerView);
+        this.updateSlider();
+      }
+
+      updateSlider() {
+        const slideWidth = 100 / this.slidesPerView;
+        const translateX = -(this.currentIndex * slideWidth);
+        
+        this.slidesContainer.style.transform = `translateX(${translateX}%)`;
+        
+        const maxIndex = Math.max(0, this.totalSlides - this.slidesPerView);
+        this.prevBtn.disabled = this.currentIndex === 0;
+        this.nextBtn.disabled = this.currentIndex >= maxIndex;
+      }
+    }
+
+    customElements.define('image-slider-{{ ai_gen_id }}', ImageSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Image slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title weight",
+      "options": [
+        {"value": "400", "label": "Normal"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semibold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Title bottom spacing",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "range",
+      "id": "nav_button_size",
+      "min": 32,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Button size",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "nav_button_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "nav_button_color",
+      "label": "Button background",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_hover_color",
+      "label": "Button hover background",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_icon_color",
+      "label": "Button icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_hover_icon_color",
+      "label": "Button hover icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Slider layout"
+    },
+    {
+      "type": "range",
+      "id": "slide_gap",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between slides",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "slide_aspect_ratio",
+      "label": "Slide aspect ratio",
+      "options": [
+        {"value": "1/1", "label": "Square (1:1)"},
+        {"value": "4/3", "label": "Landscape (4:3)"},
+        {"value": "3/2", "label": "Classic (3:2)"},
+        {"value": "16/9", "label": "Widescreen (16:9)"}
+      ],
+      "default": "4/3"
+    },
+    {
+      "type": "range",
+      "id": "slider_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Slider border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "slide_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Individual slide border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Text overlay"
+    },
+    {
+      "type": "select",
+      "id": "overlay_direction",
+      "label": "Overlay gradient direction",
+      "options": [
+        {"value": "to bottom", "label": "Top to bottom"},
+        {"value": "to top", "label": "Bottom to top"},
+        {"value": "to right", "label": "Left to right"},
+        {"value": "to left", "label": "Right to left"}
+      ],
+      "default": "to bottom"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color_start",
+      "label": "Overlay start color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color_end",
+      "label": "Overlay end color",
+      "default": "rgba(0,0,0,0.6)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "text_vertical_alignment",
+      "label": "Vertical alignment",
+      "options": [
+        {"value": "flex-start", "label": "Top"},
+        {"value": "center", "label": "Center"},
+        {"value": "flex-end", "label": "Bottom"}
+      ],
+      "default": "flex-end"
+    },
+    {
+      "type": "select",
+      "id": "text_horizontal_alignment",
+      "label": "Horizontal alignment",
+      "options": [
+        {"value": "flex-start", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "flex-end", "label": "Right"}
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "range",
+      "id": "text_padding",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Text padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "slide_title_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "slide_title_weight",
+      "label": "Title weight",
+      "options": [
+        {"value": "400", "label": "Normal"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semibold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "title_bottom_spacing",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Title bottom spacing",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "slide_description_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Slide 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_1_enabled",
+      "label": "Enable slide 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_1_title",
+      "label": "Title",
+      "default": "Slide Title 1"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_1_description",
+      "label": "Description",
+      "default": "Add a compelling description for this slide."
+    },
+    {
+      "type": "url",
+      "id": "slide_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_2_enabled",
+      "label": "Enable slide 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_2_title",
+      "label": "Title",
+      "default": "Slide Title 2"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_2_description",
+      "label": "Description",
+      "default": "Add a compelling description for this slide."
+    },
+    {
+      "type": "url",
+      "id": "slide_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_3_enabled",
+      "label": "Enable slide 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_3_title",
+      "label": "Title",
+      "default": "Slide Title 3"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_3_description",
+      "label": "Description",
+      "default": "Add a compelling description for this slide."
+    },
+    {
+      "type": "url",
+      "id": "slide_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_4_enabled",
+      "label": "Enable slide 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_4_title",
+      "label": "Title",
+      "default": "Slide Title 4"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_4_description",
+      "label": "Description",
+      "default": "Add a compelling description for this slide."
+    },
+    {
+      "type": "url",
+      "id": "slide_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_5_enabled",
+      "label": "Enable slide 5",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_5_title",
+      "label": "Title",
+      "default": "Slide Title 5"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_5_description",
+      "label": "Description",
+      "default": "Add a compelling description for this slide."
+    },
+    {
+      "type": "url",
+      "id": "slide_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_6_enabled",
+      "label": "Enable slide 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_6_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_7_enabled",
+      "label": "Enable slide 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_7_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_7_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_7_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_8_enabled",
+      "label": "Enable slide 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_8_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_8_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 9"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_9_enabled",
+      "label": "Enable slide 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_9_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_9_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_9_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_9_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 10"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_10_enabled",
+      "label": "Enable slide 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_10_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_10_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_10_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_10_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 11"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_11_enabled",
+      "label": "Enable slide 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_11_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_11_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_11_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_11_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 12"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_12_enabled",
+      "label": "Enable slide 12"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_12_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_12_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_12_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_12_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 13"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_13_enabled",
+      "label": "Enable slide 13"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_13_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_13_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_13_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_13_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 14"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_14_enabled",
+      "label": "Enable slide 14"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_14_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_14_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_14_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_14_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 15"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_15_enabled",
+      "label": "Enable slide 15"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_15_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_15_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_15_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_15_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 16"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_16_enabled",
+      "label": "Enable slide 16"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_16_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_16_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_16_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_16_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 17"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_17_enabled",
+      "label": "Enable slide 17"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_17_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_17_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_17_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_17_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 18"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_18_enabled",
+      "label": "Enable slide 18"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_18_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_18_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_18_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_18_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 19"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_19_enabled",
+      "label": "Enable slide 19"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_19_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_19_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_19_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_19_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 20"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_20_enabled",
+      "label": "Enable slide 20"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_20_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "slide_20_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "slide_20_description",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "slide_20_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image slider"
+    }
+  ]
+}
+{% endschema %}

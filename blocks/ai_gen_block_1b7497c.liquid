@@ -1,0 +1,1312 @@
+{% doc %}
+  @prompt
+    Create a responsive web section with alternating diagonal split layouts. First section has text on left, image on right with diagonal divider. Second section alternates with image on left, text on right. Include headings like "Explore and Discover" and "Why [Brand]", descriptive paragraphs, and modern styled images. Use clean minimal design with neutral backgrounds, modern typography, CSS Flexbox/Grid, and mobile-responsive stacked layout. Add diagonal edges using CSS clip-path for stylish visual separation between content areas., I want to display this section like some creative way like some animation, like I have add three image with text and thi three he overlay eachother and scrolling when we scroll, three image with text sextion with different content should visible in animation, please provide creative layout, this is correct but add animation on scroll and also decrease some space, provide the section in full width, please set section in full width, make the creative diagonal layout in 100% width
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-creative-layout-{{ ai_gen_id }} {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    overflow: hidden;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }} {
+    position: relative;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    margin-bottom: -10vh;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 100%;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}:nth-child(even) {
+    clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+    flex-direction: row-reverse;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}:last-child {
+    clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+    margin-bottom: 0;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-creative-content-side-{{ ai_gen_id }} {
+    flex: 1;
+    padding: 50px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    background: {{ block.settings.content_bg_color }};
+    width: 50%;
+    min-width: 50%;
+  }
+
+  .ai-creative-image-side-{{ ai_gen_id }} {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    min-height: 85vh;
+    width: 50%;
+    min-width: 50%;
+  }
+
+  .ai-creative-bg-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.2) translateY(30px);
+    transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .ai-creative-image-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(1.2) translateY(30px);
+    transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .ai-creative-image-placeholder-{{ ai_gen_id }} svg {
+    width: 250px;
+    height: 250px;
+    opacity: 0.3;
+    color: white;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-bg-image-{{ ai_gen_id }},
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-image-placeholder-{{ ai_gen_id }} {
+    transform: scale(1) translateY(0);
+  }
+
+  .ai-creative-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, {{ block.settings.overlay_color_1 }}, {{ block.settings.overlay_color_2 }});
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.8s ease;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-overlay-{{ ai_gen_id }} {
+    opacity: 0.5;
+  }
+
+  .ai-creative-floating-shape-{{ ai_gen_id }} {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 1s ease;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-floating-shape-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .ai-creative-shape-1-{{ ai_gen_id }} {
+    width: 150px;
+    height: 150px;
+    top: 10%;
+    right: 10%;
+    transition-delay: 0.3s;
+  }
+
+  .ai-creative-shape-2-{{ ai_gen_id }} {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 15%;
+    transition-delay: 0.5s;
+  }
+
+  .ai-creative-shape-3-{{ ai_gen_id }} {
+    width: 60px;
+    height: 60px;
+    top: 60%;
+    right: 25%;
+    transition-delay: 0.7s;
+  }
+
+  .ai-creative-content-wrapper-{{ ai_gen_id }} {
+    max-width: 600px;
+    opacity: 0;
+    transform: translateX(-80px);
+    transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition-delay: 0.2s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-content-wrapper-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-content-wrapper-{{ ai_gen_id }} {
+    transform: translateX(80px);margin-left: auto;
+    text-align: right;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}:nth-child(even).ai-in-view-{{ ai_gen_id }} .ai-creative-content-wrapper-{{ ai_gen_id }} {
+    transform: translateX(0);
+  }
+
+  .ai-creative-eyebrow-{{ ai_gen_id }} {
+    font-size: {{ block.settings.eyebrow_size }}px;
+    color: {{ block.settings.accent_color }};
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+    transition-delay: 0.4s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-eyebrow-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-creative-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+    transition: all 1s ease;
+    transition-delay: 0.6s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-heading-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .ai-creative-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+    transition-delay: 0.8s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-text-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-creative-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+    transition-delay: 1s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-buttons-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-buttons-{{ ai_gen_id }} {
+    justify-content: flex-end;
+  }
+
+  .ai-creative-btn-primary-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 28px;
+    background: {{ block.settings.primary_button_color }};
+    color: {{ block.settings.primary_button_text }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transform: scale(1);
+  }
+
+  .ai-creative-btn-primary-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .ai-creative-btn-primary-{{ ai_gen_id }}:hover::before {
+    left: 100%;
+  }
+
+  .ai-creative-btn-primary-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.primary_button_hover }};
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .ai-creative-btn-secondary-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 28px;
+    background: transparent;
+    color: {{ block.settings.secondary_button_color }};
+    text-decoration: none;
+    border: 2px solid {{ block.settings.secondary_button_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;}
+
+  .ai-creative-btn-secondary-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: {{ block.settings.secondary_button_color }};
+    transition: left 0.4s ease;
+    z-index: -1;
+  }
+
+  .ai-creative-btn-secondary-{{ ai_gen_id }}:hover::before {
+    left: 0;
+  }
+
+  .ai-creative-btn-secondary-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.secondary_button_text }};
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-creative-decorative-line-{{ ai_gen_id }} {
+    position: absolute;
+    width: 80px;
+    height: 3px;
+    background: {{ block.settings.accent_color }};
+    border-radius: 2px;
+    top: 0;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1s ease;
+    transition-delay: 1.2s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-decorative-line-{{ ai_gen_id }} {
+    transform: scaleX(1);
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-decorative-line-{{ ai_gen_id }} {
+    right: 0;
+    left: auto;
+    transform-origin: right;
+  }
+
+  .ai-creative-stats-{{ ai_gen_id }} {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+    transition-delay: 1.4s;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-stats-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-creative-stat-{{ ai_gen_id }} {
+    text-align: center;}
+
+  .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-stat-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-creative-stat-number-{{ ai_gen_id }} {
+    font-size: 28px;
+    font-weight: 800;
+    color: {{ block.settings.accent_color }};
+    display: block;
+    line-height: 1;
+    transform: scale(0);
+    transition: transform 0.6s ease;
+  }
+
+  .ai-creative-section-{{ ai_gen_id }}.ai-in-view-{{ ai_gen_id }} .ai-creative-stat-number-{{ ai_gen_id }} {
+    transform: scale(1);
+  }
+
+  .ai-creative-stat-label-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  .ai-creative-scroll-indicator-{{ ai_gen_id }} {
+    position: fixed;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-creative-scroll-dot-{{ ai_gen_id }} {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    transform: scale(1);
+  }
+
+  .ai-creative-scroll-dot-{{ ai_gen_id }}.ai-active-{{ ai_gen_id }} {
+    background: {{ block.settings.accent_color }};
+    transform: scale(1.4);
+  }
+
+  .ai-creative-scroll-dot-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: border-color 0.4s ease;
+  }
+
+  .ai-creative-scroll-dot-{{ ai_gen_id }}.ai-active-{{ ai_gen_id }}::after {
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .ai-creative-scroll-dot-{{ ai_gen_id }}:hover {
+    transform: scale(1.2);
+  }
+
+  .ai-creative-scroll-dot-{{ ai_gen_id }}.ai-active-{{ ai_gen_id }}:hover {
+    transform: scale(1.6);
+  }
+
+  @media screen and (max-width: 1200px) {
+    .ai-creative-content-side-{{ ai_gen_id }} {
+      padding: 40px 40px;
+    }
+
+    .ai-creative-content-wrapper-{{ ai_gen_id }} {
+      max-width: 500px;
+    }
+
+    .ai-creative-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.9 }}px;
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .ai-creative-section-{{ ai_gen_id }} {
+      flex-direction: column;
+      clip-path: none;
+      margin-bottom: 0;
+      min-height: auto;
+    }
+
+    .ai-creative-section-{{ ai_gen_id }}:nth-child(even) {
+      flex-direction: column;
+      clip-path: none;
+    }
+
+    .ai-creative-content-side-{{ ai_gen_id }} {
+      padding: 40px 30px;
+      min-height: 40vh;
+      width: 100%;
+    }
+
+    .ai-creative-image-side-{{ ai_gen_id }} {
+      min-height: 40vh;
+      order: -1;
+      width: 100%;
+    }
+
+    .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-image-side-{{ ai_gen_id }} {
+      order: -1;
+    }
+
+    .ai-creative-content-wrapper-{{ ai_gen_id }},
+    .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-content-wrapper-{{ ai_gen_id }} {
+      text-align: center;margin-left: auto;
+      margin-right: auto;
+    }
+
+    .ai-creative-buttons-{{ ai_gen_id }},
+    .ai-creative-section-{{ ai_gen_id }}:nth-child(even) .ai-creative-buttons-{{ ai_gen_id }} {
+      justify-content: center;
+    }
+
+    .ai-creative-stats-{{ ai_gen_id }} {
+      justify-content: center;gap: 20px;
+    }
+
+    .ai-creative-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-creative-scroll-indicator-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-creative-content-side-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .ai-creative-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.6 }}px;
+    }
+
+    .ai-creative-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.9 }}px;
+    }
+
+    .ai-creative-buttons-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: center;gap: 10px;
+    }
+
+    .ai-creative-btn-primary-{{ ai_gen_id }},
+    .ai-creative-btn-secondary-{{ ai_gen_id }} {
+      width: 100%;
+      max-width: 250px;
+      justify-content: center;padding: 12px 24px;
+    }
+
+    .ai-creative-stats-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .ai-creative-stat-number-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-creative-section-{{ ai_gen_id }},
+    .ai-creative-content-wrapper-{{ ai_gen_id }},
+    .ai-creative-eyebrow-{{ ai_gen_id }},
+    .ai-creative-heading-{{ ai_gen_id }},
+    .ai-creative-text-{{ ai_gen_id }},
+    .ai-creative-buttons-{{ ai_gen_id }},
+    .ai-creative-stats-{{ ai_gen_id }},
+    .ai-creative-decorative-line-{{ ai_gen_id }},
+    .ai-creative-bg-image-{{ ai_gen_id }},
+    .ai-creative-image-placeholder-{{ ai_gen_id }},
+    .ai-creative-floating-shape-{{ ai_gen_id }},
+    .ai-creative-overlay-{{ ai_gen_id }},
+    .ai-creative-stat-number-{{ ai_gen_id }} {
+      transition: none;
+      transform: none;
+      opacity: 1;
+    }
+  }
+{% endstyle %}
+
+<creative-diagonal-layout-{{ ai_gen_id }} class="ai-creative-layout-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-creative-scroll-indicator-{{ ai_gen_id }}">
+    <div class="ai-creative-scroll-dot-{{ ai_gen_id }}" data-section="0"></div>
+    <div class="ai-creative-scroll-dot-{{ ai_gen_id }}" data-section="1"></div>
+    <div class="ai-creative-scroll-dot-{{ ai_gen_id }}" data-section="2"></div>
+  </div>
+
+  <section class="ai-creative-section-{{ ai_gen_id }}" data-section="0">
+    <div class="ai-creative-content-side-{{ ai_gen_id }}">
+      <div class="ai-creative-content-wrapper-{{ ai_gen_id }}">
+        <div class="ai-creative-decorative-line-{{ ai_gen_id }}"></div>
+        {% if block.settings.first_eyebrow != blank %}
+          <div class="ai-creative-eyebrow-{{ ai_gen_id }}">{{ block.settings.first_eyebrow }}</div>
+        {% endif %}
+        {% if block.settings.first_heading != blank %}
+          <h2 class="ai-creative-heading-{{ ai_gen_id }}">{{ block.settings.first_heading }}</h2>
+        {% endif %}
+        {% if block.settings.first_text != blank %}
+          <div class="ai-creative-text-{{ ai_gen_id }}">{{ block.settings.first_text }}</div>
+        {% endif %}
+        <div class="ai-creative-buttons-{{ ai_gen_id }}">
+          {% if block.settings.first_primary_button_text != blank and block.settings.first_primary_button_link != blank %}
+            <a href="{{ block.settings.first_primary_button_link }}" class="ai-creative-btn-primary-{{ ai_gen_id }}">
+              {{ block.settings.first_primary_button_text }}
+            </a>
+          {% endif %}
+          {% if block.settings.first_secondary_button_text != blank and block.settings.first_secondary_button_link != blank %}
+            <a href="{{ block.settings.first_secondary_button_link }}" class="ai-creative-btn-secondary-{{ ai_gen_id }}">
+              {{ block.settings.first_secondary_button_text }}
+            </a>
+          {% endif %}
+        </div>
+        {% if block.settings.show_stats %}
+          <div class="ai-creative-stats-{{ ai_gen_id }}">
+            <div class="ai-creative-stat-{{ ai_gen_id }}">
+              <span class="ai-creative-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</span>
+              <span class="ai-creative-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</span>
+            </div>
+            <div class="ai-creative-stat-{{ ai_gen_id }}">
+              <span class="ai-creative-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</span>
+              <span class="ai-creative-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</span>
+            </div>
+            <div class="ai-creative-stat-{{ ai_gen_id }}">
+              <span class="ai-creative-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</span>
+              <span class="ai-creative-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="ai-creative-image-side-{{ ai_gen_id }}">
+      {% if block.settings.first_image %}
+        <img
+          src="{{ block.settings.first_image | image_url: width: 1200}}"
+          alt="{{ block.settings.first_image.alt | escape }}"
+          class="ai-creative-bg-image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.first_image.width }}"
+          height="{{ block.settings.first_image.height }}"
+        >
+      {% else %}
+        <div class="ai-creative-image-placeholder-{{ ai_gen_id }}">
+          {{'hero-apparel-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}<div class="ai-creative-overlay-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-1-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-2-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-3-{{ ai_gen_id }}"></div>
+    </div>
+  </section>
+
+  <section class="ai-creative-section-{{ ai_gen_id }}" data-section="1">
+    <div class="ai-creative-content-side-{{ ai_gen_id }}">
+      <div class="ai-creative-content-wrapper-{{ ai_gen_id }}">
+        <div class="ai-creative-decorative-line-{{ ai_gen_id }}"></div>
+        {% if block.settings.second_eyebrow != blank %}
+          <div class="ai-creative-eyebrow-{{ ai_gen_id }}">{{ block.settings.second_eyebrow }}</div>
+        {% endif %}
+        {% if block.settings.second_heading != blank %}
+          <h2 class="ai-creative-heading-{{ ai_gen_id }}">{{ block.settings.second_heading }}</h2>
+        {% endif %}
+        {% if block.settings.second_text != blank %}
+          <div class="ai-creative-text-{{ ai_gen_id }}">{{ block.settings.second_text }}</div>
+        {% endif %}
+        <div class="ai-creative-buttons-{{ ai_gen_id }}">
+          {% if block.settings.second_primary_button_text != blank and block.settings.second_primary_button_link != blank %}
+            <a href="{{ block.settings.second_primary_button_link }}" class="ai-creative-btn-primary-{{ ai_gen_id }}">
+              {{ block.settings.second_primary_button_text }}
+            </a>
+          {% endif %}
+          {% if block.settings.second_secondary_button_text != blank and block.settings.second_secondary_button_link != blank %}
+            <a href="{{ block.settings.second_secondary_button_link }}" class="ai-creative-btn-secondary-{{ ai_gen_id }}">
+              {{ block.settings.second_secondary_button_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="ai-creative-image-side-{{ ai_gen_id }}">
+      {% if block.settings.second_image %}
+        <img
+          src="{{ block.settings.second_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.second_image.alt | escape }}"
+          class="ai-creative-bg-image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.second_image.width }}"
+          height="{{ block.settings.second_image.height }}"
+        >
+      {% else %}
+        <div class="ai-creative-image-placeholder-{{ ai_gen_id }}">
+          {{ 'collection-apparel-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+      <div class="ai-creative-overlay-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-1-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-2-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-3-{{ ai_gen_id }}"></div>
+    </div>
+  </section>
+
+  <section class="ai-creative-section-{{ ai_gen_id }}" data-section="2">
+    <div class="ai-creative-content-side-{{ ai_gen_id }}">
+      <div class="ai-creative-content-wrapper-{{ ai_gen_id }}">
+        <div class="ai-creative-decorative-line-{{ ai_gen_id }}"></div>
+        {% if block.settings.third_eyebrow != blank %}
+          <div class="ai-creative-eyebrow-{{ ai_gen_id }}">{{ block.settings.third_eyebrow }}</div>
+        {% endif %}
+        {% if block.settings.third_heading != blank %}
+          <h2 class="ai-creative-heading-{{ ai_gen_id }}">{{ block.settings.third_heading }}</h2>
+        {% endif %}
+        {% if block.settings.third_text != blank %}
+          <div class="ai-creative-text-{{ ai_gen_id }}">{{ block.settings.third_text }}</div>
+        {% endif %}
+        <div class="ai-creative-buttons-{{ ai_gen_id }}">
+          {% if block.settings.third_primary_button_text != blank and block.settings.third_primary_button_link != blank %}
+            <a href="{{ block.settings.third_primary_button_link }}" class="ai-creative-btn-primary-{{ ai_gen_id }}">
+              {{ block.settings.third_primary_button_text }}
+            </a>
+          {% endif %}
+          {% if block.settings.third_secondary_button_text != blank and block.settings.third_secondary_button_link != blank %}
+            <a href="{{ block.settings.third_secondary_button_link }}" class="ai-creative-btn-secondary-{{ ai_gen_id }}">
+              {{ block.settings.third_secondary_button_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="ai-creative-image-side-{{ ai_gen_id }}">
+      {% if block.settings.third_image %}
+        <img
+          src="{{ block.settings.third_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.third_image.alt | escape }}"
+          class="ai-creative-bg-image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.third_image.width }}"
+          height="{{ block.settings.third_image.height }}"
+        >
+      {% else %}
+        <div class="ai-creative-image-placeholder-{{ ai_gen_id }}">
+          {{ 'detailed-apparel-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+      <div class="ai-creative-overlay-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-1-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-2-{{ ai_gen_id }}"></div>
+      <div class="ai-creative-floating-shape-{{ ai_gen_id }} ai-creative-shape-3-{{ ai_gen_id }}"></div>
+    </div>
+  </section>
+</creative-diagonal-layout-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CreativeDiagonalLayout{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.sections = [];
+        this.dots = [];
+        this.currentSection = 0;
+        this.observer = null;
+        this.scrollTimeout = null;}
+
+      connectedCallback() {
+        this.sections = Array.from(this.querySelectorAll('.ai-creative-section-{{ ai_gen_id }}'));
+        this.dots = Array.from(this.querySelectorAll('.ai-creative-scroll-dot-{{ ai_gen_id }}'));
+        
+        this.setupIntersectionObserver();
+        this.setupDotNavigation();
+        this.setupScrollEffects();
+        this.setupParallaxScrolling();
+        
+        if (this.sections.length > 0) {
+          this.updateActiveSection(0);
+        }
+      }
+
+      setupIntersectionObserver() {
+        const options = {
+          threshold: 0.2,
+          rootMargin: '-10% 0px -10% 0px'
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('ai-in-view-{{ ai_gen_id }}');
+              const sectionIndex = parseInt(entry.target.dataset.section);
+              this.updateActiveSection(sectionIndex);
+              this.animateStatsNumbers(entry.target);
+            } else {
+              entry.target.classList.remove('ai-in-view-{{ ai_gen_id }}');
+            }
+          });
+        }, options);
+
+        this.sections.forEach(section => {
+          this.observer.observe(section);
+        });
+      }
+
+      setupDotNavigation() {
+        this.dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            const targetSection = this.sections[index];
+            if (targetSection) {
+              targetSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          });
+
+          dot.addEventListener('mouseenter', () => {
+            if (!dot.classList.contains('ai-active-{{ ai_gen_id }}')) {
+              dot.style.transform = 'scale(1.2)';
+            }
+          });
+
+          dot.addEventListener('mouseleave', () => {
+            if (!dot.classList.contains('ai-active-{{ ai_gen_id }}')) {
+              dot.style.transform = 'scale(1)';
+            }
+          });
+        });
+      }
+
+      setupScrollEffects() {
+        let ticking = false;
+        
+        const handleScroll = () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              this.updateParallaxEffects();
+              this.updateFloatingShapes();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });}
+
+      setupParallaxScrolling() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        window.addEventListener('scroll', () => {
+          clearTimeout(this.scrollTimeout);
+          this.scrollTimeout = setTimeout(() => {
+            this.updateScrollBasedAnimations();
+          }, 10);
+        }, { passive: true });
+      }
+
+      updateActiveSection(index) {
+        this.currentSection = index;
+        this.dots.forEach((dot, i) => {
+          if (i === index) {
+            dot.classList.add('ai-active-{{ ai_gen_id }}');
+            dot.style.transform = 'scale(1.4)';
+          } else {
+            dot.classList.remove('ai-active-{{ ai_gen_id }}');
+            dot.style.transform = 'scale(1)';
+          }
+        });
+      }
+
+      updateParallaxEffects() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        const scrollTop = window.pageYOffset;
+        this.sections.forEach((section, index) => {
+          const rect = section.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+          
+          if (isVisible) {
+            const scrollProgress = Math.max(0, Math.min(1,
+              (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
+            ));
+            
+            const imageElement = section.querySelector('.ai-creative-bg-image-{{ ai_gen_id }}, .ai-creative-image-placeholder-{{ ai_gen_id }}');
+            const overlay = section.querySelector('.ai-creative-overlay-{{ ai_gen_id }}');
+            if (imageElement) {
+              const parallaxOffset = (scrollProgress - 0.5) * 30;
+              const scale = 1 + (scrollProgress * 0.1);
+              imageElement.style.transform = `scale(${scale}) translateY(${parallaxOffset}px)`;}
+            
+            if (overlay) {
+              const opacity = 0.3 + (scrollProgress * 0.4);
+              overlay.style.opacity = Math.min(0.7, opacity);
+            }
+          }
+        });
+      }
+
+      updateFloatingShapes() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        const scrollTop = window.pageYOffset;
+        this.sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+          
+          if (isVisible) {
+            const shapes = section.querySelectorAll('.ai-creative-floating-shape-{{ ai_gen_id }}');
+            const scrollProgress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+            
+            shapes.forEach((shape, shapeIndex) => {
+              const speed = 0.5 + (shapeIndex * 0.3);
+              const offset = scrollProgress *50* speed;
+              const rotation = scrollProgress * 180 * (shapeIndex + 1);
+              const scale = 0.8 + (scrollProgress * 0.4);
+              
+              shape.style.transform = `translateY(${offset}px) rotate(${rotation}deg) scale(${scale})`;
+            });
+          }
+        });
+      }
+
+      updateScrollBasedAnimations() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        this.sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          const isInViewport = rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.2;
+          
+          if (isInViewport && !section.classList.contains('ai-in-view-{{ ai_gen_id }}')) {
+            section.classList.add('ai-in-view-{{ ai_gen_id }}');
+            this.triggerStaggeredAnimations(section);
+          }
+        });
+      }
+
+      triggerStaggeredAnimations(section) {
+        const animatedElements = section.querySelectorAll(
+          '.ai-creative-eyebrow-{{ ai_gen_id }}, .ai-creative-heading-{{ ai_gen_id }}, .ai-creative-text-{{ ai_gen_id }}, .ai-creative-buttons-{{ ai_gen_id }}, .ai-creative-stats-{{ ai_gen_id }}'
+        );
+        
+        animatedElements.forEach((element, index) => {
+          setTimeout(() => {
+            element.style.transform = 'translateY(0)';
+            element.style.opacity = '1';
+          }, index * 100);
+        });
+      }
+
+      animateStatsNumbers(section) {
+        const statNumbers = section.querySelectorAll('.ai-creative-stat-number-{{ ai_gen_id }}');
+        statNumbers.forEach((stat, index) => {
+          setTimeout(() => {
+            const text = stat.textContent;
+            const number = parseInt(text.replace(/\D/g, ''));
+            
+            if (number && number > 0) {
+              this.animateNumber(stat, 0, number, text, 1000);
+            }
+          }, index * 200);
+        });
+      }
+
+      animateNumber(element, start, end, originalText, duration) {
+        const startTime = performance.now();
+        const suffix = originalText.replace(/[\d,]/g, '');
+        const animate = (currentTime) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+          const current = Math.round(start + (end - start) * easeOutQuart);
+          element.textContent = current.toLocaleString() + suffix;
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+        
+        requestAnimationFrame(animate);
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();}
+        if (this.scrollTimeout) {
+          clearTimeout(this.scrollTimeout);
+        }
+      }
+    }
+
+    customElements.define('creative-diagonal-layout-{{ ai_gen_id }}', CreativeDiagonalLayout{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Creative Diagonal Layout",
+  "settings": [
+    {
+      "type": "header",
+      "content": "First Section"
+    },
+    {
+      "type": "text",
+      "id": "first_eyebrow",
+      "label": "Eyebrow text",
+      "default": "Discover"
+    },
+    {
+      "type": "text",
+      "id": "first_heading",
+      "label": "Heading",
+      "default": "Explore and Discover"
+    },
+    {
+      "type": "richtext",
+      "id": "first_text",
+      "label": "Text",
+      "default": "<p>Discover our carefully curated collection of premium products designed to enhance your lifestyle. Each item is selected with attention to quality, style, and functionality.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "first_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "first_primary_button_text",
+      "label": "Primary button text",
+      "default": "Shop Collection"
+    },
+    {
+      "type": "url",
+      "id": "first_primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "first_secondary_button_text",
+      "label": "Secondary button text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "first_secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Second Section"
+    },
+    {
+      "type": "text",
+      "id": "second_eyebrow",
+      "label": "Eyebrow text",
+      "default": "Quality"
+    },
+    {
+      "type": "text",
+      "id": "second_heading",
+      "label": "Heading",
+      "default": "Why Choose Our Brand"
+    },
+    {
+      "type": "richtext",
+      "id": "second_text",
+      "label": "Text",
+      "default": "<p>We believe in delivering exceptional value through innovative design, sustainable practices, and uncompromising quality. Our commitment to excellence sets us apart.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "second_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "second_primary_button_text",
+      "label": "Primary button text",
+      "default": "Our Story"
+    },
+    {
+      "type": "url",
+      "id": "second_primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "second_secondary_button_text",
+      "label": "Secondary button text",
+      "default": "View Products"
+    },
+    {
+      "type": "url",
+      "id": "second_secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Third Section"
+    },
+    {
+      "type": "text",
+      "id": "third_eyebrow",
+      "label": "Eyebrow text",
+      "default": "Community"
+    },
+    {
+      "type": "text",
+      "id": "third_heading",
+      "label": "Heading",
+      "default": "Join Our Community"
+    },
+    {
+      "type": "richtext",
+      "id": "third_text",
+      "label": "Text",
+      "default": "<p>Become part of a growing community of satisfied customers who trust us for their needs. Experience the difference that quality and service make.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "third_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "third_primary_button_text",
+      "label": "Primary button text",
+      "default": "Get Started"
+    },
+    {
+      "type": "url",
+      "id": "third_primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "third_secondary_button_text",
+      "label": "Secondary button text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "third_secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "Show statistics",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Statistic 1 number",
+      "default": "10K+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Statistic 1 label",
+      "default": "Happy Customers"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Statistic 2 number",
+      "default": "500+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Statistic 2 label",
+      "default": "Products"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Statistic 3 number",
+      "default": "5★"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Statistic 3 label",
+      "default": "Rating"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Content background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color_1",
+      "label": "Image overlay start",
+      "default": "rgba(0, 0, 0, 0.4)"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color_2",
+      "label": "Image overlay end",
+      "default": "rgba(0, 0, 0, 0.6)"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_color",
+      "label": "Primary button color",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_text",
+      "label": "Primary button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_hover",
+      "label": "Primary button hover",
+      "default": "#5a6fd8"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_color",
+      "label": "Secondary button color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_text",
+      "label": "Secondary button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Creative Diagonal Layout"
+    }
+  ]
+}
+{% endschema %}

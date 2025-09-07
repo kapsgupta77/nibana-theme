@@ -1,0 +1,1086 @@
+{% doc %}
+  @prompt
+    Create a testimonial page section for 40 reviews to display in grid format that displays customer reviews in a clean, modern layout.  
+    Each testimonial should include:  
+    - Customer Name  
+    - Review Title  
+    - Review Body (short paragraph)  
+    
+    Requirements:  
+    - Responsive grid layout (3 per row on desktop, 1 per row on mobile).  
+    - Use card-style boxes with rounded corners, shadow, and padding.  
+    - Include a heading at the top: "What Our Customers Say".  
+    - Design should match Shopify’s clean aesthetic (white background, black/gray text, subtle accents).  
+    - Make it easily editable for adding/removing testimonials and can also add more testimonials dynamically.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-testimonials-section-{{ ai_gen_id }} {
+    padding: 60px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-testimonials-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;}
+
+  .ai-testimonials-heading-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 50px;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 600;
+  }
+
+  .ai-testimonials-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .ai-testimonial-card-{{ ai_gen_id }} {
+    background: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 30px;
+    box-shadow: {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.1 }} {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.2 }} {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.3 }} rgba(0, 0, 0, {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.1 }});
+    border: 1px solid {{ block.settings.card_border_color }};
+    transition: transform 0.2s ease, box-shadow 0.2s ease;height: 100%;display: flex;
+    flex-direction: column;
+  }
+
+  .ai-testimonial-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.15 }} {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.25 }} {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.4 }} rgba(0, 0, 0, {{ block.settings.card_shadow_intensity | divided_by: 100.0 | times: 0.15 }});
+  }
+
+  .ai-testimonial-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.title_color }};
+    margin-bottom: 15px;line-height: 1.4;
+  }
+
+  .ai-testimonial-body-{{ ai_gen_id }} {
+    font-size: {{ block.settings.body_size }}px;
+    color: {{ block.settings.body_color }};
+    line-height: 1.6;
+    margin-bottom: 20px;flex-grow: 1;
+  }
+
+  .ai-testimonial-author-{{ ai_gen_id }} {
+    font-size: {{ block.settings.author_size }}px;
+    color: {{ block.settings.author_color }};
+    font-weight: 500;
+    margin-top: auto;
+  }
+
+  .ai-testimonials-add-more-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    border: 2px dashed {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    background: {{ block.settings.card_background }};
+    color: {{ block.settings.body_color }};
+    opacity: 0.7;
+  }
+
+  .ai-testimonials-add-more-text-{{ ai_gen_id }} {
+    font-size:16px;
+    margin-bottom: 10px;
+  }
+
+  .ai-testimonials-add-more-subtext-{{ ai_gen_id }} {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 990px) {
+    .ai-testimonials-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-testimonials-section-{{ ai_gen_id }} {
+      padding: 40px 15px;
+    }
+
+    .ai-testimonials-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;gap: 20px;
+    }
+
+    .ai-testimonials-heading-{{ ai_gen_id }} {
+      margin-bottom: 30px;
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-testimonial-card-{{ ai_gen_id }} {
+      padding: 25px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-testimonials-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-testimonials-container-{{ ai_gen_id }}">
+    {% if block.settings.section_heading != blank %}
+      <h2 class="ai-testimonials-heading-{{ ai_gen_id }}">{{ block.settings.section_heading }}</h2>
+    {% endif %}<div class="ai-testimonials-grid-{{ ai_gen_id }}">
+      {% for i in (1..40) %}
+        {% liquid
+          assign customer_name_key = 'customer_name_' | append: i
+          assign review_title_key = 'review_title_' | append: i
+          assign review_body_key = 'review_body_' | append: i
+          
+          assign customer_name = block.settings[customer_name_key]
+          assign review_title = block.settings[review_title_key]
+          assign review_body = block.settings[review_body_key]
+        %}
+
+        {% if customer_name != blank or review_title != blank or review_body != blank %}
+          <div class="ai-testimonial-card-{{ ai_gen_id }}">
+            {% if review_title != blank %}
+              <h3 class="ai-testimonial-title-{{ ai_gen_id }}">{{ review_title }}</h3>
+            {% endif %}
+            
+            {% if review_body != blank %}
+              <div class="ai-testimonial-body-{{ ai_gen_id }}">{{ review_body }}</div>
+            {% endif %}
+            {% if customer_name != blank %}
+              <div class="ai-testimonial-author-{{ ai_gen_id }}">— {{ customer_name }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% comment %}Show add more prompt if no testimonials are configured{% endcomment %}
+      {% assign has_testimonials = false %}
+      {% for i in (1..40) %}
+        {% liquid
+          assign customer_name_key = 'customer_name_' | append: i
+          assign review_title_key = 'review_title_' | append: i
+          assign review_body_key = 'review_body_' | append: i
+          
+          assign customer_name = block.settings[customer_name_key]
+          assign review_title = block.settings[review_title_key]
+          assign review_body = block.settings[review_body_key]%}
+        {% if customer_name != blank or review_title != blank or review_body != blank %}
+          {% assign has_testimonials = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+
+      {% unless has_testimonials %}
+        <div class="ai-testimonials-add-more-{{ ai_gen_id }}" style="grid-column: 1 / -1;">
+          <div class="ai-testimonials-add-more-text-{{ ai_gen_id }}">Ready to showcase your customer reviews?</div>
+          <div class="ai-testimonials-add-more-subtext-{{ ai_gen_id }}">Add testimonials in the block settings to get started</div>
+        </div>
+      {% endunless %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer testimonials",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Review title size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Review title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Review body size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Review body color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "author_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Author name size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "author_color",
+      "label": "Author name color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_intensity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Card shadow intensity",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 1"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_1",
+      "label": "Customer name",
+      "default": "Sarah Johnson"
+    },
+    {
+      "type": "text",
+      "id": "review_title_1",
+      "label": "Review title",
+      "default": "Absolutely love this product!"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_1",
+      "label": "Review body",
+      "default": "The quality exceeded my expectations and the customer service was outstanding. I'll definitely be ordering again soon!"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 2"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_2",
+      "label": "Customer name",
+      "default": "Michael Chen"
+    },
+    {
+      "type": "text",
+      "id": "review_title_2",
+      "label": "Review title",
+      "default": "Fast shipping and great quality"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_2",
+      "label": "Review body",
+      "default": "Ordered on Monday and received it Wednesday. The product looks exactly like the photos and feels very well made."
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 3"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_3",
+      "label": "Customer name",
+      "default": "Emma Rodriguez"
+    },
+    {
+      "type": "text",
+      "id": "review_title_3",
+      "label": "Review title",
+      "default": "Perfect fit and style"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_3",
+      "label": "Review body",
+      "default": "Finally found something that fits perfectly! The sizing guide was accurate and the material is so comfortable."
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 4"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_4",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_4",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_4",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 5"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_5",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_5",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_5",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 6"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_6",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_6",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_6",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 7"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_7",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_7",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_7",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 8"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_8",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_8",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_8",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 9"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_9",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_9",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_9",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 10"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_10",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_10",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_10",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 11"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_11",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_11",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_11",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 12"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_12",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_12",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_12",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 13"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_13",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_13",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_13",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 14"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_14",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_14",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_14",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 15"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_15",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_15",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_15",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 16"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_16",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_16",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_16",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 17"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_17",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_17",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_17",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 18"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_18",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_18",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_18",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 19"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_19",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_19",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_19",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 20"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_20",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_20",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_20",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 21"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_21",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_21",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_21",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 22"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_22",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_22",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_22",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 23"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_23",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_23",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_23",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 24"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_24",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_24",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_24",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 25"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_25",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_25",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_25",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 26"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_26",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_26",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_26",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 27"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_27",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_27",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_27",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 28"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_28",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_28",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_28",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 29"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_29",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_29",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_29",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 30"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_30",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_30",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_30",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 31"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_31",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_31",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_31",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 32"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_32",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_32",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_32",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 33"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_33",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_33",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_33",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 34"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_34",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_34",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_34",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 35"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_35",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_35",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_35",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 36"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_36",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_36",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_36",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 37"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_37",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_37",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_37",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 38"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_38",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_38",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_38",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 39"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_39",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_39",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_39",
+      "label": "Review body"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial 40"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_40",
+      "label": "Customer name"
+    },
+    {
+      "type": "text",
+      "id": "review_title_40",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_body_40",
+      "label": "Review body"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer testimonials"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,592 @@
+{% doc %}
+  @prompt
+    Create a responsive full-width banner section with a background image, customizable content block (title and paragraph) that can be positioned anywhere on the banner, an animated play button icon with flexible positioning, and a YouTube video popup modal that opens when the play button is clicked. Include positioning controls for both the content block and play button, responsive design for all devices, and a close button for the modal.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-video-banner-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.banner_height }}px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.overlay_color }};
+  }
+
+  .ai-video-banner-background-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .ai-video-banner-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .ai-video-banner-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 300px;
+    opacity: 0.3;
+  }
+
+  .ai-video-banner-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 2;
+  }
+
+  .ai-video-banner-content-{{ ai_gen_id }} {
+    position: absolute;
+    z-index: 3;
+    max-width: {{ block.settings.content_max_width }}px;
+    text-align: {{ block.settings.content_alignment }};
+    color: {{ block.settings.text_color }};
+    padding: 20px;
+    top: {{ block.settings.content_vertical_position }}%;
+    left: {{ block.settings.content_horizontal_position }}%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ai-video-banner-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .ai-video-banner-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .ai-video-banner-play-button-{{ ai_gen_id }} {
+    position: absolute;
+    z-index: 3;
+    top: {{ block.settings.play_button_vertical_position }}%;
+    left: {{ block.settings.play_button_horizontal_position }}%;
+    transform: translate(-50%, -50%);
+    width: {{ block.settings.play_button_size }}px;
+    height: {{ block.settings.play_button_size }}px;
+    border-radius: 50%;
+    background-color: {{ block.settings.play_button_color }};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .ai-video-banner-play-button-{{ ai_gen_id }}:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .ai-video-banner-play-icon-{{ ai_gen_id }} {
+    width: calc({{ block.settings.play_button_size }}px * 0.4);
+    height: calc({{ block.settings.play_button_size }}px * 0.4);
+    fill: {{ block.settings.play_button_icon_color }};
+    margin-left: 4px;
+  }
+
+  .ai-video-banner-modal-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .ai-video-banner-modal-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-video-banner-modal-content-{{ ai_gen_id }} {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ai-video-banner-modal-iframe-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .ai-video-banner-modal-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 10000;
+  }
+
+  .ai-video-banner-modal-close-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-video-banner-{{ ai_gen_id }} {
+      height: {{ block.settings.banner_height_mobile }}px;
+    }
+
+    .ai-video-banner-content-{{ ai_gen_id }} {
+      max-width: calc(100% - 40px);
+      padding: 15px;
+    }
+
+    .ai-video-banner-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size_mobile }}px;
+      margin-bottom: 12px;
+    }
+
+    .ai-video-banner-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size_mobile }}px;
+    }
+
+    .ai-video-banner-play-button-{{ ai_gen_id }} {
+      width: {{ block.settings.play_button_size_mobile }}px;
+      height: {{ block.settings.play_button_size_mobile }}px;
+    }
+
+    .ai-video-banner-play-icon-{{ ai_gen_id }} {
+      width: calc({{ block.settings.play_button_size_mobile }}px * 0.4);
+      height: calc({{ block.settings.play_button_size_mobile }}px * 0.4);
+    }
+
+    .ai-video-banner-modal-content-{{ ai_gen_id }} {
+      width: 95%;
+      margin: 0 20px;
+    }
+
+    .ai-video-banner-modal-close-{{ ai_gen_id }} {
+      top: -40px;
+      font-size: 20px;
+    }
+  }
+  .ai-video-banner-content-azxfmou9iekuyzlljtaigenblock6dc2892p7awfc {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.5);
+    color: #2F3E48;
+}
+{% endstyle %}
+
+<video-banner-{{ ai_gen_id }}
+  class="ai-video-banner-{{ ai_gen_id }}"
+  data-video-id="{{ block.settings.youtube_video_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.background_image %}
+    <img
+      src="{{ block.settings.background_image | image_url: width: 2000 }}"
+      alt="{{ block.settings.background_image.alt | escape }}"
+      class="ai-video-banner-background-{{ ai_gen_id }}"
+      loading="lazy"
+      width="{{ block.settings.background_image.width }}"
+      height="{{ block.settings.background_image.height }}"
+    >
+  {% else %}
+    <div class="ai-video-banner-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}
+    </div>
+  {% endif %}
+
+  <div class="ai-video-banner-overlay-{{ ai_gen_id }}"></div>
+
+  {% if block.settings.show_content %}
+    <div class="ai-video-banner-content-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-video-banner-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.text != blank %}
+        <div class="ai-video-banner-text-{{ ai_gen_id }}">{{ block.settings.text }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if block.settings.youtube_video_id != blank %}
+    <button
+      class="ai-video-banner-play-button-{{ ai_gen_id }}"
+      aria-label="Play video"
+    >
+      <svg
+        class="ai-video-banner-play-icon-{{ ai_gen_id }}"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+  {% endif %}
+
+  <div class="ai-video-banner-modal-{{ ai_gen_id }}">
+    <div class="ai-video-banner-modal-content-{{ ai_gen_id }}"><button
+        class="ai-video-banner-modal-close-{{ ai_gen_id }}"
+        aria-label="Close video"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <iframe
+        class="ai-video-banner-modal-iframe-{{ ai_gen_id }}"
+        src=""
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+</video-banner-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VideoBanner{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.videoId = this.dataset.videoId;
+        this.playButton = this.querySelector('.ai-video-banner-play-button-{{ ai_gen_id }}');
+        this.modal = this.querySelector('.ai-video-banner-modal-{{ ai_gen_id }}');
+        this.closeButton = this.querySelector('.ai-video-banner-modal-close-{{ ai_gen_id }}');
+        this.iframe = this.querySelector('.ai-video-banner-modal-iframe-{{ ai_gen_id }}');
+
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        if (this.playButton) {
+          this.playButton.addEventListener('click', () => {
+            this.openModal();
+          });
+        }
+
+        if (this.closeButton) {
+          this.closeButton.addEventListener('click', () => {
+            this.closeModal();
+          });
+        }
+
+        if (this.modal) {
+          this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+              this.closeModal();
+            }
+          });
+        }document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.closeModal();
+          }
+        });
+      }
+
+      openModal() {
+        if (!this.videoId) return;
+
+        const embedUrl = `https://www.youtube.com/embed/${this.videoId}?autoplay=1&rel=0`;
+        this.iframe.src = embedUrl;
+        this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeModal() {
+        this.modal.classList.remove('active');
+        this.iframe.src = '';
+        document.body.style.overflow = '';
+      }
+    }
+
+    customElements.define('video-banner-{{ ai_gen_id }}', VideoBanner{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video Banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Banner height (desktop)",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "banner_height_mobile",
+      "min": 200,
+      "max": 600,
+      "step": 25,
+      "unit": "px",
+      "label": "Banner height (mobile)",
+      "default": 400
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_content",
+      "label": "Show content block",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Watch Our Story"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Discover the passion and craftsmanship behind our products in this exclusive video."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "content_horizontal_position",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Content horizontal position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_vertical_position",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Content vertical position",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "label": "Title size (desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 18,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size (mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size (desktop)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size (mobile)",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "text",
+      "id": "youtube_video_id",
+      "label": "YouTube video ID",
+      "info": "Enter the YouTube video ID (e.g., dQw4w9WgXcQ from https://www.youtube.com/watch?v=dQw4w9WgXcQ)"
+    },
+    {
+      "type": "range",
+      "id": "play_button_size",
+      "min": 60,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Play button size (desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "play_button_size_mobile",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Play button size (mobile)",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "play_button_color",
+      "label": "Play button color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "play_button_icon_color",
+      "label": "Play button icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "play_button_horizontal_position",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Play button horizontal position",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "play_button_vertical_position",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Play button vertical position",
+      "default": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Banner"
+    }
+  ]
+}
+{% endschema %}
