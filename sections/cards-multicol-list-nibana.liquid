@@ -1,0 +1,140 @@
+{% comment %}
+  NIBANA — Cards: Multi-column list
+  - Each column can have a title, short description and a list (one item per line)
+  - Reusable for “What to expect”, “Is this for you?”, etc.
+{% endcomment %}
+
+<section id="nbm-{{ section.id }}" class="nbm {% if section.settings.bg == 'soft' %}nbm-bg--soft{% elsif section.settings.bg == 'gainsboro' %}nbm-bg--gainsboro{% endif %}">
+  <div class="nbm-wrap">
+    {% if section.settings.heading != blank %}
+      <h2 class="nbm-h2">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p class="nbm-sub">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="nbm-grid nbm-cols-{{ section.settings.columns }}">
+      {% for block in section.blocks %}
+        <div class="nbm-card" {{ block.shopify_attributes }}>
+          {% if block.settings.title != blank %}
+            <h3 class="nbm-title">{{ block.settings.title }}</h3>
+          {% endif %}
+
+          {% if block.settings.desc != blank %}
+            <p class="nbm-desc">{{ block.settings.desc }}</p>
+          {% endif %}
+
+          {% if block.settings.items != blank %}
+            {%- assign lines = block.settings.items | newline_to_br | split: '<br />' -%}
+            <ul class="nbm-list {% if section.settings.list_style == 'check' %}nbm-list--check{% elsif section.settings.list_style == 'none' %}nbm-list--none{% endif %}">
+              {% for line in lines %}
+                {%- assign item = line | strip | strip_html -%}
+                {% if item != blank %}
+                  <li>{{ item }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% style %}
+    /* ==== Scoped styles for this section only ==== */
+    #nbm-{{ section.id }} .nbm-wrap{
+      max-width: var(--page-width, 1200px);
+      margin: 0 auto;
+      padding: clamp(24px, 3vw, 48px);
+    }
+    #nbm-{{ section.id }}.nbm-bg--soft{ background:#eaf5f4; }
+    #nbm-{{ section.id }}.nbm-bg--gainsboro{ background: var(--nb-gainsboro, #f1f1ec); }
+
+    #nbm-{{ section.id }} .nbm-h2{
+      color: var(--nb-teal, #10636c);
+      font-weight: 800;
+      margin: 0 0 .5em;
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+    }
+    #nbm-{{ section.id }} .nbm-sub{ margin: 0 0 1.25rem; color: var(--nb-ink, #233); }
+
+    #nbm-{{ section.id }} .nbm-grid{
+      display: grid;
+      gap: clamp(16px, 1.6vw, 24px);
+      grid-template-columns: repeat({{ section.settings.columns }}, minmax(0, 1fr));
+    }
+    @media (max-width: 989px){
+      #nbm-{{ section.id }} .nbm-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 749px){
+      #nbm-{{ section.id }} .nbm-grid{ grid-template-columns: 1fr; }
+    }
+
+    #nbm-{{ section.id }} .nbm-card{
+      {% if section.settings.cards %}background:#fff; border-radius:12px; box-shadow: var(--nb-shadow-1, 0 10px 28px rgba(0,0,0,.06));{% endif %}
+      padding: clamp(16px, 1.6vw, 22px);
+      display:flex; flex-direction:column; gap:10px;
+      {% if section.settings.equal %}min-height:260px;{% endif %}
+    }
+    #nbm-{{ section.id }} .nbm-title{ margin:0; font-weight:700; color:var(--nb-ink, #233); }
+    #nbm-{{ section.id }} .nbm-desc{ margin:0; color:var(--nb-ink, #233); }
+
+    #nbm-{{ section.id }} .nbm-list{ margin: 0; }
+    #nbm-{{ section.id }} .nbm-list--check{ list-style:none; padding-left:0; }
+    #nbm-{{ section.id }} .nbm-list--check li{ position:relative; padding-left:1.4em; }
+    #nbm-{{ section.id }} .nbm-list--check li::before{
+      content:"✓"; position:absolute; left:0; top:0; color:var(--nb-teal-700, #10636c); font-weight:800;
+    }
+    /* Full-bleed background: paint the outer Shopify wrapper */
+{% if section.settings.bg == 'soft' %}
+#shopify-section-{{ section.id }}{ background:#eaf5f4; }
+{% elsif section.settings.bg == 'gainsboro' %}
+#shopify-section-{{ section.id }}{ background: var(--nb-gainsboro, #f1f1ec); }
+{% endif %}
+
+/* Optional: add vertical spacing to the band itself */
+#shopify-section-{{ section.id }}{
+  padding-block: clamp(24px, 3vw, 48px);
+}
+  {% endstyle %}
+
+  {% schema %}
+  {
+    "name": "Cards — Multi-column list",
+    "class": "section",
+    "settings": [
+      { "type":"text", "id":"heading", "label":"Heading", "default":"What to expect" },
+      { "type":"textarea", "id":"subheading", "label":"Subheading" },
+      { "type":"select", "id":"bg", "label":"Background", "default":"soft",
+        "options":[
+          { "value":"none", "label":"None" },
+          { "value":"soft", "label":"Soft green (brand)" },
+          { "value":"gainsboro", "label":"Gainsboro (editorial)" }
+        ]
+      },
+      { "type":"range", "id":"columns", "min":1, "max":4, "step":1, "default":3, "label":"Columns" },
+      { "type":"checkbox", "id":"cards", "default": true, "label":"Show as cards (white tiles)" },
+      { "type":"checkbox", "id":"equal", "default": true, "label":"Equalize card heights" },
+      { "type":"select", "id":"list_style", "label":"List style", "default":"check",
+        "options":[
+          { "value":"check", "label":"Checks" },
+          { "value":"bullet", "label":"Bullets" },
+          { "value":"none", "label":"None" }
+        ]
+      }
+    ],
+    "blocks": [
+      { "type":"col", "name":"Column",
+        "settings":[
+          { "type":"text", "id":"title", "label":"Title", "default":"Title" },
+          { "type":"textarea", "id":"desc", "label":"Description" },
+          { "type":"textarea", "id":"items", "label":"List items (one per line)", "default":"Item one\nItem two\nItem three" }
+        ]
+      }
+    ],
+    "max_blocks": 12,
+    "presets":[ { "name":"Cards — Multi-column List", "category":"Custom" } ]
+  }
+  {% endschema %}
+</section>

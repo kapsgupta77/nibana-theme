@@ -1,0 +1,157 @@
+{% comment %} image-with-text.liquid - Custom section with image, text, position control, and CTA button {% endcomment %}
+
+<style>
+  .img-text-section {
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+  }
+
+  .img-text-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-direction: row;
+  }
+
+  .img-text-container.reverse {
+    flex-direction: row-reverse;
+  }
+
+  .img-text-image {
+    flex: 1 1 50%;
+  }
+
+  .img-text-image img {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .img-text-content {
+    flex: 1 1 50%;
+  }
+
+  .img-text-content h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+
+  .img-text-content p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+   .img-text-content li {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #035d67;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+
+  .cta-button:hover {
+    background-color: #023e47;
+  }
+
+  @media (max-width: 768px) {
+    .img-text-container,
+    .img-text-container.reverse {
+      flex-direction: column;
+      flex-wrap:wrap;
+    }
+
+    .img-text-content h2 {
+      font-size: 24px;
+    }
+
+    .img-text-content p {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<section class="img-text-section">
+  <div class="img-text-container {% if section.settings.image_position == 'right' %}reverse{% endif %}">
+    <div class="img-text-image">
+      {% if section.settings.image != blank %}
+        <img src="{{ section.settings.image | img_url: '800x' }}" alt="{{ section.settings.heading }}">
+      {% endif %}
+    </div>
+    <div class="img-text-content">
+      <h2>{{ section.settings.heading }}</h2>
+      {{ section.settings.text }}
+
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <a class="cta-button" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image With Text + CTA",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Your Heading Goes Here"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Position",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image With Text + CTA",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

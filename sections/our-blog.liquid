@@ -1,0 +1,241 @@
+{% comment %}
+  custom-blog-grid.liquid — Displays a grid of recent blog posts with title, image, date, tags, and button.
+{% endcomment %}
+
+<style>
+  /* NIBANA — Blog cards (custom section) */
+  .custom-blog-section{
+    /* panel feel to match Testimonials */
+    --panel-radius: 20px;
+    --panel-tint: #eaf5f4;
+    --panel-pad: clamp(28px, 3.2vw, 44px);
+
+    padding: var(--panel-pad);
+    background: var(--panel-tint);
+    border-radius: var(--panel-radius);
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  }
+
+  .custom-blog-section h2{
+    text-align:center;
+    font-size: clamp(28px, 3.2vw, 44px);
+    font-weight: 800;
+    color:#0f5b62; /* brand teal */
+    margin: 0 0 24px 0;
+  }
+
+  .custom-blog-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+  }
+
+  /* Card as a vertical flex container so button can pin to bottom */
+  .blog-card{
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    transition: box-shadow .25s ease, transform .03s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,.06);
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+  .blog-card:hover{ box-shadow:0 12px 28px rgba(0,0,0,.10); }
+
+  /* Uniform image: 16:9, cover crop */
+  .blog-card img{
+    display:block;
+    width:100%;
+    aspect-ratio:16/9;     /* forces a consistent window */
+    object-fit:cover;      /* crops nicely */
+  }
+
+  /* Content area stacks */
+  .blog-card-content{
+    padding: 18px 20px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    flex:1 1 auto;
+  }
+
+  /* Meta/tags — clamp to 2 lines and reserve height */
+  .blog-tags-date{
+    font-size: 13px;
+    color:#64707a;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    line-height:1.35;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+    overflow:hidden;
+    min-height: calc(1.35em * 2);
+    margin:0 0 6px 0;
+  }
+
+  /* Title — clamp to 2 lines and reserve height */
+  .blog-title{
+    font-size: 18px;
+    font-weight: 700;
+    color:#0b0f12;
+    line-height:1.25;
+    margin:0;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+    overflow:hidden;
+    min-height: calc(1.25em * 2);
+  }
+
+  /* Optional short excerpt — clamp to 3 lines if you render one */
+  .blog-card-content p:first-of-type{
+    line-height:1.5;
+    color:#2b2b2b;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3;
+    overflow:hidden;
+    min-height: calc(1.5em * 3);
+    margin: 0;
+  }
+
+  /* Button pinned to the bottom so rows align */
+  .read-more-btn{
+    margin-top:auto;                /* pushes it to bottom */
+    align-self:flex-start;
+    display:inline-block;
+    background:#0f5b62;
+    color:#fff;
+    padding:10px 20px;
+    border-radius:999px;
+    font-size:14px;
+    text-decoration:none;
+    box-shadow:0 6px 16px rgba(0,0,0,.10);
+    transition:filter .2s ease, transform .02s ease;
+  }
+  .read-more-btn:hover{ filter:brightness(1.04); }
+  .read-more-btn:focus-visible{ outline:3px solid #10636c; outline-offset:3px; }
+
+  @media (max-width: 480px){
+    .custom-blog-grid{ gap: 24px; }
+  }
+
+  /* === NIBANA – Blog polish pack (add after your current styles) === */
+.custom-blog-section{
+  --brand-teal: #0f5b62;
+  --card-radius: 14px;
+}
+
+.blog-card{
+  border: 1px solid rgba(15,91,98,.08);
+  border-radius: var(--card-radius);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.blog-card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,.12);
+  border-color: rgba(15,91,98,.16);
+}
+.blog-card:focus-within{
+  outline: 3px solid #10636c;
+  outline-offset: 3px;
+}
+
+/* Subtle image zoom on hover */
+.blog-card img{
+  background:#f2f6f5;          /* nice placeholder tint while loading */
+  transition: transform .45s ease;
+}
+.blog-card:hover img{ transform: scale(1.03); }
+
+/* Headline link hover (works even if title is plain text) */
+.blog-title,
+.blog-title a{
+  color:#0b1f22;
+  text-decoration:none;
+}
+.blog-title a:hover{ color: var(--brand-teal); }
+
+/* Button micro-interaction */
+.read-more-btn{
+  box-shadow: 0 10px 20px rgba(15,91,98,.15);
+}
+.read-more-btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+.read-more-btn:focus-visible{
+  outline: 3px solid #10636c;
+  outline-offset: 3px;
+}
+
+/* Slightly tighter row/column gaps on wide screens */
+.custom-blog-grid{ gap: 28px; }
+
+/* Full-width button on small screens feels nicer */
+@media (max-width: 768px){
+  .read-more-btn{ width:100%; text-align:center; }
+}
+
+</style>
+
+
+<section class="custom-blog-section">
+  {% if section.settings.heading != blank %}
+    <h2>{{ section.settings.heading }}</h2>
+  {% endif %}
+
+  <div class="custom-blog-grid">
+    {% assign blog = blogs[section.settings.blog] %}
+    {% for article in blog.articles limit: section.settings.post_limit %}
+      <div class="blog-card">
+        <a href="{{ article.url }}">
+          {% if article.image %}
+            <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.title | escape }}">
+          {% endif %}
+        </a>
+        <div class="blog-card-content">
+          <div class="blog-tags-date">
+            {{ article.tags | join: ", " }}
+            {% if article.published_at %}
+              • {{ article.published_at | date: "%b %d, %Y" }}
+            {% endif %}
+          </div>
+          <div class="blog-title">
+            <a href="{{ article.url }}">{{ article.title }}</a>
+          </div>
+          <a href="{{ article.url }}" class="read-more-btn">Read More</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Our Blog"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Select Blog"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "label": "Number of posts to show",
+      "min": 1,
+      "max": 12,
+      "default": 6
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Grid",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}

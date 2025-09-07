@@ -1,0 +1,115 @@
+{% comment %} executive-presence.liquid - Custom video section {% endcomment %}
+
+<style>
+  .executive-section {
+    background-color:{{section.settings.bg-color}};
+    padding: 60px 20px;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .executive-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .executive-text {
+    flex: 1 1 480px;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  .executive-text h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #fff;
+    text-align: center;
+  }
+
+  .executive-video {
+    flex: 1 1 480px;
+  }
+
+  .executive-video iframe {
+    width: 100%;
+    height: 315px;
+    border-radius: 20px;
+    border: none;
+  }
+
+  @media (max-width: 768px) {
+    .executive-text h2 {
+      font-size: 24px;
+    }
+
+    .executive-inner {
+      flex-direction: column;
+    }
+
+    .executive-video iframe {
+      height: 250px;
+    }
+  }
+</style>
+
+<section class="executive-section">
+  <div class="executive-text">
+    <h2>{{ section.settings.heading }}</h2>
+  </div>
+  <div class="executive-inner">
+    <div class="executive-text">
+      <p>{{ section.settings.description }}</p>
+    </div>
+    <div class="executive-video">
+      <iframe 
+        src="https://www.youtube.com/embed/{{ section.settings.youtube_id }}"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Executive Presence Coaching: Walk Into Any Room And Change The Temperature"
+    },
+    {
+      "type":"color",
+      "id":"bg-color",
+      "label":"Background Color"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Executive Presence is the ability to inspire confidence, command respect, and lead with impact..."
+    },
+    {
+      "type": "text",
+      "id": "youtube_id",
+      "label": "YouTube Video ID",
+      "default": "s8EF6TnK1as"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Banner",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
