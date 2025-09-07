@@ -2,16 +2,21 @@
   NB — Global FAQ section (Home-style pill look + single-open accordion)
   - Self-contained: HTML + CSS + JS in one file
   - Settings for width, tray/shell background, single-open logic, and colour overrides
+  - Optional JSON-LD emission for contextual FAQPage schema
 {% endcomment %}
 
 {%- assign c_ink   = section.settings.ink   | default: '#223238' -%}
 {%- assign c_teal  = section.settings.teal  | default: '#0F5B59' -%}
 {%- assign c_shell = section.settings.shell_col | default: '#E5E8E1' -%}
 {%- assign c_ans   = section.settings.answer | default: '#EAF4F3' -%}
+
 <link rel="stylesheet" href="{{ 'nb-faq.css' | asset_url }}">
+
 <section
   id="nb-faq-{{ section.id }}"
-  class="nb-faq style-home {% if section.settings.width == 'narrow' %}is-narrow{% elsif section.settings.width == 'wide' %}is-wide{% endif %}"
+  class="nb-faq style-home
+         {% if section.settings.width == 'narrow' %}is-narrow{% elsif section.settings.width == 'wide' %}is-wide{% endif %}
+         {% if section.settings.wrap_shell %}has-full-panel{% endif %}"
   style="--nb-ink: {{ c_ink }}; --nb-teal: {{ c_teal }}; --nb-shell: {{ c_shell }}; --nb-answer: {{ c_ans }};"
 >
   <div class="nb-faq__inner {% unless section.settings.wrap_shell %}is-plain{% endunless %}">
@@ -169,6 +174,31 @@
     });
   </script>
   {% endif %}
+
+  {%- comment -%} Optional contextual FAQPage JSON-LD {%- endcomment -%}
+  {%- if section.settings.emit_schema and section.blocks.size > 0 -%}
+    {%- assign faq_items = section.blocks | where: 'type', 'item' -%}
+    {%- if faq_items.size > 0 -%}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {%- for block in faq_items -%}
+            {
+              "@type": "Question",
+              "name": {{ block.settings.q | strip_html | strip | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ block.settings.a | strip | json }}
+              }
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+      </script>
+    {%- endif -%}
+  {%- endif -%}
 </section>
 
 {% schema %}
@@ -177,12 +207,7 @@
   "tag": "section",
   "class": "section nb-faq-section",
   "settings": [
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Title",
-      "default": "Frequently asked questions"
-    },
+    { "type": "text", "id": "title", "label": "Title", "default": "Frequently asked questions" },
     {
       "type": "select",
       "id": "width",
@@ -194,68 +219,26 @@
         { "value": "wide",   "label": "Wide" }
       ]
     },
-    {
-      "type": "checkbox",
-      "id": "wrap_shell",
-      "label": "Wrap in soft tray background",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "single_open",
-      "label": "Only one item open at a time",
-      "default": true
-    },
+    { "type": "checkbox", "id": "wrap_shell", "label": "Wrap in soft tray background", "default": true },
+    { "type": "checkbox", "id": "single_open", "label": "Only one item open at a time", "default": true },
+
+    { "type": "header", "content": "SEO / Schema" },
+    { "type": "checkbox", "id": "emit_schema", "label": "Enable FAQPage JSON-LD", "default": true },
 
     { "type": "header", "content": "Colours (optional overrides)" },
-    {
-      "type": "color",
-      "id": "ink",
-      "label": "Ink (text)",
-      "default": "#223238"
-    },
-    {
-      "type": "color",
-      "id": "teal",
-      "label": "Teal (pill)",
-      "default": "#0F5B59"
-    },
-    {
-      "type": "color",
-      "id": "shell_col",
-      "label": "Tray / shell background",
-      "default": "#E5E8E1"
-    },
-    {
-      "type": "color",
-      "id": "answer",
-      "label": "Answer background",
-      "default": "#EAF4F3"
-    }
+    { "type": "color", "id": "ink", "label": "Ink (text)", "default": "#223238" },
+    { "type": "color", "id": "teal", "label": "Teal (pill)", "default": "#0F5B59" },
+    { "type": "color", "id": "shell_col", "label": "Tray / shell background", "default": "#E5E8E1" },
+    { "type": "color", "id": "answer", "label": "Answer background", "default": "#EAF4F3" }
   ],
   "blocks": [
     {
       "type": "item",
       "name": "FAQ item",
       "settings": [
-        {
-          "type": "text",
-          "id": "q",
-          "label": "Question",
-          "default": "Your question here"
-        },
-        {
-          "type": "richtext",
-          "id": "a",
-          "label": "Answer",
-          "default": "<p>Your answer text goes here.</p>"
-        },
-        {
-          "type": "checkbox",
-          "id": "open",
-          "label": "Open by default",
-          "default": false
-        }
+        { "type": "text", "id": "q", "label": "Question", "default": "Your question here" },
+        { "type": "richtext", "id": "a", "label": "Answer", "default": "<p>Your answer text goes here.</p>" },
+        { "type": "checkbox", "id": "open", "label": "Open by default", "default": false }
       ]
     }
   ],
