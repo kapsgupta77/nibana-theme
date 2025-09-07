@@ -44,6 +44,16 @@
       --nb-shadow-1: 0 12px 30px rgba(0,0,0,.06);
       --nb-shadow-2: 0 8px 22px rgba(0,0,0,.05);
     }
+    /* Kill the theme’s outer section tray for this instance */
+#shopify-section-{{ section.id }}{
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#shopify-section-{{ section.id }} > .section{
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
     .nb-faq{ padding: clamp(28px,3vw,60px) 0; background: transparent; }
     .nb-faq.has-full-panel{ background: var(--nb-shell) !important; }
 
