@@ -1,0 +1,322 @@
+{
+  "sections": {
+    "hero_service": {
+      "type": "hero",
+      "blocks": {
+        "title": {
+          "type": "text",
+          "settings": {
+            "text": "<h1>Transformational Life Coaching</h1>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h1",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground-heading)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          }
+        },
+        "sub": {
+          "type": "text",
+          "settings": {
+            "text": "<p>From performance to presence—build a life that feels as good as it looks.</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h4",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 18,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          }
+        },
+        "cta": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "Book a free 20-min call",
+            "link": "/pages/book-a-call",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          }
+        }
+      },
+      "block_order": ["title", "sub", "cta"],
+      "name": "t:names.hero",
+      "settings": {
+        "media_type_1": "image",
+        "image_1": "",
+        "media_type_2": "image",
+        "link": "",
+        "open_in_new_tab": false,
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "section_height": "small",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-4",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "gradient",
+        "gradient_direction": "to top",
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+
+    "outcomes": {
+      "type": "nb-multicol",
+      "name": "Cards: Multi-column",
+      "settings": {
+        "overline": "What changes for you",
+        "heading": "Outcome highlights",
+        "subheading": "",
+        "align": "left",
+        "columns": 3,
+        "bg": "var(--nb-gainsboro, #E6ECEA)"
+      },
+      "blocks": {
+        "o1": {
+          "type": "item",
+          "settings": {
+            "heading": "Presence & clarity",
+            "text": "<ul><li>Quieter mind, steadier nervous system</li><li>More signal, less noise</li><li>Decisions that feel aligned</li></ul>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "o2": {
+          "type": "item",
+          "settings": {
+            "heading": "Intimacy & aliveness",
+            "text": "<ul><li>Reconnection to body + desire</li><li>Richer relationships</li><li>Everyday moments feel vivid</li></ul>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "o3": {
+          "type": "item",
+          "settings": {
+            "heading": "Sustainable success",
+            "text": "<ul><li>Goals that serve your life</li><li>Systems that protect energy</li><li>Work that feels like you</li></ul>",
+            "link_label": "",
+            "link_url": ""
+          }
+        }
+      },
+      "block_order": ["o1", "o2", "o3"]
+    },
+
+    "fit": {
+      "type": "cards-multicol-list-nibana",
+      "name": "Cards — Multi-column List",
+      "settings": {
+        "heading": "Is this for you?",
+        "subheading": "",
+        "bg": "soft",
+        "columns": 1,
+        "cards": true,
+        "equal": false,
+        "list_style": "check"
+      },
+      "blocks": {
+        "list": {
+          "type": "col",
+          "settings": {
+            "title": "",
+            "desc": "",
+            "items": "Successful on paper, but something’s missing\nReady to swap performance for presence\nPrefer straight, respectful conversations\nWant a coach who’s been where you are"
+          }
+        }
+      },
+      "block_order": ["list"]
+    },
+
+    "process": {
+      "type": "nb-multicol",
+      "name": "Cards: Multi-column",
+      "settings": {
+        "overline": "How it works",
+        "heading": "A simple path",
+        "subheading": "",
+        "align": "left",
+        "columns": 3,
+        "bg": "var(--nb-gainsboro, #E6ECEA)"
+      },
+      "blocks": {
+        "p1": {
+          "type": "item",
+          "settings": {
+            "heading": "1) Connection call",
+            "text": "<p>20 minutes to feel the fit and goals.</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "p2": {
+          "type": "item",
+          "settings": {
+            "heading": "2) Deep-dive",
+            "text": "<p>60–90 minutes to map outcomes, surface patterns, and design options.</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "p3": {
+          "type": "item",
+          "settings": {
+            "heading": "3) Offer & start",
+            "text": "<p>Clear proposal (cadence + investment). You choose yes/no—no pressure.</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        }
+      },
+      "block_order": ["p1", "p2", "p3"]
+    },
+
+    "cta_band": {
+      "type": "section",
+      "name": "t:names.image_with_text",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-3",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 28,
+        "padding-block-end": 28
+      },
+      "blocks": {
+        "cta_title": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2>Ready to talk?</h2>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground-heading)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          }
+        },
+        "cta_button": {
+          "type": "button",
+          "settings": {
+            "label": "Book a free 20-min call",
+            "link": "/pages/book-a-call",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          }
+        }
+      },
+      "block_order": ["cta_title", "cta_button"]
+    },
+
+    "testimonials_service": {
+      "type": "testimonials",
+      "name": "Testimonials",
+      "settings": {
+        "heading": "Client stories",
+        "button_label": "VIEW ALL",
+        "button_link": ""
+      },
+      "blocks": {
+        "t1": { "type": "testimonial", "settings": { "name": "", "title": "", "location": "", "testimonial": "“Short testimonial here.”" } },
+        "t2": { "type": "testimonial", "settings": { "name": "", "title": "", "location": "", "testimonial": "“Short testimonial here.”" } },
+        "t3": { "type": "testimonial", "settings": { "name": "", "title": "", "location": "", "testimonial": "“Short testimonial here.”" } }
+      },
+      "block_order": ["t1", "t2", "t3"]
+    },
+
+    "faq_service": {
+      "type": "nb-faq",
+      "name": "FAQ (NIBANA)",
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#00535d",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3"
+      },
+      "blocks": {
+        "q1": { "type": "item", "settings": { "q": "How do we start?", "a": "<p>We begin with a free 20-minute connection call to feel the fit and outline goals.</p>", "open": true } },
+        "q2": { "type": "item", "settings": { "q": "How long do engagements run?", "a": "<p>Typically 8–16 weeks, weekly or fortnightly sessions—tailored to you.</p>", "open": false } },
+        "q3": { "type": "item", "settings": { "q": "Is this therapy?", "a": "<p>No. Coaching focuses on desired outcomes and forward movement. If therapy is appropriate, I’ll tell you with care.</p>", "open": false } }
+      },
+      "block_order": ["q1", "q2", "q3"]
+    }
+  },
+  "order": ["hero_service", "outcomes", "fit", "process", "cta_band", "testimonials_service", "faq_service"]
+}
