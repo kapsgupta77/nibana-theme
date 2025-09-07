@@ -1,0 +1,275 @@
+/* ===========================
+   NIBANA — Book a Call (scoped)
+   Loads only on this page via the <link> you added.
+   =========================== */
+
+main[data-template="page.book-call"]{
+  /* tokens */
+  --nb-card-bg: #ffffff;
+  --nb-card-radius: 16px;
+  --nb-card-shadow: 0 10px 28px rgba(0,0,0,.06);
+  --nb-card-shadow-2: 0 6px 20px rgba(0,0,0,.10);
+  --nb-pill: 9999px;
+  --nb-teal: var(--nb-teal, #0c5e63);
+  --nb-choc: var(--nb-chocolate, #c86b2a);
+  --nb-choc-600: var(--nb-choc-600, #a8561e);
+  --nb-pebble: var(--color-base-background-2, #e6ece9);
+}
+
+/* 1) HERO — keep section full-bleed; chocolate CTA */
+main[data-template="page.book-call"] .hero-wrapper,
+main[data-template="page.book-call"] .section.hero-wrapper{
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+  max-width: 100vw;
+}
+
+main[data-template="page.book-call"] .hero-wrapper :is(a.button, .btn, button){
+  background: var(--nb-choc) !important;
+  color: #fff !important;
+  border: 2px solid var(--nb-choc) !important;
+  border-radius: var(--nb-pill) !important;
+  padding: 10px 22px !important;
+  box-shadow: var(--nb-card-shadow) !important;
+  transition: transform .08s ease, box-shadow .2s ease, background-color .15s ease;
+}
+main[data-template="page.book-call"] .hero-wrapper :is(a.button, .btn, button):hover{
+  background: var(--nb-choc-600) !important;
+  border-color: var(--nb-choc-600) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--nb-card-shadow-2) !important;
+}
+
+/* 2) MULTICOLUMN SECTIONS — clear rhythm + cards */
+main[data-template="page.book-call"] [id*="__nb_multicol_"]{
+  padding-top: clamp(28px, 4vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 56px);
+  background: transparent; /* default */
+}
+/* alternate background for visual rhythm */
+main[data-template="page.book-call"] [id*="__nb_multicol_"]:nth-of-type(odd){
+  background: var(--nb-pebble);
+}
+
+/* card surface inside multicol */
+main[data-template="page.book-call"] [id*="__nb_multicol_"] :is(.card, .multicolumn-card, .column, .block){
+  background: var(--nb-card-bg);
+  border-radius: var(--nb-card-radius);
+  box-shadow: var(--nb-card-shadow);
+  overflow: hidden;
+}
+
+/* Headline colour for these blocks */
+main[data-template="page.book-call"] [id*="__nb_multicol_"] :is(h2,.title){
+  color: var(--nb-teal);
+}
+
+/* 3) “IS THIS FOR YOU?” — simple checklist, no mini pills */
+main[data-template="page.book-call"] [id*="__nb_multicol_"] ul{
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+main[data-template="page.book-call"] [id*="__nb_multicol_"] ul li{
+  background: transparent;           /* revert from pill look */
+  border-radius: 0;
+  box-shadow: none;
+  padding: 10px 8px 10px 28px;
+  position: relative;
+}
+main[data-template="page.book-call"] [id*="__nb_multicol_"] ul li::before{
+  content: "✔";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  opacity: .6;
+}
+
+/* 4) CALENDLY — centred white card */
+main[data-template="page.book-call"] .calendly-inline-widget{
+  width: min(1040px, 94%);
+  margin: 32px auto;
+  background: #fff;
+  border-radius: var(--nb-card-radius);
+  box-shadow: var(--nb-card-shadow);
+  min-height: 780px;                 /* room for desktop view */
+  overflow: hidden;
+}
+@media (max-width: 749px){
+  main[data-template="page.book-call"] .calendly-inline-widget{ min-height: 980px; }
+}
+
+/* 5) TESTIMONIALS — contained, no arrows if 3 fit */
+main[data-template="page.book-call"] [id*="__testimonials_"]{
+  background: var(--nb-pebble);
+  padding-top: 36px;
+  padding-bottom: 40px;
+}
+main[data-template="page.book-call"] [id*="__testimonials_"] .page-width,
+main[data-template="page.book-call"] [id*="__testimonials_"] .content,
+main[data-template="page.book-call"] [id*="__testimonials_"] > div{
+  max-width: 1200px;
+  margin-inline: auto;
+}
+main[data-template="page.book-call"] [id*="__testimonials_"] :is(.slider-buttons, [class*="slider-button"], [class*="flickity-button"], [class*="swiper-button"]){
+  display: none !important;
+}
+main[data-template="page.book-call"] [id*="__testimonials_"] :is(.testimonial, .card){
+  background: #fff;
+  border-radius: var(--nb-card-radius);
+  box-shadow: var(--nb-card-shadow);
+}
+
+/* 6) FAQ — pill cards similar to home */
+main[data-template="page.book-call"] details{
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--nb-card-shadow);
+  margin: 10px 0;
+  overflow: hidden;
+}
+main[data-template="page.book-call"] details > summary{
+  cursor: pointer;
+  padding: 16px 18px;
+  font-weight: 600;
+}
+main[data-template="page.book-call"] details[open] > summary{
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+main[data-template="page.book-call"] details > *:not(summary){
+  padding: 16px 18px;
+}
+/* 7) READY TO TALK — chocolate CTA, contained section */
+main[data-template="page.book-call"] [id*="__image_with_text"],
+main[data-template="page.book-call"] [id*="__section_keMyKD"]{
+  background: var(--nb-pebble);
+}
+main[data-template="page.book-call"] [id*="__image_with_text"] :is(a.button, .btn, button),
+main[data-template="page.book-call"] [id*="__section_keMyKD"] :is(a.button, .btn, button){
+  background: var(--nb-choc) !important;
+  color: #fff !important;
+  border: 2px solid var(--nb-choc) !important;
+  border-radius: var(--nb-pill) !important;
+  padding: 10px 22px !important;
+  box-shadow: var(--nb-card-shadow) !important;
+}
+/* ===========================
+   BOOK-A-CALL — READY TO TALK (robust selectors)
+   Works whether the outer wrapper is <div> or <section>.
+   =========================== */
+
+/* Kill full-bleed bg + add vertical rhythm */
+[id$="__section_keMyKD"]{
+  background: transparent !important;
+  padding: clamp(32px,4vw,64px) 0 !important;
+}
+
+/* Target the content container inside the section.
+   1) Prefer the standard .image-with-text wrapper
+   2) Fallback to the first direct child if your theme wraps it differently */
+[id$="__section_keMyKD"] .image-with-text,
+[id$="__section_keMyKD"] > :first-child{
+  max-width: min(1160px, 94vw) !important;
+  margin-inline: auto !important;
+
+  background: #E6ECEA !important;               /* soft tray */
+  border-radius: 18px !important;
+  box-shadow: 0 14px 36px rgba(0,0,0,.08) !important;
+  padding: clamp(24px,3vw,36px) !important;
+}
+
+/* Align the two columns nicely across theme variants */
+[id$="__section_keMyKD"] :is(.image-with-text__grid, .grid, .grid--2-col, .grid--2-col-tablet){
+  align-items: center !important;
+  gap: clamp(16px,2.5vw,32px) !important;
+}
+
+/* Media polish */
+[id$="__section_keMyKD"] :is(.image-with-text__media, .media){
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.06) !important;
+}
+[id$="__section_keMyKD"] :is(.image-with-text__media, .media) img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Typography stays in Ink */
+[id$="__section_keMyKD"] :is(h2, .image-with-text__heading){
+  color: #21323A !important;
+  margin-bottom: .5rem !important;
+}
+[id$="__section_keMyKD"] .image-with-text__text{
+  color: #384B53 !important;
+}
+
+/* ===========================
+   READY-TO-TALK CTA (book-call)
+   Round image + Hero-sized CTA
+   =========================== */
+
+/* Round & clip the image inside the builder's image-block */
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) picture,
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) img.image_block__image,
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) img.image-block__image{
+  border-radius: 18px !important;
+  overflow: hidden !important;     /* ensures corners are clipped */
+  display: block !important;
+}
+
+/* Optional soft lift on the photo */
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) picture{
+  box-shadow: 0 10px 28px rgba(0,0,0,.08);
+}
+
+/* Make the CTA button match the Hero size/style */
+main[data-template="page.book-call"] :is(a,button)[class*="button"],
+main[data-template="page.book-call"] .btn{
+  font-size: clamp(17px, 2.1vw, 19px) !important;  /* same as Hero */
+  padding: 12px 24px !important;
+  border-radius: 9999px !important;
+  background: var(--nb-chocolate, #C86B2A) !important;
+  border-color: var(--nb-chocolate, #C86B2A) !important;
+  color: #fff !important;
+  line-height: 1.1 !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,.10) !important;
+  transition: background-color .15s ease, box-shadow .2s ease, transform .08s ease !important;
+}
+main[data-template="page.book-call"] :is(a,button)[class*="button"]:hover,
+main[data-template="page.book-call"] .btn:hover{
+  background: var(--nb-choc-600, #9E4E19) !important;
+  border-color: var(--nb-choc-600, #9E4E19) !important;
+  transform: translateY(-1px);
+}
+
+/* === CTA: small-screen niceties (stack + spacing) === */
+@media (max-width: 900px){
+  main[data-template="page.book-call"] .mobile--column{
+    gap: clamp(16px, 3vw, 24px) !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  main[data-template="page.book-call"] :is(a,button)[class*="button"], 
+  main[data-template="page.book-call"] .btn{
+    /* breathe a touch more on mobile */
+    padding: 13px 26px !important;
+  }
+  /* make sure the CTA image scales nicely */
+  main[data-template="page.book-call"] :is(.image-block, [class*="image-block"]) img{
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+}
+
+/* === Testimonials: hide nav arrows/dots on this page === */
+main[data-template="page.book-call"] [id*="__testimonials_"] :is(.flickity-button,.flickity-prev-next-button,.flickity-page-dots){
+  display: none !important;
+}

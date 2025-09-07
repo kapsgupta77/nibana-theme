@@ -1,0 +1,223 @@
+/* ===========================
+   NIBANA — FAQ (global)
+   Scope: .nb-faq
+   =========================== */
+
+.nb-faq{
+  /* Brand palette (uses CSS vars if present; falls back to hex) */
+  --nb-ink: var(--color-ink, #162a2a);
+  --nb-ink-70: color-mix(in oklab, var(--nb-ink), #ffffff 30%);
+  --nb-teal-900: var(--nb-teal-900, #0e4342);
+  --nb-teal-800: var(--nb-teal-800, #125a58);
+  --nb-teal-600: var(--nb-teal-600, #1e7b78);
+  --nb-sky-50: var(--nb-sky-50, #eaf5f4);
+  --nb-shell-bg: var(--nb-shell-bg, #e6ece8);
+
+  --nb-radius-pill: 9999px;
+  --nb-radius-card: 14px;
+  --nb-shadow-1: 0 8px 24px rgba(0,0,0,.06);
+  --nb-shadow-2: 0 10px 30px rgba(0,0,0,.08);
+
+  color: var(--nb-ink);
+}
+
+/* Optional soft tray wrapper (toggle in section setting).
+   Your section should add .nb-faq--wrap around .nb-faq__shell when enabled. */
+.nb-faq--wrap .nb-faq__shell{
+  background: var(--nb-shell-bg);
+  border-radius: 18px;
+  box-shadow: var(--nb-shadow-1);
+  padding: clamp(16px, 2.4vw, 28px);
+}
+
+/* Title */
+.nb-faq .nb-faq__title{
+  text-align: center;
+  margin: 0 0 clamp(16px, 2.3vw, 22px);
+  color: var(--nb-ink);
+  line-height: 1.15;
+}
+
+/* List layout: TIGHTER BY DEFAULT */
+.nb-faq .nb-faq__list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* tighter rhythm */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each FAQ item */
+.nb-faq .nb-faq__item{
+  position: relative;
+}
+
+/* Question “pill” */
+.nb-faq .nb-faq__q{
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  border-radius: var(--nb-radius-pill);
+  background: var(--nb-teal-800);
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.35;
+  cursor: pointer;
+  text-align: left;
+  /* TIGHTER BY DEFAULT */
+  padding: 14px 56px 14px 18px;
+  box-shadow: var(--nb-shadow-1);
+  transition: transform .08s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.nb-faq .nb-faq__q:hover{
+  background: var(--nb-teal-600);
+  box-shadow: var(--nb-shadow-2);
+}
+
+.nb-faq .nb-faq__q:focus-visible{
+  outline: 3px solid color-mix(in oklab, #ffffff, var(--nb-teal-600) 40%);
+  outline-offset: 2px;
+}
+
+/* Plus / minus icon bubble on the right */
+.nb-faq .nb-faq__icon{
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--nb-radius-pill);
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklab, var(--nb-teal-800), #ffffff 18%);
+  color: #fff;
+  border: 1px solid color-mix(in oklab, var(--nb-teal-900), #ffffff 22%);
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+  pointer-events: none;
+  transition: background-color .18s ease, transform .18s ease;
+}
+
+.nb-faq .nb-faq__q:hover .nb-faq__icon{
+  background: color-mix(in oklab, var(--nb-teal-600), #ffffff 18%);
+}
+
+/* Rotate icon when open if you’re using a single SVG + rotation */
+.nb-faq .is-open .nb-faq__icon{
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Answer card */
+.nb-faq .nb-faq__a{
+  background: var(--nb-sky-50);
+  border-radius: var(--nb-radius-card);
+  border: 1px solid color-mix(in oklab, var(--nb-teal-600), #ffffff 80%);
+  box-shadow: var(--nb-shadow-1);
+  /* TIGHTER BY DEFAULT */
+  margin: 8px 12px 2px;
+  padding: 14px 16px;
+  color: var(--nb-ink);
+}
+
+/* Typography inside answers */
+.nb-faq .nb-faq__a p{
+  margin: 0 0 .6em;
+}
+.nb-faq .nb-faq__a p:last-child{
+  margin-bottom: 0;
+}
+.nb-faq .nb-faq__a ul,
+.nb-faq .nb-faq__a ol{
+  margin: .5em 0 0 1.2em;
+}
+
+/* State helpers if you’re toggling classes in JS */
+.nb-faq .nb-faq__item.is-open .nb-faq__q{
+  background: var(--nb-teal-900);
+}
+.nb-faq .nb-faq__item.is-open .nb-faq__q:hover{
+  background: var(--nb-teal-900);
+}
+
+/* Divider line between items if you ever enable it */
+.nb-faq .nb-faq__item + .nb-faq__item{
+  /* border-top: 1px dashed color-mix(in oklab, var(--nb-teal-800), #ffffff 80%); */
+}
+
+/* Mobile tweaks */
+@media (max-width: 720px){
+  .nb-faq .nb-faq__q{
+    padding: 13px 52px 13px 16px;
+  }
+  .nb-faq .nb-faq__icon{
+    width: 36px;
+    height: 36px;
+    right: 6px;
+  }
+  .nb-faq .nb-faq__a{
+    margin: 8px 10px 2px;
+    padding: 14px 14px;
+  }
+}
+
+/* Optional: style hook used on homepage to force this exact look everywhere */
+.nb-faq.style-home .nb-faq__list{ gap: 10px; }
+.nb-faq.style-home .nb-faq__q{ padding: 14px 56px 14px 18px; }
+.nb-faq.style-home .nb-faq__a{ margin: 8px 12px 2px; padding: 14px 16px; }
+
+/* ===============================
+   NB — FAQ: compact spacing, sure-fire
+   =============================== */
+
+/* 1) Reduce the whitespace above/below the FAQ section.
+   Your theme uses custom props for block padding, so we set both the props
+   and the physical padding (belt & braces). */
+.shopify-section.nb-faq-section,
+.shopify-section.section.nb-faq-section,
+.nb-faq.style-home {
+  --padding-block-start: 20px !important;
+  --padding-block-end: 20px !important;
+  padding-block-start: 20px !important;
+  padding-block-end: 20px !important;
+  margin-block-start: 16px !important;
+  margin-block-end: 16px !important;
+}
+
+/* 2) Tighten the space BETWEEN questions.
+   We force the list into a column with a small gap and kill any default
+   margins the theme adds on items and parts. */
+#MainContent .nb-faq.style-home .nb-faq__list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;                /* <-- control this number */
+}
+
+/* Normalise margins the theme adds on items/Q/A */
+#MainContent .nb-faq.style-home .nb-faq__item { margin: 0 !important; padding: 0 !important; }
+#MainContent .nb-faq.style-home .nb-faq__q    { margin: 0 !important; }
+#MainContent .nb-faq.style-home .nb-faq__a    { margin: 8px 0 0 !important; }
+
+/* Safety net: if the theme uses another wrapper per item,
+   this ensures a compact stack even if class names vary slightly. */
+#MainContent [id^="nb-faq-"].nb-faq.style-home .nb-faq__list > * + * {
+  margin-top: 10px !important;         /* fallback for themes that ignore `gap` */
+}
+
+/* Optional: keep pills a touch leaner for a tighter look */
+#MainContent .nb-faq.style-home .nb-faq__q {
+  min-height: 52px !important;
+  padding: 12px 18px !important;
+}
+#MainContent .nb-faq.style-home .nb-faq__a {
+  padding: 14px 18px !important;
+}
+
+/* Width + centering stays tidy and consistent with other panels */
+#MainContent .nb-faq.style-home .nb-faq__inner {
+  max-width: min(1160px, 94vw) !important;
+  margin-inline: auto !important;
+}
