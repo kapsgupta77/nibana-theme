@@ -89,18 +89,31 @@ main[data-template="page.book-call"] [id*="__nb_multicol_"] ul li::before{
   opacity: .6;
 }
 
-/* 4) CALENDLY — centred white card */
+/* 4) CALENDLY — responsive white card (no forced desktop) */
 main[data-template="page.book-call"] .calendly-inline-widget{
-  width: min(1040px, 94%);
+  width: 100%;
+  max-width: min(1040px, 94vw);
   margin: 32px auto;
   background: #fff;
   border-radius: var(--nb-card-radius);
   box-shadow: var(--nb-card-shadow);
-  min-height: 780px;                 /* room for desktop view */
+  min-height: 760px;
   overflow: hidden;
+  min-width: 0; /* critical: allow Calendly to switch to mobile layout */
 }
+
+/* Ensure the embed iframe fills and inherits rounding */
+main[data-template="page.book-call"] .calendly-inline-widget iframe{
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--nb-card-radius);
+}
+
 @media (max-width: 749px){
-  main[data-template="page.book-call"] .calendly-inline-widget{ min-height: 980px; }
+  main[data-template="page.book-call"] .calendly-inline-widget{
+    min-height: 1000px;
+  }
 }
 
 /* 5) TESTIMONIALS — contained, no arrows if 3 fit */
@@ -272,4 +285,32 @@ main[data-template="page.book-call"] .btn:hover{
 /* === Testimonials: hide nav arrows/dots on this page === */
 main[data-template="page.book-call"] [id*="__testimonials_"] :is(.flickity-button,.flickity-prev-next-button,.flickity-page-dots){
   display: none !important;
+}
+
+/* === Calendly: inline on desktop, popup on phones === */
+.nb-cal-embed { width: 100%; display: grid; place-items: center; }
+
+.nb-cal-desktop {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.nb-cal-mobile-btn {
+  display: none;
+}
+
+@media (max-width: 768px){
+  .nb-cal-desktop { display: none !important; }
+  .nb-cal-mobile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    background: var(--nb-chocolate, #C86B2A);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  }
 }
