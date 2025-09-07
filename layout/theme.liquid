@@ -1,0 +1,441 @@
+<!doctype html>
+<html
+  class="no-js{% if request.design_mode %} shopify-design-mode{% endif %}"
+  lang="{{ request.locale.iso_code }}"
+>
+  <head>
+    {%- render 'stylesheets' -%}
+
+    {%- if settings.favicon != blank -%}
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
+      >
+    {%- endif -%}
+
+    {% comment %} This a way to wait for main content to load when navigating to a new page so that the view transitions can work consistently {% endcomment %}
+    <link
+      rel="expect"
+      href="#MainContent"
+      blocking="render"
+      id="view-transition-render-blocker"
+    >
+
+    {%- render 'meta-tags' -%}
+    {%- render 'fonts' -%}
+    {%- render 'scripts' -%}
+    {%- render 'theme-styles-variables' -%}
+    {%- render 'color-schemes' -%}
+
+    {% if request.design_mode %}
+      {%- render 'theme-editor' -%}
+    {% endif %}
+
+    {{ content_for_header }}
+  <meta name="google-site-verification" content="svWEU0CU65jKsUVlQILttsbFdiql4KZBKACoNfSB8gY" />
+
+{%- comment -%}
+NIBANA — Book-a-call JSON-LD (WebPage + Breadcrumb + FAQ)
+Place this block in theme.liquid before </head>.
+Runs only when template = page.book-call.
+{%- endcomment -%}
+{%- if template.name == 'page' and template.suffix == 'book-call' -%}
+  {%- assign bc_home_name = shop.name | default: 'Home' -%}
+  {%- assign page_name = page.title | default: 'Book a call' -%}
+  {%- assign page_desc = page.content | strip_html | strip_newlines | truncate: 180 | escape -%}
+  {%- assign page_lang = request.locale.iso_code | default: 'en' -%}
+  {%- assign home_url = routes.root_url | absolute_url -%}
+  {%- assign canon = canonical_url -%}
+
+  <!-- WebPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "{{ canon }}#webpage",
+    "url": "{{ canon }}",
+    "name": {{ page_name | json }},
+    "description": {{ page_desc | json }},
+    "inLanguage": {{ page_lang | json }}
+  }
+  </script>
+
+  <!-- Breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": {{ bc_home_name | json }},
+        "item": {{ home_url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ page_name | json }},
+        "item": {{ canon | json }}
+      }
+    ]
+  }
+  </script>
+
+  <!-- FAQ from .nb-faq blocks on this page -->
+  <script>
+  (function () {
+    try {
+      // Don't duplicate if it already ran
+      if (document.querySelector('script[data-nb-faq-ld="book-call"]')) return;
+
+      // Collect all <details> Q&A inside any .nb-faq section on this page
+      var roots = Array.prototype.slice.call(document.querySelectorAll('main .nb-faq'));
+      if (!roots.length) return;
+
+      var items = [];
+      roots.forEach(function(root){
+        root.querySelectorAll('details').forEach(function(d){
+          var q = d.querySelector('summary');
+          if (!q) return;
+          var question = (q.textContent || '').trim();
+          // All non-summary immediate children = answer content
+          var contentNodes = Array.prototype.slice.call(
+            d.querySelectorAll(':scope > *:not(summary)')
+          );
+          var answer = contentNodes.map(function(n){
+            return (n.textContent || '').trim();
+          }).join(' ').replace(/\s+/g,' ').trim();
+
+          if (question && answer) {
+            items.push({
+              "@type":"Question",
+              "name": question,
+              "acceptedAnswer": { "@type":"Answer", "text": answer }
+            });
+          }
+        });
+      });
+
+      if (!items.length) return;
+
+      var ld = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": items
+      };
+
+      var s = document.createElement('script');
+      s.type = 'application/ld+json';
+      s.dataset.nbFaqLd = 'book-call';
+      s.text = JSON.stringify(ld);
+      document.head.appendChild(s);
+    } catch (e) {
+      /* silent */
+    }
+  })();
+  </script>
+{%- endif -%}
+
+  </head>
+
+  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
+    {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+    <div id="header-group">
+      {% sections 'header-group' %}
+    </div>
+
+    <main
+      id="MainContent"
+      class="content-for-layout"
+      role="main"
+      data-page-transition-enabled="{{ settings.page_transition_enabled }}"
+      data-product-transition="{{ settings.transition_to_main_product }}"
+      data-template="{{ template }}"
+    >
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+
+    {% # theme-check-disable ParserBlockingScript %}
+    <script src="{{ 'critical.js' | asset_url }}"></script>
+    {% # theme-check-enable ParserBlockingScript %}
+
+    {% render 'search-modal' %}
+
+    {% if settings.quick_add or settings.mobile_quick_add %}
+      {% render 'quick-add-modal' %}
+    {% endif %}
+{{ 'faq-single-open.js' | asset_url | script_tag }}
+<script>
+/* NIBANA – FAQ JSON-LD from existing markup (home) */
+(function () {
+  // Only on the home page; remove this guard if you reuse on other pages
+  if (!location.pathname.replace(/\/+$/, '').match(/^\/?$/)) return;
+
+  // Target the FAQ section we styled (stable suffix technique)
+  const root = document.querySelector('[id$="__section_4EQaYA"]');
+  if (!root) return;
+
+  // Collect Q&A from <details> blocks
+  const items = [];
+  root.querySelectorAll('details').forEach((d) => {
+    const q = d.querySelector('summary');
+    if (!q) return;
+
+    const question = q.textContent.trim();
+
+    // Gather visible text from the open content container(s)
+    // (works with Dawn-like FAQ markup and our custom styles)
+    const contentNodes = Array.from(
+      d.querySelectorAll(':scope > *:not(summary)')
+    );
+
+    // Flatten to one clean answer string
+    const answer = contentNodes
+      .map((n) => n.textContent)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (question && answer) {
+      items.push({
+        "@type": "Question",
+        "name": question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": answer
+        }
+      });
+    }
+  });
+
+  if (!items.length) return;
+
+  const ld = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": items
+  };
+
+  const s = document.createElement('script');
+  s.type = 'application/ld+json';
+  s.text = JSON.stringify(ld);
+  document.head.appendChild(s);
+})();
+</script>
+
+<script>
+/* NIBANA — Track Calendly clicks site-wide */
+(function () {
+  function fire(payload) {
+    if (window.dataLayer && Array.isArray(window.dataLayer)) {
+      window.dataLayer.push(payload);
+    }
+    if (window.gtag) {
+      window.gtag('event', 'calendly_click', {
+        event_category: 'engagement',
+        link_text: payload.link_text,
+        link_url: payload.link_url,
+        placement: payload.placement
+      });
+    }
+    console.log('Calendly click →', payload);
+  }
+
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a');
+    if (!a || !a.href) return;
+    if (/calendly\.com\/nibana/i.test(a.href)) {
+      const placement = a.closest('header') ? 'header'
+                      : a.closest('section') ? 'section'
+                      : a.closest('footer') ? 'footer'
+                      : 'unknown';
+      fire({
+        event: 'calendly_click',
+        link_text: a.textContent.trim().replace(/\s+/g, ' ').slice(0, 80),
+        link_url: a.href,
+        placement
+      });
+    }
+  });
+})();
+</script>
+
+<script>
+(() => {
+  // Config
+  const LINK = 'https://calendly.com/nibana/20min';
+  const TEXT = 'Book a free 20-min call';
+  const SHOW_AFTER = 200; // px scrolled before showing
+
+  // Create FAB container + button
+  const fab = document.createElement('div');
+  fab.className = 'nb-fab is-hidden';
+  fab.innerHTML = `<a href="${LINK}" aria-label="${TEXT}">${TEXT}</a>`;
+  document.body.appendChild(fab);
+
+  // Show after a bit of scrolling
+  const onScroll = () => {
+    const y = window.scrollY || document.documentElement.scrollTop;
+    fab.classList.toggle('is-hidden', y < SHOW_AFTER);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // So it doesn’t sit on top of the footer
+  const footer = document.querySelector('footer');
+  if (footer && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) fab.style.opacity = e.isIntersecting ? '0' : '';
+    }, { threshold: 0 });
+    io.observe(footer);
+  }
+})();
+</script>
+
+
+{%- comment -%}
+NIBANA — Mobile FAB (Book a call) — Layout hardening + Auto-lift above Mailchimp bar
+Place this block near the end of theme.liquid (before </body>).
+It:
+• Pins the FAB to the right, compact (no full-width).
+• Adds a soft shadow and safe-area padding.
+• Automatically lifts the FAB when the Mailchimp bar appears, with a 12px gap.
+• Works across pages and on route/section loads.
+{%- endcomment -%}
+
+<style>
+  :root{
+    --nb-fab-gap: 16px;  /* base distance from bottom when no bars are present */
+    --nb-fab-lift: 0px;  /* dynamically set by script when Mailchimp bar shows */
+  }
+
+  /* Only style the FAB on mobile/tablet sizes */
+  @media (max-width: 1024px){
+    /* FAB container */
+    .nb-fab{
+      position: fixed;
+      inset-inline-end: 16px;     /* right aligned */
+      inset-inline-start: auto !important;
+      transform: none !important; /* cancel any centering transforms */
+      bottom: calc(
+        var(--nb-fab-gap, 16px)
+        + var(--nb-fab-lift, 0px)
+        + env(safe-area-inset-bottom, 0px)
+      );
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      pointer-events: none;       /* container won't block touches */
+    }
+
+    /* Actual clickable pill (anchor/button inside the FAB) */
+    .nb-fab > a,
+    .nb-fab > button,
+    .nb-fab .button{
+      pointer-events: auto;       /* clickable */
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .875rem 1.125rem;  /* close to hero pill size */
+      border-radius: 9999px;
+      white-space: nowrap;
+      width: auto !important;     /* prevent theme from forcing width:100% */
+      max-width: min(22rem, 90vw);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+  }
+</style>
+
+<script>
+/*!
+ * NIBANA — FAB auto-lift above Mailchimp bar
+ * Detects the Mailchimp "mcforms-wrapper" bottom bar (and variants), then
+ * sets the CSS var --nb-fab-lift to keep the FAB neatly above it.
+ */
+(function () {
+  var bar = null, raf = null;
+
+  function toNumber(v){ v = parseFloat(v); return isNaN(v) ? 0 : v; }
+
+  function getBarHeight(el){
+    if(!el) return 0;
+    var r = el.getBoundingClientRect();
+    if(r.height <= 0) return 0;
+    var cs = getComputedStyle(el);
+    if(cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') return 0;
+    return Math.round(r.height + toNumber(cs.marginTop) + toNumber(cs.marginBottom));
+  }
+
+  function findOptInBar(){
+    // Common Mailchimp wrappers
+    var selectors = [
+      '.mcforms-wrapper',
+      '[id^="mcforms-"]',
+      '[id^="mc-"]',
+      '[class*="mailchimp"]'
+    ].join(',');
+
+    var candidates = Array.prototype.slice.call(document.querySelectorAll(selectors));
+    if(!candidates.length) return null;
+
+    // Prefer fixed elements on the bottom
+    var fixed = candidates.filter(function(el){
+      var s = getComputedStyle(el);
+      var isFixedOrSticky = (s.position === 'fixed' || s.position === 'sticky');
+      var touchesBottom = (isFixedOrSticky && (s.bottom === '0px' || s.bottom === '0'));
+      return isFixedOrSticky || touchesBottom;
+    });
+
+    return fixed[0] || candidates[0] || null;
+  }
+
+  function applyLift(){
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function(){
+      var h = getBarHeight(bar);
+      // +12 puts a friendly gap between the FAB and the bar
+      document.documentElement.style.setProperty('--nb-fab-lift', (h ? (h + 12) : 0) + 'px');
+    });
+  }
+
+  function init(){
+    bar = findOptInBar();
+    applyLift();
+
+    // If no bar yet, watch for it being added later
+    var bodyMO = new MutationObserver(function(){
+      var newBar = findOptInBar();
+      if(newBar !== bar){
+        bar = newBar;
+        applyLift();
+      }
+    });
+    bodyMO.observe(document.body, { childList: true, subtree: true });
+
+    // Watch the bar for style/class changes (open/close/resize)
+    var mo = new MutationObserver(applyLift);
+    if(bar) mo.observe(bar, { attributes: true, attributeFilter: ['style','class'], subtree: true, childList: true });
+
+    window.addEventListener('resize', applyLift, { passive: true });
+
+    // Re-run on Shopify dynamic loads
+    document.addEventListener('shopify:section:load', applyLift);
+    document.addEventListener('shopify:section:unload', applyLift);
+    document.addEventListener('shopify:section:select', applyLift);
+    document.addEventListener('shopify:section:deselect', applyLift);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+  </body>
+</html>
