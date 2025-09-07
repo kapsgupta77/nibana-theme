@@ -1,14 +1,16 @@
 {% comment %}
   NB — Global FAQ section (Home-style pill look + single-open accordion)
-  - Self-contained: HTML + CSS + JS in one file
-  - Settings for width, tray/shell background, single-open logic, and colour overrides
+  Self-contained: HTML + CSS + JS
+  This version force-disables any Dawn wrapper background around this section
 {% endcomment %}
 
-{%- assign c_ink   = section.settings.ink   | default: '#223238' -%}
-{%- assign c_teal  = section.settings.teal  | default: '#0F5B59' -%}
-{%- assign c_shell = section.settings.shell_col | default: '#E5E8E1' -%}
-{%- assign c_ans   = section.settings.answer | default: '#EAF4F3' -%}
+{%- assign c_ink   = section.settings.ink        | default: '#223238' -%}
+{%- assign c_teal  = section.settings.teal       | default: '#0F5B59' -%}
+{%- assign c_shell = section.settings.shell_col  | default: '#E5E8E1' -%}
+{%- assign c_ans   = section.settings.answer     | default: '#EAF4F3' -%}
+
 <link rel="stylesheet" href="{{ 'nb-faq.css' | asset_url }}">
+
 <section
   id="nb-faq-{{ section.id }}"
   class="nb-faq style-home {% if section.settings.width == 'narrow' %}is-narrow{% elsif section.settings.width == 'wide' %}is-wide{% endif %}"
@@ -34,26 +36,52 @@
   </div>
 
   <style>
-    /* NIBANA — Global FAQ (Home-style pill variant) */
+    /* ============================================================
+       NIBANA — Global FAQ (Home-style pill variant)
+       Hard stop any Dawn wrapper around THIS instance
+       ============================================================ */
+    #shopify-section-{{ section.id }}{
+      background: transparent !important;
+      box-shadow: none !important;
+      border: 0 !important;
+    }
+    /* If Dawn adds an inner .section/.color-… container, kill it */
+    #shopify-section-{{ section.id }} > .section,
+    #shopify-section-{{ section.id }} > .color-*,       /* Dawn color scheme wrappers */
+    #shopify-section-{{ section.id }} > .page-width,
+    #shopify-section-{{ section.id }} > .content-container,
+    #shopify-section-{{ section.id }} > .gradient{
+      background: transparent !important;
+      box-shadow: none !important;
+      border: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
     :root{
       --nb-shadow-1: 0 12px 30px rgba(0,0,0,.06);
       --nb-shadow-2: 0 8px 22px rgba(0,0,0,.05);
     }
+
     .nb-faq{ padding: clamp(28px,3vw,60px) 0; background: transparent; }
-    .nb-faq.has-full-panel{ background: var(--nb-shell) !important; }
 
     .nb-faq__inner{
       max-width: min(1160px, 94vw);
       margin-inline: auto;
-      background: var(--nb-shell) !important;
+      background: var(--nb-shell) !important;  /* our single soft tray */
       border-radius: 22px;
       box-shadow: var(--nb-shadow-1);
       padding: clamp(18px, 2.2vw, 28px);
     }
-    .nb-faq__inner.is-plain{ background: transparent !important; box-shadow:none; padding:0; }
+    .nb-faq__inner.is-plain{
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0;
+    }
 
     .nb-faq.is-narrow .nb-faq__inner{ max-width: min(920px, 94vw); }
-    .nb-faq.is-wide   .nb-faq__inner{ max-width: min(1320px,96vw); }
+    .nb-faq.is-wide   .nb-faq__inner{ max-width: min(1320px, 96vw); }
 
     /* Heading */
     .nb-faq.style-home .nb-faq__title{
@@ -66,7 +94,7 @@
 
     .nb-faq__list{ display: grid; gap: 18px; }
 
-    /* Base card (fallback) */
+    /* Base (fallback) */
     .nb-faq__item{
       background: #fff;
       border-radius: 14px;
@@ -90,7 +118,7 @@
     .nb-faq__a ul{ padding-left:1.1rem; margin:.5rem 0 0; }
     .nb-faq__a li{ margin:.25rem 0; }
 
-    /* HOME LOOK (dark-teal rounded pill + soft answer panel) */
+    /* HOME LOOK (teal rounded pill + soft answer) */
     .nb-faq.style-home .nb-faq__item{
       background: transparent !important;
       border: 0 !important;
@@ -103,10 +131,11 @@
       color: #fff !important;
       border: 0 !important;
       border-radius: 9999px !important;
-      padding: 16px 64px 16px 22px !important; /* extra right space for bubble */
+      padding: 16px 64px 16px 22px !important; /* room for bubble */
       font-weight: 720 !important;
       box-shadow: 0 4px 14px rgba(0,0,0,.05);
     }
+
     /* hide any theme-provided icon */
     .nb-faq.style-home .nb-faq__q svg,
     .nb-faq.style-home .nb-faq__q .icon,
@@ -128,12 +157,10 @@
     }
     .nb-faq.style-home .nb-faq__item[open] .nb-faq__q::after{ content: "–"; }
 
-    /* hover tweak */
     .nb-faq.style-home .nb-faq__q:hover{
       background: color-mix(in srgb, var(--nb-teal) 92%, white) !important;
     }
 
-    /* answer panel */
     .nb-faq.style-home .nb-faq__a{
       background: var(--nb-answer) !important;
       border: 1px solid rgba(0,0,0,.06);
@@ -145,7 +172,6 @@
       box-shadow: 0 1px 0 rgba(255,255,255,.4) inset;
     }
 
-    /* focus ring */
     .nb-faq.style-home .nb-faq__q:focus{
       outline: 3px solid rgba(15,91,89,.35);
       outline-offset: 2px;
@@ -158,7 +184,6 @@
     document.addEventListener('DOMContentLoaded', function () {
       const root = document.getElementById('nb-faq-{{ section.id }}');
       if (!root) return;
-      // keep exactly one open within this section
       root.addEventListener('toggle', function (ev) {
         const d = ev.target;
         if (d.tagName !== 'DETAILS' || !d.open) return;
@@ -175,87 +200,34 @@
 {
   "name": "NB — FAQ (Global)",
   "tag": "section",
-  "class": "section nb-faq-section",
+  "class": "nb-faq-section",            /* <- DO NOT include Dawn's 'section' class */
   "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Frequently asked questions" },
     {
-      "type": "text",
-      "id": "title",
-      "label": "Title",
-      "default": "Frequently asked questions"
-    },
-    {
-      "type": "select",
-      "id": "width",
-      "label": "Content width",
-      "default": "normal",
+      "type": "select", "id": "width", "label": "Content width", "default": "normal",
       "options": [
         { "value": "narrow", "label": "Narrow" },
         { "value": "normal", "label": "Normal" },
         { "value": "wide",   "label": "Wide" }
       ]
     },
-    {
-      "type": "checkbox",
-      "id": "wrap_shell",
-      "label": "Wrap in soft tray background",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "single_open",
-      "label": "Only one item open at a time",
-      "default": true
-    },
+    { "type": "checkbox", "id": "wrap_shell", "label": "Wrap in soft tray background", "default": true },
+    { "type": "checkbox", "id": "single_open", "label": "Only one item open at a time", "default": true },
 
     { "type": "header", "content": "Colours (optional overrides)" },
-    {
-      "type": "color",
-      "id": "ink",
-      "label": "Ink (text)",
-      "default": "#223238"
-    },
-    {
-      "type": "color",
-      "id": "teal",
-      "label": "Teal (pill)",
-      "default": "#0F5B59"
-    },
-    {
-      "type": "color",
-      "id": "shell_col",
-      "label": "Tray / shell background",
-      "default": "#E5E8E1"
-    },
-    {
-      "type": "color",
-      "id": "answer",
-      "label": "Answer background",
-      "default": "#EAF4F3"
-    }
+    { "type": "color", "id": "ink",       "label": "Ink (text)",            "default": "#223238" },
+    { "type": "color", "id": "teal",      "label": "Teal (pill)",            "default": "#0F5B59" },
+    { "type": "color", "id": "shell_col", "label": "Tray / shell background","default": "#E5E8E1" },
+    { "type": "color", "id": "answer",    "label": "Answer background",      "default": "#EAF4F3" }
   ],
   "blocks": [
     {
       "type": "item",
       "name": "FAQ item",
       "settings": [
-        {
-          "type": "text",
-          "id": "q",
-          "label": "Question",
-          "default": "Your question here"
-        },
-        {
-          "type": "richtext",
-          "id": "a",
-          "label": "Answer",
-          "default": "<p>Your answer text goes here.</p>"
-        },
-        {
-          "type": "checkbox",
-          "id": "open",
-          "label": "Open by default",
-          "default": false
-        }
+        { "type": "text",     "id": "q",    "label": "Question", "default": "Your question here" },
+        { "type": "richtext", "id": "a",    "label": "Answer",   "default": "<p>Your answer text goes here.</p>" },
+        { "type": "checkbox", "id": "open", "label": "Open by default", "default": false }
       ]
     }
   ],
@@ -265,8 +237,8 @@
       "name": "NB — FAQ (Global)",
       "category": "Text",
       "blocks": [
-        { "type": "item", "settings": { "q": "What’s included?", "a": "<p>Answer example.</p>" } },
-        { "type": "item", "settings": { "q": "How long is the call?", "a": "<p>Answer example.</p>" } }
+        { "type": "item", "settings": { "q": "What’s included?",         "a": "<p>Answer example.</p>" } },
+        { "type": "item", "settings": { "q": "How long is the call?",    "a": "<p>Answer example.</p>" } }
       ]
     }
   ]

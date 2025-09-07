@@ -5085,3 +5085,70 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
 @media (min-width: 990px){
   .header .nb-cta{ display:inline-flex; align-items:center; }
 }
+
+/* ==============================================
+   NIBANA — Coaching page trays (Calendly)
+   Scope: templates/page.coaching.json only
+   Paste at END of assets/base.css
+   ============================================== */
+
+/* Page-scoped tokens (safe + non-invasive) */
+main[data-template="page.coaching"]{
+  --nb-shell-w: min(1160px, 94vw);
+  --nb-sage: #E6ECEA; /* soft panel bg */
+  --nb-shadow-1: 0 10px 28px rgba(0,0,0,.06);
+}
+
+/* ---------------------------
+   Calendly tray (section id: custom_liquid_calendly)
+   --------------------------- */
+main[data-template="page.coaching"] [id$="custom_liquid_calendly"]{
+  background: transparent !important;
+  padding: clamp(24px,3vw,48px) 0 !important;
+}
+
+/* Kill any theme wrapper styling so we don't get a double-tray */
+main[data-template="page.coaching"] [id$="custom_liquid_calendly"] > :not(.nb-cal-wrap){
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Our single soft tray */
+main[data-template="page.coaching"] [id$="custom_liquid_calendly"] .nb-cal-wrap{
+  max-width: var(--nb-shell-w) !important;
+  margin-inline: auto !important;
+  background: var(--nb-sage) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--nb-shadow-1) !important;
+  padding: clamp(18px,2.2vw,28px) !important;
+}
+
+/* Calendly card — desktop UI on desktop */
+main[data-template="page.coaching"] [id$="custom_liquid_calendly"] .nb-cal-wrap .calendly-inline-widget{
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 980px !important;   /* force Calendly desktop layout on desktop */
+  height: 760px !important;
+  margin: 0 auto !important;
+  background: #fff !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.05) !important;
+}
+
+/* Match the inner iframe to the rounded card */
+main[data-template="page.coaching"] [id$="custom_liquid_calendly"] .calendly-inline-widget iframe{
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+}
+
+/* On phones: allow the mobile UI + more height */
+@media (max-width: 980px){
+  main[data-template="page.coaching"] [id$="custom_liquid_calendly"] .calendly-inline-widget{
+    min-width: 0 !important;     /* stop forcing desktop on phones */
+    height: 1000px !important;    /* room for Calendly mobile layout */
+  }
+}
