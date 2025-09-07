@@ -1,0 +1,104 @@
+{% comment %}
+  NIBANA — Calendly section
+  • Desktop: inline embed
+  • Mobile (≤ 768px): popup (cleanest UX)
+{% endcomment %}
+
+{{ 'book-call.css' | asset_url | stylesheet_tag }}
+
+<section class="nb-cal-embed" id="nb-cal-{{ section.id }}">
+  <!-- Desktop inline calendar -->
+  <div
+    class="calendly-inline-widget nb-cal-desktop"
+    data-url="{{ section.settings.url | escape }}"
+    style="min-width:320px;height:{{ section.settings.height | default: 740 }}px;">
+  </div>
+
+  <!-- Mobile popup trigger -->
+  <a href="#book" class="nb-cal-mobile-btn">
+    {{ section.settings.button_label | default: 'Pick a time' }}
+  </a>
+</section>
+
+<script>
+(function () {
+  // Load Calendly script once
+  if (!window.__nbCalendlyLoaded) {
+    var s = document.createElement('script');
+    s.src = 'https://assets.calendly.com/assets/external/widget.js';
+    s.async = true;
+    document.head.appendChild(s);
+    window.__nbCalendlyLoaded = true;
+  }
+
+  function isMobile(){ return window.matchMedia('(max-width: 768px)').matches; }
+
+  function initCalendlySection(root){
+    if (!root) return;
+
+    var inline = root.querySelector('.nb-cal-desktop');
+    var btn    = root.querySelector('.nb-cal-mobile-btn');
+    var url    = (inline && inline.getAttribute('data-url')) || '{{ section.settings.url | escape }}';
+
+    if (isMobile()) {
+      if (inline) inline.style.display = 'none';
+      if (btn) {
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          if (window.Calendly) {
+            Calendly.initPopupWidget({ url: url });
+          }
+        });
+      }
+    } else {
+      if (btn) btn.style.display = 'none';
+    }
+  }
+
+  function ready(fn){ document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn) : fn(); }
+
+  ready(function(){
+    var root = document.getElementById('nb-cal-{{ section.id }}');
+    initCalendlySection(root);
+
+    // Re-init if Shopify dynamically reloads sections in the editor
+    document.addEventListener('shopify:section:load', function(e){
+      if (e && e.detail && e.detail.sectionId === '{{ section.id }}') {
+        initCalendlySection(document.getElementById('nb-cal-{{ section.id }}'));
+      }
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Calendly (inline + mobile popup)",
+  "settings": [
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Calendly URL",
+      "default": "https://calendly.com/nibana/20min?hide_event_type_details=1&hide_gdpr_banner=1"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Mobile button label",
+      "default": "Pick a time"
+    },
+    {
+      "type": "number",
+      "id": "height",
+      "label": "Desktop inline height (px)",
+      "default": 740,
+      "min": 500,
+      "max": 1400,
+      "step": 10
+    }
+  ],
+  "presets": [
+    { "name": "Calendly (inline + mobile popup)" }
+  ]
+}
+{% endschema %}
