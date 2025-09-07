@@ -5028,3 +5028,30 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
   /* hidden state for when we haven’t scrolled yet or footer is visible */
   .nb-fab.is-hidden{ transform: translateY(120%); opacity: 0; }
 }
+
+/* === FAB vs Mailchimp (mobile lift + left align) === */
+:root {
+  --nb-fab-gap: 16px;
+  --nb-fab-lift: 0px; /* set by JS */
+}
+
+/* Ensure the FAB can sit above overlays */
+.nb-fab {
+  position: fixed;
+  z-index: 9999; /* above Mailchimp bar */
+}
+
+@media (max-width: 749px) {
+  .nb-fab {
+    /* Left align on mobile */
+    inset-inline-start: max(var(--nb-fab-gap), env(safe-area-inset-left));
+    inset-inline-end: auto;
+
+    /* Lift above Mailchimp bar + a friendly gap */
+    bottom: calc(
+      var(--nb-fab-gap) + var(--nb-fab-lift, 0px) + 12px + env(safe-area-inset-bottom, 0px)
+    );
+
+    transform: none; /* never centered */
+  }
+}
