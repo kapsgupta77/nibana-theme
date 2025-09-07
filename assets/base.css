@@ -5055,3 +5055,7 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
     transform: none; /* never centered */
   }
 }
+/* Hide the mobile FAB on tablet/desktop */
+@media (min-width: 750px){
+  .nb-fab { display: none !important; }
+}
