@@ -350,83 +350,37 @@ It:
   }
 </style>
 
-<script>
-/*!
- * NIBANA — FAB auto-lift above Mailchimp bar
- * Detects the Mailchimp "mcforms-wrapper" bottom bar (and variants), then
- * sets the CSS var --nb-fab-lift to keep the FAB neatly above it.
- */
+<script id="nb-fab-lift-v2">
 (function () {
-  var bar = null, raf = null;
+  var root = document.documentElement;
 
-  function toNumber(v){ v = parseFloat(v); return isNaN(v) ? 0 : v; }
+  // Look for common Mailchimp bottom-bar wrappers
+  var BAR_SELECTOR = '.mcforms-wrapper, [id^="mcforms-"], [id^="mc-"], [class*="mailchimp"]';
 
-  function getBarHeight(el){
+  function num(v){ v = parseFloat(v); return isNaN(v) ? 0 : v; }
+
+  function barHeight(el){
     if(!el) return 0;
     var r = el.getBoundingClientRect();
-    if(r.height <= 0) return 0;
     var cs = getComputedStyle(el);
-    if(cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') return 0;
-    return Math.round(r.height + toNumber(cs.marginTop) + toNumber(cs.marginBottom));
-  }
-
-  function findOptInBar(){
-    // Common Mailchimp wrappers
-    var selectors = [
-      '.mcforms-wrapper',
-      '[id^="mcforms-"]',
-      '[id^="mc-"]',
-      '[class*="mailchimp"]'
-    ].join(',');
-
-    var candidates = Array.prototype.slice.call(document.querySelectorAll(selectors));
-    if(!candidates.length) return null;
-
-    // Prefer fixed elements on the bottom
-    var fixed = candidates.filter(function(el){
-      var s = getComputedStyle(el);
-      var isFixedOrSticky = (s.position === 'fixed' || s.position === 'sticky');
-      var touchesBottom = (isFixedOrSticky && (s.bottom === '0px' || s.bottom === '0'));
-      return isFixedOrSticky || touchesBottom;
-    });
-
-    return fixed[0] || candidates[0] || null;
+    if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return 0;
+    // include external margins to lift cleanly above the pill
+    return Math.round(r.height + num(cs.marginTop) + num(cs.marginBottom));
   }
 
   function applyLift(){
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(function(){
-      var h = getBarHeight(bar);
-      // +12 puts a friendly gap between the FAB and the bar
-      document.documentElement.style.setProperty('--nb-fab-lift', (h ? (h + 12) : 0) + 'px');
-    });
+    var bar = document.querySelector(BAR_SELECTOR);
+    var h = barHeight(bar);
+    root.style.setProperty('--nb-fab-lift', (h || 0) + 'px');
   }
 
+  // Recompute when the bar reflows/animates/opens
+  var mo = new MutationObserver(applyLift);
+
   function init(){
-    bar = findOptInBar();
     applyLift();
-
-    // If no bar yet, watch for it being added later
-    var bodyMO = new MutationObserver(function(){
-      var newBar = findOptInBar();
-      if(newBar !== bar){
-        bar = newBar;
-        applyLift();
-      }
-    });
-    bodyMO.observe(document.body, { childList: true, subtree: true });
-
-    // Watch the bar for style/class changes (open/close/resize)
-    var mo = new MutationObserver(applyLift);
-    if(bar) mo.observe(bar, { attributes: true, attributeFilter: ['style','class'], subtree: true, childList: true });
-
-    window.addEventListener('resize', applyLift, { passive: true });
-
-    // Re-run on Shopify dynamic loads
-    document.addEventListener('shopify:section:load', applyLift);
-    document.addEventListener('shopify:section:unload', applyLift);
-    document.addEventListener('shopify:section:select', applyLift);
-    document.addEventListener('shopify:section:deselect', applyLift);
+    var bar = document.querySelector(BAR_SELECTOR);
+    if (bar) mo.observe(bar, { attributes: true, childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading'){
@@ -434,8 +388,9 @@ It:
   } else {
     init();
   }
+
+  window.addEventListener('resize', applyLift, { passive: true });
 })();
 </script>
-
   </body>
 </html>
