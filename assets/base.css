@@ -5059,3 +5059,29 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
 @media (min-width: 750px){
   .nb-fab { display: none !important; }
 }
+/* ===== NIBANA — Header “Book a call” CTA (desktop) ===== */
+.header .nb-cta{
+  display:none;
+  text-decoration:none;
+  border-radius:9999px;
+  padding:10px 18px;
+  font-weight:600;
+  line-height:1.1;
+  border:2px solid var(--nb-chocolate, #C86B2A);
+  background:var(--nb-chocolate, #C86B2A);
+  color:#fff;
+  box-shadow:0 10px 28px rgba(0,0,0,.06);
+  transition:background-color .15s ease, box-shadow .2s ease, transform .08s ease;
+  margin-inline-start:var(--gap-xl, 16px);
+  white-space:nowrap;
+}
+.header .nb-cta:hover{
+  background:var(--nb-choc-600, #9E4E19);
+  border-color:var(--nb-choc-600, #9E4E19);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(0,0,0,.10);
+}
+@media (min-width: 990px){
+  .header .nb-cta{ display:inline-flex; align-items:center; }
+}
