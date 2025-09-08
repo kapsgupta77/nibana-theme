@@ -35,10 +35,7 @@
           "blocks": {}
         }
       },
-      "block_order": [
-        "heading",
-        "page-content"
-      ],
+      "block_order": ["heading","page-content"],
       "disabled": true,
       "settings": {
         "content_direction": "column",
@@ -49,44 +46,13 @@
       }
     },
 
-    "1754122764fd7ade93": {
-      "type": "_blocks",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-
     "video_banner_RmGkBJ": {
       "type": "video-banner",
       "name": "Video Banner",
       "settings": {
         "heading": "Transformational Life Coach in London",
         "bg-color": "#10636c",
-        "description": "Transformational Life Coaching is the art of helping someone see new possibilities in life and working with them to create a new future. It’s not just giving advice; it’s working together as equals to help someone grow and find their true potential.\n\nAs you transition from one chapter of your life to the next or tackle a personal challenge, you may need someone to help and support you. \n\nA coach is a professional who can support, inspire and motivate you to achieve your goals and live a happier, more fulfilled life. A life coach is trained to listen, understand, probe, and find ways for their clients to achieve their potential. \n\nThey are like trusted friends who have your best interests at heart. With their help, you will be able to confront challenges in your personal and professional settings.",
+        "description": "Transformational Life Coaching helps you see new possibilities and create a new future. It’s not advice—it’s a partnership to grow into your potential.",
         "youtube_id": "sdTy9IZR87k"
       }
     },
@@ -95,14 +61,107 @@
       "type": "cta-bar",
       "name": "CTA Bar",
       "settings": {
-        "heading": "Initial 20 Mins Complimentary Consultation",
-        "button_label": "BOOK YOUR FREE SESSION NOW!",
-        "button_link": "https:\/\/calendly.com\/nibana\/20min",
+        "heading": "Initial 20-min Complimentary Consultation",
+        "button_label": "Book your free session now",
+        "button_link": "/pages/book-a-call#book",
         "bg_color": "#ffffff",
         "text_color": "#0b656e",
-        "button_color": "#0b656e",
-        "button_hover_color": "#07494f",
+        "button_color": "#C86B2A",
+        "button_hover_color": "#9E4E19",
         "button_text_color": "#ffffff"
+      }
+    },
+
+    "image_text_BT9irB": {
+      "type": "image-text",
+      "name": "Who it's for",
+      "settings": {
+        "image": "shopify://shop_images/Screenshot-2024-09-17-at-6.17.51_PM-700x750_1.webp",
+        "heading": "Is this you?",
+        "text": "<ul><li>You’ve ticked the boxes—career, money, relationships—yet it still feels empty.<\/li><li>You’re asking “is there more to life than this?”<\/li><li>You feel lost and want your joy and aliveness back.<\/li><li>You’re ready to stop performing and start living in alignment.<\/li><li>You want deeper relationships and real connection.<\/li><\/ul>",
+        "image_position": "right",
+        "button_label": "Book a free call",
+        "button_link": "/pages/book-a-call#book"
+      }
+    },
+
+    "nb_multicol_outcomes": {
+      "type": "nb-multicol",
+      "name": "Outcomes",
+      "settings": {
+        "overline": "What changes for you",
+        "heading": "Results my clients see",
+        "subheading": "",
+        "align": "left",
+        "columns": 3,
+        "bg": "var(--nb-soft-green, #eaf5f4)"
+      },
+      "blocks": {
+        "o1": { "type": "item", "settings": { "heading": "Deep self-trust", "text": "Act from alignment, not anxiety." } },
+        "o2": { "type": "item", "settings": { "heading": "Better relationships", "text": "Cleaner boundaries, deeper connection." } },
+        "o3": { "type": "item", "settings": { "heading": "Emotional mastery", "text": "Feel everything. React to nothing." } },
+        "o4": { "type": "item", "settings": { "heading": "Purpose & clarity", "text": "Decide without second-guessing." } },
+        "o5": { "type": "item", "settings": { "heading": "Energy & flow", "text": "From burnout to sustainable drive." } },
+        "o6": { "type": "item", "settings": { "heading": "Joy & play", "text": "Bring aliveness back into everyday life." } }
+      },
+      "block_order": ["o1","o2","o3","o4","o5","o6"]
+    },
+
+    "nb_multicol_how": {
+      "type": "nb-multicol",
+      "name": "How it works",
+      "settings": {
+        "overline": "How we’ll work",
+        "heading": "A simple 3-step path",
+        "subheading": "",
+        "align": "left",
+        "columns": 3,
+        "bg": "white"
+      },
+      "blocks": {
+        "s1": { "type": "item", "settings": { "heading": "20-min call", "text": "Fit check + your goals. If aligned, we book a deep-dive." } },
+        "s2": { "type": "item", "settings": { "heading": "60–90-min deep-dive", "text": "Define outcomes, surface patterns, map first moves." } },
+        "s3": { "type": "item", "settings": { "heading": "Your plan", "text": "A bespoke coaching plan with cadence and milestones." } }
+      },
+      "block_order": ["s1","s2","s3"]
+    },
+
+    "image_text_LkPpQU": {
+      "type": "image-text",
+      "name": "What is TLC?",
+      "settings": {
+        "image": "shopify://shop_images/Kapil-3-700x750_1.webp",
+        "heading": "What is Transformational Life Coaching?",
+        "text": "<p>Transformational coaching builds self-awareness and changes the patterns that keep you stuck. At Nibana we use an embodied approach—mind, body and soul in alignment—so change sticks.<\/p>",
+        "image_position": "left",
+        "button_label": "Book a free call",
+        "button_link": "/pages/book-a-call#book"
+      }
+    },
+
+    "image_text_LY8G7J": {
+      "type": "image-text",
+      "name": "Benefits 1",
+      "settings": {
+        "image": "shopify://shop_images/people-celebrating-levi-guzman-770x853_1.webp",
+        "heading": "Benefits you’ll feel",
+        "text": "<ul><li>Self-awareness & self-management<\/li><li>Better relationships—self, partners & colleagues<\/li><li>Higher emotional intelligence & presence<\/li><\/ul>",
+        "image_position": "right",
+        "button_label": "Book a free call",
+        "button_link": "/pages/book-a-call#book"
+      }
+    },
+
+    "image_text_GxHMj7": {
+      "type": "image-text",
+      "name": "Benefits 2",
+      "settings": {
+        "image": "shopify://shop_images/woman-dancing-on-the-beach-by-kelli-mcclintock-700x750_1.webp",
+        "heading": "",
+        "text": "<ul><li>Lead with desire, not fear<\/li><li>Thrive in conflict with clean communication<\/li><li>Create 360° impact across life, work & intimacy<\/li><\/ul>",
+        "image_position": "left",
+        "button_label": "Book a free call",
+        "button_link": "/pages/book-a-call#book"
       }
     },
 
@@ -110,15 +169,11 @@
       "type": "_blocks",
       "blocks": {
         "judge_me_reviews_featured_carousel_LnaExU": {
-          "type": "shopify:\/\/apps\/judge-me-reviews\/blocks\/featured_carousel\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
-          "settings": {
-            "maxwidth": 1080
-          }
+          "type": "shopify://apps/judge-me-reviews/blocks/featured_carousel/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": { "maxwidth": 1080 }
         }
       },
-      "block_order": [
-        "judge_me_reviews_featured_carousel_LnaExU"
-      ],
+      "block_order": ["judge_me_reviews_featured_carousel_LnaExU"],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -148,203 +203,33 @@
       }
     },
 
-    "image_text_LkPpQU": {
-      "type": "image-text",
-      "name": "Image With Text + CTA",
+    "nb_faq_service": {
+      "type": "nb-faq",
+      "name": "FAQ (Service)",
       "settings": {
-        "image": "shopify:\/\/shop_images\/Kapil-3-700x750_1.webp",
-        "heading": "What Is Transformational Life Coaching?",
-        "text": "<p><strong>Transformational life coaching<\/strong> is a type of coaching that works on an individual’s <strong>self-awareness<\/strong> and behavior, so they can make changes in their lives. <\/p><p>In our experience, transformational coaches can facilitate change and growth at a deeper level. They also help create lasting change.<\/p><p>It involves reflection and holding space so that it helps clients explore their beliefs, emotions, cognition, and relational patterns to create a more complete understanding of their perspective in the world. <\/p><p>At Nibana, <em><strong>we use an embodied approach<\/strong><\/em> to transformative coaching. A coaching model <em><strong>that combines mind, body, and soul<\/strong><\/em>; and helps you come into alignment with all of them.<\/p>",
-        "image_position": "left",
-        "button_label": "Book Now",
-        "button_link": "#"
-      }
-    },
-
-    "image_text_BT9irB": {
-      "type": "image-text",
-      "name": "Image With Text + CTA",
-      "settings": {
-        "image": "shopify:\/\/shop_images\/Screenshot-2024-09-17-at-6.17.51_PM-700x750_1.webp",
-        "heading": "",
-        "text": "<p>If you are someone living through these patterns, some of the challenges listed below may resonate:<\/p><ul><li>You have ticked all the boxes – money, recognition, success, relationships, family- yet it all feels empty.<\/li><li>You often wonder if there is more to life than what you are experiencing.<\/li><li>You have proven to the world that you are capable, and there’s nothing left to prove.<\/li><li>You feel lost and don’t know how to return to that feeling of joy you once had access to.<\/li><li>You are scared that if you stop, your life will fall apart, and you will feel stuck on the hamster wheel of more and more achievement.<\/li><li>You have lost hope of having a thriving relationship and struggle in your relationships.<\/li><li>You miss the childlike play in your life and feel numb.<\/li><li>You have energy and also feel you are likely headed toward burnout.<\/li><li>You often wake up with a feeling of dread.<\/li><li>You have a good life on paper and want to go from Good to Great!<\/li><li>You feel like you want to end the search and are ready to make a change in your life…<\/li><\/ul>",
-        "image_position": "right",
-        "button_label": "Book Now",
-        "button_link": "#"
-      }
-    },
-
-    "image_text_LY8G7J": {
-      "type": "image-text",
-      "name": "Image With Text + CTA",
-      "settings": {
-        "image": "shopify:\/\/shop_images\/people-celebrating-levi-guzman-770x853_1.webp",
-        "heading": "WHAT ARE THE BENEFITS OF TRANSFORMATIONAL COACHING?",
-        "text": "<p>Here are some top benefits that our coaching clients get from the work we do with them:<\/p><h5><strong>Self-Awareness And Self-Management<\/strong><\/h5><p>A better understanding of your core beliefs, your strengths and being able to manage your emotions will allow you to be a better human being and a <a href=\"https:\/\/www.nibana.life\/conscious-leadership-development-coach\" target=\"_blank\">leader<\/a>.<\/p><h5><strong>Better Relationships – Self, Romantic Partners And Colleagues<\/strong><\/h5><p>Cultivating empathy and understanding masculine-feminine dynamics and the language of emotions will help you transform your relationship with Self, your romantic partner(s), and your business and work colleagues.<\/p><h5><strong>Emotional Intelligence<\/strong><\/h5><p>Through building self-awareness and empathy, you will become more intuitive and be able to read other people’s emotions and your surroundings and see other people’s perspectives beyond the need to be better than proving your self-worth or value.<\/p>",
-        "image_position": "left",
-        "button_label": "Book Now",
-        "button_link": "#"
-      }
-    },
-
-    "image_text_GxHMj7": {
-      "type": "image-text",
-      "name": "Image With Text + CTA",
-      "settings": {
-        "image": "shopify:\/\/shop_images\/woman-dancing-on-the-beach-by-kelli-mcclintock-700x750_1.webp",
-        "heading": "",
-        "text": "<h5><strong>Leading With Desire<\/strong><\/h5><p>You will have a new relationship with reception and have your desire as a compass for your life moving forward. Your fears and limiting beliefs will no longer hold you back from going for what you want in your life and reaching your potential.<\/p><h4><strong>Thriving In Conflict<\/strong><\/h4><p>Instead of shying away from conflict or needing to be right, you will learn to engage in intense conversation with ease and mastery and create win-win situations.<\/p><h4><strong>360-Degree Impact On Your Life<\/strong><\/h4><p>Everything in our life is connected. As you change one area of your life, you will start to see other areas transform – personal, family, relationships, intimacy, work, purpose, and higher power!<\/p>",
-        "image_position": "right",
-        "button_label": "Book Now",
-        "button_link": "#"
-      }
-    },
-
-    "image_text_gzx6FP": {
-      "type": "image-text",
-      "name": "Image With Text + CTA",
-      "settings": {
-        "image": "shopify:\/\/shop_images\/404-bg-700x750_3.webp",
-        "heading": "Deep Understanding Of Your Own Blueprint And Relationship With Yourself",
-        "text": "<p>As you do the work of self-excavation, you will see any parts of your life that you have been living as a way to please others. You will get a deep sense of who you are and your uniqueness and learn to design all areas of your life from this place.<\/p><h2>A Deep Sense Of Fulfilment And Joy<\/h2><p>You will learn to live your life with a foundation of joy and fulfilment in your soul. A sense of childlike play and mystery<\/p><h2>Self Mastery And Leadership<\/h2><h4><strong>A Life That Is Happening For You And Not To You!<\/strong><\/h4><p>You will no longer feel like a victim of your circumstances or anyone else. You will learn to take full responsibility for your experiences and learn to reframe your experiences, and see that life is happening FOR you!<\/p><h4><strong>Thrive In Uncertainty And The Unknown<\/strong><\/h4><p>You will learn to have an internal sense of safety so that you let go when you expand outside your comfort zone.<\/p><h4> <\/h4><p>You will move from competing with others to a life that is about being in your potential and continuous improvement. You will become an <a href=\"https:\/\/www.nibana.life\/coaching-types-details\/emotional-intelligence-executive-coaching\"><strong>emotionally intelligent<\/strong><\/a> leader who inspires others and leads by example and empathy. You will start to see mastery as a process and not a destination.<\/p>",
-        "image_position": "left",
-        "button_label": "Book Now",
-        "button_link": "#"
-      }
-    },
-
-    "1756536911436a7b85": {
-      "type": "_blocks",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-
-    "17565362510c22f364": {
-      "type": "_blocks",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-
-    "1756537076f83d73bb": {
-      "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_126ae38_xWh9mL": {
-          "type": "ai_gen_block_126ae38",
-          "settings": {
-            "heading": "",
-            "text": "<h4><strong>Our Approach<\/strong><\/h4><p>At Nibana, our holistic approach is based on connecting to our core blueprint as an individual. We do this through self-awareness and self-inquiry, understanding and mastering our relationship with the life energy and people around us, and shifting our outlook towards life as we see it as an infinite game.<\/p><p>Here are the key components of the coaching model that we use in our coaching sessions:<\/p><h4><strong>Identity Work <\/strong><\/h4><p>Identity work is about cultivating a deep understanding of who you are and how you got to where you are today. We do this by looking at things like:<\/p><h4><strong>Boundaries<\/strong><\/h4><p>Where do you say Yes to things when you are a No, and where do you say No to things when you are actually a Yes? Boundaries play an important role in defining our personal space – physically, emotionally and energetically.<\/p><p>It is our responsibility to understand our boundaries and educate people around us on how to be with us.<\/p><h4><strong>Victim Consciousness<\/strong><\/h4><p>Do you believe life is happening TO you or FOR you? A lot of suffering exists because we remain in a victim mindset, sometimes even months and years after the fact.<\/p><p>Learning how to view the world from an Observer Consciousness can shift our perspective so that we start to see that life is happening FOR us. It is a very powerful mindset shift.<\/p><h4><strong>Inner Child Work<\/strong><\/h4><p>It is now quite a well-known and researched idea (Gabor Mate, Peter Levine et al.) that most of our core beliefs and coping mechanisms are created when we are really young.<\/p><p>Through inner child work, we can start understanding how these beliefs were formed and how they show up in our present life. Once we shift these beliefs, we start to make different choices in life and can slowly start to redesign all aspects of our life.<\/p><h4><strong>Shadow Work<\/strong><\/h4><p> There is a saying that “there’s a lot of power locked up in the basement of our psyche”. Our shadow is the parts of ourselves that we avoid or have repressed throughout our life.<\/p><p>We do this in order to fit in this world and become functioning adults. However, anything that’s suppressed ultimately leaks out anyway.<\/p><p>Understanding and Integrating our shadow can unlock a huge amount of power and helps us become a more integrated human being.<\/p><h4><strong>Archetypes <\/strong><\/h4><p>We generally live our lives wearing different masks. These masks can be – a partner, an employee, a business person, a child, a parent etc.<\/p><p>We continuously swap these masks unconsciously as we walk through life. While we are unconscious of these masks, they control us.<\/p><p>Bringing more consciousness to the archetypes in our lives helps us be more in control and brings choice.<\/p><h4><strong>Core Beliefs<\/strong><\/h4><p>At Nibana, our experience suggests that our life is almost like a holographic projection of the core beliefs we have and how these beliefs interact with each other about the following:<\/p><ul><li>How do we define our self-worth, i.e., are we inherently good enough and worthy or not? A lack of inherent self-worth often results in continuously striving and competing with others in order to prove our self-worth.<\/li><li>How we define our value, i.e., our inherent value vs value defined by others.<\/li><li>Are we enough, i.e., do we feel that we are whole human beings or if we are somehow incomplete without others<\/li><li>Do we belong, i.e., are we comfortable in our own skin and surroundings, or do we feel abandoned by the world?<\/li><li>Are we lovable and are loved, i.e., do we feel that we have to be or act in a certain way to be lovable or not<\/li><\/ul><h4><strong>Inner Skills<\/strong><\/h4><p>During our lifetime, we generally learn skills that help us navigate the external world and be successful. However, we pay little attention, or importance, to our internal landscape.<\/p><p>Our transformational coaching uses various concepts and modalities to develop this internal landscape.<\/p><p>For example – cultivating attention, mindfulness, energy accounting, feminine-masculine dynamics, eros, principles of deep connection, embodiment, understanding desire cycle, orgasmic meditation (OM), reactivity vs responsiveness, and more…<\/p><h4><strong>Practices<\/strong><\/h4><p>Have you ever been to a <a href=\"https:\/\/www.nibana.life\/corporate-workshop\" target=\"_blank\">workshop<\/a> or a retreat where you got your head completely clear and were able to see what is possible and your potential? We call that a peak experience. Peak experiences are great for visualising what is possible.<\/p><p>However, you then have to build the discipline to become that person who can reach that potential or execute the vision.<\/p><p>We also believe that our subconscious mind is a habituated mind. If we want to change beliefs and reprogram our minds, we need to cultivate new habits.<\/p><p>At Nibana, we believe that in order to transform your life, sustainable change has to be rooted firmly in the discipline of practices or rituals.<\/p><p>This is also crucial for you to become independent in your self-inquiry process and not depend on us on the path once we finish working together. We work with you to cultivate and master practices during our time together.<\/p><h4><strong>Play<\/strong><\/h4><p>In the book, Finite and Infinite Games, James P Carse talks about the idea that a finite game is played to win or lose while an Infinite Game is played for the sake of playing and to continue playing.<\/p><p>Our coaching model introduces a set of principles for a life based on living life as an Infinite Game, i.e., creating a life where play and mystery are the core.<\/p><p>Rather than looking at life as something where we need to win or lose everything or get somewhere, what would it be like if we were to play the game of life just to play?<\/p><h4><strong>Unlock Your True Potential<\/strong><\/h4><p>We believe our true potential is unlocked when we master uncertainty and being in the unknown. A popular saying is that ‘growth happens beyond your comfort zone. Well, beyond your comfort zone lies the unknown.<\/p><p>Steven Kotler, the founder of the Flow Research Project, says that ‘in order to get into the flow, we need to be able to shut our rational mind, which is also the fear-based mind.<\/p><p>In order to be able to shut down this part of our brain, we need to be doing something that is at the edge of or beyond our comfort zone.<\/p><p>There is another saying that ‘we need to feel safe in order to fully let go. Now, we tend to create a sense of safety by controlling things around us, which is the opposite of being in flow.<\/p><p>In order to create a sense of safety to let go and experience flow, we need to build an internal sense of safety that allows us to go into uncharted territory and have the confidence that we will come out safely and with flying colours.<\/p><p>And in order to create this sense of safety, we need to build a solid foundation that includes understanding our core beliefs, our boundaries, how we operate with the victim consciousness and how to come out of it, and our relationship with desire – essentially, becoming conscious of all things that our subconscious mind used to live our life on autopilot.<\/p><p>Working with a life coach at Nibana using our transformational coaching framework, you can learn how to unlock your true potential successfully.<\/p><h4><strong>Transformational Life Coaching: Stop Overwhelm And Self-Doubt; Find Focus And Self-Belief<\/strong><\/h4><p>An experienced transformational coach is a guide who can walk you through the process of aligning your life to your unique blueprint and help you design all parts of your life – personal, professional, intimate, and spiritual.<\/p><p>This kind of transformational process can be scary to some people as sometimes it can feel like jumping off a cliff.<\/p><p>The support and guidance of an experienced life coach who has gone through a similar process can make all the difference in walking this path step by step.<\/p><h4><strong>What Coaching Services Do We Offer in London?<\/strong><\/h4><p>At Nibana, we offer online 1-on-1 and group coaching to clients all over the world. We have been working with clients from the Asia Pacific, Europe, the Indian subcontinent, North and South America and, of course, all over the UK.<\/p><p>We have found that online sessions are as transformative as coaching in person. If you are local to London, there is an option to coach in person or have a mixture of online and in-person sessions. We are more than happy to create a bespoke program that suits your particular needs and desires.<\/p><p>Our clients are mostly with professional careers who have experienced life and ticked some or all of the boxes that the world told us to to find that eternal joy, happiness and fulfilment – be it professional success, monetary achievement, acquisition of material wealth, relationships – and when we got to the top, we are left with a sense of – “there must be more to life than just this.”<\/p><p>We help you move forward and <em><strong>go from bad to good to better<\/strong><\/em>.<\/p><p>We help you re-align your life to your blueprint so you can find that joy, happiness, and fulfilment again. A rich life full of connection, intimacy, mystery and childlike playfulness.<\/p><p>We offer this via a mix of Transformational Life Coaching, Business Coaching, <a href=\"https:\/\/www.nibana.life\/emotional-intelligence\" target=\"_blank\">Emotional Intelligence<\/a> & Executive Coaching, Relationship Coaching, and <a href=\"https:\/\/www.nibana.life\/coaching-types-details\/eros-orgasmic-meditation\" target=\"_blank\">Eros & Orgasmic Mediation training<\/a>.<\/p><p>We create a bespoke journey for each client we work with on a 1-on-1 basis that combines things from different parts of the Nibana Framework.<\/p><p>Get in touch for a free 20 min consultation to connect and explore if you want to work together and transform your life.<\/p><p>Join us at Nibana, where our experienced coaches will be your trusted guides on a journey to managing stress effectively. We’ll embark on a journey of self-excavation and building self-awareness. Through this transformative process, you’ll uncover insights into your boundaries, core beliefs, and unique stress triggers. Through personalised plans, we enable you to overcome stress and reclaim happiness and calm. Our comprehensive approach guarantees that you regain inner calm, regardless of the source—personal struggles, work-related stress, or the need for balance. Today, take the first step towards living a happy, stress-free life. Speak with Nibana and allow us to assist you on your journey of self-transformation.<\/p>",
-            "button_text": "",
-            "button_link": "",
-            "content_width": 1200,
-            "text_alignment": "center",
-            "mobile_text_alignment": "center",
-            "content_spacing": 30,
-            "padding_top": 60,
-            "padding_bottom": 60,
-            "background_color": "#f8f8f8",
-            "heading_color": "#000000",
-            "text_color": "#666666",
-            "heading_size": 48,
-            "text_size": 16,
-            "button_background": "#000000",
-            "button_hover_background": "#333333",
-            "button_text_color": "#ffffff",
-            "button_hover_text_color": "#ffffff",
-            "button_text_size": 16,
-            "button_padding_vertical": 14,
-            "button_padding_horizontal": 32,
-            "button_border_radius": 8
-          },
-          "blocks": {}
-        }
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#00535d",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3"
       },
-      "block_order": [
-        "ai_gen_block_126ae38_xWh9mL"
-      ],
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
+      "blocks": {
+        "f1": { "type": "item", "settings": { "q": "What happens in our first call?", "a": "<p>A relaxed connection + fit check—where you are now, what aligned success looks like, and whether we’re a fit. If yes for both, we’ll book a 60–90 min deep-dive.<\/p>", "open": true } },
+        "f2": { "type": "item", "settings": { "q": "How is the deep-dive different?", "a": "<p>We define clear outcomes, surface patterns and map first practical moves. You leave with clarity and a direction.<\/p>", "open": false } },
+        "f3": { "type": "item", "settings": { "q": "Do I have to decide on the call?", "a": "<p>You’ll make a clean decision after the deep-dive. No pressure—Yes or No are both great answers.<\/p>", "open": false } },
+        "f4": { "type": "item", "settings": { "q": "How do we meet?", "a": "<p>Usually on Zoom. Calendly shows your local timezone automatically. If you need a different time or format, mention it in the notes.<\/p>", "open": false } }
+      },
+      "block_order": ["f1","f2","f3","f4"]
     },
 
     "17545838089b8ac598": {
       "type": "_blocks",
       "blocks": {
         "instafeed_app_block_XKwafT": {
-          "type": "shopify:\/\/apps\/instafeed\/blocks\/app-block\/c447db20-095d-4a10-9725-b5977662c9d5",
+          "type": "shopify://apps/instafeed/blocks/app-block/c447db20-095d-4a10-9725-b5977662c9d5",
           "settings": {
             "title": "",
             "title_color": "",
@@ -362,9 +247,7 @@
           }
         }
       },
-      "block_order": [
-        "instafeed_app_block_XKwafT"
-      ],
+      "block_order": ["instafeed_app_block_XKwafT"],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -392,92 +275,23 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
-    },
-
-    "custom_liquid_calendly": {
-      "type": "custom-liquid",
-      "name": "t:names.custom_liquid",
-      "settings": {
-        "custom_liquid": "<div class=\"nb-cal-wrap\">\n  <div id=\"book\" class=\"calendly-inline-widget\"\n       data-url=\"https:\/\/calendly.com\/nibana\/20min?hide_event_type_details=1&hide_gdpr_banner=1\"\n       style=\"min-width:320px;height:740px;\"><\/div>\n<\/div>\n<script src=\"https:\/\/assets.calendly.com\/assets\/external\/widget.js\" async><\/script>\n<noscript>\n  <p>Calendly requires JavaScript. You can also book directly here:\n    <a href=\"https:\/\/calendly.com\/nibana\/20min\" target=\"_blank\" rel=\"noopener\">Open Calendly<\/a>.\n  <\/p>\n<\/noscript>",
-        "color_scheme": "scheme-4",
-        "section_width": "page-width",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-
-    "nb_faq_service": {
-      "type": "nb-faq",
-      "name": "FAQ (NIBANA)",
-      "settings": {
-        "title": "Frequently asked questions",
-        "width": "normal",
-        "wrap_shell": true,
-        "single_open": true,
-        "ink": "#00535d",
-        "teal": "#0f5b59",
-        "shell_col": "#e5e8e1",
-        "answer": "#eaf4f3"
-      },
-      "blocks": {
-        "item_1": {
-          "type": "item",
-          "settings": {
-            "q": "What happens in our first call?",
-            "a": "<p>A relaxed connection and fit check—where you are now, what aligned success looks like, and whether we’re a fit. If yes for both, we’ll book a 60–90 min deep dive.<\/p>",
-            "open": true
-          }
-        },
-        "item_2": {
-          "type": "item",
-          "settings": {
-            "q": "How is the deep\u2010dive different?",
-            "a": "<p>We define outcomes, surface patterns, and map first moves. I\u2019ll make a clear offer (cadence, investment, logistics) so you can decide yes or no cleanly.<\/p>",
-            "open": false
-          }
-        },
-        "item_3": {
-          "type": "item",
-          "settings": {
-            "q": "Do I have to decide on the call?",
-            "a": "<p>I ask for a clear yes\/no by the end of the second call so it stays energetically clean. No is always ok.<\/p>",
-            "open": false
-          }
-        },
-        "item_4": {
-          "type": "item",
-          "settings": {
-            "q": "How do we meet?",
-            "a": "<p>Usually Zoom. Calendly automatically shows your local time zone. Need a different slot or format? Add a note when booking.<\/p>",
-            "open": false
-          }
-        }
-      },
-      "block_order": [
-        "item_1",
-        "item_2",
-        "item_3",
-        "item_4"
-      ]
     }
   },
 
   "order": [
     "main",
-    "1754122764fd7ade93",
     "video_banner_RmGkBJ",
     "cta_bar_VdKiDR",
-    "1754583875c121c3ae",
-    "image_text_LkPpQU",
+
     "image_text_BT9irB",
+    "nb_multicol_outcomes",
+    "nb_multicol_how",
+
+    "image_text_LkPpQU",
     "image_text_LY8G7J",
     "image_text_GxHMj7",
-    "image_text_gzx6FP",
-    "1756536911436a7b85",
-    "17565362510c22f364",
-    "1756537076f83d73bb",
 
-    "custom_liquid_calendly",
+    "1754583875c121c3ae",
     "nb_faq_service",
 
     "17545838089b8ac598"
