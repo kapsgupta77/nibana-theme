@@ -128,48 +128,17 @@
       }
     },
 
-    "image_text_gzx6FP": {
+    "image_text_approach": {
       "type": "image-text",
-      "name": "Image With Text + CTA",
+      "name": "Our Approach (Longform)",
       "settings": {
         "image": "shopify://shop_images/404-bg-700x750_3.webp",
-        "heading": "Blueprint, mastery, and joy",
-        "text": "<p>As you do the work of self-excavation, you stop living to please others and design life from who you are.</p><h4><strong>Fulfilment & joy</strong></h4><p>Rebuild a foundation of play, mystery, and aliveness.</p><h4><strong>Self-mastery & leadership</strong></h4><p>Life happens <em>for</em> you, not to you. Build an internal sense of safety so you can expand into the unknown.</p>",
+        "heading": "Our Approach",
+        "text": "<p>At Nibana, our holistic approach connects you back to your core blueprint. We build self-awareness, deepen relationship to life and people around you, and help you shift from finite games to an infinite one.</p><h4><strong>Identity work</strong></h4><p>Understand who you are and how you got here—so your choices start matching your truth.</p><h4><strong>Boundaries</strong></h4><p>See where you say Yes when you mean No (and the reverse). Create clean physical, emotional and energetic boundaries.</p><h4><strong>Victim → Observer</strong></h4><p>Shift from “life is happening to me” to “life is happening for me.” It’s a powerful lens change.</p><h4><strong>Inner child</strong></h4><p>Spot the early beliefs driving today’s decisions and rewrite them—gently and for good.</p><h4><strong>Shadow work</strong></h4><p>Integrate the parts you’ve pushed away and unlock their power.</p><h4><strong>Archetypes</strong></h4><p>Get conscious of the masks you wear—so you can choose them, not be run by them.</p><h4><strong>Core beliefs</strong></h4><ul><li>Self-worth and value (inherent vs. earned)</li><li>Enoughness and belonging</li><li>Lovability without performance</li></ul><h4><strong>Inner skills</strong></h4><p>Attention, mindfulness, energy accounting, masculine–feminine dynamics, embodiment, desire cycle, responsiveness over reactivity—and more.</p><h4><strong>Practice</strong></h4><p>Peak experiences are great; disciplined practice makes change stick. We help you build the rituals that make transformation durable.</p><h4><strong>Play</strong></h4><p>Live life as an infinite game—choose play and mystery over winning and control.</p><h4><strong>Unlock your potential</strong></h4><p>Growth lives beyond your comfort zone. Build the inner safety to go there—and enjoy it.</p>",
         "image_position": "left",
         "button_label": "Book a free 20-min call",
         "button_link": "/pages/book-a-call"
       }
-    },
-
-    "ai_gen_block_126ae38_xWh9mL": {
-      "type": "ai_gen_block_126ae38",
-      "name": "Longform: Our Approach",
-      "settings": {
-        "heading": "Our Approach",
-        "text": "<p>At Nibana, our holistic approach connects you back to your core blueprint. We build self-awareness, deepen relationship to life and people around you, and help you shift from finite games to an infinite one.</p><h4><strong>Identity work</strong></h4><p>Understand who you are and how you got here—so your choices start matching your truth.</p><h4><strong>Boundaries</strong></h4><p>See where you say Yes when you mean No (and the reverse). Create clean physical, emotional and energetic boundaries.</p><h4><strong>Victim → Observer</strong></h4><p>Shift from “life is happening to me” to “life is happening for me.” It’s a powerful lens change.</p><h4><strong>Inner child</strong></h4><p>Spot the early beliefs driving today’s decisions and rewrite them—gently and for good.</p><h4><strong>Shadow work</strong></h4><p>Integrate the parts you’ve pushed away and unlock their power.</p><h4><strong>Archetypes</strong></h4><p>Get conscious of the masks you wear—so you can choose them, not be run by them.</p><h4><strong>Core beliefs</strong></h4><ul><li>Self-worth and value (inherent vs. earned)</li><li>Enoughness and belonging</li><li>Lovability without performance</li></ul><h4><strong>Inner skills</strong></h4><p>Attention, mindfulness, energy accounting, masculine–feminine dynamics, embodiment, desire cycle, responsiveness over reactivity—and more.</p><h4><strong>Practice</strong></h4><p>Peak experiences are great; disciplined practice makes change stick. We help you build the rituals that make transformation durable.</p><h4><strong>Play</strong></h4><p>Live life as an infinite game—choose play and mystery over winning and control.</p><h4><strong>Unlock your potential</strong></h4><p>Growth lives beyond your comfort zone. Build the inner safety to go there—and enjoy it.</p>",
-        "button_text": "",
-        "button_link": "",
-        "content_width": 1200,
-        "text_alignment": "center",
-        "mobile_text_alignment": "center",
-        "content_spacing": 30,
-        "padding_top": 60,
-        "padding_bottom": 60,
-        "background_color": "#f8f8f8",
-        "heading_color": "#000000",
-        "text_color": "#666666",
-        "heading_size": 48,
-        "text_size": 16,
-        "button_background": "#000000",
-        "button_hover_background": "#333333",
-        "button_text_color": "#ffffff",
-        "button_hover_text_color": "#ffffff",
-        "button_text_size": 16,
-        "button_padding_vertical": 14,
-        "button_padding_horizontal": 32,
-        "button_border_radius": 8
-      },
-      "blocks": {}
     },
 
     "instafeed_wrapper": {
@@ -234,8 +203,7 @@
     "image_text_BT9irB",
     "image_text_LY8G7J",
     "image_text_GxHMj7",
-    "image_text_gzx6FP",
-    "ai_gen_block_126ae38_xWh9mL",
+    "image_text_approach",
     "instafeed_wrapper"
   ]
 }
