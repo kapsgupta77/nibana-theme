@@ -7,7 +7,7 @@
           "type": "text",
           "name": "Title",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}<\/h1>",
+            "text": "<h1>Transformational Life Coaching<\/h1>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -35,7 +35,7 @@
           "blocks": {}
         }
       },
-      "block_order": ["heading","page-content"],
+      "block_order": ["heading", "page-content"],
       "disabled": true,
       "settings": {
         "content_direction": "column",
@@ -52,7 +52,7 @@
       "settings": {
         "heading": "Transformational Life Coach in London",
         "bg-color": "#10636c",
-        "description": "Transformational Life Coaching helps you see new possibilities and create a new future. It’s not advice—it’s a partnership to grow into your potential.",
+        "description": "<p>Transformational Life Coaching helps you see new possibilities and create a new future. It isn’t advice—it’s a partnership to grow into your potential.<\/p><p>As you transition into your next chapter or tackle a personal challenge, a trusted coach supports, inspires and keeps you moving in alignment.<\/p>",
         "youtube_id": "sdTy9IZR87k"
       }
     },
@@ -78,7 +78,7 @@
       "settings": {
         "image": "shopify://shop_images/Screenshot-2024-09-17-at-6.17.51_PM-700x750_1.webp",
         "heading": "Is this you?",
-        "text": "<ul><li>You’ve ticked the boxes—career, money, relationships—yet it still feels empty.<\/li><li>You’re asking “is there more to life than this?”<\/li><li>You feel lost and want your joy and aliveness back.<\/li><li>You’re ready to stop performing and start living in alignment.<\/li><li>You want deeper relationships and real connection.<\/li><\/ul>",
+        "text": "<ul><li>You’ve ticked the boxes—career, money, relationships—yet it still feels empty.<\/li><li>You’re asking “is there more to life than this?”<\/li><li>You want your joy and aliveness back.<\/li><li>You’re ready to stop performing and start living in alignment.<\/li><li>You want deeper relationships and real connection.<\/li><\/ul>",
         "image_position": "right",
         "button_label": "Book a free call",
         "button_link": "/pages/book-a-call#book"
@@ -104,7 +104,7 @@
         "o5": { "type": "item", "settings": { "heading": "Energy & flow", "text": "From burnout to sustainable drive." } },
         "o6": { "type": "item", "settings": { "heading": "Joy & play", "text": "Bring aliveness back into everyday life." } }
       },
-      "block_order": ["o1","o2","o3","o4","o5","o6"]
+      "block_order": ["o1", "o2", "o3", "o4", "o5", "o6"]
     },
 
     "nb_multicol_how": {
@@ -123,7 +123,7 @@
         "s2": { "type": "item", "settings": { "heading": "60–90-min deep-dive", "text": "Define outcomes, surface patterns, map first moves." } },
         "s3": { "type": "item", "settings": { "heading": "Your plan", "text": "A bespoke coaching plan with cadence and milestones." } }
       },
-      "block_order": ["s1","s2","s3"]
+      "block_order": ["s1", "s2", "s3"]
     },
 
     "image_text_LkPpQU": {
@@ -157,7 +157,7 @@
       "name": "Benefits 2",
       "settings": {
         "image": "shopify://shop_images/woman-dancing-on-the-beach-by-kelli-mcclintock-700x750_1.webp",
-        "heading": "",
+        "heading": "More shifts",
         "text": "<ul><li>Lead with desire, not fear<\/li><li>Thrive in conflict with clean communication<\/li><li>Create 360° impact across life, work & intimacy<\/li><\/ul>",
         "image_position": "left",
         "button_label": "Book a free call",
@@ -217,12 +217,40 @@
         "answer": "#eaf4f3"
       },
       "blocks": {
-        "f1": { "type": "item", "settings": { "q": "What happens in our first call?", "a": "<p>A relaxed connection + fit check—where you are now, what aligned success looks like, and whether we’re a fit. If yes for both, we’ll book a 60–90 min deep-dive.<\/p>", "open": true } },
-        "f2": { "type": "item", "settings": { "q": "How is the deep-dive different?", "a": "<p>We define clear outcomes, surface patterns and map first practical moves. You leave with clarity and a direction.<\/p>", "open": false } },
-        "f3": { "type": "item", "settings": { "q": "Do I have to decide on the call?", "a": "<p>You’ll make a clean decision after the deep-dive. No pressure—Yes or No are both great answers.<\/p>", "open": false } },
-        "f4": { "type": "item", "settings": { "q": "How do we meet?", "a": "<p>Usually on Zoom. Calendly shows your local timezone automatically. If you need a different time or format, mention it in the notes.<\/p>", "open": false } }
+        "f1": {
+          "type": "item",
+          "settings": {
+            "q": "What happens in our first call?",
+            "a": "<p>A relaxed connection + fit check—where you are now, what aligned success looks like, and whether we’re a fit. If yes for both, we’ll book a 60–90 min deep-dive.<\/p>",
+            "open": true
+          }
+        },
+        "f2": {
+          "type": "item",
+          "settings": {
+            "q": "How is the deep-dive different?",
+            "a": "<p>We define clear outcomes, surface patterns and map first practical moves. You leave with clarity and a direction.<\/p>",
+            "open": false
+          }
+        },
+        "f3": {
+          "type": "item",
+          "settings": {
+            "q": "Do I have to decide on the call?",
+            "a": "<p>You’ll make a clean decision after the deep-dive. No pressure—Yes or No are both great answers.<\/p>",
+            "open": false
+          }
+        },
+        "f4": {
+          "type": "item",
+          "settings": {
+            "q": "How do we meet?",
+            "a": "<p>Usually on Zoom. Calendly shows your local timezone automatically. If you need a different time or format, mention it in the notes.<\/p>",
+            "open": false
+          }
+        }
       },
-      "block_order": ["f1","f2","f3","f4"]
+      "block_order": ["f1", "f2", "f3", "f4"]
     },
 
     "17545838089b8ac598": {
