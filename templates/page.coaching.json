@@ -63,7 +63,7 @@
       "settings": {
         "heading": "Initial 20-min Complimentary Consultation",
         "button_label": "Book your free session now",
-        "button_link": "#book",
+        "button_link": "/pages/book-a-call#book",
         "bg_color": "#ffffff",
         "text_color": "#0b656e",
         "button_color": "#C86B2A",
@@ -81,7 +81,7 @@
         "text": "<ul><li>You’ve ticked the boxes—career, money, relationships—yet it still feels empty.<\/li><li>You’re asking “is there more to life than this?”<\/li><li>You feel lost and want your joy and aliveness back.<\/li><li>You’re ready to stop performing and start living in alignment.<\/li><li>You want deeper relationships and real connection.<\/li><\/ul>",
         "image_position": "right",
         "button_label": "Book a free call",
-        "button_link": "#book"
+        "button_link": "/pages/book-a-call#book"
       }
     },
 
@@ -135,7 +135,7 @@
         "text": "<p>Transformational coaching builds self-awareness and changes the patterns that keep you stuck. At Nibana we use an embodied approach—mind, body and soul in alignment—so change sticks.<\/p>",
         "image_position": "left",
         "button_label": "Book a free call",
-        "button_link": "#book"
+        "button_link": "/pages/book-a-call#book"
       }
     },
 
@@ -148,7 +148,7 @@
         "text": "<ul><li>Self-awareness & self-management<\/li><li>Better relationships—self, partners & colleagues<\/li><li>Higher emotional intelligence & presence<\/li><\/ul>",
         "image_position": "right",
         "button_label": "Book a free call",
-        "button_link": "#book"
+        "button_link": "/pages/book-a-call#book"
       }
     },
 
@@ -161,19 +161,7 @@
         "text": "<ul><li>Lead with desire, not fear<\/li><li>Thrive in conflict with clean communication<\/li><li>Create 360° impact across life, work & intimacy<\/li><\/ul>",
         "image_position": "left",
         "button_label": "Book a free call",
-        "button_link": "#book"
-      }
-    },
-
-    "custom_liquid_calendly": {
-      "type": "custom-liquid",
-      "name": "Calendly",
-      "settings": {
-        "custom_liquid": "<div class=\"nb-cal-wrap\"><div id=\"book\" class=\"calendly-inline-widget\" data-url=\"https://calendly.com/nibana/20min?hide_event_type_details=1&hide_gdpr_banner=1\" style=\"min-width:320px;height:740px;\"></div></div><script src=\"https://assets.calendly.com/assets/external/widget.js\" async></script>",
-        "color_scheme": "scheme-4",
-        "section_width": "page-width",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "button_link": "/pages/book-a-call#book"
       }
     },
 
@@ -303,7 +291,6 @@
     "image_text_LY8G7J",
     "image_text_GxHMj7",
 
-    "custom_liquid_calendly",
     "1754583875c121c3ae",
     "nb_faq_service",
 
