@@ -141,6 +141,55 @@
       }
     },
 
+"nb_faq_service_coaching": {
+  "type": "nb-faq",
+  "settings": {
+    "title": "Coaching FAQs",
+    "width": "normal",
+    "wrap_shell": true,
+    "single_open": true,
+    "ink": "#00535d",
+    "teal": "#0F5B59",
+    "shell_col": "#E5E8E1",
+    "answer": "#EAF4F3"
+  },
+  "blocks": {
+    "item_1": {
+      "type": "item",
+      "settings": {
+        "q": "What happens on the free 20-min call?",
+        "a": "<p>It’s a no-pressure connection call: we’ll explore where you are, what you want, and whether we’re a fit. If yes, we book a 60–90-min deep-dive to map next steps.</p>",
+        "open": true
+      }
+    },
+    "item_2": {
+      "type": "item",
+      "settings": {
+        "q": "Who is this coaching for?",
+        "a": "<p>High-achieving professionals who feel “successful but stuck,” want clarity, and are ready to make changes in how they work, relate, and lead.</p>",
+        "open": false
+      }
+    },
+    "item_3": {
+      "type": "item",
+      "settings": {
+        "q": "How quickly will I see changes?",
+        "a": "<p>Many clients notice shifts in the first few weeks. Sustainable change compounds over 8–12 weeks as we reinforce practices and align actions with your blueprint.</p>",
+        "open": false
+      }
+    },
+    "item_4": {
+      "type": "item",
+      "settings": {
+        "q": "Do we meet online or in person?",
+        "a": "<p>Mostly Zoom (effective worldwide). If you’re in London, we can mix in-person sessions by request.</p>",
+        "open": false
+      }
+    }
+  },
+  "block_order": ["item_1","item_2","item_3","item_4"]
+}
+    
     "instafeed_wrapper": {
       "type": "_blocks",
       "blocks": {
@@ -204,6 +253,7 @@
     "image_text_LY8G7J",
     "image_text_GxHMj7",
     "image_text_approach",
+    "nb_faq_service_coaching",
     "instafeed_wrapper"
   ]
 }
