@@ -59,13 +59,11 @@
     content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
   endcapture
 
- capture actions
-  render 'header-actions'
-  echo '<a href="/pages/book-a-call"
-           class="nb-cta"
-           data-cta="header-cta"
-           title="Book a free 20-min call">Book a call</a>'
-endcapture
+capture actions
+    render 'header-actions'
+    assign nbcta = '<a href="/pages/book-a-call" class="nb-cta" data-cta="header-cta" title="Book a free 20-min call">Book a call</a>'
+    echo nbcta
+  endcapture
 
   if shop.customer_accounts_enabled
     assign search_class = 'mobile:hidden'
