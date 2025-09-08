@@ -392,5 +392,26 @@ It:
   window.addEventListener('resize', applyLift, { passive: true });
 })();
 </script>
+<script>
+(function () {
+  function send(label, place){
+    if (!window.gtag) return;
+    gtag('event','book_call_click',{
+      event_category:'engagement',
+      event_label: label||'(no label)',
+      location: place||'site',
+      value: 1
+    });
+  }
+  document.addEventListener('click', function(e){
+    const el = e.target.closest('a,button'); if(!el) return;
+    const href = el.getAttribute('href')||'';
+    const isBook = el.dataset.cta === 'book-call' ||
+      /calendly\.com\/nibana\/20min/i.test(href) ||
+      /book-?call|\/pages\/book-?call/i.test(href);
+    if (isBook) send(el.textContent.trim().slice(0,60),'global');
+  });
+})();
+</script>
   </body>
 </html>
