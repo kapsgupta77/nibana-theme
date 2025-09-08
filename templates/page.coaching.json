@@ -1,162 +1,44 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
-      "blocks": {
-        "heading": {
-          "type": "text",
-          "name": "Title",
-          "settings": {
-            "text": "<h1>Transformational Life Coaching<\/h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "page-content": {
-          "type": "page-content",
-          "settings": {},
-          "blocks": {}
-        }
-      },
-      "block_order": ["heading", "page-content"],
-      "disabled": true,
+    "custom_liquid_tokens": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
+        "custom_liquid": "<style>main[data-template=\"page.coaching\"]{--color-button:var(--nb-chocolate,#C86B2A);--color-button-text:#fff;--color-button-border:var(--nb-chocolate,#C86B2A);--color-button-hover:var(--nb-choc-600,#9E4E19);--color-button-text-hover:#fff}</style>",
         "color_scheme": "",
-        "padding-block-start": 40,
-        "padding-block-end": 80
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
+
     "video_banner_RmGkBJ": {
       "type": "video-banner",
       "name": "Video Banner",
       "settings": {
-        "heading": "Transformational Life Coach in London",
+        "heading": "Transformational Life Coaching in London",
         "bg-color": "#10636c",
-        "description": "<p>Transformational Life Coaching helps you see new possibilities and create a new future. It isn’t advice—it’s a partnership to grow into your potential.<\/p><p>As you transition into your next chapter or tackle a personal challenge, a trusted coach supports, inspires and keeps you moving in alignment.<\/p>",
+        "description": "Transformational Life Coaching helps you see new possibilities and create a future you actually want. It isn’t advice—it’s partnership, reflection and practice.\n\nAs you transition chapters or tackle a personal challenge, a coach holds space, asks better questions and helps you build the inner skills to make durable change.",
         "youtube_id": "sdTy9IZR87k"
       }
     },
+
     "cta_bar_VdKiDR": {
       "type": "cta-bar",
       "name": "CTA Bar",
       "settings": {
-        "heading": "Initial 20-min Complimentary Consultation",
-        "button_label": "Book your free session now",
-        "button_link": "/pages/book-a-call#book",
+        "heading": "Initial 20-min complimentary consultation",
+        "button_label": "BOOK YOUR FREE SESSION",
+        "button_link": "/pages/book-a-call",
         "bg_color": "#ffffff",
         "text_color": "#0b656e",
-        "button_color": "#C86B2A",
-        "button_hover_color": "#9E4E19",
+        "button_color": "#0b656e",
+        "button_hover_color": "#07494f",
         "button_text_color": "#ffffff"
       }
     },
-    "image_text_BT9irB": {
-      "type": "image-text",
-      "name": "Who it's for",
-      "settings": {
-        "image": "shopify://shop_images/Screenshot-2024-09-17-at-6.17.51_PM-700x750_1.webp",
-        "heading": "Is this you?",
-        "text": "<ul><li>You’ve ticked the boxes—career, money, relationships—yet it still feels empty.<\/li><li>You’re asking “is there more to life than this?”<\/li><li>You want your joy and aliveness back.<\/li><li>You’re ready to stop performing and start living in alignment.<\/li><li>You want deeper relationships and real connection.<\/li><\/ul>",
-        "image_position": "right",
-        "button_label": "Book a free call",
-        "button_link": "/pages/book-a-call#book"
-      }
-    },
-    "nb_multicol_outcomes": {
-      "type": "nb-multicol",
-      "name": "Outcomes",
-      "settings": {
-        "overline": "What changes for you",
-        "heading": "Results my clients see",
-        "subheading": "",
-        "align": "left",
-        "columns": 3,
-        "bg": "var(--nb-soft-green, #eaf5f4)"
-      },
-      "blocks": {
-        "o1": { "type": "item", "settings": { "heading": "Deep self-trust", "text": "<p>Act from alignment, not anxiety.<\/p>" } },
-        "o2": { "type": "item", "settings": { "heading": "Better relationships", "text": "<p>Cleaner boundaries, deeper connection.<\/p>" } },
-        "o3": { "type": "item", "settings": { "heading": "Emotional mastery", "text": "<p>Feel everything. React to nothing.<\/p>" } },
-        "o4": { "type": "item", "settings": { "heading": "Purpose & clarity", "text": "<p>Decide without second-guessing.<\/p>" } },
-        "o5": { "type": "item", "settings": { "heading": "Energy & flow", "text": "<p>From burnout to sustainable drive.<\/p>" } },
-        "o6": { "type": "item", "settings": { "heading": "Joy & play", "text": "<p>Bring aliveness back into everyday life.<\/p>" } }
-      },
-      "block_order": ["o1", "o2", "o3", "o4", "o5", "o6"]
-    },
-    "nb_multicol_how": {
-      "type": "nb-multicol",
-      "name": "How it works",
-      "settings": {
-        "overline": "How we’ll work",
-        "heading": "A simple 3-step path",
-        "subheading": "",
-        "align": "left",
-        "columns": 3,
-        "bg": "white"
-      },
-      "blocks": {
-        "s1": { "type": "item", "settings": { "heading": "20-min call", "text": "<p>Fit check + your goals. If aligned, we book a deep-dive.<\/p>" } },
-        "s2": { "type": "item", "settings": { "heading": "60–90-min deep-dive", "text": "<p>Define outcomes, surface patterns, map first moves.<\/p>" } },
-        "s3": { "type": "item", "settings": { "heading": "Your plan", "text": "<p>A bespoke coaching plan with cadence and milestones.<\/p>" } }
-      },
-      "block_order": ["s1", "s2", "s3"]
-    },
-    "image_text_LkPpQU": {
-      "type": "image-text",
-      "name": "What is TLC?",
-      "settings": {
-        "image": "shopify://shop_images/Kapil-3-700x750_1.webp",
-        "heading": "What is Transformational Life Coaching?",
-        "text": "<p>Transformational coaching builds self-awareness and changes the patterns that keep you stuck. At Nibana we use an embodied approach—mind, body and soul in alignment—so change sticks.<\/p>",
-        "image_position": "left",
-        "button_label": "Book a free call",
-        "button_link": "/pages/book-a-call#book"
-      }
-    },
-    "image_text_LY8G7J": {
-      "type": "image-text",
-      "name": "Benefits 1",
-      "settings": {
-        "image": "shopify://shop_images/people-celebrating-levi-guzman-770x853_1.webp",
-        "heading": "Benefits you’ll feel",
-        "text": "<ul><li>Self-awareness & self-management<\/li><li>Better relationships—self, partners & colleagues<\/li><li>Higher emotional intelligence & presence<\/li><\/ul>",
-        "image_position": "right",
-        "button_label": "Book a free call",
-        "button_link": "/pages/book-a-call#book"
-      }
-    },
-    "image_text_GxHMj7": {
-      "type": "image-text",
-      "name": "More shifts",
-      "settings": {
-        "image": "shopify://shop_images/woman-dancing-on-the-beach-by-kelli-mcclintock-700x750_1.webp",
-        "heading": "More shifts",
-        "text": "<ul><li>Lead with desire, not fear<\/li><li>Thrive in conflict with clean communication<\/li><li>Create 360° impact across life, work & intimacy<\/li><\/ul>",
-        "image_position": "left",
-        "button_label": "Book a free call",
-        "button_link": "/pages/book-a-call#book"
-      }
-    },
-    "1754583875c121c3ae": {
+
+    "judge_wrapper": {
       "type": "_blocks",
       "blocks": {
         "judge_me_reviews_featured_carousel_LnaExU": {
@@ -193,56 +75,104 @@
         "padding-block-end": 0
       }
     },
-    "nb_faq_service": {
-      "type": "nb-faq",
-      "name": "FAQ (Service)",
+
+    "image_text_LkPpQU": {
+      "type": "image-text",
+      "name": "Image With Text + CTA",
       "settings": {
-        "title": "Frequently asked questions",
-        "width": "normal",
-        "wrap_shell": true,
-        "single_open": true,
-        "ink": "#00535d",
-        "teal": "#0f5b59",
-        "shell_col": "#e5e8e1",
-        "answer": "#eaf4f3"
-      },
-      "blocks": {
-        "f1": {
-          "type": "item",
-          "settings": {
-            "q": "What happens in our first call?",
-            "a": "<p>A relaxed connection + fit check—where you are now, what aligned success looks like, and whether we’re a fit. If yes for both, we’ll book a 60–90 min deep-dive.<\/p>",
-            "open": true
-          }
-        },
-        "f2": {
-          "type": "item",
-          "settings": {
-            "q": "How is the deep-dive different?",
-            "a": "<p>We define clear outcomes, surface patterns and map first practical moves. You leave with clarity and a direction.<\/p>",
-            "open": false
-          }
-        },
-        "f3": {
-          "type": "item",
-          "settings": {
-            "q": "Do I have to decide on the call?",
-            "a": "<p>You’ll make a clean decision after the deep-dive. No pressure—Yes or No are both great answers.<\/p>",
-            "open": false
-          }
-        },
-        "f4": {
-          "type": "item",
-          "settings": {
-            "q": "How do we meet?",
-            "a": "<p>Usually on Zoom. Calendly shows your local timezone automatically. If you need a different time or format, mention it in the notes.<\/p>",
-            "open": false
-          }
-        }
-      },
-      "block_order": ["f1", "f2", "f3", "f4"]
+        "image": "shopify://shop_images/Kapil-3-700x750_1.webp",
+        "heading": "What is Transformational Life Coaching?",
+        "text": "<p><strong>Transformational life coaching</strong> focuses on self-awareness and behavior—so you can make changes that last.</p><p>We use an embodied approach (mind, body, soul) to help you realign with your core blueprint and design a life that actually fits.</p>",
+        "image_position": "left",
+        "button_label": "Book a free 20-min call",
+        "button_link": "/pages/book-a-call"
+      }
     },
-    "17545838089b8ac598": {
+
+    "image_text_BT9irB": {
+      "type": "image-text",
+      "name": "Image With Text + CTA",
+      "settings": {
+        "image": "shopify://shop_images/Screenshot-2024-09-17-at-6.17.51_PM-700x750_1.webp",
+        "heading": "Who this is for",
+        "text": "<p>If some of these resonate, you’re in the right place:</p><ul><li>Successful on paper, yet it feels oddly empty.</li><li>You’ve proven yourself—now you want meaning, not just performance.</li><li>You feel stuck in patterns that used to work… until they didn’t.</li><li>You miss the playful, alive version of you.</li><li>You’re ready to look honestly and make real changes.</li></ul>",
+        "image_position": "right",
+        "button_label": "Book a free 20-min call",
+        "button_link": "/pages/book-a-call"
+      }
+    },
+
+    "image_text_LY8G7J": {
+      "type": "image-text",
+      "name": "Image With Text + CTA",
+      "settings": {
+        "image": "shopify://shop_images/people-celebrating-levi-guzman-770x853_1.webp",
+        "heading": "Benefits you can expect",
+        "text": "<h5><strong>Self-awareness & self-management</strong></h5><p>Understand your patterns and regulate emotions so you lead yourself (and others) better.</p><h5><strong>Better relationships</strong></h5><p>Transform how you relate—to self, partners, family and colleagues.</p><h5><strong>Emotional intelligence</strong></h5><p>See clearly, listen deeply, and respond instead of react.</p>",
+        "image_position": "left",
+        "button_label": "Book a free 20-min call",
+        "button_link": "/pages/book-a-call"
+      }
+    },
+
+    "image_text_GxHMj7": {
+      "type": "image-text",
+      "name": "Image With Text + CTA",
+      "settings": {
+        "image": "shopify://shop_images/woman-dancing-on-the-beach-by-kelli-mcclintock-700x750_1.webp",
+        "heading": "Deeper outcomes",
+        "text": "<h4><strong>Lead with desire</strong></h4><p>Use desire as a compass, not fear.</p><h4><strong>Thrive in conflict</strong></h4><p>Have intense conversations with ease and create win-wins.</p><h4><strong>Whole-life impact</strong></h4><p>As one area shifts, others follow—personal, relational, and professional.</p>",
+        "image_position": "right",
+        "button_label": "Book a free 20-min call",
+        "button_link": "/pages/book-a-call"
+      }
+    },
+
+    "image_text_gzx6FP": {
+      "type": "image-text",
+      "name": "Image With Text + CTA",
+      "settings": {
+        "image": "shopify://shop_images/404-bg-700x750_3.webp",
+        "heading": "Blueprint, mastery, and joy",
+        "text": "<p>As you do the work of self-excavation, you stop living to please others and design life from who you are.</p><h4><strong>Fulfilment & joy</strong></h4><p>Rebuild a foundation of play, mystery, and aliveness.</p><h4><strong>Self-mastery & leadership</strong></h4><p>Life happens <em>for</em> you, not to you. Build an internal sense of safety so you can expand into the unknown.</p>",
+        "image_position": "left",
+        "button_label": "Book a free 20-min call",
+        "button_link": "/pages/book-a-call"
+      }
+    },
+
+    "ai_gen_block_126ae38_xWh9mL": {
+      "type": "ai_gen_block_126ae38",
+      "name": "Longform: Our Approach",
+      "settings": {
+        "heading": "Our Approach",
+        "text": "<p>At Nibana, our holistic approach connects you back to your core blueprint. We build self-awareness, deepen relationship to life and people around you, and help you shift from finite games to an infinite one.</p><h4><strong>Identity work</strong></h4><p>Understand who you are and how you got here—so your choices start matching your truth.</p><h4><strong>Boundaries</strong></h4><p>See where you say Yes when you mean No (and the reverse). Create clean physical, emotional and energetic boundaries.</p><h4><strong>Victim → Observer</strong></h4><p>Shift from “life is happening to me” to “life is happening for me.” It’s a powerful lens change.</p><h4><strong>Inner child</strong></h4><p>Spot the early beliefs driving today’s decisions and rewrite them—gently and for good.</p><h4><strong>Shadow work</strong></h4><p>Integrate the parts you’ve pushed away and unlock their power.</p><h4><strong>Archetypes</strong></h4><p>Get conscious of the masks you wear—so you can choose them, not be run by them.</p><h4><strong>Core beliefs</strong></h4><ul><li>Self-worth and value (inherent vs. earned)</li><li>Enoughness and belonging</li><li>Lovability without performance</li></ul><h4><strong>Inner skills</strong></h4><p>Attention, mindfulness, energy accounting, masculine–feminine dynamics, embodiment, desire cycle, responsiveness over reactivity—and more.</p><h4><strong>Practice</strong></h4><p>Peak experiences are great; disciplined practice makes change stick. We help you build the rituals that make transformation durable.</p><h4><strong>Play</strong></h4><p>Live life as an infinite game—choose play and mystery over winning and control.</p><h4><strong>Unlock your potential</strong></h4><p>Growth lives beyond your comfort zone. Build the inner safety to go there—and enjoy it.</p>",
+        "button_text": "",
+        "button_link": "",
+        "content_width": 1200,
+        "text_alignment": "center",
+        "mobile_text_alignment": "center",
+        "content_spacing": 30,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "background_color": "#f8f8f8",
+        "heading_color": "#000000",
+        "text_color": "#666666",
+        "heading_size": 48,
+        "text_size": 16,
+        "button_background": "#000000",
+        "button_hover_background": "#333333",
+        "button_text_color": "#ffffff",
+        "button_hover_text_color": "#ffffff",
+        "button_text_size": 16,
+        "button_padding_vertical": 14,
+        "button_padding_horizontal": 32,
+        "button_border_radius": 8
+      },
+      "blocks": {}
+    },
+
+    "instafeed_wrapper": {
       "type": "_blocks",
       "blocks": {
         "instafeed_app_block_XKwafT": {
@@ -294,18 +224,18 @@
       }
     }
   },
+
   "order": [
-    "main",
+    "custom_liquid_tokens",
     "video_banner_RmGkBJ",
     "cta_bar_VdKiDR",
-    "image_text_BT9irB",
-    "nb_multicol_outcomes",
-    "nb_multicol_how",
+    "judge_wrapper",
     "image_text_LkPpQU",
+    "image_text_BT9irB",
     "image_text_LY8G7J",
     "image_text_GxHMj7",
-    "1754583875c121c3ae",
-    "nb_faq_service",
-    "17545838089b8ac598"
+    "image_text_gzx6FP",
+    "ai_gen_block_126ae38_xWh9mL",
+    "instafeed_wrapper"
   ]
 }
