@@ -45,7 +45,6 @@
         "padding-block-end": 80
       }
     },
-
     "video_banner_RmGkBJ": {
       "type": "video-banner",
       "name": "Video Banner",
@@ -56,7 +55,6 @@
         "youtube_id": "sdTy9IZR87k"
       }
     },
-
     "cta_bar_VdKiDR": {
       "type": "cta-bar",
       "name": "CTA Bar",
@@ -71,7 +69,6 @@
         "button_text_color": "#ffffff"
       }
     },
-
     "image_text_BT9irB": {
       "type": "image-text",
       "name": "Who it's for",
@@ -84,7 +81,6 @@
         "button_link": "/pages/book-a-call#book"
       }
     },
-
     "nb_multicol_outcomes": {
       "type": "nb-multicol",
       "name": "Outcomes",
@@ -97,16 +93,15 @@
         "bg": "var(--nb-soft-green, #eaf5f4)"
       },
       "blocks": {
-        "o1": { "type": "item", "settings": { "heading": "Deep self-trust", "text": "Act from alignment, not anxiety." } },
-        "o2": { "type": "item", "settings": { "heading": "Better relationships", "text": "Cleaner boundaries, deeper connection." } },
-        "o3": { "type": "item", "settings": { "heading": "Emotional mastery", "text": "Feel everything. React to nothing." } },
-        "o4": { "type": "item", "settings": { "heading": "Purpose & clarity", "text": "Decide without second-guessing." } },
-        "o5": { "type": "item", "settings": { "heading": "Energy & flow", "text": "From burnout to sustainable drive." } },
-        "o6": { "type": "item", "settings": { "heading": "Joy & play", "text": "Bring aliveness back into everyday life." } }
+        "o1": { "type": "item", "settings": { "heading": "Deep self-trust", "text": "<p>Act from alignment, not anxiety.<\/p>" } },
+        "o2": { "type": "item", "settings": { "heading": "Better relationships", "text": "<p>Cleaner boundaries, deeper connection.<\/p>" } },
+        "o3": { "type": "item", "settings": { "heading": "Emotional mastery", "text": "<p>Feel everything. React to nothing.<\/p>" } },
+        "o4": { "type": "item", "settings": { "heading": "Purpose & clarity", "text": "<p>Decide without second-guessing.<\/p>" } },
+        "o5": { "type": "item", "settings": { "heading": "Energy & flow", "text": "<p>From burnout to sustainable drive.<\/p>" } },
+        "o6": { "type": "item", "settings": { "heading": "Joy & play", "text": "<p>Bring aliveness back into everyday life.<\/p>" } }
       },
       "block_order": ["o1", "o2", "o3", "o4", "o5", "o6"]
     },
-
     "nb_multicol_how": {
       "type": "nb-multicol",
       "name": "How it works",
@@ -119,13 +114,12 @@
         "bg": "white"
       },
       "blocks": {
-        "s1": { "type": "item", "settings": { "heading": "20-min call", "text": "Fit check + your goals. If aligned, we book a deep-dive." } },
-        "s2": { "type": "item", "settings": { "heading": "60–90-min deep-dive", "text": "Define outcomes, surface patterns, map first moves." } },
-        "s3": { "type": "item", "settings": { "heading": "Your plan", "text": "A bespoke coaching plan with cadence and milestones." } }
+        "s1": { "type": "item", "settings": { "heading": "20-min call", "text": "<p>Fit check + your goals. If aligned, we book a deep-dive.<\/p>" } },
+        "s2": { "type": "item", "settings": { "heading": "60–90-min deep-dive", "text": "<p>Define outcomes, surface patterns, map first moves.<\/p>" } },
+        "s3": { "type": "item", "settings": { "heading": "Your plan", "text": "<p>A bespoke coaching plan with cadence and milestones.<\/p>" } }
       },
       "block_order": ["s1", "s2", "s3"]
     },
-
     "image_text_LkPpQU": {
       "type": "image-text",
       "name": "What is TLC?",
@@ -138,7 +132,6 @@
         "button_link": "/pages/book-a-call#book"
       }
     },
-
     "image_text_LY8G7J": {
       "type": "image-text",
       "name": "Benefits 1",
@@ -151,10 +144,9 @@
         "button_link": "/pages/book-a-call#book"
       }
     },
-
     "image_text_GxHMj7": {
       "type": "image-text",
-      "name": "Benefits 2",
+      "name": "More shifts",
       "settings": {
         "image": "shopify://shop_images/woman-dancing-on-the-beach-by-kelli-mcclintock-700x750_1.webp",
         "heading": "More shifts",
@@ -164,7 +156,6 @@
         "button_link": "/pages/book-a-call#book"
       }
     },
-
     "1754583875c121c3ae": {
       "type": "_blocks",
       "blocks": {
@@ -202,7 +193,6 @@
         "padding-block-end": 0
       }
     },
-
     "nb_faq_service": {
       "type": "nb-faq",
       "name": "FAQ (Service)",
@@ -252,7 +242,6 @@
       },
       "block_order": ["f1", "f2", "f3", "f4"]
     },
-
     "17545838089b8ac598": {
       "type": "_blocks",
       "blocks": {
@@ -305,23 +294,18 @@
       }
     }
   },
-
   "order": [
     "main",
     "video_banner_RmGkBJ",
     "cta_bar_VdKiDR",
-
     "image_text_BT9irB",
     "nb_multicol_outcomes",
     "nb_multicol_how",
-
     "image_text_LkPpQU",
     "image_text_LY8G7J",
     "image_text_GxHMj7",
-
     "1754583875c121c3ae",
     "nb_faq_service",
-
     "17545838089b8ac598"
   ]
 }
