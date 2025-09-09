@@ -209,20 +209,16 @@
 
 {%- comment -%} ---------- FAQ (robust split) ---------- {%- endcomment -%}
 {%- liquid
-  # Raw fields
   assign q_raw = service.faqs_q | to_string
   assign a_raw = service.faqs_a | to_string
 
-  # Convert real newlines to <br /> so we can split reliably
   assign q_html = q_raw | newline_to_br
   assign a_html = a_raw | newline_to_br
 
-  # QUESTIONS: split on each single line
   assign q_pipe = q_html | replace: '<br />', '|||'
   assign q_pipe = q_pipe  | replace: '<br>', '|||'
   assign qs = q_pipe | split: '|||'
 
-  # ANSWERS: split on a blank line (two breaks in a row)
   assign a_pipe = a_html
   assign a_pipe = a_pipe | replace: '<br />\n<br />', '§§'
   assign a_pipe = a_pipe | replace: '<br /><br />',   '§§'
@@ -230,10 +226,10 @@
   assign a_pipe = a_pipe | replace: '<br><br>',       '§§'
   assign as = a_pipe | split: '§§'
 
-  # count non-empty questions
   assign q_count = 0
   for q in qs
-    if q | strip_html | strip != ''
+    assign q_clean = q | strip_html | strip
+    if q_clean != ''
       assign q_count = q_count | plus: 1
     endif
   endfor
