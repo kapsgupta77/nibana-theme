@@ -1,26 +1,19 @@
-{% comment %}
+{%- comment -%}
   Coaching Service (metaobject-driven)
-  Page metafield: pages → metafield "coaching_service" (reference → CoachingService)
-{% endcomment %}
+  Page metafield: either custom.coaching_service OR coachingservice.coaching_service
+{%- endcomment -%}
 
-{% liquid
-  assign ref = page.metafields.coachingservice.coaching_service
-%}
+{%- comment -%} Resolve the CoachingService metaobject reference from either namespace {%- endcomment -%}
+{%- assign cs_custom    = page.metafields.custom.coaching_service -%}
+{%- assign cs_canonical = page.metafields.coachingservice.coaching_service -%}
+{%- assign ref          = cs_custom | default: cs_canonical -%}
+{%- assign service      = ref.value -%}
 
-{% if ref == blank or ref.value == blank %}
-  <section class="page-width" style="padding:40px 0;">
+{%- if service == blank -%}
+  <section class="page--width" style="padding:40px 0;">
     <p>No coaching service selected for this page.</p>
   </section>
-{% else %}
-
-  {% liquid
-    assign service   = ref.value
-    assign btn_label = service.cta_label | default: 'Book a free 20-min call'
-    assign btn_href  = service.cta_link
-    if btn_href == blank
-      assign btn_href = '/pages/book-a-call'
-    endif
-  %}
+{%- endif -%}
 
   <style>
     /* page-scoped styles */
