@@ -208,25 +208,44 @@
   {%- endif -%}
 
   {%- comment -%} ---------- FAQ ---------- {%- endcomment -%}
-  {%- assign faqs_q = service.faqs_q -%}
-  {%- assign faqs_a = service.faqs_a -%}
-  {%- if faqs_q -%}{% assign faqs_q = faqs_q | replace: '\r\n', normSep | replace: '\r', normSep %}{% if faqs_q contains newline %}{% assign faqs_q = faqs_q | split: newline %}{% else %}{% assign faqs_q = faqs_q | split: '|' %}{% endif %}{% endif -%}
-  {%- if faqs_a -%}{% assign faqs_a = faqs_a | replace: '\r\n', normSep | replace: '\r', normSep %}{% if faqs_a contains newline %}{% assign faqs_a = faqs_a | split: newline %}{% else %}{% assign faqs_a = faqs_a | split: '|' %}{% endif %}{% endif -%}
-  {%- if faqs_q and faqs_a and faqs_q.size > 0 -%}
-    <div class="nb-tray nb-faq">
-      <h2 class="nb-h2">Frequently asked questions</h2>
-      {%- for q in faqs_q -%}
-        {%- assign qq = q | strip -%}
-        {%- assign a = faqs_a[forloop.index0] | default: '' | strip -%}
-        {%- if qq != '' -%}
-          <details{% if forloop.first %} open{% endif %}>
-            <summary>{{ qq }}</summary>
-            <div class="nb-a">{{ a | newline_to_br }}</div>
-          </details>
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-  {%- endif -%}
+{%- liquid
+  assign q_raw = service.faqs_q | to_string
+  assign a_raw = service.faqs_a | to_string
+
+  # normalise line breaks (handles mac/win)
+  assign q_norm = q_raw | replace: '\r\n', '\n' | replace: '\r', '\n'
+  assign a_norm = a_raw | replace: '\r\n', '\n' | replace: '\r', '\n'
+
+  # split into arrays
+  assign qs = q_norm | split: '\n'
+  assign as = a_norm | split: '\n'
+
+  # count non-empty questions
+  assign q_count = 0
+  for q in qs
+    assign qq = q | strip
+    if qq != '' 
+      assign q_count = q_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if q_count > 0 -%}
+  <div class="nb-tray nb-faq" style="margin:22px 0">
+    <h2 class="nb-h2">Frequently asked questions</h2>
+
+    {%- for q in qs -%}
+      {%- assign qq = q | strip -%}
+      {%- if qq != '' -%}
+        {%- assign a = as[forloop.index0] | default: '' | strip -%}
+        <details{% if forloop.first %} open{% endif %}>
+          <summary>{{ qq }}</summary>
+          <div class="nb-a">{{ a | newline_to_br }}</div>
+        </details>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
 
   {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
   <div style="text-align:center;padding:10px 0 24px">
