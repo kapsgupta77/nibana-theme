@@ -207,25 +207,29 @@
     </div>
   {%- endif -%}
 
-{%- comment -%} ---------- FAQ (robust split) ---------- {%- endcomment -%}
+{%- comment -%} ---------- FAQ (global pill look + robust splitting) ---------- {%- endcomment -%}
 {%- liquid
   assign q_raw = service.faqs_q | to_string
   assign a_raw = service.faqs_a | to_string
 
+  # QUESTIONS → split by single newlines (ignore empty)
   assign q_html = q_raw | newline_to_br
-  assign a_html = a_raw | newline_to_br
-
   assign q_pipe = q_html | replace: '<br />', '|||'
   assign q_pipe = q_pipe  | replace: '<br>', '|||'
   assign qs = q_pipe | split: '|||'
 
+  # ANSWERS → split by BLANK line (handle many variants)
+  assign a_html = a_raw | newline_to_br
   assign a_pipe = a_html
-  assign a_pipe = a_pipe | replace: '<br />\n<br />', '§§'
-  assign a_pipe = a_pipe | replace: '<br /><br />',   '§§'
-  assign a_pipe = a_pipe | replace: '<br>\n<br>',     '§§'
-  assign a_pipe = a_pipe | replace: '<br><br>',       '§§'
+  assign a_pipe = a_pipe | replace: '<br />\r\n<br />', '§§'
+  assign a_pipe = a_pipe | replace: '<br />\n<br />',  '§§'
+  assign a_pipe = a_pipe | replace: '<br /><br />',    '§§'
+  assign a_pipe = a_pipe | replace: '<br>\r\n<br>',    '§§'
+  assign a_pipe = a_pipe | replace: '<br>\n<br>',      '§§'
+  assign a_pipe = a_pipe | replace: '<br><br>',        '§§'
   assign as = a_pipe | split: '§§'
 
+  # count non-blank questions
   assign q_count = 0
   for q in qs
     assign q_clean = q | strip_html | strip
@@ -236,22 +240,64 @@
 -%}
 
 {%- if q_count > 0 -%}
-  <div class="nb-tray nb-faq" style="margin:22px 0">
-    <h2 class="nb-h2">Frequently asked questions</h2>
+  <style>
+    /* --- Global FAQ pill look (scoped) --- */
+    .nb-faq--wrap{ margin:22px 0; }
+    .nb-faq__title{ color:#223238; text-align:center; font-weight:800; font-size:clamp(28px,3.6vw,40px); margin:0 0 16px; }
+    .nb-faq__list{ display:grid; gap:18px; }
+    .nb-faq__item{ background:transparent; border:0; box-shadow:none; overflow:visible; }
+    .nb-faq__q{
+      position:relative; background:#0F5B59; color:#fff; border:0; border-radius:9999px;
+      padding:16px 64px 16px 22px; font-weight:720; box-shadow:0 4px 14px rgba(0,0,0,.05);
+      display:grid; grid-template-columns:1fr auto; align-items:center; list-style:none; cursor:pointer;
+    }
+    .nb-faq__q::-webkit-details-marker{ display:none; }
+    .nb-faq__q:hover{ background:#0e5452; }
+    .nb-faq__q::after{
+      content:"+"; position:absolute; right:10px; top:50%; transform:translateY(-50%);
+      width:38px; height:38px; border-radius:9999px; display:grid; place-items:center;
+      color:#fff; background:rgba(255,255,255,.14); font-size:22px; font-weight:800; line-height:1;
+    }
+    details[open] .nb-faq__q::after{ content:"–"; }
+    .nb-faq__a{
+      background:#EAF4F3; border:1px solid rgba(0,0,0,.06); border-radius:14px;
+      margin:10px 14px 2px; padding:16px 20px; color:#2d4046; line-height:1.65;
+      box-shadow:0 1px 0 rgba(255,255,255,.4) inset;
+    }
+  </style>
 
-    {%- assign idx = 0 -%}
-    {%- for q in qs -%}
-      {%- assign qq = q | strip_html | strip -%}
-      {%- if qq != '' -%}
-        {%- assign a_item = as[idx] | default: '' | strip -%}
-        <details{% if forloop.first %} open{% endif %}>
-          <summary>{{ qq }}</summary>
-          <div class="nb-a">{{ a_item }}</div>
-        </details>
-        {%- assign idx = idx | plus: 1 -%}
-      {%- endif -%}
-    {%- endfor -%}
+  <div class="nb-tray nb-faq--wrap">
+    <h2 class="nb-faq__title">Frequently asked questions</h2>
+
+    <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
+      {%- assign idx = 0 -%}
+      {%- for q in qs -%}
+        {%- assign qq = q | strip_html | strip -%}
+        {%- if qq != '' -%}
+          {%- assign a_block = as[idx] | default: '' -%}
+          {%- assign a_clean = a_block | strip -%}
+          <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+            <summary class="nb-faq__q">{{ qq }}</summary>
+            <div class="nb-faq__a rte">{{ a_clean }}</div>
+          </details>
+          {%- assign idx = idx | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
   </div>
+
+  <script>
+    /* single-open behavior (scoped to this section) */
+    (function(){
+      var root = document.getElementById('nb-faq-{{ section.id }}-svc');
+      if(!root) return;
+      root.addEventListener('toggle', function(ev){
+        var d = ev.target;
+        if(d.tagName !== 'DETAILS' || !d.open) return;
+        root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+      }, true);
+    })();
+  </script>
 {%- endif -%}
 
   {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
