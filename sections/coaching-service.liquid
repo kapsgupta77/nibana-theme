@@ -30,10 +30,13 @@
   .nb-grid{display:grid;gap:22px}
 
   /* Headings use theme heading family; body uses theme body family */
-  .nb-h1,.nb-h2,.nb-h3{font-family:var(--font-heading-family,inherit);color:var(--nb-ink)}
-  .nb-h1{font-size:clamp(30px,4.4vw,48px);line-height:1.1;margin:0 0 10px;font-weight:800}
-  .nb-h2{font-size:clamp(22px,2.8vw,28px);font-weight:800;margin:0 0 6px}
-  .nb-h3{font-size:clamp(18px,2.1vw,22px);font-weight:750;margin:0 0 10px}
+.nb-h1,.nb-h2,.nb-h3{ font-family: var(--font-heading-family,inherit); color: var(--nb-ink); }
+.nb-h1{ font-size:clamp(30px,4.4vw,48px); line-height:1.1; margin:0 0 10px; font-weight:800; }
+.nb-h2{ font-size:clamp(22px,2.8vw,28px); font-weight:800; margin:0 0 6px; }
+.nb-h3{ font-size:clamp(18px,2.1vw,22px); font-weight:750; margin:0 0 10px; }
+
+/* tone tweak for brand */
+.nb-h2,.nb-h3{ color: var(--nb-deep); }  /* leaves H1 on --nb-ink, H2/H3 on slightly softer deep */
 
   /* Body copy */
   .nb-copy,.nb-tray,.nb-hero p,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
@@ -258,50 +261,69 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%} ---------- MYTHS / TRUTHS (optional) ---------- {%- endcomment -%}
-  {%- liquid
-    assign myths_raw  = service.myths | append: ''
-    assign myths_html = myths_raw | newline_to_br
-    assign myths_norm = myths_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
-    assign myths_pipe = myths_norm | replace: br_tag, '|||'
-    assign myths = myths_pipe | split: '|||'
-    assign myths_count = 0
-    for m in myths
-      assign t = m | strip
-      if t != '' 
-        assign myths_count = myths_count | plus: 1
-      endif
-    endfor
+  {%- comment -%} ---------- MYTHS / TRUTHS (two-card layout) ---------- {%- endcomment -%}
+{%- liquid
+  assign br_tag = '<br />'
 
-    assign truths_raw  = service.truths | append: ''
-    assign truths_html = truths_raw | newline_to_br
-    assign truths_norm = truths_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
-    assign truths_pipe = truths_norm | replace: br_tag, '|||'
-    assign truths = truths_pipe | split: '|||'
-    assign truths_count = 0
-    for t in truths
-      assign x = t | strip
-      if x != '' 
-        assign truths_count = truths_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if myths_count > 0 or truths_count > 0 -%}
-    <div class="nb-tray">
+  assign myths_raw  = service.myths  | append: ''
+  assign truths_raw = service.truths | append: ''
+
+  assign myths_html  = myths_raw  | newline_to_br
+  assign truths_html = truths_raw | newline_to_br
+
+  assign myths_norm  = myths_html  | replace: '<br/>', br_tag | replace: '<br>', br_tag
+  assign truths_norm = truths_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+
+  assign myths_pipe  = myths_norm  | replace: br_tag, '|||'
+  assign truths_pipe = truths_norm | replace: br_tag, '|||'
+
+  assign myths  = myths_pipe  | split: '|||'
+  assign truths = truths_pipe | split: '|||'
+
+  assign myths_count  = 0
+  for m in myths
+    assign t = m | strip
+    if t != '' 
+      assign myths_count = myths_count | plus: 1
+    endif
+  endfor
+
+  assign truths_count = 0
+  for t in truths
+    assign x = t | strip
+    if x != '' 
+      assign truths_count = truths_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if myths_count > 0 or truths_count > 0 -%}
+  <div class="nb-tray">
+    <div class="nb-pair">
       {%- if myths_count > 0 -%}
-        <h3 class="nb-h3">Common myths</h3>
-        <ul class="nb-list">
-          {%- for m in myths -%}{%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}{%- endfor -%}
-        </ul>
+        <div class="nb-panel">
+          <h3 class="nb-panel__title"><span class="dot"></span>Common myths</h3>
+          <ul class="nb-list">
+            {%- for m in myths -%}
+              {%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}
+            {%- endfor -%}
+          </ul>
+        </div>
       {%- endif -%}
+
       {%- if truths_count > 0 -%}
-        <h3 class="nb-h3" style="margin-top:12px">What’s actually true</h3>
-        <ul class="nb-list">
-          {%- for t in truths -%}{%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}{%- endfor -%}
-        </ul>
+        <div class="nb-panel">
+          <h3 class="nb-panel__title"><span class="dot"></span>What’s actually true</h3>
+          <ul class="nb-list">
+            {%- for t in truths -%}
+              {%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}
+            {%- endfor -%}
+          </ul>
+        </div>
       {%- endif -%}
     </div>
-  {%- endif -%}
+  </div>
+{%- endif -%}
 
   {%- comment -%} ---------- FAQ (global pill look + robust splitting; keeps single-open) ---------- {%- endcomment -%}
   {%- liquid
