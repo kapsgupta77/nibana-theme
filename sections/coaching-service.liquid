@@ -1,9 +1,9 @@
 {% comment %}
-  Coaching Service template section (v2)
-  - Reads the metaobject attached via page metafield: custom.coaching_service
-  - Single hero CTA, brand-styled
+  Coaching Service template section (v2.1 — compile-safe)
+  - Reads metaobject via page.metafields.custom.coaching_service
+  - One hero CTA, brand-styled
   - Graceful hero placeholder when no media
-  - Renders lists and longform if present
+  - Renders lists, process, method, myths/truths, FAQ if present
 {% endcomment %}
 
 {%- assign svc_ref = page.metafields.custom.coaching_service -%}
@@ -12,6 +12,7 @@
 
 <section id="coaching-service" class="nb-coach">
   {% if service %}
+
     {%- comment -%} ---------- Hero ---------- {%- endcomment -%}
     {%- assign cta_url = service.cta_link | default: '' -%}
     {%- if cta_url == blank -%}{% assign cta_url = '/pages/book-a-call' %}{%- endif -%}
@@ -60,8 +61,15 @@
     </header>
 
     {%- comment -%} ---------- Outcomes / Is this for you ---------- {%- endcomment -%}
-    {% assign has_outcomes = service.outcomes and service.outcomes.size > 0 %}
-    {% assign has_for_you = service.is_for_you and service.is_for_you.size > 0 %}
+    {% assign has_outcomes = false %}
+    {% if service.outcomes and service.outcomes.size > 0 %}
+      {% assign has_outcomes = true %}
+    {% endif %}
+    {% assign has_for_you = false %}
+    {% if service.is_for_you and service.is_for_you.size > 0 %}
+      {% assign has_for_you = true %}
+    {% endif %}
+
     {% if has_outcomes or has_for_you %}
       <section class="nb-panels">
         {% if has_outcomes %}
@@ -88,7 +96,10 @@
     {% endif %}
 
     {%- comment -%} ---------- Process steps ---------- {%- endcomment -%}
-    {% assign has_steps = service.process_bodies and service.process_bodies.size > 0 %}
+    {% assign has_steps = false %}
+    {% if service.process_bodies and service.process_bodies.size > 0 %}
+      {% assign has_steps = true %}
+    {% endif %}
     {% if has_steps %}
       <section class="nb-proc">
         <h2 class="nb-proc__title">{{ service.process_titles | default: 'How it works' }}</h2>
@@ -115,8 +126,15 @@
     {% endif %}
 
     {%- comment -%} ---------- Myths / Truths ---------- {%- endcomment -%}
-    {% assign has_myths = service.myths and service.myths.size > 0 %}
-    {% assign has_truths = service.truths and service.truths.size > 0 %}
+    {% assign has_myths = false %}
+    {% if service.myths and service.myths.size > 0 %}
+      {% assign has_myths = true %}
+    {% endif %}
+    {% assign has_truths = false %}
+    {% if service.truths and service.truths.size > 0 %}
+      {% assign has_truths = true %}
+    {% endif %}
+
     {% if has_myths or has_truths %}
       <section class="nb-myths">
         {% if has_myths %}
@@ -142,8 +160,11 @@
       </section>
     {% endif %}
 
-    {%- comment -%} ---------- FAQ (from Q/A lists) ---------- {%- endcomment -%}
-    {% assign has_faq = service.faqs_q and service.faqs_a and service.faqs_q.size > 0 and service.faqs_a.size > 0 %}
+    {%- comment -%} ---------- FAQ (Q/A lists) ---------- {%- endcomment -%}
+    {% assign has_faq = false %}
+    {% if service.faqs_q and service.faqs_a and service.faqs_q.size > 0 and service.faqs_a.size > 0 %}
+      {% assign has_faq = true %}
+    {% endif %}
     {% if has_faq %}
       <section class="nb-faq">
         <h2 class="nb-faq__title">Frequently asked questions</h2>
