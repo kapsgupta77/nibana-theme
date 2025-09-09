@@ -145,7 +145,7 @@
     {%- endif -%}
 
     {%- comment -%} ---------- MYTHS / TRUTHS (optional) ---------- {%- endcomment -%}
-    {%- if (service.myths and service.myths != blank) or (service.truths and service.truths != blank) -%}
+    {%- if service.myths and service.myths != blank or service.truths and service.truths != blank -%}
       <div class="nb-tray" style="margin:22px 0">
         {%- if service.myths and service.myths.size > 0 -%}
           <h3 class="nb-h3">Common myths</h3>
