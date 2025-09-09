@@ -209,10 +209,11 @@
 
 {%- comment -%} ---------- FAQ (global pill look + robust splitting) ---------- {%- endcomment -%}
 {%- liquid
-  assign q_raw = service.faqs_q | to_string
-  assign a_raw = service.faqs_a | to_string
+  # Raw strings (coerce to string safely)
+  assign q_raw = service.faqs_q | append: ''
+  assign a_raw = service.faqs_a | append: ''
 
-  # QUESTIONS → split by single newlines (ignore empty)
+  # QUESTIONS — normalize BRs → split on single line breaks
   assign q_html = q_raw | newline_to_br
   assign q_norm = q_html
   assign q_norm = q_norm | replace: '<br/>', '<br />'
@@ -222,7 +223,7 @@
   assign q_pipe = q_norm | replace: '<br />', '|||'
   assign qs     = q_pipe | split: '|||'
 
-  # ANSWERS → robust blank-line split + optional '---' delimiter
+  # ANSWERS — normalize BRs, then split on double BRs or explicit '---'
   assign a_html = a_raw | newline_to_br
   assign a_norm = a_html
   assign a_norm = a_norm | replace: '<br/>', '<br />'
@@ -231,32 +232,57 @@
   assign a_norm = a_norm | replace: '<br />\n',   '<br />'
   assign a_norm = a_norm | replace: '&nbsp;', ' '
 
-  # convert multiple patterns of double <br /> (with/without spaces) to a delimiter
-  assign a_norm = a_norm | replace: '<br /><br />', '§§'
-  assign a_norm = a_norm | replace: '<br /> <br />', '§§'
-  assign a_norm = a_norm | replace: '<br />  <br />', '§§'
-  assign a_norm = a_norm | replace: '<br />   <br />', '§§'
-  # handle (rare) triple breaks just in case
+  # treat blank lines (double BRs) and '---' as delimiters
   assign a_norm = a_norm | replace: '<br /><br /><br />', '§§'
-
-  # also allow an explicit '---' line as a separator
-  assign a_norm = a_norm | replace: '---', '§§'
-
+  assign a_norm = a_norm | replace: '<br /><br />',       '§§'
+  assign a_norm = a_norm | replace: '<br /> <br />',      '§§'
+  assign a_norm = a_norm | replace: '<br />  <br />',     '§§'
+  assign a_norm = a_norm | replace: '<br />   <br />',    '§§'
+  assign a_norm = a_norm | replace: '---',                '§§'
   assign as = a_norm | split: '§§'
 
   # count non-blank questions
   assign q_count = 0
   for q in qs
-    assign q_clean = q | strip_html | strip
-    if q_clean != ''
+    assign qq = q | strip_html | strip
+    if qq != ''
       assign q_count = q_count | plus: 1
     endif
   endfor
 -%}
 
 {%- if q_count > 0 -%}
+  <div class="nb-tray nb-faq--wrap">
+    <h2 class="nb-faq__title">Frequently asked questions</h2>
+
+    <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
+      {%- assign idx = 0 -%}
+      {%- for q in qs -%}
+        {%- assign qq = q | strip_html | strip -%}
+        {%- if qq != '' -%}
+          {%- assign a_block = as[idx] | default: '' -%}
+          {%- assign a_clean = a_block | strip -%}
+          {%- comment -%} trim a single leading <br> variant left by the split {%- endcomment -%}
+          {%- assign head6 = a_clean | slice: 0,6 -%}
+          {%- assign head5 = a_clean | slice: 0,5 -%}
+          {%- assign head4 = a_clean | slice: 0,4 -%}
+          {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+          {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+          {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+
+          <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+            <summary class="nb-faq__q">{{ qq }}</summary>
+            <div class="nb-faq__a rte">{{ a_clean }}</div>
+          </details>
+
+          {%- assign idx = idx | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
   <style>
-    /* --- Global FAQ pill look (scoped) --- */
+    /* Scoped FAQ styling (matches the global pill look) */
     .nb-faq--wrap{ margin:22px 0; }
     .nb-faq__title{ color:#223238; text-align:center; font-weight:800; font-size:clamp(28px,3.6vw,40px); margin:0 0 16px; }
     .nb-faq__list{ display:grid; gap:18px; }
@@ -281,28 +307,7 @@
     }
   </style>
 
-  <div class="nb-tray nb-faq--wrap">
-    <h2 class="nb-faq__title">Frequently asked questions</h2>
-
-    <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
-      {%- assign idx = 0 -%}
-      {%- for q in qs -%}
-        {%- assign qq = q | strip_html | strip -%}
-        {%- if qq != '' -%}
-          {%- assign a_block = as[idx] | default: '' -%}
-          {%- assign a_clean = a_block | strip -%}
-          <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
-            <summary class="nb-faq__q">{{ qq }}</summary>
-            <div class="nb-faq__a rte">{{ a_clean }}</div>
-          </details>
-          {%- assign idx = idx | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-  </div>
-
   <script>
-    /* keep single-open */
     (function(){
       var root = document.getElementById('nb-faq-{{ section.id }}-svc');
       if(!root) return;
