@@ -10,212 +10,233 @@
 -%}
 
 {%- if service_ref and service_ref.value -%}
-  {%- assign service = service_ref.value -%}
+{%- assign service = service_ref.value -%}
 
-  <style>
-    /* Page-scoped styles (kept minimal) */
-    .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
-    .nb-grid{display:grid;gap:16px}
-    .nb-hero{display:grid;grid-template-columns:1fr .9fr;align-items:center;gap:24px}
-    @media (max-width: 990px){ .nb-hero{grid-template-columns:1fr} }
-    .nb-tray{background:#e6eeea;border-radius:18px;padding:18px 22px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
-    .nb-h2{font-size:clamp(22px,3vw,28px);font-weight:800;margin:0 0 10px}
-    .nb-h3{font-size:clamp(18px,2.2vw,22px);font-weight:750;margin:0 0 8px}
-    .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate,#C86B2A);background:var(--nb-chocolate,#C86B2A);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.08);text-decoration:none}
-    .nb-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.10)}
-    .nb-card{background:#fff;border-radius:12px;box-shadow:0 10px 24px rgba(0,0,0,.06);padding:12px 14px}
-    .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    @media (max-width: 720px){ .nb-badges{grid-template-columns:1fr} }
-    .nb-hero_img{width:100%;height:auto;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
-    .nb-hero_placeholder{aspect-ratio:16/9;border-radius:16px;background:linear-gradient(135deg,#9fe1ef,#f5fa9f);box-shadow:0 12px 30px rgba(0,0,0,.08)}
-    .nb-list{margin:0;padding-left:1.1rem}
-    .nb-list li{margin:.25rem 0}
-    .nb-faq details{background:#fff;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.05);margin:10px 0;overflow:hidden}
-    .nb-faq summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:grid;grid-template-columns:1fr auto;align-items:center}
-    .nb-faq summary::-webkit-details-marker{display:none}
-    .nb-faq .nb-a{padding:0 16px 16px;color:#324247}
-  </style>
+<style>
+  /* ---- page-scoped styles ---- */
+  .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
+  .nb-grid{display:grid;gap:22px}
 
-  <section class="nb-shell" data-coaching-service="{{ service.id | default: service.title | escape }}">
+  /* Headings */
+  .nb-h1{font-size:clamp(30px,4.4vw,48px);line-height:1.1;margin:0 0 10px;font-weight:800}
+  .nb-h2{font-size:clamp(22px,2.8vw,28px);font-weight:800;margin:0 0 6px}
+  .nb-h3{font-size:clamp(18px,2.1vw,22px);font-weight:750;margin:0 0 10px}
 
-    {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
-    <div class="nb-hero">
-      <div>
-        <h1 class="nb-h2" style="font-size:clamp(28px,4.2vw,48px);line-height:1.1;margin:0 0 12px">
-          {{ service.hero_heading | default: service.title | escape }}
-        </h1>
-        {%- if service.hero_subheading != blank -%}
-          <p style="margin:0 0 18px">{{ service.hero_subheading }}</p>
-        {%- endif -%}
+  /* Hero */
+  .nb-hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:28px}
+  @media (max-width:990px){ .nb-hero{grid-template-columns:1fr} }
+  .nb-hero p{margin:0 0 16px;color:#38474c}
+  .nb-hero_img{width:100%;height:auto;border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
+  .nb-hero_placeholder{aspect-ratio:16/9;border-radius:18px;background:linear-gradient(135deg,#e8f1ee,#f3f6ef)}
+  .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate,#C86B2A);background:var(--nb-chocolate,#C86B2A);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
+  .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
-        {%- liquid
-          assign btn_label = service.cta_label | default: 'Book a free 20-min call'
-          assign btn_href  = service.cta_link
-          if btn_href == blank
-            assign btn_href = '/pages/book-a-call'
-          endif
-        -%}
-        <a class="nb-cta" href="{{ btn_href }}" data-cta="service-hero-cta">{{ btn_label }}</a>
-      </div>
+  /* Trays / cards */
+  .nb-tray{background:#e6eeea;border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .nb-card{background:#fff;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);padding:12px 14px}
+  .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
 
-      <div>
-        {%- if service.hero_video_url != blank -%}
-          <div class="nb-hero_placeholder">
-            <iframe width="100%" height="100%" style="width:100%;aspect-ratio:16/9;border:0;border-radius:16px"
-              src="https://www.youtube.com/embed/{{ service.hero_video_url | split: 'v=' | last | split: '&' | first }}"
-              title="Intro video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-          </div>
-        {%- elsif service.hero_image -%}
-          <img
-            src="{{ service.hero_image | image_url: width: 1400 }}"
-            srcset="
-              {{ service.hero_image | image_url: width: 700 }} 700w,
-              {{ service.hero_image | image_url: width:1000 }} 1000w,
-              {{ service.hero_image | image_url: width:1400 }} 1400w
-            "
-            sizes="(max-width: 990px) 100vw, 640px"
-            alt="{{ service.hero_heading | default: service.title | escape }}"
-            class="nb-hero_img" loading="eager" fetchpriority="high">
-        {%- else -%}
-          <div class="nb-hero_placeholder"></div>
-        {%- endif -%}
-      </div>
+  /* Lists */
+  .nb-list{margin:0;padding-left:1.15rem}
+  .nb-list li{margin:.28rem 0}
+
+  /* RTE inside method text */
+  .nb-rte{line-height:1.65}
+  .nb-rte h3{margin:.25rem 0 .35rem}
+  .nb-rte ul{padding-left:1.25rem}
+
+  /* FAQ */
+  .nb-faq details{background:#fff;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.05);margin:10px 0;overflow:hidden}
+  .nb-faq summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:grid;grid-template-columns:1fr auto;align-items:center}
+  .nb-faq summary::-webkit-details-marker{display:none}
+  .nb-faq .nb-a{padding:0 16px 16px;color:#324247}
+</style>
+
+<section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
+
+  {%- comment -%} ---------- Prep shared CTA ---------- {%- endcomment -%}
+  {%- liquid
+    assign btn_label = service.cta_label | default: 'Book a free 20-min call'
+    assign btn_href  = service.cta_link
+    if btn_href == blank
+      assign btn_href = '/pages/book-a-call'
+    endif
+  -%}
+
+  {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
+  <div class="nb-hero">
+    <div>
+      <h1 class="nb-h1">{{ service.hero_heading | default: service.title | escape }}</h1>
+      {%- if service.hero_subheading != blank -%}
+        <p>{{ service.hero_subheading }}</p>
+      {%- endif -%}
+      <a class="nb-cta" href="{{ btn_href }}" data-cta="service-hero-cta">{{ btn_label }}</a>
     </div>
 
-    {%- comment -%} UTIL: normalize a multi-line text field into an array {%- endcomment -%}
-    {%- assign social_raw   = service.social_proof   | default: '' -%}
-    {%- assign outcomes_raw = service.outcomes       | default: '' -%}
-    {%- assign ify_raw      = service.is_for_you     | default: '' -%}
-    {%- assign steps_raw    = service.process_bodies | default: '' -%}
-    {%- assign myths_raw    = service.myths          | default: '' -%}
-    {%- assign truths_raw   = service.truths         | default: '' -%}
-    {%- assign faqq_raw     = service.faqs_q         | default: '' -%}
-    {%- assign faqa_raw     = service.faqs_a         | default: '' -%}
+    <div>
+      {%- if service.hero_video_url -%}
+        <div class="nb-hero_placeholder">
+          <iframe width="100%" height="100%" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px"
+            src="https://www.youtube.com/embed/{{ service.hero_video_url | split: 'v=' | last | split: '&' | first }}"
+            title="Intro video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+      {%- elsif service.hero_image -%}
+        <img
+          src="{{ service.hero_image | image_url: width: 1400 }}"
+          srcset="
+            {{ service.hero_image | image_url: width: 700 }} 700w,
+            {{ service.hero_image | image_url: width:1000 }} 1000w,
+            {{ service.hero_image | image_url: width:1400 }} 1400w
+          "
+          sizes="(max-width: 990px) 100vw, 640px"
+          alt="{{ service.hero_heading | default: service.title | escape }}"
+          class="nb-hero_img" loading="eager" fetchpriority="high">
+      {%- else -%}
+        <div class="nb-hero_placeholder"></div>
+      {%- endif -%}
+    </div>
+  </div>
 
-    {%- assign social   = social_raw   | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign outcomes = outcomes_raw | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign ify      = ify_raw      | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign steps    = steps_raw    | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign myths    = myths_raw    | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign truths   = truths_raw   | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign faqs_q   = faqq_raw     | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
-    {%- assign faqs_a   = faqa_raw     | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+  {%- comment -%} Helper: normalize lines → array (handles \r\n, \r, \n; falls back to comma) {%- endcomment -%}
+  {%- assign newline = '\n' -%}
+  {%- capture normSep %}{{ newline }}{% endcapture -%}
+  {%- assign _tmp = '' -%}
 
-    {%- comment -%} ---------- SOCIAL PROOF ---------- {%- endcomment -%}
+  {%- comment -%} ---------- SOCIAL PROOF (optional) ---------- {%- endcomment -%}
+  {%- assign social = service.social_proof -%}
+  {%- if social -%}
+    {%- assign social = social | replace: '\r\n', normSep | replace: '\r', normSep -%}
+    {%- if social contains newline -%}{% assign social = social | split: newline %}{% else %}{% assign social = social | split: ',' %}{% endif -%}
     {%- if social.size > 0 -%}
-      <div class="nb-tray" style="margin:22px 0">
+      <div class="nb-tray">
         <div class="nb-badges">
           {%- for badge in social -%}
-            {%- assign b = badge | strip -%}
-            {%- if b != '' -%}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{%- endif -%}
+            {%- assign b = badge | strip -%}{% if b != '' %}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{% endif %}
           {%- endfor -%}
         </div>
       </div>
     {%- endif -%}
+  {%- endif -%}
 
-    {%- comment -%} ---------- OUTCOMES ---------- {%- endcomment -%}
+  {%- comment -%} ---------- OUTCOMES ---------- {%- endcomment -%}
+  {%- assign outcomes = service.outcomes -%}
+  {%- if outcomes -%}
+    {%- assign outcomes = outcomes | replace: '\r\n', normSep | replace: '\r', normSep -%}
+    {%- if outcomes contains newline -%}{% assign outcomes = outcomes | split: newline %}{% else %}{% assign outcomes = outcomes | split: ',' %}{% endif -%}
     {%- if outcomes.size > 0 -%}
-      <div class="nb-tray" style="margin:22px 0">
+      <div class="nb-tray">
         <h2 class="nb-h2">What you’ll get</h2>
         <div class="nb-badges">
           {%- for item in outcomes -%}
-            {%- assign it = item | strip -%}
-            {%- if it != '' -%}<div class="nb-card">{{ it }}</div>{%- endif -%}
+            {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
           {%- endfor -%}
         </div>
       </div>
     {%- endif -%}
+  {%- endif -%}
 
-    {%- comment -%} ---------- IS THIS FOR YOU ---------- {%- endcomment -%}
+  {%- comment -%} ---------- IS THIS FOR YOU ---------- {%- endcomment -%}
+  {%- assign ify = service.is_for_you -%}
+  {%- if ify -%}
+    {%- assign ify = ify | replace: '\r\n', normSep | replace: '\r', normSep -%}
+    {%- if ify contains newline -%}{% assign ify = ify | split: newline %}{% else %}{% assign ify = ify | split: ',' %}{% endif -%}
     {%- if ify.size > 0 -%}
-      <div class="nb-tray" style="margin:22px 0">
+      <div class="nb-tray">
         <h3 class="nb-h3">Is this for you?</h3>
         <ul class="nb-list">
           {%- for line in ify -%}
-            {%- assign l = line | strip -%}
-            {%- if l != '' -%}<li>{{ l }}</li>{%- endif -%}
+            {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
           {%- endfor -%}
         </ul>
       </div>
     {%- endif -%}
+  {%- endif -%}
 
-    {%- comment -%} ---------- PROCESS ---------- {%- endcomment -%}
-    {%- if service.process_titles != blank or steps.size > 0 -%}
-      <div class="nb-tray" style="margin:22px 0">
-        <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
-        {%- if steps.size > 0 -%}
-          <ol class="nb-list">
-            {%- for step in steps -%}
-              {%- assign s = step | strip -%}
-              {%- if s != '' -%}<li>{{ s }}</li>{%- endif -%}
-            {%- endfor -%}
-          </ol>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
-    {%- if service.method_title != blank or service.method_richtext -%}
-      <div class="nb-tray" style="margin:22px 0">
-        <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
-        {%- if service.method_richtext -%}
-          <div class="rte">{{ service.method_richtext | metafield_tag }}</div>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} ---------- MYTHS / TRUTHS ---------- {%- endcomment -%}
-    {%- if myths.size > 0 or truths.size > 0 -%}
-      <div class="nb-tray" style="margin:22px 0">
-        {%- if myths.size > 0 -%}
-          <h3 class="nb-h3">Common myths</h3>
-          <ul class="nb-list">
-            {%- for m in myths -%}
-              {%- assign mm = m | strip -%}
-              {%- if mm != '' -%}<li>{{ mm }}</li>{%- endif -%}
-            {%- endfor -%}
-          </ul>
-        {%- endif -%}
-
-        {%- if truths.size > 0 -%}
-          <h3 class="nb-h3" style="margin-top:12px">What’s actually true</h3>
-          <ul class="nb-list">
-            {%- for t in truths -%}
-              {%- assign tt = t | strip -%}
-              {%- if tt != '' -%}<li>{{ tt }}</li>{%- endif -%}
-            {%- endfor -%}
-          </ul>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} ---------- FAQ ---------- {%- endcomment -%}
-    {%- if faqs_q.size > 0 -%}
-      <div class="nb-tray nb-faq" style="margin:22px 0">
-        <h2 class="nb-h2">Frequently asked questions</h2>
-        {%- for q in faqs_q -%}
-          {%- assign qq = q | strip -%}
-          {%- assign a  = faqs_a[forloop.index0] | default: '' | strip -%}
-          {%- if qq != '' -%}
-            <details>
-              <summary>{{ qq }}</summary>
-              <div class="nb-a">{{ a }}</div>
-            </details>
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
-    <div style="margin:28px 0;text-align:center">
-      <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+  {%- comment -%} ---------- PROCESS ---------- {%- endcomment -%}
+  {%- assign steps = service.process_bodies -%}
+  {%- if steps -%}
+    {%- assign steps = steps | replace: '\r\n', normSep | replace: '\r', normSep -%}
+    {%- if steps contains newline -%}{% assign steps = steps | split: newline %}{% else %}{% assign steps = steps | split: ',' %}{% endif -%}
+  {%- endif -%}
+  {%- if service.process_titles or steps -%}
+    <div class="nb-tray">
+      <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
+      {%- if steps and steps.size > 0 -%}
+        <ol class="nb-list">
+          {%- for step in steps -%}
+            {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
     </div>
-    
-  </section>
+  {%- endif -%}
+
+  {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
+  {%- if service.method_title or service.method_richtext -%}
+    <div class="nb-tray">
+      <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
+      {%- if service.method_richtext -%}
+        <div class="nb-rte">
+          {{ service.method_richtext | metafield_tag }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- MYTHS / TRUTHS (optional) ---------- {%- endcomment -%}
+  {%- assign myths = service.myths -%}
+  {%- assign truths = service.truths -%}
+  {%- if myths -%}{% assign myths = myths | replace: '\r\n', normSep | replace: '\r', normSep %}{% if myths contains newline %}{% assign myths = myths | split: newline %}{% else %}{% assign myths = myths | split: ',' %}{% endif %}{% endif -%}
+  {%- if truths -%}{% assign truths = truths | replace: '\r\n', normSep | replace: '\r', normSep %}{% if truths contains newline %}{% assign truths = truths | split: newline %}{% else %}{% assign truths = truths | split: ',' %}{% endif %}{% endif -%}
+  {%- if myths or truths -%}
+    <div class="nb-tray">
+      {%- if myths and myths.size > 0 -%}
+        <h3 class="nb-h3">Common myths</h3>
+        <ul class="nb-list">
+          {%- for m in myths -%}{%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}{%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if truths and truths.size > 0 -%}
+        <h3 class="nb-h3" style="margin-top:12px">What’s actually true</h3>
+        <ul class="nb-list">
+          {%- for t in truths -%}{%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}{%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- FAQ ---------- {%- endcomment -%}
+  {%- assign faqs_q = service.faqs_q -%}
+  {%- assign faqs_a = service.faqs_a -%}
+  {%- if faqs_q -%}{% assign faqs_q = faqs_q | replace: '\r\n', normSep | replace: '\r', normSep %}{% if faqs_q contains newline %}{% assign faqs_q = faqs_q | split: newline %}{% else %}{% assign faqs_q = faqs_q | split: '|' %}{% endif %}{% endif -%}
+  {%- if faqs_a -%}{% assign faqs_a = faqs_a | replace: '\r\n', normSep | replace: '\r', normSep %}{% if faqs_a contains newline %}{% assign faqs_a = faqs_a | split: newline %}{% else %}{% assign faqs_a = faqs_a | split: '|' %}{% endif %}{% endif -%}
+  {%- if faqs_q and faqs_a and faqs_q.size > 0 -%}
+    <div class="nb-tray nb-faq">
+      <h2 class="nb-h2">Frequently asked questions</h2>
+      {%- for q in faqs_q -%}
+        {%- assign qq = q | strip -%}
+        {%- assign a = faqs_a[forloop.index0] | default: '' | strip -%}
+        {%- if qq != '' -%}
+          <details{% if forloop.first %} open{% endif %}>
+            <summary>{{ qq }}</summary>
+            <div class="nb-a">{{ a | newline_to_br }}</div>
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
+  <div style="text-align:center;padding:10px 0 24px">
+    <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+  </div>
+
+</section>
 
 {%- else -%}
-  <section class="page--width" style="padding:40px 0;">
-    <p>No coaching service selected for this page.</p>
-  </section>
+<section class="page--width" style="padding:40px 0;">
+  <p>No coaching service selected for this page.</p>
+</section>
 {%- endif -%}
