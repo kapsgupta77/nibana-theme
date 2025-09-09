@@ -40,17 +40,19 @@
               allowfullscreen></iframe>
           </div>
         {% elsif service.hero_image %}
-          <img
-            src="{{ service.hero_image | image_url: width: 1400 }}"
-            srcset="
-              {{ service.hero_image | image_url: width: 700 }} 700w,
-              {{ service.hero_image | image_url: width: 1000 }} 1000w,
-              {{ service.hero_image | image_url: width: 1400 }} 1400w
-            "
-            sizes="(max-width: 990px) 100vw, 640px"
-            alt="{{ service.hero_heading | escape }}"
-            class="nb-hero__img">
-        {% else %}
+  <img
+    src="{{ service.hero_image | image_url: width: 1400 }}"
+    srcset="
+      {{ service.hero_image | image_url: width: 700 }} 700w,
+      {{ service.hero_image | image_url: width: 1000 }} 1000w,
+      {{ service.hero_image | image_url: width: 1400 }} 1400w
+    "
+    sizes="(max-width: 989px) 100vw, 640px"
+    alt="{{ service.hero_heading | default: service.title | escape }}"
+    class="nb-hero__img"
+    loading="eager" fetchpriority="high"
+  >
+{% else %}
           <div class="nb-hero__placeholder">
             <div class="nb-hero__ph-card">
               <p>Preview your hero image / video here.</p>
