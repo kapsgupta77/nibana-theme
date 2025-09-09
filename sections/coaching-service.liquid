@@ -216,7 +216,21 @@
     <div style="margin:28px 0;text-align:center">
       <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
     </div>
-
+<script>
+  console.log('CoachingService debug', {
+    id: {{ service.id | json }},
+    title: {{ service.title | json }},
+    outcomes: {{ service.outcomes | json }},
+    is_for_you: {{ service.is_for_you | json }},
+    process_titles: {{ service.process_titles | json }},
+    process_bodies: {{ service.process_bodies | json }},
+    myths: {{ service.myths | json }},
+    truths: {{ service.truths | json }},
+    faqs_q: {{ service.faqs_q | json }},
+    faqs_a: {{ service.faqs_a | json }},
+    thumbnail: {{ service.thumbnail | image_url: width: 800 | json }}
+  });
+</script>
   </section>
 
 {%- else -%}
