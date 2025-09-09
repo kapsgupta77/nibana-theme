@@ -145,11 +145,14 @@
   {% endif %}
 
   {%- comment %} Myths / truths {%- endcomment %}
-  {%- if (service.myths and service.myths != blank) or (service.truths and service.truths != blank) -%}
+  {%- assign myths_text  = service.myths  | default: '' | strip -%}
+{%- assign truths_text = service.truths | default: '' | strip -%}
+{%- if myths_text != '' or truths_text != '' -%}
 <section class="nb-tray">
   <div class="nb-grid-2">
-    {%- if service.myths and service.myths != blank -%}
-      {%- assign myths = service.myths | strip | newline_to_br | split: '<br />' -%}
+
+    {%- if myths_text != '' -%}
+      {%- assign myths = myths_text | newline_to_br | split: '<br />' -%}
       <div class="nb-card">
         <h3 class="nb-h3">Common myths</h3>
         <ul class="nb-list">
@@ -161,8 +164,8 @@
       </div>
     {%- endif -%}
 
-    {%- if service.truths and service.truths != blank -%}
-      {%- assign truths = service.truths | strip | newline_to_br | split: '<br />' -%}
+    {%- if truths_text != '' -%}
+      {%- assign truths = truths_text | newline_to_br | split: '<br />' -%}
       <div class="nb-card">
         <h3 class="nb-h3">What’s actually true</h3>
         <ul class="nb-list">
@@ -173,6 +176,7 @@
         </ul>
       </div>
     {%- endif -%}
+
   </div>
 </section>
 {%- endif -%}
