@@ -21,8 +21,8 @@
   assign hero_image      = svc.hero_image
   assign hero_video_url  = svc.hero_video_url
 
-  assign cta_label = svc.cta_label | default: section.settings.cta_label
-  assign cta_link  = svc.cta_link  | default: section.settings.cta_link
+  assign cta_label = svc.cta_label | default: section.settings.cta_label | default: 'Book a call'
+  assign cta_link  = svc.cta_link  | default: section.settings.cta_link | default: '/pages/book-a-call'
 
   assign social_proof = svc.social_proof
   assign outcomes     = svc.outcomes
@@ -363,7 +363,7 @@ document.addEventListener('click', function(e){
     { "type": "text",     "id": "fallback_title", "label": "Fallback title", "default": "Transformational life coaching helps you change from the inside out." },
     { "type": "textarea", "id": "fallback_sub",   "label": "Fallback subheading" },
     { "type": "text",     "id": "cta_label",      "label": "Fallback CTA label", "default":"Book a call" },
-    { "type": "url",      "id": "cta_link",       "label": "Fallback CTA link",  "default": "/pages/book-a-call" },
+    { "type": "url",      "id": "cta_link",       "label": "Fallback CTA link" },
     { "type": "text",     "id": "outcomes_heading","label": "Outcomes heading", "default": "What you’ll get" },
     { "type": "text",     "id": "isfor_heading",   "label": "Is this for you? heading", "default": "Is this for you?" },
     { "type": "text",     "id": "process_heading", "label": "Process heading", "default": "The process" },
