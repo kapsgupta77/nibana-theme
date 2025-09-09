@@ -13,26 +13,44 @@
 {%- assign service = service_ref.value -%}
 
 <style>
-  /* ---- page-scoped styles ---- */
+  /* ===========================
+     Nibana page-scoped styling
+     =========================== */
+
+  :root{
+    --nb-ink:#223238;
+    --nb-muted:#324247;
+    --nb-deep:#0F5B59;
+    --nb-sage:#EAF4F3;
+    --nb-sage-strong:#e6eeea;
+    --nb-chocolate:#C86B2A;
+  }
+
   .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
   .nb-grid{display:grid;gap:22px}
 
-  /* Headings */
+  /* Headings use theme heading family; body uses theme body family */
+  .nb-h1,.nb-h2,.nb-h3{font-family:var(--font-heading-family,inherit);color:var(--nb-ink)}
   .nb-h1{font-size:clamp(30px,4.4vw,48px);line-height:1.1;margin:0 0 10px;font-weight:800}
   .nb-h2{font-size:clamp(22px,2.8vw,28px);font-weight:800;margin:0 0 6px}
   .nb-h3{font-size:clamp(18px,2.1vw,22px);font-weight:750;margin:0 0 10px}
 
+  /* Body copy */
+  .nb-copy,.nb-tray,.nb-hero p,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
+
   /* Hero */
   .nb-hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:28px}
   @media (max-width:990px){ .nb-hero{grid-template-columns:1fr} }
-  .nb-hero p{margin:0 0 16px;color:#38474c}
+  .nb-hero p{margin:0 0 16px}
   .nb-hero_img{width:100%;height:auto;border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
   .nb-hero_placeholder{aspect-ratio:16/9;border-radius:18px;background:linear-gradient(135deg,#e8f1ee,#f3f6ef)}
-  .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate,#C86B2A);background:var(--nb-chocolate,#C86B2A);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
+
+  /* CTA */
+  .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate);background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
   .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
   /* Trays / cards */
-  .nb-tray{background:#e6eeea;border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .nb-tray{background:var(--nb-sage);border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
   .nb-card{background:#fff;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);padding:12px 14px}
   .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
@@ -41,21 +59,40 @@
   .nb-list{margin:0;padding-left:1.15rem}
   .nb-list li{margin:.28rem 0}
 
-  /* RTE inside method text */
+  /* Rich text inside "Method" */
   .nb-rte{line-height:1.65}
   .nb-rte h3{margin:.25rem 0 .35rem}
   .nb-rte ul{padding-left:1.25rem}
 
-  /* FAQ */
-  .nb-faq details{background:#fff;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.05);margin:10px 0;overflow:hidden}
-  .nb-faq summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:grid;grid-template-columns:1fr auto;align-items:center}
-  .nb-faq summary::-webkit-details-marker{display:none}
-  .nb-faq .nb-a{padding:0 16px 16px;color:#324247}
+  /* FAQ (global pill look) */
+  .nb-faq--wrap{ margin:22px 0; }
+  .nb-faq__title{ color:var(--nb-ink); text-align:center; font-weight:800; font-size:clamp(28px,3.6vw,40px); margin:0 0 16px; font-family:var(--font-heading-family,inherit); }
+  .nb-faq__list{ display:grid; gap:18px; }
+  .nb-faq__item{ background:transparent; border:0; box-shadow:none; overflow:visible; }
+  .nb-faq__q{
+    position:relative; background:var(--nb-deep); color:#fff; border:0; border-radius:9999px;
+    padding:16px 64px 16px 22px; font-weight:720; box-shadow:0 4px 14px rgba(0,0,0,.05);
+    display:grid; grid-template-columns:1fr auto; align-items:center; list-style:none; cursor:pointer;
+    font-family:var(--font-body-family,inherit);
+  }
+  .nb-faq__q::-webkit-details-marker{ display:none; }
+  .nb-faq__q:hover{ background:#0e5452; }
+  .nb-faq__q::after{
+    content:"+"; position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:9999px; display:grid; place-items:center;
+    color:#fff; background:rgba(255,255,255,.14); font-size:22px; font-weight:800; line-height:1;
+  }
+  details[open] .nb-faq__q::after{ content:"–"; }
+  .nb-faq__a{
+    background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:14px;
+    margin:10px 14px 2px; padding:16px 20px; color:var(--nb-muted); line-height:1.65;
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset;
+  }
 </style>
 
 <section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
 
-  {%- comment -%} ---------- Prep shared CTA ---------- {%- endcomment -%}
+  {%- comment -%} ---------- Shared CTA ---------- {%- endcomment -%}
   {%- liquid
     assign btn_label = service.cta_label | default: 'Book a free 20-min call'
     assign btn_href  = service.cta_link
@@ -66,7 +103,7 @@
 
   {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
   <div class="nb-hero">
-    <div>
+    <div class="nb-copy">
       <h1 class="nb-h1">{{ service.hero_heading | default: service.title | escape }}</h1>
       {%- if service.hero_subheading != blank -%}
         <p>{{ service.hero_subheading }}</p>
@@ -99,71 +136,109 @@
     </div>
   </div>
 
-  {%- comment -%} Helper: normalize lines → array (handles \r\n, \r, \n; falls back to comma) {%- endcomment -%}
-  {%- assign newline = '\n' -%}
-  {%- capture normSep %}{{ newline }}{% endcapture -%}
-  {%- assign _tmp = '' -%}
+  {%- comment -%}
+    Helper: robust splitter for list fields
+    – accepts raw text with newlines or <br> variants; falls back to commas
+  {%- endcomment -%}
+  {%- assign br_tag = '<br />' -%}
 
   {%- comment -%} ---------- SOCIAL PROOF (optional) ---------- {%- endcomment -%}
-  {%- assign social = service.social_proof -%}
-  {%- if social -%}
-    {%- assign social = social | replace: '\r\n', normSep | replace: '\r', normSep -%}
-    {%- if social contains newline -%}{% assign social = social | split: newline %}{% else %}{% assign social = social | split: ',' %}{% endif -%}
-    {%- if social.size > 0 -%}
-      <div class="nb-tray">
-        <div class="nb-badges">
-          {%- for badge in social -%}
-            {%- assign b = badge | strip -%}{% if b != '' %}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{% endif %}
-          {%- endfor -%}
-        </div>
+  {%- liquid
+    assign sp_raw  = service.social_proof | append: ''
+    assign sp_html = sp_raw | newline_to_br
+    assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign sp_pipe = sp_norm | replace: br_tag, '|||'
+    assign sp      = sp_pipe | split: '|||'
+    assign sp_filled = 0
+    for x in sp
+      assign t = x | strip
+      if t != '' 
+        assign sp_filled = sp_filled | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if sp_filled > 0 -%}
+    <div class="nb-tray">
+      <div class="nb-badges">
+        {%- for badge in sp -%}
+          {%- assign b = badge | strip -%}
+          {%- if b != '' -%}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{%- endif -%}
+        {%- endfor -%}
       </div>
-    {%- endif -%}
+    </div>
   {%- endif -%}
 
   {%- comment -%} ---------- OUTCOMES ---------- {%- endcomment -%}
-  {%- assign outcomes = service.outcomes -%}
-  {%- if outcomes -%}
-    {%- assign outcomes = outcomes | replace: '\r\n', normSep | replace: '\r', normSep -%}
-    {%- if outcomes contains newline -%}{% assign outcomes = outcomes | split: newline %}{% else %}{% assign outcomes = outcomes | split: ',' %}{% endif -%}
-    {%- if outcomes.size > 0 -%}
-      <div class="nb-tray">
-        <h2 class="nb-h2">What you’ll get</h2>
-        <div class="nb-badges">
-          {%- for item in outcomes -%}
-            {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
-          {%- endfor -%}
-        </div>
+  {%- liquid
+    assign oc_raw  = service.outcomes | append: ''
+    assign oc_html = oc_raw | newline_to_br
+    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign oc_pipe = oc_norm | replace: br_tag, '|||'
+    assign outcomes = oc_pipe | split: '|||'
+    assign oc_count = 0
+    for it in outcomes
+      assign t = it | strip
+      if t != '' 
+        assign oc_count = oc_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if oc_count > 0 -%}
+    <div class="nb-tray">
+      <h2 class="nb-h2">What you’ll get</h2>
+      <div class="nb-badges">
+        {%- for item in outcomes -%}
+          {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
+        {%- endfor -%}
       </div>
-    {%- endif -%}
+    </div>
   {%- endif -%}
 
   {%- comment -%} ---------- IS THIS FOR YOU ---------- {%- endcomment -%}
-  {%- assign ify = service.is_for_you -%}
-  {%- if ify -%}
-    {%- assign ify = ify | replace: '\r\n', normSep | replace: '\r', normSep -%}
-    {%- if ify contains newline -%}{% assign ify = ify | split: newline %}{% else %}{% assign ify = ify | split: ',' %}{% endif -%}
-    {%- if ify.size > 0 -%}
-      <div class="nb-tray">
-        <h3 class="nb-h3">Is this for you?</h3>
-        <ul class="nb-list">
-          {%- for line in ify -%}
-            {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
-          {%- endfor -%}
-        </ul>
-      </div>
-    {%- endif -%}
+  {%- liquid
+    assign ify_raw  = service.is_for_you | append: ''
+    assign ify_html = ify_raw | newline_to_br
+    assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign ify_pipe = ify_norm | replace: br_tag, '|||'
+    assign ify = ify_pipe | split: '|||'
+    assign ify_count = 0
+    for it in ify
+      assign t = it | strip
+      if t != '' 
+        assign ify_count = ify_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if ify_count > 0 -%}
+    <div class="nb-tray">
+      <h3 class="nb-h3">Is this for you?</h3>
+      <ul class="nb-list">
+        {%- for line in ify -%}
+          {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
+        {%- endfor -%}
+      </ul>
+    </div>
   {%- endif -%}
 
   {%- comment -%} ---------- PROCESS ---------- {%- endcomment -%}
-  {%- assign steps = service.process_bodies -%}
-  {%- if steps -%}
-    {%- assign steps = steps | replace: '\r\n', normSep | replace: '\r', normSep -%}
-    {%- if steps contains newline -%}{% assign steps = steps | split: newline %}{% else %}{% assign steps = steps | split: ',' %}{% endif -%}
-  {%- endif -%}
-  {%- if service.process_titles or steps -%}
+  {%- liquid
+    assign steps_raw  = service.process_bodies | append: ''
+    assign steps_html = steps_raw | newline_to_br
+    assign steps_norm = steps_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign steps_pipe = steps_norm | replace: br_tag, '|||'
+    assign steps = steps_pipe | split: '|||'
+    assign steps_count = 0
+    for s in steps
+      assign t = s | strip
+      if t != ''
+        assign steps_count = steps_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if service.process_titles or steps_count > 0 -%}
     <div class="nb-tray">
       <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
-      {%- if steps and steps.size > 0 -%}
+      {%- if steps_count > 0 -%}
         <ol class="nb-list">
           {%- for step in steps -%}
             {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
@@ -178,27 +253,48 @@
     <div class="nb-tray">
       <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
       {%- if service.method_richtext -%}
-        <div class="nb-rte">
-          {{ service.method_richtext | metafield_tag }}
-        </div>
+        <div class="nb-rte rte">{{ service.method_richtext | metafield_tag }}</div>
       {%- endif -%}
     </div>
   {%- endif -%}
 
   {%- comment -%} ---------- MYTHS / TRUTHS (optional) ---------- {%- endcomment -%}
-  {%- assign myths = service.myths -%}
-  {%- assign truths = service.truths -%}
-  {%- if myths -%}{% assign myths = myths | replace: '\r\n', normSep | replace: '\r', normSep %}{% if myths contains newline %}{% assign myths = myths | split: newline %}{% else %}{% assign myths = myths | split: ',' %}{% endif %}{% endif -%}
-  {%- if truths -%}{% assign truths = truths | replace: '\r\n', normSep | replace: '\r', normSep %}{% if truths contains newline %}{% assign truths = truths | split: newline %}{% else %}{% assign truths = truths | split: ',' %}{% endif %}{% endif -%}
-  {%- if myths or truths -%}
+  {%- liquid
+    assign myths_raw  = service.myths | append: ''
+    assign myths_html = myths_raw | newline_to_br
+    assign myths_norm = myths_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign myths_pipe = myths_norm | replace: br_tag, '|||'
+    assign myths = myths_pipe | split: '|||'
+    assign myths_count = 0
+    for m in myths
+      assign t = m | strip
+      if t != '' 
+        assign myths_count = myths_count | plus: 1
+      endif
+    endfor
+
+    assign truths_raw  = service.truths | append: ''
+    assign truths_html = truths_raw | newline_to_br
+    assign truths_norm = truths_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign truths_pipe = truths_norm | replace: br_tag, '|||'
+    assign truths = truths_pipe | split: '|||'
+    assign truths_count = 0
+    for t in truths
+      assign x = t | strip
+      if x != '' 
+        assign truths_count = truths_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if myths_count > 0 or truths_count > 0 -%}
     <div class="nb-tray">
-      {%- if myths and myths.size > 0 -%}
+      {%- if myths_count > 0 -%}
         <h3 class="nb-h3">Common myths</h3>
         <ul class="nb-list">
           {%- for m in myths -%}{%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}{%- endfor -%}
         </ul>
       {%- endif -%}
-      {%- if truths and truths.size > 0 -%}
+      {%- if truths_count > 0 -%}
         <h3 class="nb-h3" style="margin-top:12px">What’s actually true</h3>
         <ul class="nb-list">
           {%- for t in truths -%}{%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}{%- endfor -%}
@@ -207,118 +303,76 @@
     </div>
   {%- endif -%}
 
-{%- comment -%} ---------- FAQ (global pill look + robust splitting) ---------- {%- endcomment -%}
-{%- liquid
-  # Raw strings (coerce to string safely)
-  assign q_raw = service.faqs_q | append: ''
-  assign a_raw = service.faqs_a | append: ''
+  {%- comment -%} ---------- FAQ (global pill look + robust splitting; keeps single-open) ---------- {%- endcomment -%}
+  {%- liquid
+    assign q_raw = service.faqs_q | append: ''
+    assign a_raw = service.faqs_a | append: ''
 
-  # QUESTIONS — normalize BRs → split on single line breaks
-  assign q_html = q_raw | newline_to_br
-  assign q_norm = q_html
-  assign q_norm = q_norm | replace: '<br/>', '<br />'
-  assign q_norm = q_norm | replace: '<br>',  '<br />'
-  assign q_norm = q_norm | replace: '<br />\r\n', '<br />'
-  assign q_norm = q_norm | replace: '<br />\n',   '<br />'
-  assign q_pipe = q_norm | replace: '<br />', '|||'
-  assign qs     = q_pipe | split: '|||'
+    assign q_html = q_raw | newline_to_br
+    assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign q_pipe = q_norm | replace: br_tag, '|||'
+    assign qs     = q_pipe | split: '|||'
 
-  # ANSWERS — normalize BRs, then split on double BRs or explicit '---'
-  assign a_html = a_raw | newline_to_br
-  assign a_norm = a_html
-  assign a_norm = a_norm | replace: '<br/>', '<br />'
-  assign a_norm = a_norm | replace: '<br>',  '<br />'
-  assign a_norm = a_norm | replace: '<br />\r\n', '<br />'
-  assign a_norm = a_norm | replace: '<br />\n',   '<br />'
-  assign a_norm = a_norm | replace: '&nbsp;', ' '
+    assign a_html = a_raw | newline_to_br
+    assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+    assign a_norm = a_norm | replace: '<br /><br /><br />', '§§'
+    assign a_norm = a_norm | replace: '<br /><br />',       '§§'
+    assign a_norm = a_norm | replace: '<br /> <br />',      '§§'
+    assign a_norm = a_norm | replace: '<br />  <br />',     '§§'
+    assign a_norm = a_norm | replace: '<br />   <br />',    '§§'
+    assign a_norm = a_norm | replace: '---',                '§§'
+    assign as     = a_norm | split: '§§'
 
-  # treat blank lines (double BRs) and '---' as delimiters
-  assign a_norm = a_norm | replace: '<br /><br /><br />', '§§'
-  assign a_norm = a_norm | replace: '<br /><br />',       '§§'
-  assign a_norm = a_norm | replace: '<br /> <br />',      '§§'
-  assign a_norm = a_norm | replace: '<br />  <br />',     '§§'
-  assign a_norm = a_norm | replace: '<br />   <br />',    '§§'
-  assign a_norm = a_norm | replace: '---',                '§§'
-  assign as = a_norm | split: '§§'
+    assign q_count = 0
+    for q in qs
+      assign qq = q | strip_html | strip
+      if qq != '' 
+        assign q_count = q_count | plus: 1
+      endif
+    endfor
+  -%}
 
-  # count non-blank questions
-  assign q_count = 0
-  for q in qs
-    assign qq = q | strip_html | strip
-    if qq != ''
-      assign q_count = q_count | plus: 1
-    endif
-  endfor
--%}
+  {%- if q_count > 0 -%}
+    <div class="nb-tray nb-faq--wrap">
+      <h2 class="nb-faq__title">Frequently asked questions</h2>
 
-{%- if q_count > 0 -%}
-  <div class="nb-tray nb-faq--wrap">
-    <h2 class="nb-faq__title">Frequently asked questions</h2>
+      <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
+        {%- assign idx = 0 -%}
+        {%- for q in qs -%}
+          {%- assign qq = q | strip_html | strip -%}
+          {%- if qq != '' -%}
+            {%- assign a_block = as[idx] | default: '' -%}
+            {%- assign a_clean = a_block | strip -%}
+            {%- assign head6 = a_clean | slice: 0,6 -%}
+            {%- assign head5 = a_clean | slice: 0,5 -%}
+            {%- assign head4 = a_clean | slice: 0,4 -%}
+            {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+            {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+            {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
 
-    <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
-      {%- assign idx = 0 -%}
-      {%- for q in qs -%}
-        {%- assign qq = q | strip_html | strip -%}
-        {%- if qq != '' -%}
-          {%- assign a_block = as[idx] | default: '' -%}
-          {%- assign a_clean = a_block | strip -%}
-          {%- comment -%} trim a single leading <br> variant left by the split {%- endcomment -%}
-          {%- assign head6 = a_clean | slice: 0,6 -%}
-          {%- assign head5 = a_clean | slice: 0,5 -%}
-          {%- assign head4 = a_clean | slice: 0,4 -%}
-          {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
-          {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
-          {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+            <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+              <summary class="nb-faq__q">{{ qq }}</summary>
+              <div class="nb-faq__a rte">{{ a_clean }}</div>
+            </details>
 
-          <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
-            <summary class="nb-faq__q">{{ qq }}</summary>
-            <div class="nb-faq__a rte">{{ a_clean }}</div>
-          </details>
-
-          {%- assign idx = idx | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
+            {%- assign idx = idx | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
     </div>
-  </div>
 
-  <style>
-    /* Scoped FAQ styling (matches the global pill look) */
-    .nb-faq--wrap{ margin:22px 0; }
-    .nb-faq__title{ color:#223238; text-align:center; font-weight:800; font-size:clamp(28px,3.6vw,40px); margin:0 0 16px; }
-    .nb-faq__list{ display:grid; gap:18px; }
-    .nb-faq__item{ background:transparent; border:0; box-shadow:none; overflow:visible; }
-    .nb-faq__q{
-      position:relative; background:#0F5B59; color:#fff; border:0; border-radius:9999px;
-      padding:16px 64px 16px 22px; font-weight:720; box-shadow:0 4px 14px rgba(0,0,0,.05);
-      display:grid; grid-template-columns:1fr auto; align-items:center; list-style:none; cursor:pointer;
-    }
-    .nb-faq__q::-webkit-details-marker{ display:none; }
-    .nb-faq__q:hover{ background:#0e5452; }
-    .nb-faq__q::after{
-      content:"+"; position:absolute; right:10px; top:50%; transform:translateY(-50%);
-      width:38px; height:38px; border-radius:9999px; display:grid; place-items:center;
-      color:#fff; background:rgba(255,255,255,.14); font-size:22px; font-weight:800; line-height:1;
-    }
-    details[open] .nb-faq__q::after{ content:"–"; }
-    .nb-faq__a{
-      background:#EAF4F3; border:1px solid rgba(0,0,0,.06); border-radius:14px;
-      margin:10px 14px 2px; padding:16px 20px; color:#2d4046; line-height:1.65;
-      box-shadow:0 1px 0 rgba(255,255,255,.4) inset;
-    }
-  </style>
-
-  <script>
-    (function(){
-      var root = document.getElementById('nb-faq-{{ section.id }}-svc');
-      if(!root) return;
-      root.addEventListener('toggle', function(ev){
-        var d = ev.target;
-        if(d.tagName !== 'DETAILS' || !d.open) return;
-        root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
-      }, true);
-    })();
-  </script>
-{%- endif -%}
+    <script>
+      (function(){
+        var root = document.getElementById('nb-faq-{{ section.id }}-svc');
+        if(!root) return;
+        root.addEventListener('toggle', function(ev){
+          var d = ev.target;
+          if(d.tagName !== 'DETAILS' || !d.open) return;
+          root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+        }, true);
+      })();
+    </script>
+  {%- endif -%}
 
   {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
   <div style="text-align:center;padding:10px 0 24px">
