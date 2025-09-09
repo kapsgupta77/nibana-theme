@@ -30,13 +30,12 @@
   .nb-grid{display:grid;gap:22px}
 
   /* Headings use theme heading family; body uses theme body family */
-.nb-h1,.nb-h2,.nb-h3{ font-family: var(--font-heading-family,inherit); color: var(--nb-ink); }
-.nb-h1{ font-size:clamp(30px,4.4vw,48px); line-height:1.1; margin:0 0 10px; font-weight:800; }
-.nb-h2{ font-size:clamp(22px,2.8vw,28px); font-weight:800; margin:0 0 6px; }
-.nb-h3{ font-size:clamp(18px,2.1vw,22px); font-weight:750; margin:0 0 10px; }
-
-/* tone tweak for brand */
-.nb-h2,.nb-h3{ color: var(--nb-deep); }  /* leaves H1 on --nb-ink, H2/H3 on slightly softer deep */
+  .nb-h1,.nb-h2,.nb-h3{ font-family: var(--font-heading-family,inherit); color: var(--nb-ink); }
+  .nb-h1{ font-size:clamp(30px,4.4vw,48px); line-height:1.1; margin:0 0 10px; font-weight:800; }
+  .nb-h2{ font-size:clamp(22px,2.8vw,28px); font-weight:800; margin:0 0 6px; }
+  .nb-h3{ font-size:clamp(18px,2.1vw,22px); font-weight:750; margin:0 0 10px; }
+  /* tone tweak for brand */
+  .nb-h2,.nb-h3{ color: var(--nb-deep); }  /* H1 stays on --nb-ink; H2/H3 on deep */
 
   /* Body copy */
   .nb-copy,.nb-tray,.nb-hero p,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
@@ -58,19 +57,67 @@
   .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
 
-/* Duo cards (myths / truths) */
-.nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-@media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
-.nb-duo .nb-card{padding:18px 20px}
+  /* Duo cards (myths / truths) */
+  .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
+  .nb-duo .nb-card{padding:18px 20px}
 
   /* Lists */
   .nb-list{margin:0;padding-left:1.15rem}
   .nb-list li{margin:.28rem 0}
 
-  /* Rich text inside "Method" */
+  /* General RTE */
   .nb-rte{line-height:1.65}
   .nb-rte h3{margin:.25rem 0 .35rem}
   .nb-rte ul{padding-left:1.25rem}
+
+  /* --- METHOD (rich text) enhancements --- */
+  .nb-method{ padding:22px 22px 24px; }
+  .nb-method .nb-h2{ margin-bottom:10px; }
+
+  /* H3s inside the rich text get a brand accent */
+  .nb-method__body h3{
+    color:var(--nb-deep);
+    font-weight:800;
+    margin:16px 0 8px;
+  }
+
+  /* Turn the first UL after each H3 into pill cards, two columns on desktop */
+  .nb-method__body h3 + ul{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    margin:10px 0 6px;
+    padding:0; /* override default UL padding for this layout */
+  }
+  @media (max-width: 860px){
+    .nb-method__body h3 + ul{ grid-template-columns:1fr; }
+  }
+  .nb-method__body h3 + ul li{
+    list-style:none;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    padding:10px 12px 10px 36px;
+    position:relative;
+    line-height:1.5;
+  }
+  .nb-method__body h3 + ul li::before{
+    content:"✓";
+    position:absolute; left:12px; top:11px;
+    font-weight:800; color:var(--nb-deep);
+  }
+
+  /* Card-style the paragraph immediately after each H3 */
+  .nb-method__body h3 + p{
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    padding:14px 16px;
+    line-height:1.65;
+    margin:10px 0 16px;
+    color:var(--nb-muted);
+  }
 
   /* FAQ (global pill look) */
   .nb-faq--wrap{ margin:22px 0; }
@@ -258,95 +305,87 @@
 
   {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
   {%- if service.method_title or service.method_richtext -%}
-    <div class="nb-tray">
+    <div class="nb-tray nb-method">
       <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
       {%- if service.method_richtext -%}
-        <div class="nb-rte rte">{{ service.method_richtext | metafield_tag }}</div>
+        <div class="nb-rte nb-method__body">
+          {{ service.method_richtext | metafield_tag }}
+        </div>
       {%- endif -%}
     </div>
   {%- endif -%}
 
   {%- comment -%} ---------- MYTHS / TRUTHS (two-column cards; robust splitting) ---------- {%- endcomment -%}
-{%- liquid
-  assign nl = '\n'
+  {%- liquid
+    assign myths_raw  = service.myths  | append: ''
+    assign truths_raw = service.truths | append: ''
 
-  # Raw strings
-  assign myths_raw  = service.myths  | append: ''
-  assign truths_raw = service.truths | append: ''
+    assign myths_html  = myths_raw  | newline_to_br
+    assign truths_html = truths_raw | newline_to_br
 
-  # --- Normalize to HTML breaks
-  assign myths_html  = myths_raw  | newline_to_br
-  assign truths_html = truths_raw | newline_to_br
+    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
 
-  # --- Standardize <br> variants and nbsp
-  assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
-  assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+    assign myths_norm  = myths_norm  | replace: '” “', '”|||“'
+    assign truths_norm = truths_norm | replace: '” “', '”|||“'
 
-  # --- Also split on the pattern: closing smart quote + space + opening smart quote
-  #     e.g. “One.” “Two.” → “One.”|||“Two.”
-  assign myths_norm  = myths_norm  | replace: '” “', '”|||“'
-  assign truths_norm = truths_norm | replace: '” “', '”|||“'
+    assign myths_pipe  = myths_norm  | replace: '<br />', '|||'
+    assign truths_pipe = truths_norm | replace: '<br />', '|||'
 
-  # --- Convert single <br /> to our pipe delimiter
-  assign myths_pipe  = myths_norm  | replace: '<br />', '|||'
-  assign truths_pipe = truths_norm | replace: '<br />', '|||'
+    assign myths  = myths_pipe  | split: '|||'
+    assign truths = truths_pipe | split: '|||'
 
-  # --- Arrays
-  assign myths  = myths_pipe  | split: '|||'
-  assign truths = truths_pipe | split: '|||'
+    assign myths_count = 0
+    for m in myths
+      assign mm = m | strip
+      if mm != '' 
+        assign myths_count = myths_count | plus: 1
+      endif
+    endfor
 
-  # --- Count non-blank items
-  assign myths_count = 0
-  for m in myths
-    assign mm = m | strip
-    if mm != '' 
-      assign myths_count = myths_count | plus: 1
-    endif
-  endfor
+    assign truths_count = 0
+    for t in truths
+      assign tt = t | strip
+      if tt != '' 
+        assign truths_count = truths_count | plus: 1
+      endif
+    endfor
+  -%}
 
-  assign truths_count = 0
-  for t in truths
-    assign tt = t | strip
-    if tt != '' 
-      assign truths_count = truths_count | plus: 1
-    endif
-  endfor
--%}
+  {%- if myths_count > 0 or truths_count > 0 -%}
+    <div class="nb-tray nb-duo">
+      {%- if myths_count > 0 -%}
+        <div class="nb-card nb-duo__col">
+          <h3 class="nb-h3">Common myths</h3>
+          <ul class="nb-list">
+            {%- for m in myths -%}
+              {%- assign mm = m | strip -%}
+              {%- if mm != '' -%}<li>{{ mm }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
 
-{%- if myths_count > 0 or truths_count > 0 -%}
-  <div class="nb-tray nb-duo">
-    {%- if myths_count > 0 -%}
-      <div class="nb-card nb-duo__col">
-        <h3 class="nb-h3">Common myths</h3>
-        <ul class="nb-list">
-          {%- for m in myths -%}
-            {%- assign mm = m | strip -%}
-            {%- if mm != '' -%}<li>{{ mm }}</li>{%- endif -%}
-          {%- endfor -%}
-        </ul>
-      </div>
-    {%- endif -%}
+      {%- if truths_count > 0 -%}
+        <div class="nb-card nb-duo__col">
+          <h3 class="nb-h3">What’s actually true</h3>
+          <ul class="nb-list">
+            {%- for t in truths -%}
+              {%- assign tt = t | strip -%}
+              {%- if tt != '' -%}<li>{{ tt }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
 
-    {%- if truths_count > 0 -%}
-      <div class="nb-card nb-duo__col">
-        <h3 class="nb-h3">What’s actually true</h3>
-        <ul class="nb-list">
-          {%- for t in truths -%}
-            {%- assign tt = t | strip -%}
-            {%- if tt != '' -%}<li>{{ tt }}</li>{%- endif -%}
-          {%- endfor -%}
-        </ul>
-      </div>
-    {%- endif -%}
-  </div>
-
-  <style>
-    /* two-column layout for myths/truths */
-    .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    @media (max-width: 780px){ .nb-duo{grid-template-columns:1fr} }
-    .nb-duo__col{padding:16px 18px}
-  </style>
-{%- endif -%}
+    <style>
+      /* two-column layout for myths/truths */
+      .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+      @media (max-width: 780px){ .nb-duo{grid-template-columns:1fr} }
+      .nb-duo__col{padding:16px 18px}
+    </style>
+  {%- endif -%}
 
   {%- comment -%} ---------- FAQ (global pill look + robust splitting; keeps single-open) ---------- {%- endcomment -%}
   {%- liquid
