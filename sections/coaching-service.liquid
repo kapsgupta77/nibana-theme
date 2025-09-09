@@ -1,0 +1,203 @@
+{% comment %}
+  Coaching Service page section
+  - Pulls all content from page metafield: custom.coaching_service (Metaobject: CoachingService)
+  - Uses your exact keys from screenshots
+{% endcomment %}
+
+{%- assign service_ref = page.metafields.custom.coaching_service -%}
+{%- assign service = nil -%}
+{%- if service_ref and service_ref.value -%}
+  {%- assign service = service_ref.value -%}
+{%- endif -%}
+
+<section class="section coaching-service">
+  <div class="page-width">
+
+    {%- if service == nil -%}
+      <div class="rte" style="background:#fff3cd;border:1px solid #ffe3a2;padding:16px;border-radius:10px;">
+        <p><strong>Heads up (admin only):</strong> This page isn’t linked to a <em>CoachingService</em> entry yet.
+        In the page editor, set <code>Metafields → custom.coaching_service</code> to an entry.</p>
+      </div>
+    {%- else -%}
+
+      {%- comment %} HERO / TITLE + MEDIA {% endcomment -%}
+      <header class="cs-hero" style="display:grid;grid-template-columns:1.1fr .9fr;gap:min(5vw,36px);align-items:center;">
+        <div class="cs-hero__copy">
+          <h1 class="cs-title">{{ service.title | default: page.title }}</h1>
+          {%- if service.hero_subheading != blank -%}
+            <p class="cs-subtitle">{{ service.hero_subheading }}</p>
+          {%- endif -%}
+
+          {%- if service.social_proof != blank and service.social_proof.size > 0 -%}
+            <ul class="cs-trust" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;">
+              {%- for chip in service.social_proof -%}
+                <li style="background:#E6ECEA;border-radius:9999px;padding:6px 10px;font-size:.92rem;line-height:1;">{{ chip }}</li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <div style="margin-top:18px;">
+            <a class="button button--primary"
+               href="{{ service.cta_link | default: '/pages/book-a-call' }}">
+              {{ service.cta_label | default: 'Book a free 20-min call' }}
+            </a>
+          </div>
+        </div>
+
+        {%- if service.hero_video_url != blank -%}
+          <div class="cs-media">
+            <div style="position:relative;padding-top:56.25%;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.06);background:#000;">
+              <iframe
+                src="{{ service.hero_video_url | replace: 'watch?v=', 'embed/' }}{% if service.hero_video_url contains 'youtube' %}?rel=0&modestbranding=1&color=white{% endif %}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
+            </div>
+          </div>
+        {%- elsif service.hero_image != blank -%}
+          <div class="cs-media">
+            <div style="border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.06);">
+              {{ service.hero_image | image_url: width:1200 | image_tag: loading: 'lazy', alt: service.title }}
+            </div>
+          </div>
+        {%- endif -%}
+      </header>
+
+      {%- comment %} OUTCOMES / IS THIS FOR YOU {% endcomment -%}
+      <div class="cs-panels" style="display:grid;gap:min(3vw,24px);margin-top:28px;">
+        {%- if service.outcomes != blank and service.outcomes.size > 0 -%}
+          <section class="cs-card">
+            <h2>What you’ll get</h2>
+            <ul class="cs-list">
+              {%- for item in service.outcomes -%}
+                <li>{{ item }}</li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+
+        {%- if service.is_for_you != blank and service.is_for_you.size > 0 -%}
+          <section class="cs-card">
+            <h2>Is this for you?</h2>
+            <ul class="cs-list">
+              {%- for item in service.is_for_you -%}
+                <li>{{ item }}</li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+      </div>
+
+      {%- comment %} PROCESS (paired titles + bodies) {% endcomment -%}
+      {%- if service.process_titles != blank and service.process_titles.size > 0 -%}
+        <section class="cs-process cs-card">
+          <h2>How it works</h2>
+          <div style="display:grid;gap:16px;">
+            {%- for title in service.process_titles -%}
+              {%- assign idx = forloop.index0 -%}
+              {%- assign body = service.process_bodies[idx] -%}
+              <div class="cs-step" style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.05);">
+                <h3 style="margin:0 0 6px;">{{ title }}</h3>
+                {%- if body != blank -%}<div class="rte">{{ body }}</div>{%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </section>
+      {%- endif -%}
+
+      {%- comment %} METHOD / LONGFORM {% endcomment -%}
+      {%- if service.method_richtext != blank -%}
+        <section class="cs-card">
+          {%- if service.method_title != blank -%}
+            <h2>{{ service.method_title }}</h2>
+          {%- endif -%}
+          <div class="rte">
+            {{ service.method_richtext }}
+          </div>
+        </section>
+      {%- endif -%}
+
+      {%- comment %} MYTHS / TRUTHS (optional) {% endcomment -%}
+      {%- if (service.myths and service.myths.size > 0) or (service.truths and service.truths.size > 0) -%}
+        <section class="cs-card">
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;">
+            {%- if service.myths and service.myths.size > 0 -%}
+              <div>
+                <h3>Common myths</h3>
+                <ul class="cs-list">
+                  {%- for item in service.myths -%}<li>{{ item }}</li>{%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+            {%- if service.truths and service.truths.size > 0 -%}
+              <div>
+                <h3>What’s actually true</h3>
+                <ul class="cs-list">
+                  {%- for item in service.truths -%}<li>{{ item }}</li>{%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+          </div>
+        </section>
+      {%- endif -%}
+
+      {%- comment %} FAQ — pairs faqs_q/faqs_a; includes JSON-LD {% endcomment -%}
+      {%- assign has_faq = service.faqs_q and service.faqs_q.size > 0 -%}
+      {%- if has_faq -%}
+        <section class="cs-card" id="faqs">
+          <h2>Frequently asked questions</h2>
+          <div class="nb-faq__list" style="display:grid;gap:12px;">
+            {%- for q in service.faqs_q -%}
+              {%- assign a = service.faqs_a[forloop.index0] -%}
+              <details class="nb-faq__item">
+                <summary class="nb-faq__q">{{ q }}</summary>
+                <div class="nb-faq__a rte">{{ a }}</div>
+              </details>
+            {%- endfor -%}
+          </div>
+        </section>
+
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {%- for q in service.faqs_q -%}
+            {
+              "@type": "Question",
+              "name": {{ q | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ service.faqs_a[forloop.index0] | strip_newlines | json }}
+              }
+            }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ]
+        }
+        </script>
+      {%- endif -%}
+
+      {%- comment %} BOTTOM CTA {% endcomment -%}
+      <div class="cs-bottom-cta" style="text-align:center;margin-top:28px;">
+        <a class="button button--primary"
+           href="{{ service.cta_link | default: '/pages/book-a-call' }}">
+          {{ service.cta_label | default: 'Book a free 20-min call' }}
+        </a>
+      </div>
+
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .coaching-service .cs-title{font-size:clamp(28px,3.2vw,40px);margin:0 0 8px;font-weight:800;}
+  .coaching-service .cs-subtitle{font-size:clamp(16px,2vw,20px);opacity:.9;margin:0;}
+  .coaching-service .cs-card{background:var(--nb-sage,#E6ECEA);border-radius:18px;padding:clamp(18px,2vw,26px);box-shadow:0 10px 28px rgba(0,0,0,.06);margin-top:22px;}
+  .coaching-service .cs-list{list-style:disc;margin:8px 0 0 1.1rem;display:grid;gap:.45rem;}
+  .coaching-service .nb-faq__q{cursor:pointer;display:block;padding:12px 16px;background:#0F5B59;color:#fff;border-radius:9999px;font-weight:700;}
+  .coaching-service .nb-faq__item{background:transparent;border:0;}
+  .coaching-service .nb-faq__a{background:#EAF4F3;border-radius:12px;margin:8px 12px 0;padding:12px 14px;}
+  @media (max-width: 900px){
+    .coaching-service .cs-hero{grid-template-columns:1fr;gap:18px;}
+  }
+</style>
