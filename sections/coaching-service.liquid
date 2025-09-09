@@ -1,14 +1,17 @@
-{%- comment -%}
-  Nibana – Coaching Service (metaobject-driven)
-  Update (2025-09-09):
-  1) Colors use global tokens from assets/base.css (with safe fallbacks)
-  2) Process rendered as a distinct timeline ("rail" layout)
-  3) Method styles apply to any UL within .nb-method__body (not only h3+ul)
-  4) Adds FAQ JSON-LD built from faqs_q/faqs_a (applies to any page using this section)
-  5) Adds sticky mobile CTA
-{%- endcomment -%}
+{% comment %}
+  Nibana — Coaching Service (metaobject-driven)
+  - Uses page metafields to select a service metaobject:
+      page.metafields.custom.coaching_service
+      (fallback) page.metafields.coachingservice.coaching_service
+  - Enhancements in this version:
+      1) Colors refactored to global tokens (see assets/base.css)
+      2) Process rendered as a vertical timeline
+      3) Method lists styled as pill cards (robust selectors)
+      4) FAQ JSON-LD injection (only if FAQs present)
+      5) Sticky mobile CTA bar (uses same CTA as hero)
+{% endcomment %}
 
-{%- liquid
+{% liquid
   assign cs_custom    = page.metafields.custom.coaching_service
   assign cs_canonical = page.metafields.coachingservice.coaching_service
   assign service_ref  = cs_custom | default: cs_canonical
@@ -16,18 +19,17 @@
     assign svc = service_ref.value
   endif
 
-  assign hero_kicker     = svc.hero_kicker
   assign hero_heading    = svc.hero_heading | default: section.settings.fallback_title
   assign hero_subheading = svc.hero_subheading | default: section.settings.fallback_sub
   assign hero_image      = svc.hero_image
-  assign hero_image_alt  = svc.hero_image_alt | default: hero_heading
   assign hero_video_url  = svc.hero_video_url
 
   assign cta_label = svc.cta_label | default: section.settings.cta_label
   assign cta_link  = svc.cta_link  | default: section.settings.cta_link
 
-  assign outcomes   = svc.outcomes
-  assign is_for_you = svc.is_for_you
+  assign social_proof = svc.social_proof
+  assign outcomes     = svc.outcomes
+  assign is_for_you   = svc.is_for_you
 
   assign process_titles = svc.process_titles
   assign process_bodies = svc.process_bodies
@@ -40,148 +42,332 @@
 
   assign faqs_q = svc.faqs_q
   assign faqs_a = svc.faqs_a
--%}
+%}
 
-<section class="nb-service" aria-label="Coaching service">
-  <div class="page-width nb-hero">
-    {%- if hero_kicker != blank -%}
-      <p class="nb-kicker">{{ hero_kicker }}</p>
-    {%- endif -%}
-
+<section class="nb-cs">
+  <!-- Hero -->
+  <header class="nb-cs__hero page-width">
+    {% if svc.kicker != blank %}
+      <p class="nb-kicker">{{ svc.kicker }}</p>
+    {% endif %}
     <h1 class="nb-title">{{ hero_heading }}</h1>
+    {% if hero_subheading != blank %}
+      <p class="nb-sub">{{ hero_subheading }}</p>
+    {% endif %}
 
-    {%- if hero_subheading != blank -%}
-      <div class="nb-sub rte">{{ hero_subheading }}</div>
-    {%- endif -%}
-
-    {%- if cta_label and cta_link -%}
-      <div class="nb-cta-row">
-        <a class="nb-cta" href="{{ cta_link }}" data-cta="primary-hero">{{ cta_label }}</a>
+    {% if cta_label and cta_link %}
+      <div class="nb-cta-wrap">
+        <a class="nb-cta" href="{{ cta_link }}" data-cta="coaching-hero">{{ cta_label }}</a>
       </div>
-    {%- endif -%}
+    {% endif %}
 
-    {%- if hero_video_url != blank -%}
-      <div class="nb-media nb-media--video">
-        <div class="nb-media__inner">
-          <iframe
-            src="{{ hero_video_url | replace: 'watch?v=', 'embed/' }}"
-            title="{{ hero_image_alt | escape }}"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </div>
+    {% if hero_video_url != blank %}
+      <div class="nb-hero-media nb-hero-media--video">
+        <iframe src="{{ hero_video_url | replace: 'watch?v=', 'embed/' }}" title="Intro video"
+                loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
-    {%- elsif hero_image -%}
-      <div class="nb-media nb-media--image">
-        {{ hero_image | image_url: width: 1760 | image_tag:
-          alt: hero_image_alt,
-          widths: '640,880,1200,1440,1760',
-          sizes: '(max-width: 780px) 92vw, 1100px',
-          loading: 'eager'
-        }}
+    {% elsif hero_image %}
+      <div class="nb-hero-media">
+        {{ hero_image | image_url: width: 1600 | image_tag: alt: hero_heading, sizes: "(min-width: 1100px) 1100px, 90vw", widths: "600,900,1200,1600" }}
       </div>
-    {%- endif -%}
-  </div>
+    {% endif %}
+  </header>
 
-  {%- comment -%} BENEFITS / OUTCOMES {%- endcomment -%}
-  {%- if outcomes and outcomes.size > 0 -%}
-  <div class="page-width nb-benefits">
-    <h2 class="nb-h2">What you’ll get</h2>
-    <ul class="nb-grid">
-      {%- for item in outcomes -%}
+  <!-- Social proof chips (keep text badges; trust logos live in global strip elsewhere) -->
+  {% if social_proof and social_proof.size > 0 %}
+    <div class="page-width">
+      <ul class="nb-chips" role="list">
+        {% for chip in social_proof %}
+          <li class="nb-chip">{{ chip }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <!-- Outcomes (cards) -->
+  {% if outcomes and outcomes.size > 0 %}
+  <section class="page-width nb-block">
+    <h2 class="nb-h2">{{ section.settings.outcomes_heading }}</h2>
+    <ul class="nb-grid nb-grid--3" role="list">
+      {% for item in outcomes %}
         <li class="nb-card">
-          {%- if item.title != blank -%}<h3>{{ item.title }}</h3>{%- endif -%}
-          {%- if item.blurb != blank -%}<p>{{ item.blurb }}</p>{%- endif -%}
+          <h3 class="nb-card__h">{{ item.title }}</h3>
+          {% if item.blurb != blank %}<p class="nb-card__p">{{ item.blurb }}</p>{% endif %}
         </li>
-      {%- endfor -%}
+      {% endfor %}
     </ul>
-  </div>
-  {%- endif -%}
+  </section>
+  {% endif %}
 
-  {%- comment -%} IS THIS FOR YOU? {%- endcomment -%}
-  {%- if is_for_you and is_for_you.size > 0 -%}
-  <div class="page-width nb-isforyou">
-    <h2 class="nb-h2">Is this for you?</h2>
-    <ul class="nb-bullets">
-      {%- for line in is_for_you -%}
-        {%- if line != blank -%}<li>{{ line }}</li>{%- endif -%}
-      {%- endfor -%}
+  <!-- Is this for you? (list) -->
+  {% if is_for_you and is_for_you.size > 0 %}
+  <section class="page-width nb-block">
+    <h2 class="nb-h2">{{ section.settings.isfor_heading }}</h2>
+    <ul class="nb-list">
+      {% for point in is_for_you %}
+        <li class="nb-list__item">{{ point }}</li>
+      {% endfor %}
     </ul>
-  </div>
-  {%- endif -%}
+  </section>
+  {% endif %}
 
-  {%- comment -%} PROCESS – TIMELINE ("rail") {%- endcomment -%}
-  {%- if process_titles and process_titles.size > 0 -%}
-  <div class="page-width nb-process">
-    <h2 class="nb-h2">The process</h2>
-    <ol class="nb-steps" role="list">
-      {%- for title in process_titles -%}
-        {%- assign body = process_bodies[forloop.index0] -%}
-        <li class="nb-step">
-          <span class="nb-step__num" aria-hidden="true">{{ forloop.index }}</span>
-          <div class="nb-step__body">
-            <h3 class="nb-step__title">{{ title }}</h3>
-            {%- if body != blank -%}<p class="nb-step__text">{{ body }}</p>{%- endif -%}
+  <!-- Process as vertical timeline -->
+  {% if process_titles and process_titles.size > 0 %}
+  <section class="page-width nb-block">
+    <h2 class="nb-h2">{{ section.settings.process_heading }}</h2>
+    <ol class="nb-timeline" role="list">
+      {% for t in process_titles %}
+        {% assign idx = forloop.index0 %}
+        {% assign b = process_bodies[idx] %}
+        <li class="nb-tl__item">
+          <div class="nb-tl__dot" aria-hidden="true">{{ forloop.index }}</div>
+          <div class="nb-tl__content">
+            <h3 class="nb-tl__h">{{ t }}</h3>
+            {% if b != blank %}<p class="nb-tl__p">{{ b }}</p>{% endif %}
           </div>
         </li>
-      {%- endfor -%}
+      {% endfor %}
     </ol>
-  </div>
-  {%- endif -%}
+  </section>
+  {% endif %}
 
-  {%- comment -%} METHOD – robust RTE styling for any UL inside body {%- endcomment -%}
-  {%- if method_title != blank or method_richtext != blank -%}
-  <div class="page-width nb-method">
-    {%- if method_title != blank -%}<h2 class="nb-h2">{{ method_title }}</h2>{%- endif -%}
-    <div class="nb-method__body rte">
-      {{ method_richtext }}
+  <!-- Method (rich text) — lists become pill cards automatically -->
+  {% if method_title or method_richtext %}
+  <section class="page-width nb-block nb-method">
+    {% if method_title %}<h2 class="nb-h2">{{ method_title }}</h2>{% endif %}
+    {% if method_richtext %}
+      <div class="nb-method__body rte">
+        {{ method_richtext }}
+      </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <!-- Myths vs Truths -->
+  {% if myths and myths.size > 0 and truths and truths.size > 0 %}
+  <section class="page-width nb-block">
+    <h2 class="nb-h2">{{ section.settings.myths_heading }}</h2>
+    <div class="nb-split">
+      <div>
+        <h3 class="nb-eyebrow">{{ section.settings.myths_col_title }}</h3>
+        <ul class="nb-list">
+          {% for m in myths %}<li class="nb-list__item">{{ m }}</li>{% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h3 class="nb-eyebrow">{{ section.settings.truths_col_title }}</h3>
+        <ul class="nb-list">
+          {% for tr in truths %}<li class="nb-list__item">{{ tr }}</li>{% endfor %}
+        </ul>
+      </div>
     </div>
-  </div>
-  {%- endif -%}
+  </section>
+  {% endif %}
 
-  {%- comment -%} MYTHS vs TRUTH – paired by index {%- endcomment -%}
-  {%- if myths and myths.size > 0 -%}
-  <div class="page-width nb-myths">
-    <h2 class="nb-h2">Myths vs Truth</h2>
-    <ul class="nb-grid nb-two">
-      {%- for myth in myths -%}
-        {%- assign truth = truths[forloop.index0] -%}
-        <li class="nb-card nb-card--myth">
-          <h3>Myth</h3>
-          <p>{{ myth }}</p>
-        </li>
-        <li class="nb-card nb-card--truth">
-          <h3>Truth</h3>
-          <p>{{ truth }}</p>
-        </li>
-      {%- endfor -%}
-    </ul>
-  </div>
-  {%- endif -%}
+  <!-- FAQ -->
+  {% assign faq_count = 0 %}
+  {% if faqs_q and faqs_a and faqs_q.size > 0 and faqs_a.size > 0 %}
+    {% assign faq_count = faqs_q.size | minus: 0 %}
+  {% endif %}
 
-  {%- comment -%} FAQ – accordion + JSON-LD {%- endcomment -%}
-  {%- if faqs_q and faqs_q.size > 0 -%}
-  <div class="page-width nb-faq">
-    <h2 class="nb-h2">Frequently asked questions</h2>
+  {% if faq_count > 0 %}
+  <section class="page-width nb-block nb-faq">
+    <h2 class="nb-h2">{{ section.settings.faq_heading }}</h2>
     <div class="nb-accordion" data-single-open="true">
-      {%- for q in faqs_q -%}
-        {%- assign a = faqs_a[forloop.index0] -%}
-        {%- if q != blank and a != blank -%}
-        <details class="nb-qa">
-          <summary class="nb-q">{{ q }}</summary>
-          <div class="nb-a rte">{{ a }}</div>
-        </details>
-        {%- endif -%}
-      {%- endfor -%}
+      {% for i in (0..faq_count-1) %}
+        {% assign q = faqs_q[i] %}
+        {% assign a = faqs_a[i] %}
+        {% if q != blank and a != blank %}
+          <details class="nb-acc">
+            <summary class="nb-acc__q">{{ q }}</summary>
+            <div class="nb-acc__a">{{ a }}</div>
+          </details>
+        {% endif %}
+      {% endfor %}
     </div>
-  </div>
 
-  {%- comment -%} JSON-LD: applies to all pages using this section {%- endcomment -%}
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"FAQPage",
-    "mainEntity":[
-      {%- assign last_index = faqs_q.size | minus: 1 -%}
-     
+    {%- comment -%} FAQ JSON-LD (renders only if FAQs exist) {%- endcomment -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- assign first = true -%}
+        {%- for i in (0..faq_count-1) -%}
+          {%- assign q = faqs_q[i] -%}
+          {%- assign a = faqs_a[i] -%}
+          {%- if q != blank and a != blank -%}
+            {%- unless first -%},{%- endunless -%}
+            {
+              "@type": "Question",
+              "name": {{ q | json }},
+              "acceptedAnswer": { "@type": "Answer", "text": {{ a | json }} }
+            }
+            {%- assign first = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    </script>
+  </section>
+  {% endif %}
+
+  <!-- Secondary CTA (optional bottom) -->
+  {% if cta_label and cta_link %}
+    <div class="page-width nb-block nb-cta-bottom">
+      <a class="nb-cta nb-cta--alt" href="{{ cta_link }}" data-cta="coaching-bottom">{{ cta_label }}</a>
+    </div>
+  {% endif %}
+
+  <!-- Sticky Mobile CTA (visible under 860px) -->
+  {% if cta_label and cta_link %}
+  <div class="nb-sticky-cta" data-cta="coaching-sticky">
+    <a href="{{ cta_link }}" class="nb-sticky-cta__btn" aria-label="{{ cta_label }}">{{ cta_label }}</a>
+  </div>
+  {% endif %}
+</section>
+
+<style>
+/* =========
+   Tokens
+   =========
+   Uses global tokens already defined in assets/base.css:
+   --nb-ink, --nb-muted, --nb-deep, --nb-sage, --nb-teal, --nb-cadet, --nb-pebble, --nb-chocolate, etc.
+*/
+.nb-cs{ --pad:clamp(16px,3vw,28px); }
+.page-width{ max-width:1100px; margin-inline:auto; padding-inline:var(--pad); }
+.nb-block{ margin-top:clamp(28px,5vw,48px); }
+
+.nb-kicker{ letter-spacing:.08em; text-transform:uppercase; color:var(--nb-muted); margin:.25rem 0 .5rem; }
+.nb-title{ font-size:clamp(28px,4vw,44px); line-height:1.12; color:var(--nb-ink); margin:0 0 .5rem; }
+.nb-sub{ color:var(--nb-ink); opacity:.9; max-width:60ch; }
+.nb-cta-wrap{ margin-top:1rem; }
+.nb-cta{
+  display:inline-block; padding:.85rem 1.15rem; border-radius:999px;
+  background:var(--nb-deep); color:#fff; text-decoration:none; font-weight:600;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+.nb-cta--alt{ background:var(--nb-teal); }
+
+.nb-hero-media{ margin-top:1rem; border-radius:16px; overflow:hidden; border:1px solid rgba(0,0,0,.06); background:#fff; }
+.nb-hero-media img{ display:block; width:100%; height:auto; }
+.nb-hero-media--video iframe{ width:100%; aspect-ratio:16/9; border:0; }
+
+/* Chips */
+.nb-chips{ display:flex; flex-wrap:wrap; gap:10px; padding-top:10px; }
+.nb-chip{
+  padding:.45rem .7rem; border-radius:999px; background:var(--nb-sage);
+  color:var(--nb-deep); border:1px solid rgba(0,0,0,.06); font-size:.9rem;
+}
+
+/* Headings */
+.nb-h2{ font-size:clamp(20px,2.6vw,28px); color:var(--nb-ink); margin:0 0 .8rem; }
+.nb-eyebrow{ font-size:.85rem; letter-spacing:.06em; text-transform:uppercase; color:var(--nb-muted); margin:0 0 .4rem; }
+
+/* Grid cards */
+.nb-grid{ display:grid; gap:18px; }
+.nb-grid--3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+@media(max-width:900px){ .nb-grid--3{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:560px){ .nb-grid--3{ grid-template-columns:1fr; } }
+
+.nb-card{
+  background:#fff; border:1px solid #e8ecef; border-radius:16px; padding:16px 18px;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+.nb-card__h{ margin:0 0 .25rem; color:var(--nb-ink); font-size:1.05rem; }
+.nb-card__p{ margin:0; color:var(--nb-ink); opacity:.9; }
+
+/* Lists */
+.nb-list{ display:grid; gap:10px; padding:0; margin:0; list-style:none; }
+.nb-list__item{
+  padding:12px 14px; background:#fff; border:1px solid #e8ecef; border-radius:12px;
+  color:var(--nb-ink);
+}
+
+/* Timeline */
+.nb-timeline{
+  position:relative; margin:0; padding-left:0; list-style:none;
+  display:grid; gap:14px;
+}
+.nb-tl__item{ display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:flex-start; }
+.nb-tl__dot{
+  width:32px; height:32px; border-radius:999px; display:grid; place-items:center;
+  background:var(--nb-sage); color:var(--nb-deep); font-weight:700; flex:0 0 auto;
+  border:1px solid rgba(0,0,0,.06);
+}
+.nb-tl__content{
+  background:#fff; border:1px solid #e8ecef; border-radius:14px; padding:12px 14px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.nb-tl__h{ margin:0 0 .25rem; font-size:1.05rem; color:var(--nb-ink); }
+.nb-tl__p{ margin:0; color:var(--nb-ink); opacity:.9; }
+
+/* Method pills (robust selectors) */
+.nb-method__body ul{
+  display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:.6rem 0 0; list-style:none;
+}
+.nb-method__body ul li{
+  padding:.45rem .65rem; border-radius:999px; background:var(--nb-pebble);
+  color:var(--nb-ink); border:1px solid rgba(0,0,0,.06); font-size:.95rem;
+}
+.nb-method__body h3{ margin-top:1rem; margin-bottom:.4rem; color:var(--nb-ink); }
+.nb-method__body p{ color:var(--nb-ink); }
+
+/* Two column split (myths/truths) */
+.nb-split{ display:grid; gap:18px; grid-template-columns:1fr 1fr; }
+@media(max-width:800px){ .nb-split{ grid-template-columns:1fr; } }
+
+/* Accordion (single-open) */
+.nb-accordion .nb-acc{ border:1px solid #e8ecef; border-radius:14px; background:#fff; padding:10px 12px; }
+.nb-accordion .nb-acc + .nb-acc{ margin-top:10px; }
+.nb-acc__q{ cursor:pointer; font-weight:600; color:var(--nb-ink); list-style:none; }
+.nb-acc__a{ margin-top:.5rem; color:var(--nb-ink); }
+
+/* Sticky Mobile CTA */
+.nb-sticky-cta{
+  position:fixed; left:0; right:0; bottom:0; z-index:40; display:none;
+  padding: max(10px, env(safe-area-inset-bottom));
+  background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));
+  border-top:1px solid #e8ecef;
+}
+.nb-sticky-cta__btn{
+  display:block; text-align:center; font-weight:700; text-decoration:none;
+  background:var(--nb-chocolate, var(--nb-deep)); color:#fff;
+  padding:.9rem 1.1rem; border-radius:999px;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+@media(max-width:860px){ .nb-sticky-cta{ display:block; } }
+</style>
+
+<script>
+/* Single-open accordion behavior for FAQ */
+document.addEventListener('click', function(e){
+  const summary = e.target.closest('.nb-acc > summary');
+  if(!summary) return;
+  const details = summary.parentNode;
+  const root = details.closest('.nb-accordion');
+  if(root && root.dataset.singleOpen === 'true'){
+    root.querySelectorAll('details[open]').forEach(d => { if(d !== details) d.removeAttribute('open'); });
+  }
+}, {passive:true});
+</script>
+
+{% schema %}
+{
+  "name": "Nibana – Coaching Service",
+  "settings": [
+    { "type": "text",     "id": "fallback_title", "label": "Fallback title", "default": "Transformational life coaching helps you change from the inside out." },
+    { "type": "textarea", "id": "fallback_sub",   "label": "Fallback subheading" },
+    { "type": "text",     "id": "cta_label",      "label": "Fallback CTA label", "default":"Book a call" },
+    { "type": "url",      "id": "cta_link",       "label": "Fallback CTA link",  "default": "/pages/book-a-call" },
+    { "type": "text",     "id": "outcomes_heading","label": "Outcomes heading", "default": "What you’ll get" },
+    { "type": "text",     "id": "isfor_heading",   "label": "Is this for you? heading", "default": "Is this for you?" },
+    { "type": "text",     "id": "process_heading", "label": "Process heading", "default": "The process" },
+    { "type": "text",     "id": "myths_heading",   "label": "Myths vs Truths heading", "default": "Common myths vs What’s true" },
+    { "type": "text",     "id": "myths_col_title", "label": "Myths column title", "default": "Myths" },
+    { "type": "text",     "id": "truths_col_title","label": "Truths column title", "default": "Truths" },
+    { "type": "text",     "id": "faq_heading",     "label": "FAQ heading", "default":"Frequently asked questions" }
+  ],
+  "presets": [{ "name": "Nibana – Coaching Service" }]
+}
+{% endschema %}
