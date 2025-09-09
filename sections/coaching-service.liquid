@@ -214,20 +214,35 @@
 
   # QUESTIONS → split by single newlines (ignore empty)
   assign q_html = q_raw | newline_to_br
-  assign q_pipe = q_html | replace: '<br />', '|||'
-  assign q_pipe = q_pipe  | replace: '<br>', '|||'
-  assign qs = q_pipe | split: '|||'
+  assign q_norm = q_html
+  assign q_norm = q_norm | replace: '<br/>', '<br />'
+  assign q_norm = q_norm | replace: '<br>',  '<br />'
+  assign q_norm = q_norm | replace: '<br />\r\n', '<br />'
+  assign q_norm = q_norm | replace: '<br />\n',   '<br />'
+  assign q_pipe = q_norm | replace: '<br />', '|||'
+  assign qs     = q_pipe | split: '|||'
 
-  # ANSWERS → split by BLANK line (handle many variants)
+  # ANSWERS → robust blank-line split + optional '---' delimiter
   assign a_html = a_raw | newline_to_br
-  assign a_pipe = a_html
-  assign a_pipe = a_pipe | replace: '<br />\r\n<br />', '§§'
-  assign a_pipe = a_pipe | replace: '<br />\n<br />',  '§§'
-  assign a_pipe = a_pipe | replace: '<br /><br />',    '§§'
-  assign a_pipe = a_pipe | replace: '<br>\r\n<br>',    '§§'
-  assign a_pipe = a_pipe | replace: '<br>\n<br>',      '§§'
-  assign a_pipe = a_pipe | replace: '<br><br>',        '§§'
-  assign as = a_pipe | split: '§§'
+  assign a_norm = a_html
+  assign a_norm = a_norm | replace: '<br/>', '<br />'
+  assign a_norm = a_norm | replace: '<br>',  '<br />'
+  assign a_norm = a_norm | replace: '<br />\r\n', '<br />'
+  assign a_norm = a_norm | replace: '<br />\n',   '<br />'
+  assign a_norm = a_norm | replace: '&nbsp;', ' '
+
+  # convert multiple patterns of double <br /> (with/without spaces) to a delimiter
+  assign a_norm = a_norm | replace: '<br /><br />', '§§'
+  assign a_norm = a_norm | replace: '<br /> <br />', '§§'
+  assign a_norm = a_norm | replace: '<br />  <br />', '§§'
+  assign a_norm = a_norm | replace: '<br />   <br />', '§§'
+  # handle (rare) triple breaks just in case
+  assign a_norm = a_norm | replace: '<br /><br /><br />', '§§'
+
+  # also allow an explicit '---' line as a separator
+  assign a_norm = a_norm | replace: '---', '§§'
+
+  assign as = a_norm | split: '§§'
 
   # count non-blank questions
   assign q_count = 0
@@ -287,7 +302,7 @@
   </div>
 
   <script>
-    /* single-open behavior (scoped to this section) */
+    /* keep single-open */
     (function(){
       var root = document.getElementById('nb-faq-{{ section.id }}-svc');
       if(!root) return;
