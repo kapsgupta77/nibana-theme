@@ -207,23 +207,37 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%} ---------- FAQ ---------- {%- endcomment -%}
+ {%- comment -%} ---------- FAQ (robust split) ---------- {%- endcomment -%}
 {%- liquid
+  # Raw fields
   assign q_raw = service.faqs_q | to_string
   assign a_raw = service.faqs_a | to_string
 
-  # normalise line breaks (handles mac/win)
-  assign q_norm = q_raw | replace: '\r\n', '\n' | replace: '\r', '\n'
-  assign a_norm = a_raw | replace: '\r\n', '\n' | replace: '\r', '\n'
+  # Convert real newlines to <br /> so we can split reliably in Liquid
+  assign q_html = q_raw | newline_to_br
+  assign a_html = a_raw | newline_to_br
 
-  # split into arrays
-  assign qs = q_norm | split: '\n'
-  assign as = a_norm | split: '\n'
+  # Questions: split on every <br/> (i.e., each line = one question)
+  assign q_pipe = q_html
+  assign q_pipe = q_pipe | replace: '<br />', '|||'
+  assign q_pipe = q_pipe | replace: '<br>', '|||'
+  assign qs = q_pipe | split: '|||'
+
+  # Answers: split on blank line (i.e., two <br/> in a row)
+  assign a_pipe = a_html
+  assign a_pipe = a_pipe | replace: '<br />' | append: ''  # normalize
+  assign a_pipe = a_pipe | replace: '<br />' | append: ''  # no-op but keeps compatibility
+  # handle both patterns that Shopify may output
+  assign a_pipe = a_html | replace: '<br />\n<br />', '§§'
+  assign a_pipe = a_pipe | replace: '<br /><br />', '§§'
+  assign a_pipe = a_pipe | replace: '<br>\n<br>', '§§'
+  assign a_pipe = a_pipe | replace: '<br><br>', '§§'
+  assign as = a_pipe | split: '§§'
 
   # count non-empty questions
   assign q_count = 0
   for q in qs
-    assign qq = q | strip
+    assign qq = q | strip_html | strip
     if qq != '' 
       assign q_count = q_count | plus: 1
     endif
@@ -234,14 +248,19 @@
   <div class="nb-tray nb-faq" style="margin:22px 0">
     <h2 class="nb-h2">Frequently asked questions</h2>
 
+    {%- assign i = 0 -%}
     {%- for q in qs -%}
-      {%- assign qq = q | strip -%}
+      {%- assign qq = q | strip_html | strip -%}
       {%- if qq != '' -%}
-        {%- assign a = as[forloop.index0] | default: '' | strip -%}
+        {%- assign a_index = i -%}
+        {%- assign a_item = as[a_index] | default: '' | strip -%}
         <details{% if forloop.first %} open{% endif %}>
           <summary>{{ qq }}</summary>
-          <div class="nb-a">{{ a | newline_to_br }}</div>
+          <div class="nb-a">
+            {{ a_item }} {# a_item already contains <br /> for its internal line-breaks #}
+          </div>
         </details>
+        {%- assign i = i | plus: 1 -%}
       {%- endif -%}
     {%- endfor -%}
   </div>
