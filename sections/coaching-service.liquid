@@ -212,18 +212,6 @@
       <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
     </div>
 
-    {%- comment -%} Dev-time logger (safe to remove when satisfied) {%- endcomment -%}
-    <script>
-      console.log('CoachingService debug',
-        'outcomes:', {{ outcomes | json }},
-        'is_for_you:', {{ ify | json }},
-        'steps:', {{ steps | json }},
-        'myths:', {{ myths | json }},
-        'truths:', {{ truths | json }},
-        'faqs_q:', {{ faqs_q | json }},
-        'faqs_a:', {{ faqs_a | json }}
-      );
-    </script>
   </section>
 
 {%- else -%}
