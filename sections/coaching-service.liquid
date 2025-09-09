@@ -257,14 +257,16 @@
   {%- endif -%}
 
   {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
-  {%- if service.method_title or service.method_richtext -%}
-    <div class="nb-tray">
-      <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
-      {%- if service.method_richtext -%}
-        <div class="nb-rte rte">{{ service.method_richtext | metafield_tag }}</div>
-      {%- endif -%}
-    </div>
-  {%- endif -%}
+{%- if service.method_title or service.method_richtext -%}
+  <div class="nb-tray nb-method">
+    <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
+    {%- if service.method_richtext -%}
+      <div class="nb-rte nb-method__body">
+        {{ service.method_richtext | metafield_tag }}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
 
   {%- comment -%} ---------- MYTHS / TRUTHS (two-column cards; robust splitting) ---------- {%- endcomment -%}
 {%- liquid
