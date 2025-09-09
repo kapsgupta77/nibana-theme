@@ -1,377 +1,472 @@
-{% comment %}
-  Nibana — Coaching Service (metaobject-driven)
-  Enhancements:
-    1) Tokenized colors (uses assets/base.css tokens)
-    2) Process rendered as vertical timeline
-    3) Method ULs styled as pill cards (robust selectors)
-    4) FAQ JSON-LD injection (only if FAQs exist)
-    5) Sticky mobile CTA (same CTA as hero)
-{% endcomment %}
+{%- comment -%}
+  Coaching Service (metaobject-driven)
+  Page metafield: either custom.coaching_service OR coachingservice.coaching_service
+{%- endcomment -%}
 
-{% liquid
+{%- liquid
   assign cs_custom    = page.metafields.custom.coaching_service
   assign cs_canonical = page.metafields.coachingservice.coaching_service
   assign service_ref  = cs_custom | default: cs_canonical
-  if service_ref and service_ref.value
-    assign svc = service_ref.value
-  endif
+-%}
 
-  assign hero_heading    = svc.hero_heading | default: section.settings.fallback_title
-  assign hero_subheading = svc.hero_subheading | default: section.settings.fallback_sub
-  assign hero_image      = svc.hero_image
-  assign hero_video_url  = svc.hero_video_url
-
-  assign cta_label = svc.cta_label | default: section.settings.cta_label | default: 'Book a call'
-  assign cta_link  = svc.cta_link  | default: section.settings.cta_link | default: '/pages/book-a-call'
-
-  assign social_proof = svc.social_proof
-  assign outcomes     = svc.outcomes
-  assign is_for_you   = svc.is_for_you
-
-  assign process_titles = svc.process_titles
-  assign process_bodies = svc.process_bodies
-
-  assign method_title    = svc.method_title
-  assign method_richtext = svc.method_richtext
-
-  assign myths  = svc.myths
-  assign truths = svc.truths
-
-  assign faqs_q = svc.faqs_q
-  assign faqs_a = svc.faqs_a
-%}
-
-<section class="nb-cs">
-  <!-- Hero -->
-  <header class="nb-cs__hero page-width">
-    {% if svc.kicker != blank %}
-      <p class="nb-kicker">{{ svc.kicker }}</p>
-    {% endif %}
-    <h1 class="nb-title">{{ hero_heading }}</h1>
-    {% if hero_subheading != blank %}
-      <p class="nb-sub">{{ hero_subheading }}</p>
-    {% endif %}
-
-    {% if cta_label and cta_link %}
-      <div class="nb-cta-wrap">
-        <a class="nb-cta" href="{{ cta_link }}" data-cta="coaching-hero">{{ cta_label }}</a>
-      </div>
-    {% endif %}
-
-    {% if hero_video_url != blank %}
-      <div class="nb-hero-media nb-hero-media--video">
-        <iframe src="{{ hero_video_url | replace: 'watch?v=', 'embed/' }}" title="Intro video"
-                loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-    {% elsif hero_image %}
-      <div class="nb-hero-media">
-        {{ hero_image | image_url: width: 1600 | image_tag: alt: hero_heading, sizes: "(min-width: 1100px) 1100px, 90vw", widths: "600,900,1200,1600" }}
-      </div>
-    {% endif %}
-  </header>
-
-  <!-- Social proof chips (text badges; global trust logos live elsewhere) -->
-  {% if social_proof and social_proof.size > 0 %}
-    <div class="page-width">
-      <ul class="nb-chips" role="list">
-        {% for chip in social_proof %}
-          <li class="nb-chip">{{ chip }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
-
-  <!-- Outcomes (cards) -->
-  {% if outcomes and outcomes.size > 0 %}
-  <section class="page-width nb-block">
-    <h2 class="nb-h2">{{ section.settings.outcomes_heading }}</h2>
-    <ul class="nb-grid nb-grid--3" role="list">
-      {% for item in outcomes %}
-        <li class="nb-card">
-          <h3 class="nb-card__h">{{ item.title }}</h3>
-          {% if item.blurb != blank %}<p class="nb-card__p">{{ item.blurb }}</p>{% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
-
-  <!-- Is this for you? (list) -->
-  {% if is_for_you and is_for_you.size > 0 %}
-  <section class="page-width nb-block">
-    <h2 class="nb-h2">{{ section.settings.isfor_heading }}</h2>
-    <ul class="nb-list">
-      {% for point in is_for_you %}
-        <li class="nb-list__item">{{ point }}</li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
-
-  <!-- Process as vertical timeline -->
-  {% if process_titles and process_titles.size > 0 %}
-  <section class="page-width nb-block">
-    <h2 class="nb-h2">{{ section.settings.process_heading }}</h2>
-    <ol class="nb-timeline" role="list">
-      {% for t in process_titles %}
-        {% assign idx = forloop.index0 %}
-        {% assign b = process_bodies[idx] %}
-        <li class="nb-tl__item">
-          <div class="nb-tl__dot" aria-hidden="true">{{ forloop.index }}</div>
-          <div class="nb-tl__content">
-            <h3 class="nb-tl__h">{{ t }}</h3>
-            {% if b != blank %}<p class="nb-tl__p">{{ b }}</p>{% endif %}
-          </div>
-        </li>
-      {% endfor %}
-    </ol>
-  </section>
-  {% endif %}
-
-  <!-- Method (rich text) — lists become pill cards automatically -->
-  {% if method_title or method_richtext %}
-  <section class="page-width nb-block nb-method">
-    {% if method_title %}<h2 class="nb-h2">{{ method_title }}</h2>{% endif %}
-    {% if method_richtext %}
-      <div class="nb-method__body rte">
-        {{ method_richtext }}
-      </div>
-    {% endif %}
-  </section>
-  {% endif %}
-
-  <!-- Myths vs Truths -->
-  {% if myths and myths.size > 0 and truths and truths.size > 0 %}
-  <section class="page-width nb-block">
-    <h2 class="nb-h2">{{ section.settings.myths_heading }}</h2>
-    <div class="nb-split">
-      <div>
-        <h3 class="nb-eyebrow">{{ section.settings.myths_col_title }}</h3>
-        <ul class="nb-list">
-          {% for m in myths %}<li class="nb-list__item">{{ m }}</li>{% endfor %}
-        </ul>
-      </div>
-      <div>
-        <h3 class="nb-eyebrow">{{ section.settings.truths_col_title }}</h3>
-        <ul class="nb-list">
-          {% for tr in truths %}<li class="nb-list__item">{{ tr }}</li>{% endfor %}
-        </ul>
-      </div>
-    </div>
-  </section>
-  {% endif %}
-
-  <!-- FAQ -->
-  {% assign faq_count = 0 %}
-  {% if faqs_q != blank and faqs_a != blank %}
-    {% assign size_q = faqs_q.size %}
-    {% assign size_a = faqs_a.size %}
-    {% if size_q < size_a %}
-      {% assign faq_count = size_q %}
-    {% else %}
-      {% assign faq_count = size_a %}
-    {% endif %}
-  {% endif %}
-
-  {% if faq_count > 0 %}
-  {% assign last_index = faq_count | minus: 1 %}
-  <section class="page-width nb-block nb-faq">
-    <h2 class="nb-h2">{{ section.settings.faq_heading }}</h2>
-    <div class="nb-accordion" data-single-open="true">
-      {% for i in (0..last_index) %}
-        {% assign q = faqs_q[i] %}
-        {% assign a = faqs_a[i] %}
-        {% if q != blank and a != blank %}
-          <details class="nb-acc">
-            <summary class="nb-acc__q">{{ q }}</summary>
-            <div class="nb-acc__a">{{ a }}</div>
-          </details>
-        {% endif %}
-      {% endfor %}
-    </div>
-
-    {%- comment -%} FAQ JSON-LD (renders only if FAQs exist) {%- endcomment -%}
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {%- assign first = true -%}
-        {%- for i in (0..last_index) -%}
-          {%- assign q = faqs_q[i] -%}
-          {%- assign a = faqs_a[i] -%}
-          {%- if q != blank and a != blank -%}
-            {%- unless first -%},{%- endunless -%}
-            {
-              "@type": "Question",
-              "name": {{ q | json }},
-              "acceptedAnswer": { "@type": "Answer", "text": {{ a | json }} }
-            }
-            {%- assign first = false -%}
-          {%- endif -%}
-        {%- endfor -%}
-      ]
-    }
-    </script>
-  </section>
-  {% endif %}
-
-  <!-- Secondary CTA (optional bottom) -->
-  {% if cta_label and cta_link %}
-    <div class="page-width nb-block nb-cta-bottom">
-      <a class="nb-cta nb-cta--alt" href="{{ cta_link }}" data-cta="coaching-bottom">{{ cta_label }}</a>
-    </div>
-  {% endif %}
-
-  <!-- Sticky Mobile CTA (visible under 860px) -->
-  {% if cta_label and cta_link %}
-  <div class="nb-sticky-cta" data-cta="coaching-sticky">
-    <a href="{{ cta_link }}" class="nb-sticky-cta__btn" aria-label="{{ cta_label }}">{{ cta_label }}</a>
-  </div>
-  {% endif %}
-</section>
+{%- if service_ref and service_ref.value -%}
+{%- assign service = service_ref.value -%}
 
 <style>
-/* =========
-   Tokens
-   =========
-   Uses global tokens already defined in assets/base.css:
-   --nb-ink, --nb-muted, --nb-deep, --nb-sage, --nb-teal, --nb-cadet, --nb-pebble, --nb-chocolate, etc.
-*/
-.nb-cs{ --pad:clamp(16px,3vw,28px); }
-.page-width{ max-width:1100px; margin-inline:auto; padding-inline:var(--pad); }
-.nb-block{ margin-top:clamp(28px,5vw,48px); }
+  /* ===========================
+     Nibana page-scoped styling
+     =========================== */
 
-.nb-kicker{ letter-spacing:.08em; text-transform:uppercase; color:var(--nb-muted); margin:.25rem 0 .5rem; }
-.nb-title{ font-size:clamp(28px,4vw,44px); line-height:1.12; color:var(--nb-ink); margin:0 0 .5rem; }
-.nb-sub{ color:var(--nb-ink); opacity:.9; max-width:60ch; }
-.nb-cta-wrap{ margin-top:1rem; }
-.nb-cta{
-  display:inline-block; padding:.85rem 1.15rem; border-radius:999px;
-  background:var(--nb-deep); color:#fff; text-decoration:none; font-weight:600;
-  box-shadow:0 1px 2px rgba(0,0,0,.08);
-}
-.nb-cta--alt{ background:var(--nb-teal); }
+  :root{
+    --nb-ink:#223238;
+    --nb-muted:#324247;
+    --nb-deep:#0F5B59;
+    --nb-sage:#EAF4F3;
+    --nb-sage-strong:#e6eeea;
+    --nb-chocolate:#C86B2A;
+  }
 
-.nb-hero-media{ margin-top:1rem; border-radius:16px; overflow:hidden; border:1px solid rgba(0,0,0,.06); background:#fff; }
-.nb-hero-media img{ display:block; width:100%; height:auto; }
-.nb-hero-media--video iframe{ width:100%; aspect-ratio:16/9; border:0; }
+  .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
+  .nb-grid{display:grid;gap:22px}
 
-/* Chips */
-.nb-chips{ display:flex; flex-wrap:wrap; gap:10px; padding-top:10px; }
-.nb-chip{
-  padding:.45rem .7rem; border-radius:999px; background:var(--nb-sage);
-  color:var(--nb-deep); border:1px solid rgba(0,0,0,.06); font-size:.9rem;
-}
+  /* Headings use theme heading family; body uses theme body family */
+  .nb-h1,.nb-h2,.nb-h3{ font-family: var(--font-heading-family,inherit); color: var(--nb-ink); }
+  .nb-h1{ font-size:clamp(30px,4.4vw,48px); line-height:1.1; margin:0 0 10px; font-weight:800; }
+  .nb-h2{ font-size:clamp(22px,2.8vw,28px); font-weight:800; margin:0 0 6px; }
+  .nb-h3{ font-size:clamp(18px,2.1vw,22px); font-weight:750; margin:0 0 10px; }
+  /* tone tweak for brand */
+  .nb-h2,.nb-h3{ color: var(--nb-deep); }  /* H1 stays on --nb-ink; H2/H3 on deep */
 
-/* Headings */
-.nb-h2{ font-size:clamp(20px,2.6vw,28px); color:var(--nb-ink); margin:0 0 .8rem; }
-.nb-eyebrow{ font-size:.85rem; letter-spacing:.06em; text-transform:uppercase; color:var(--nb-muted); margin:0 0 .4rem; }
+  /* Body copy */
+  .nb-copy,.nb-tray,.nb-hero p,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
 
-/* Grid cards */
-.nb-grid{ display:grid; gap:18px; }
-.nb-grid--3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
-@media(max-width:900px){ .nb-grid--3{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:560px){ .nb-grid--3{ grid-template-columns:1fr; } }
+  /* Hero */
+  .nb-hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:28px}
+  @media (max-width:990px){ .nb-hero{grid-template-columns:1fr} }
+  .nb-hero p{margin:0 0 16px}
+  .nb-hero_img{width:100%;height:auto;border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
+  .nb-hero_placeholder{aspect-ratio:16/9;border-radius:18px;background:linear-gradient(135deg,#e8f1ee,#f3f6ef)}
 
-.nb-card{
-  background:#fff; border:1px solid #e8ecef; border-radius:16px; padding:16px 18px;
-  box-shadow:0 1px 3px rgba(0,0,0,.05);
-}
-.nb-card__h{ margin:0 0 .25rem; color:var(--nb-ink); font-size:1.05rem; }
-.nb-card__p{ margin:0; color:var(--nb-ink); opacity:.9; }
+  /* CTA */
+  .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate);background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
+  .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
-/* Lists */
-.nb-list{ display:grid; gap:10px; padding:0; margin:0; list-style:none; }
-.nb-list__item{
-  padding:12px 14px; background:#fff; border:1px solid #e8ecef; border-radius:12px;
-  color:var(--nb-ink);
-}
+  /* Trays / cards */
+  .nb-tray{background:var(--nb-sage);border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .nb-card{background:#fff;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);padding:12px 14px}
+  .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
 
-/* Timeline */
-.nb-timeline{
-  position:relative; margin:0; padding-left:0; list-style:none;
-  display:grid; gap:14px;
-}
-.nb-tl__item{ display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:flex-start; }
-.nb-tl__dot{
-  width:32px; height:32px; border-radius:999px; display:grid; place-items:center;
-  background:var(--nb-sage); color:var(--nb-deep); font-weight:700; flex:0 0 auto;
-  border:1px solid rgba(0,0,0,.06);
-}
-.nb-tl__content{
-  background:#fff; border:1px solid #e8ecef; border-radius:14px; padding:12px 14px;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-}
-.nb-tl__h{ margin:0 0 .25rem; font-size:1.05rem; color:var(--nb-ink); }
-.nb-tl__p{ margin:0; color:var(--nb-ink); opacity:.9; }
+  /* Duo cards (myths / truths) */
+  .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
+  .nb-duo .nb-card{padding:18px 20px}
 
-/* Method pills (robust selectors) */
-.nb-method__body ul{
-  display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:.6rem 0 0; list-style:none;
-}
-.nb-method__body ul li{
-  padding:.45rem .65rem; border-radius:999px; background:var(--nb-pebble);
-  color:var(--nb-ink); border:1px solid rgba(0,0,0,.06); font-size:.95rem;
-}
-.nb-method__body h3{ margin-top:1rem; margin-bottom:.4rem; color:var(--nb-ink); }
-.nb-method__body p{ color:var(--nb-ink); }
+  /* Lists */
+  .nb-list{margin:0;padding-left:1.15rem}
+  .nb-list li{margin:.28rem 0}
 
-/* Two column split (myths/truths) */
-.nb-split{ display:grid; gap:18px; grid-template-columns:1fr 1fr; }
-@media(max-width:800px){ .nb-split{ grid-template-columns:1fr; } }
+  /* General RTE */
+  .nb-rte{line-height:1.65}
+  .nb-rte h3{margin:.25rem 0 .35rem}
+  .nb-rte ul{padding-left:1.25rem}
 
-/* Accordion (single-open) */
-.nb-accordion .nb-acc{ border:1px solid #e8ecef; border-radius:14px; background:#fff; padding:10px 12px; }
-.nb-accordion .nb-acc + .nb-acc{ margin-top:10px; }
-.nb-acc__q{ cursor:pointer; font-weight:600; color:var(--nb-ink); list-style:none; }
-.nb-acc__a{ margin-top:.5rem; color:var(--nb-ink); }
+  /* --- METHOD (rich text) enhancements --- */
+  .nb-method{ padding:22px 22px 24px; }
+  .nb-method .nb-h2{ margin-bottom:10px; }
 
-/* Sticky Mobile CTA */
-.nb-sticky-cta{
-  position:fixed; left:0; right:0; bottom:0; z-index:40; display:none;
-  padding: max(10px, env(safe-area-inset-bottom));
-  background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));
-  border-top:1px solid #e8ecef;
-}
-.nb-sticky-cta__btn{
-  display:block; text-align:center; font-weight:700; text-decoration:none;
-  background:var(--nb-chocolate, var(--nb-deep)); color:#fff;
-  padding:.9rem 1.1rem; border-radius:999px;
-  box-shadow:0 1px 3px rgba(0,0,0,.12);
-}
-@media(max-width:860px){ .nb-sticky-cta{ display:block; } }
+  /* H3s inside the rich text get a brand accent */
+  .nb-method__body h3{
+    color:var(--nb-deep);
+    font-weight:800;
+    margin:16px 0 8px;
+  }
+
+  /* Turn the first UL after each H3 into pill cards, two columns on desktop */
+  .nb-method__body h3 + ul{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    margin:10px 0 6px;
+    padding:0; /* override default UL padding for this layout */
+  }
+  @media (max-width: 860px){
+    .nb-method__body h3 + ul{ grid-template-columns:1fr; }
+  }
+  .nb-method__body h3 + ul li{
+    list-style:none;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    padding:10px 12px 10px 36px;
+    position:relative;
+    line-height:1.5;
+  }
+  .nb-method__body h3 + ul li::before{
+    content:"✓";
+    position:absolute; left:12px; top:11px;
+    font-weight:800; color:var(--nb-deep);
+  }
+
+  /* Card-style the paragraph immediately after each H3 */
+  .nb-method__body h3 + p{
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    padding:14px 16px;
+    line-height:1.65;
+    margin:10px 0 16px;
+    color:var(--nb-muted);
+  }
+
+  /* FAQ (global pill look) */
+  .nb-faq--wrap{ margin:22px 0; }
+  .nb-faq__title{ color:var(--nb-ink); text-align:center; font-weight:800; font-size:clamp(28px,3.6vw,40px); margin:0 0 16px; font-family:var(--font-heading-family,inherit); }
+  .nb-faq__list{ display:grid; gap:18px; }
+  .nb-faq__item{ background:transparent; border:0; box-shadow:none; overflow:visible; }
+  .nb-faq__q{
+    position:relative; background:var(--nb-deep); color:#fff; border:0; border-radius:9999px;
+    padding:16px 64px 16px 22px; font-weight:720; box-shadow:0 4px 14px rgba(0,0,0,.05);
+    display:grid; grid-template-columns:1fr auto; align-items:center; list-style:none; cursor:pointer;
+    font-family:var(--font-body-family,inherit);
+  }
+  .nb-faq__q::-webkit-details-marker{ display:none; }
+  .nb-faq__q:hover{ background:#0e5452; }
+  .nb-faq__q::after{
+    content:"+"; position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:9999px; display:grid; place-items:center;
+    color:#fff; background:rgba(255,255,255,.14); font-size:22px; font-weight:800; line-height:1;
+  }
+  details[open] .nb-faq__q::after{ content:"–"; }
+  .nb-faq__a{
+    background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:14px;
+    margin:10px 14px 2px; padding:16px 20px; color:var(--nb-muted); line-height:1.65;
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset;
+  }
 </style>
 
-<script>
-/* Single-open accordion behavior for FAQ */
-document.addEventListener('click', function(e){
-  const summary = e.target.closest('.nb-acc > summary');
-  if(!summary) return;
-  const details = summary.parentNode;
-  const root = details.closest('.nb-accordion');
-  if(root && root.dataset.singleOpen === 'true'){
-    root.querySelectorAll('details[open]').forEach(d => { if(d !== details) d.removeAttribute('open'); });
-  }
-}, {passive:true});
-</script>
+<section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
 
-{% schema %}
-{
-  "name": "Nibana – Coaching Service",
-  "settings": [
-    { "type": "text",     "id": "fallback_title", "label": "Fallback title", "default": "Transformational life coaching helps you change from the inside out." },
-    { "type": "textarea", "id": "fallback_sub",   "label": "Fallback subheading" },
-    { "type": "text",     "id": "cta_label",      "label": "Fallback CTA label", "default":"Book a call" },
-    { "type": "url",      "id": "cta_link",       "label": "Fallback CTA link" },
-    { "type": "text",     "id": "outcomes_heading","label": "Outcomes heading", "default": "What you’ll get" },
-    { "type": "text",     "id": "isfor_heading",   "label": "Is this for you? heading", "default": "Is this for you?" },
-    { "type": "text",     "id": "process_heading", "label": "Process heading", "default": "The process" },
-    { "type": "text",     "id": "myths_heading",   "label": "Myths vs Truths heading", "default": "Common myths vs What’s true" },
-    { "type": "text",     "id": "myths_col_title", "label": "Myths column title", "default": "Myths" },
-    { "type": "text",     "id": "truths_col_title","label": "Truths column title", "default": "Truths" },
-    { "type": "text",     "id": "faq_heading",     "label": "FAQ heading", "default":"Frequently asked questions" }
-  ],
-  "presets": [{ "name": "Nibana – Coaching Service" }]
-}
-{% endschema %}
+  {%- comment -%} ---------- Shared CTA ---------- {%- endcomment -%}
+  {%- liquid
+    assign btn_label = service.cta_label | default: 'Book a free 20-min call'
+    assign btn_href  = service.cta_link
+    if btn_href == blank
+      assign btn_href = '/pages/book-a-call'
+    endif
+  -%}
+
+  {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
+  <div class="nb-hero">
+    <div class="nb-copy">
+      <h1 class="nb-h1">{{ service.hero_heading | default: service.title | escape }}</h1>
+      {%- if service.hero_subheading != blank -%}
+        <p>{{ service.hero_subheading }}</p>
+      {%- endif -%}
+      <a class="nb-cta" href="{{ btn_href }}" data-cta="service-hero-cta">{{ btn_label }}</a>
+    </div>
+
+    <div>
+      {%- if service.hero_video_url -%}
+        <div class="nb-hero_placeholder">
+          <iframe width="100%" height="100%" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px"
+            src="https://www.youtube.com/embed/{{ service.hero_video_url | split: 'v=' | last | split: '&' | first }}"
+            title="Intro video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+      {%- elsif service.hero_image -%}
+        <img
+          src="{{ service.hero_image | image_url: width: 1400 }}"
+          srcset="
+            {{ service.hero_image | image_url: width: 700 }} 700w,
+            {{ service.hero_image | image_url: width:1000 }} 1000w,
+            {{ service.hero_image | image_url: width:1400 }} 1400w
+          "
+          sizes="(max-width: 990px) 100vw, 640px"
+          alt="{{ service.hero_heading | default: service.title | escape }}"
+          class="nb-hero_img" loading="eager" fetchpriority="high">
+      {%- else -%}
+        <div class="nb-hero_placeholder"></div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%}
+    Helper: robust splitter for list fields
+    – accepts raw text with newlines or <br> variants; falls back to commas
+  {%- endcomment -%}
+  {%- assign br_tag = '<br />' -%}
+
+  {%- comment -%} ---------- SOCIAL PROOF (optional) ---------- {%- endcomment -%}
+  {%- liquid
+    assign sp_raw  = service.social_proof | append: ''
+    assign sp_html = sp_raw | newline_to_br
+    assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign sp_pipe = sp_norm | replace: br_tag, '|||'
+    assign sp      = sp_pipe | split: '|||'
+    assign sp_filled = 0
+    for x in sp
+      assign t = x | strip
+      if t != '' 
+        assign sp_filled = sp_filled | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if sp_filled > 0 -%}
+    <div class="nb-tray">
+      <div class="nb-badges">
+        {%- for badge in sp -%}
+          {%- assign b = badge | strip -%}
+          {%- if b != '' -%}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- OUTCOMES ---------- {%- endcomment -%}
+  {%- liquid
+    assign oc_raw  = service.outcomes | append: ''
+    assign oc_html = oc_raw | newline_to_br
+    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign oc_pipe = oc_norm | replace: br_tag, '|||'
+    assign outcomes = oc_pipe | split: '|||'
+    assign oc_count = 0
+    for it in outcomes
+      assign t = it | strip
+      if t != '' 
+        assign oc_count = oc_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if oc_count > 0 -%}
+    <div class="nb-tray">
+      <h2 class="nb-h2">What you’ll get</h2>
+      <div class="nb-badges">
+        {%- for item in outcomes -%}
+          {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- IS THIS FOR YOU ---------- {%- endcomment -%}
+  {%- liquid
+    assign ify_raw  = service.is_for_you | append: ''
+    assign ify_html = ify_raw | newline_to_br
+    assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign ify_pipe = ify_norm | replace: br_tag, '|||'
+    assign ify = ify_pipe | split: '|||'
+    assign ify_count = 0
+    for it in ify
+      assign t = it | strip
+      if t != '' 
+        assign ify_count = ify_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if ify_count > 0 -%}
+    <div class="nb-tray">
+      <h3 class="nb-h3">Is this for you?</h3>
+      <ul class="nb-list">
+        {%- for line in ify -%}
+          {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- PROCESS ---------- {%- endcomment -%}
+  {%- liquid
+    assign steps_raw  = service.process_bodies | append: ''
+    assign steps_html = steps_raw | newline_to_br
+    assign steps_norm = steps_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign steps_pipe = steps_norm | replace: br_tag, '|||'
+    assign steps = steps_pipe | split: '|||'
+    assign steps_count = 0
+    for s in steps
+      assign t = s | strip
+      if t != ''
+        assign steps_count = steps_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if service.process_titles or steps_count > 0 -%}
+    <div class="nb-tray">
+      <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
+      {%- if steps_count > 0 -%}
+        <ol class="nb-list">
+          {%- for step in steps -%}
+            {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
+  {%- if service.method_title or service.method_richtext -%}
+    <div class="nb-tray nb-method">
+      <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
+      {%- if service.method_richtext -%}
+        <div class="nb-rte nb-method__body">
+          {{ service.method_richtext | metafield_tag }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- MYTHS / TRUTHS (two-column cards; robust splitting) ---------- {%- endcomment -%}
+  {%- liquid
+    assign myths_raw  = service.myths  | append: ''
+    assign truths_raw = service.truths | append: ''
+
+    assign myths_html  = myths_raw  | newline_to_br
+    assign truths_html = truths_raw | newline_to_br
+
+    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+
+    assign myths_norm  = myths_norm  | replace: '” “', '”|||“'
+    assign truths_norm = truths_norm | replace: '” “', '”|||“'
+
+    assign myths_pipe  = myths_norm  | replace: '<br />', '|||'
+    assign truths_pipe = truths_norm | replace: '<br />', '|||'
+
+    assign myths  = myths_pipe  | split: '|||'
+    assign truths = truths_pipe | split: '|||'
+
+    assign myths_count = 0
+    for m in myths
+      assign mm = m | strip
+      if mm != '' 
+        assign myths_count = myths_count | plus: 1
+      endif
+    endfor
+
+    assign truths_count = 0
+    for t in truths
+      assign tt = t | strip
+      if tt != '' 
+        assign truths_count = truths_count | plus: 1
+      endif
+    endfor
+  -%}
+
+  {%- if myths_count > 0 or truths_count > 0 -%}
+    <div class="nb-tray nb-duo">
+      {%- if myths_count > 0 -%}
+        <div class="nb-card nb-duo__col">
+          <h3 class="nb-h3">Common myths</h3>
+          <ul class="nb-list">
+            {%- for m in myths -%}
+              {%- assign mm = m | strip -%}
+              {%- if mm != '' -%}<li>{{ mm }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if truths_count > 0 -%}
+        <div class="nb-card nb-duo__col">
+          <h3 class="nb-h3">What’s actually true</h3>
+          <ul class="nb-list">
+            {%- for t in truths -%}
+              {%- assign tt = t | strip -%}
+              {%- if tt != '' -%}<li>{{ tt }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <style>
+      /* two-column layout for myths/truths */
+      .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+      @media (max-width: 780px){ .nb-duo{grid-template-columns:1fr} }
+      .nb-duo__col{padding:16px 18px}
+    </style>
+  {%- endif -%}
+
+  {%- comment -%} ---------- FAQ (global pill look + robust splitting; keeps single-open) ---------- {%- endcomment -%}
+  {%- liquid
+    assign q_raw = service.faqs_q | append: ''
+    assign a_raw = service.faqs_a | append: ''
+
+    assign q_html = q_raw | newline_to_br
+    assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign q_pipe = q_norm | replace: br_tag, '|||'
+    assign qs     = q_pipe | split: '|||'
+
+    assign a_html = a_raw | newline_to_br
+    assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+    assign a_norm = a_norm | replace: '<br /><br /><br />', '§§'
+    assign a_norm = a_norm | replace: '<br /><br />',       '§§'
+    assign a_norm = a_norm | replace: '<br /> <br />',      '§§'
+    assign a_norm = a_norm | replace: '<br />  <br />',     '§§'
+    assign a_norm = a_norm | replace: '<br />   <br />',    '§§'
+    assign a_norm = a_norm | replace: '---',                '§§'
+    assign as     = a_norm | split: '§§'
+
+    assign q_count = 0
+    for q in qs
+      assign qq = q | strip_html | strip
+      if qq != '' 
+        assign q_count = q_count | plus: 1
+      endif
+    endfor
+  -%}
+
+  {%- if q_count > 0 -%}
+    <div class="nb-tray nb-faq--wrap">
+      <h2 class="nb-faq__title">Frequently asked questions</h2>
+
+      <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
+        {%- assign idx = 0 -%}
+        {%- for q in qs -%}
+          {%- assign qq = q | strip_html | strip -%}
+          {%- if qq != '' -%}
+            {%- assign a_block = as[idx] | default: '' -%}
+            {%- assign a_clean = a_block | strip -%}
+            {%- assign head6 = a_clean | slice: 0,6 -%}
+            {%- assign head5 = a_clean | slice: 0,5 -%}
+            {%- assign head4 = a_clean | slice: 0,4 -%}
+            {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+            {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+            {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+
+            <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+              <summary class="nb-faq__q">{{ qq }}</summary>
+              <div class="nb-faq__a rte">{{ a_clean }}</div>
+            </details>
+
+            {%- assign idx = idx | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        var root = document.getElementById('nb-faq-{{ section.id }}-svc');
+        if(!root) return;
+        root.addEventListener('toggle', function(ev){
+          var d = ev.target;
+          if(d.tagName !== 'DETAILS' || !d.open) return;
+          root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+        }, true);
+      })();
+    </script>
+  {%- endif -%}
+
+  {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
+  <div style="text-align:center;padding:10px 0 24px">
+    <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+  </div>
+
+</section>
+
+{%- else -%}
+<section class="page--width" style="padding:40px 0;">
+  <p>No coaching service selected for this page.</p>
+</section>
+{%- endif -%}
