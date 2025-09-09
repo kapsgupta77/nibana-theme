@@ -1,14 +1,11 @@
 {% comment %}
   Nibana — Coaching Service (metaobject-driven)
-  - Uses page metafields to select a service metaobject:
-      page.metafields.custom.coaching_service
-      (fallback) page.metafields.coachingservice.coaching_service
-  - Enhancements in this version:
-      1) Colors refactored to global tokens (see assets/base.css)
-      2) Process rendered as a vertical timeline
-      3) Method lists styled as pill cards (robust selectors)
-      4) FAQ JSON-LD injection (only if FAQs present)
-      5) Sticky mobile CTA bar (uses same CTA as hero)
+  Enhancements:
+    1) Tokenized colors (uses assets/base.css tokens)
+    2) Process rendered as vertical timeline
+    3) Method ULs styled as pill cards (robust selectors)
+    4) FAQ JSON-LD injection (only if FAQs exist)
+    5) Sticky mobile CTA (same CTA as hero)
 {% endcomment %}
 
 {% liquid
@@ -73,7 +70,7 @@
     {% endif %}
   </header>
 
-  <!-- Social proof chips (keep text badges; trust logos live in global strip elsewhere) -->
+  <!-- Social proof chips (text badges; global trust logos live elsewhere) -->
   {% if social_proof and social_proof.size > 0 %}
     <div class="page-width">
       <ul class="nb-chips" role="list">
@@ -166,15 +163,22 @@
 
   <!-- FAQ -->
   {% assign faq_count = 0 %}
-  {% if faqs_q and faqs_a and faqs_q.size > 0 and faqs_a.size > 0 %}
-    {% assign faq_count = faqs_q.size | minus: 0 %}
+  {% if faqs_q != blank and faqs_a != blank %}
+    {% assign size_q = faqs_q.size %}
+    {% assign size_a = faqs_a.size %}
+    {% if size_q < size_a %}
+      {% assign faq_count = size_q %}
+    {% else %}
+      {% assign faq_count = size_a %}
+    {% endif %}
   {% endif %}
 
   {% if faq_count > 0 %}
+  {% assign last_index = faq_count | minus: 1 %}
   <section class="page-width nb-block nb-faq">
     <h2 class="nb-h2">{{ section.settings.faq_heading }}</h2>
     <div class="nb-accordion" data-single-open="true">
-      {% for i in (0..faq_count-1) %}
+      {% for i in (0..last_index) %}
         {% assign q = faqs_q[i] %}
         {% assign a = faqs_a[i] %}
         {% if q != blank and a != blank %}
@@ -193,7 +197,7 @@
       "@type": "FAQPage",
       "mainEntity": [
         {%- assign first = true -%}
-        {%- for i in (0..faq_count-1) -%}
+        {%- for i in (0..last_index) -%}
           {%- assign q = faqs_q[i] -%}
           {%- assign a = faqs_a[i] -%}
           {%- if q != blank and a != blank -%}
