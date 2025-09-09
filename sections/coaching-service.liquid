@@ -88,7 +88,7 @@
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:12px;
     margin:10px 0 6px;
-    padding:0;
+    padding:0; /* override default UL padding for this layout */
   }
   @media (max-width: 860px){
     .nb-method__body h3 + ul{ grid-template-columns:1fr; }
@@ -118,37 +118,6 @@
     margin:10px 0 16px;
     color:var(--nb-muted);
   }
-
-  /* METHOD — vertical timeline on FIRST UL only (overrides pill layout) */
-  .nb-method--timeline .nb-method__body > h3 + ul:first-of-type{
-    list-style:none;margin:10px 0 0;padding:0 0 0 32px;position:relative;display:block;
-  }
-  .nb-method--timeline .nb-method__body > h3 + ul:first-of-type::before{
-    content:"";position:absolute;left:14px;top:8px;bottom:8px;width:2px;background:rgba(15,91,89,.18)
-  }
-  .nb-method--timeline .nb-method__body > h3 + ul:first-of-type li{
-    position:relative;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 22px rgba(0,0,0,.06);margin:12px 0;color:var(--nb-muted)
-  }
-  .nb-method--timeline .nb-method__body > h3 + ul:first-of-type li::before{
-    content:"";position:absolute;left:-18px;top:20px;width:12px;height:12px;border-radius:50%;
-    background:var(--nb-deep);box-shadow:0 0 0 4px #fff;
-  }
-
-  /* PROCESS — horizontal stepper */
-  .nb-stepper{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin-top:10px}
-  .nb-step{
-    position:relative;flex:1 1 240px;background:#fff;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);
-    padding:18px 16px 16px 16px;color:var(--nb-muted)
-  }
-  .nb-step__dot{
-    position:absolute;top:-12px;left:14px;width:28px;height:28px;border-radius:9999px;
-    background:var(--nb-chocolate);color:#fff;display:grid;place-items:center;
-    font-weight:700;font-size:14px;box-shadow:0 4px 10px rgba(0,0,0,.12)
-  }
-  .nb-step::after{
-    content:"";position:absolute;top:26px;right:-9px;width:18px;height:2px;background:rgba(15,91,89,.25)
-  }
-  .nb-step:last-child::after{display:none}
 
   /* FAQ (global pill look) */
   .nb-faq--wrap{ margin:22px 0; }
@@ -306,7 +275,7 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%} ---------- PROCESS (horizontal stepper) ---------- {%- endcomment -%}
+  {%- comment -%} ---------- PROCESS ---------- {%- endcomment -%}
   {%- liquid
     assign steps_raw  = service.process_bodies | append: ''
     assign steps_html = steps_raw | newline_to_br
@@ -325,26 +294,18 @@
     <div class="nb-tray">
       <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
       {%- if steps_count > 0 -%}
-        <ol class="nb-stepper" role="list">
-          {%- assign i = 0 -%}
+        <ol class="nb-list">
           {%- for step in steps -%}
-            {%- assign s = step | strip -%}
-            {%- if s != '' -%}
-              {%- assign i = i | plus: 1 -%}
-              <li class="nb-step">
-                <span class="nb-step__dot">{{ i }}</span>
-                <span class="nb-step__text">{{ s }}</span>
-              </li>
-            {%- endif -%}
+            {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
           {%- endfor -%}
         </ol>
       {%- endif -%}
     </div>
   {%- endif -%}
 
-  {%- comment -%} ---------- METHOD (RICH TEXT, with first-UL timeline) ---------- {%- endcomment -%}
+  {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
   {%- if service.method_title or service.method_richtext -%}
-    <div class="nb-tray nb-method nb-method--timeline">
+    <div class="nb-tray nb-method">
       <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
       {%- if service.method_richtext -%}
         <div class="nb-rte nb-method__body">
