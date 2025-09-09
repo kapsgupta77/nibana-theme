@@ -33,13 +33,11 @@
   .nb-h1{ font-size:clamp(30px,4.4vw,48px); line-height:1.1; margin:0 0 10px; font-weight:800; }
   .nb-h2{ font-size:clamp(22px,2.8vw,28px); font-weight:800; margin:0 0 6px; }
   .nb-h3{ font-size:clamp(18px,2.1vw,22px); font-weight:750; margin:0 0 10px; }
-  /* tone tweak for brand */
-  .nb-h2,.nb-h3{ color: var(--nb-deep); }  /* H1 stays on --nb-ink; H2/H3 on deep */
 
   /* Body copy */
   .nb-copy,.nb-tray,.nb-hero p,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
 
-  /* Hero */
+  /* Hero (legacy base) */
   .nb-hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:28px}
   @media (max-width:990px){ .nb-hero{grid-template-columns:1fr} }
   .nb-hero p{margin:0 0 16px}
@@ -152,44 +150,215 @@
     endif
   -%}
 
-  {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
-  <div class="nb-hero">
-    <div class="nb-copy">
-      <h1 
-        class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
-      {%- if service.hero_subheading != blank -%}
-        <p>{{ service.hero_subheading }}</p>
+  {%- comment -%} ---------- HERO SUPERKIT (drop-in) ---------- {%- endcomment -%}
+
+{%- comment -%}
+  HERO SUPERKIT — Nibana
+  Toggle visuals via metaobject string: service.hero_flags
+  Example: "band, teal, ring, tilt, stripe, glass, noise, dots, corner, parallax"
+{%- endcomment -%}
+
+{%- liquid
+  assign vid_id = ''
+  if service.hero_video_url
+    assign vid_id = service.hero_video_url | split: 'v=' | last | split: '&' | first
+  endif
+
+  assign flags_raw = service.hero_flags | default: 'band, teal, ring, tilt'
+  assign flags = flags_raw | split: ','
+
+  assign hero_classes = 'nb-hero-skit'
+  for f in flags
+    assign t = f | strip | downcase
+    case t
+      when 'band'     then assign hero_classes = hero_classes | append: ' is-band'
+      when 'teal'     then assign hero_classes = hero_classes | append: ' tone-teal'
+      when 'ink'      then assign hero_classes = hero_classes | append: ' tone-ink'
+      when 'pebble'   then assign hero_classes = hero_classes | append: ' tone-pebble'
+      when 'ring'     then assign hero_classes = hero_classes | append: ' has-ring'
+      when 'tilt'     then assign hero_classes = hero_classes | append: ' has-tilt'
+      when 'stripe'   then assign hero_classes = hero_classes | append: ' has-stripe'
+      when 'glass'    then assign hero_classes = hero_classes | append: ' has-glass'
+      when 'noise'    then assign hero_classes = hero_classes | append: ' has-noise'
+      when 'dots'     then assign hero_classes = hero_classes | append: ' has-dots'
+      when 'corner'   then assign hero_classes = hero_classes | append: ' has-corner'
+      when 'parallax' then assign hero_classes = hero_classes | append: ' has-parallax'
+    endcase
+  endfor
+-%}
+
+<section class="{{ hero_classes }}">
+  <div class="nb-skit__inner nb-shell">
+    <div class="nb-skit__copy">
+      {%- if service.kicker != blank -%}
+        <p class="nb-eyebrow">{{ service.kicker }}</p>
       {%- endif -%}
-      <a class="nb-cta" href="{{ btn_href }}" data-cta="service-hero-cta">{{ btn_label }}</a>
+      <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
+      {%- if service.hero_subheading != blank -%}
+        <p class="nb-sub">{{ service.hero_subheading }}</p>
+      {%- endif -%}
+      <div class="nb-skit__cta">
+        <a class="nb-cta" href="{{ btn_href }}" data-cta="service-hero-cta">{{ btn_label }}</a>
+      </div>
     </div>
 
-    <div>
-      {%- if service.hero_video_url -%}
-        <div class="nb-hero_placeholder">
-          <iframe width="100%" height="100%" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px"
-            src="https://www.youtube.com/embed/{{ service.hero_video_url | split: 'v=' | last | split: '&' | first }}"
-            title="Intro video" allow="accelerometer; autoplay; ...rite; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <div class="nb-skit__media">
+      <div class="nb-skit__frame">
+        <div class="nb-skit__mat">
+          {%- if vid_id != '' -%}
+            <!-- Lite YouTube (loads iframe on click) -->
+            <button type="button"
+              class="nb-video nb-video--lite"
+              data-video="{{ vid_id }}"
+              style="--poster:url('https://i.ytimg.com/vi/{{ vid_id }}/hqdefault.jpg')"
+              aria-label="Play intro video">
+              <span class="nb-video__play" aria-hidden="true"></span>
+            </button>
+          {%- elsif service.hero_image -%}
+            {{ service.hero_image
+              | image_url: width: 1400
+              | image_tag:
+                alt: service.hero_heading | default: service.title,
+                sizes: "(max-width: 990px) 100vw, 640px",
+                widths: "700,1000,1400",
+                class: "nb-media-img" }}
+          {%- else -%}
+            <div class="nb-media-ph"></div>
+          {%- endif -%}
         </div>
-      {%- elsif service.hero_image -%}
-        <img
-          src="{{ service.hero_image | image_url: width: 1400 }}"
-          srcset="
-            {{ service.hero_image | image_url: width: 700 }} 700w,
-            {{ service.hero_image | image_url: width:1000 }} 1000w,
-            {{ service.hero_image | image_url: width:1400 }} 1400w
-          "
-          sizes="(max-width: 990px) 100vw, 640px"
-          alt="{{ service.hero_heading | default: service.title | escape }}"
-          class="nb-hero_img" loading="eager" fetchpriority="high">
-      {%- else -%}
-        <div class="nb-hero_placeholder"></div>
-      {%- endif -%}
+      </div>
     </div>
   </div>
 
-  {%- comment -%} ---------- line break normalization token ---------- {%- endcomment -%}
-  {%- comment -%} Using a fixed token as BR surrogate to normalize newline_to_br → <br> variants; falls back to commas
+  <!-- Fine parallax line (visible when 'parallax') -->
+  <div class="nb-skit__line" aria-hidden="true"></div>
+</section>
+
+<style>
+/* ====== HERO SUPERKIT styles (scoped classes) ====== */
+.nb-hero-skit{ position:relative; }
+.nb-skit__inner{ display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap: clamp(18px,4vw,32px); }
+@media (max-width: 990px){ .nb-skit__inner{ grid-template-columns:1fr; } }
+/* Full-bleed band + tones */
+.nb-hero-skit.is-band{ padding: clamp(28px,6vw,64px) 0; background: var(--nb-sage, #EAF4F3); }
+.nb-hero-skit.is-band.tone-teal{
+  background:
+    radial-gradient(120% 120% at 85% -10%, rgba(16,99,108,.18) 0 40%, rgba(16,99,108,0) 55%),
+    var(--nb-sage, #EAF4F3);
+}
+.nb-hero-skit.is-band.tone-ink{
+  background:
+    radial-gradient(120% 120% at 85% -10%, rgba(34,50,56,.22) 0 40%, rgba(34,50,56,0) 55%),
+    #f6f9f8;
+}
+.nb-hero-skit.is-band.tone-pebble{
+  background:
+    radial-gradient(120% 120% at 85% -10%, rgba(210,203,200,.28) 0 40%, rgba(210,203,200,0) 55%),
+    #fbfbfa;
+}
+/* Optional soft noise over band */
+.nb-hero-skit.is-band.has-noise::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image: radial-gradient(rgba(0,0,0,.02) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+/* Copy + CTA */
+.nb-eyebrow{letter-spacing:.08em;text-transform:uppercase;color:var(--nb-deep,#0F5B59);margin:0 0 .35rem;font-weight:600}
+.nb-h1{ font-size:clamp(30px,4.4vw,48px); line-height:1.1; margin:0 0 10px; font-weight:800; color:var(--nb-ink,#223238); }
+.nb-sub{ color:var(--nb-muted,#324247); max-width:60ch; margin:0 0 16px; }
+.nb-skit__cta{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+.nb-cta{ display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.1rem; border-radius:999px; background:var(--nb-chocolate,#C86B2A); color:#fff; text-decoration:none; box-shadow:0 10px 24px rgba(0,0,0,.08) }
+.nb-hero-skit.has-glass .nb-cta{
+  background: rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.40);
+  backdrop-filter: blur(10px) saturate(140%); box-shadow: 0 8px 20px rgba(0,0,0,.10);
+}
+.nb-cta:hover{ transform: translateY(-1px); }
+/* Media frame */
+.nb-skit__media{ position:relative; }
+.nb-skit__frame{ position:relative; filter: drop-shadow(0 18px 40px rgba(0,0,0,.12)); transform-style:preserve-3d; transition:transform .25s ease; }
+.nb-hero-skit.has-tilt .nb-skit__frame:hover{ transform: perspective(1200px) rotateX(1.5deg) rotateY(-1.5deg) translateY(-2px); }
+@media (prefers-reduced-motion: reduce){ .nb-hero-skit.has-tilt .nb-skit__frame:hover{ transform:none; } }
+/* Gradient ring glow */
+.nb-hero-skit.has-ring .nb-skit__frame::before{
+  content:""; position:absolute; inset:-22px; border-radius:28px; z-index:-1;
+  background: conic-gradient(from 180deg, rgba(16,99,108,.14), rgba(200,107,42,.12), rgba(16,99,108,.14));
+  filter: blur(18px); opacity:.9;
+}
+/* Angled stripe */
+.nb-hero-skit.has-stripe .nb-skit__media::before{
+  content:""; position:absolute; inset:-18px -26px auto -26px; height:52%; transform:skewY(-5deg); z-index:-2;
+  background: linear-gradient(90deg, rgba(116,162,155,.18), rgba(210,203,200,.12));
+  border-radius:18px;
+}
+/* Micro dots */
+.nb-hero-skit.has-dots .nb-skit__media::after{
+  content:""; position:absolute; inset:14px; z-index:-1;
+  background-image: radial-gradient(rgba(0,0,0,.06) 1px, transparent 1px);
+  background-size: 10px 10px; border-radius:22px; opacity:.35;
+}
+/* Mat + corner cut */
+.nb-skit__mat{ border-radius:22px; background:#fff; padding:10px; border:1px solid rgba(0,0,0,.06); }
+.nb-skit__mat > *{ display:block; width:100%; aspect-ratio:16/9; border:0; border-radius:14px; overflow:hidden; }
+.nb-hero-skit.has-corner .nb-skit__mat > *{
+  clip-path: polygon(0% 0%, 85% 0%, 100% 12%, 100% 100%, 0% 100%);
+}
+/* Image / placeholder / lite video */
+.nb-media-img{ display:block; width:100%; height:auto; border-radius:14px; }
+.nb-media-ph{ width:100%; aspect-ratio:16/9; border-radius:14px; background: linear-gradient(135deg, #e9f1ef, #f3f6ef); }
+.nb-video{ position:relative; background-size:cover; background-position:center; border-radius:14px; overflow:hidden; }
+.nb-video--lite{ background-image:var(--poster); cursor:pointer; }
+.nb-video__play{ position:absolute; inset:0; margin:auto; width:74px; height:74px; border-radius:999px; background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.22); }
+.nb-video__play::before{ content:""; position:absolute; left:29px; top:22px; border-style:solid; border-width:15px 0 15px 22px; border-color: transparent transparent transparent var(--nb-chocolate,#C86B2A); }
+.nb-video:hover .nb-video__play{ transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce){ .nb-video:hover .nb-video__play{ transform:none; } }
+/* Fine parallax line */
+.nb-skit__line{ position:absolute; left:0; right:0; bottom:-1px; height:2px; transform: translateY(0); background: linear-gradient(90deg, rgba(34,50,56,.0), rgba(34,50,56,.25), rgba(34,50,56,.0)); opacity:.5; pointer-events:none; display:none; }
+.nb-hero-skit.has-parallax .nb-skit__line{ display:block; }
+/* Ensure content after hero sits above band */
+.nb-hero-skit.is-band + * { position:relative; z-index:1; }
+</style>
+
+<script>
+(function(){
+  // Lite YouTube loader (only on click)
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.nb-video--lite'); if(!btn) return;
+    var id = btn.getAttribute('data-video'); if(!id) return;
+    var url = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('allowfullscreen',''); iframe.setAttribute('loading','eager');
+    iframe.setAttribute('referrerpolicy','no-referrer-when-downgrade');
+    iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    iframe.style.width='100%'; iframe.style.height='100%'; iframe.style.border='0';
+    btn.replaceWith(iframe);
+  }, {passive:true});
+
+  // Parallax line (gentle; honors reduced motion)
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.querySelector('.nb-hero-skit.has-parallax');
+  var line = hero ? hero.querySelector('.nb-skit__line') : null;
+  if(hero && line && !reduce){
+    var raf, lastY = 0;
+    var onScroll = function(){
+      var rect = hero.getBoundingClientRect();
+      var dy = Math.max(-2, Math.min(2, (window.innerHeight - rect.top) * 0.004));
+      if(Math.abs(dy - lastY) > 0.1){
+        line.style.transform = 'translateY(' + dy.toFixed(2) + 'px)';
+        lastY = dy;
+      }
+      raf = null;
+    };
+    window.addEventListener('scroll', function(){
+      if(!raf) raf = requestAnimationFrame(onScroll);
+    }, {passive:true});
+    onScroll();
+  }
+})();
+</script>
+
+  {%- comment -%}
+    Helper: robust splitter for list fields
+    – accepts raw text with newlines or <br> variants; falls back to commas
   {%- endcomment -%}
   {%- assign br_tag = '<br />' -%}
 
