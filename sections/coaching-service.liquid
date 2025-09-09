@@ -1,7 +1,6 @@
 {% comment %}
   Coaching Service page section
   - Pulls all content from page metafield: custom.coaching_service (Metaobject: CoachingService)
-  - Uses your exact keys from screenshots
 {% endcomment %}
 
 {%- assign service_ref = page.metafields.custom.coaching_service -%}
@@ -28,7 +27,8 @@
             <p class="cs-subtitle">{{ service.hero_subheading }}</p>
           {%- endif -%}
 
-          {%- if service.social_proof != blank and service.social_proof.size > 0 -%}
+          {%- assign social_size = service.social_proof | size -%}
+          {%- if social_size > 0 -%}
             <ul class="cs-trust" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;">
               {%- for chip in service.social_proof -%}
                 <li style="background:#E6ECEA;border-radius:9999px;padding:6px 10px;font-size:.92rem;line-height:1;">{{ chip }}</li>
@@ -65,7 +65,8 @@
 
       {%- comment %} OUTCOMES / IS THIS FOR YOU {% endcomment -%}
       <div class="cs-panels" style="display:grid;gap:min(3vw,24px);margin-top:28px;">
-        {%- if service.outcomes != blank and service.outcomes.size > 0 -%}
+        {%- assign outcomes_size = service.outcomes | size -%}
+        {%- if outcomes_size > 0 -%}
           <section class="cs-card">
             <h2>What you’ll get</h2>
             <ul class="cs-list">
@@ -76,7 +77,8 @@
           </section>
         {%- endif -%}
 
-        {%- if service.is_for_you != blank and service.is_for_you.size > 0 -%}
+        {%- assign foryou_size = service.is_for_you | size -%}
+        {%- if foryou_size > 0 -%}
           <section class="cs-card">
             <h2>Is this for you?</h2>
             <ul class="cs-list">
@@ -89,13 +91,14 @@
       </div>
 
       {%- comment %} PROCESS (paired titles + bodies) {% endcomment -%}
-      {%- if service.process_titles != blank and service.process_titles.size > 0 -%}
+      {%- assign proc_titles_size = service.process_titles | size -%}
+      {%- if proc_titles_size > 0 -%}
         <section class="cs-process cs-card">
           <h2>How it works</h2>
           <div style="display:grid;gap:16px;">
             {%- for title in service.process_titles -%}
               {%- assign idx = forloop.index0 -%}
-              {%- assign body = service.process_bodies[idx] -%}
+              {%- assign body = service.process_bodies | at: idx -%}
               <div class="cs-step" style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.05);">
                 <h3 style="margin:0 0 6px;">{{ title }}</h3>
                 {%- if body != blank -%}<div class="rte">{{ body }}</div>{%- endif -%}
@@ -117,11 +120,13 @@
         </section>
       {%- endif -%}
 
-      {%- comment %} MYTHS / TRUTHS (optional) {% endcomment -%}
-      {%- if (service.myths and service.myths.size > 0) or (service.truths and service.truths.size > 0) -%}
+      {%- comment %} MYTHS / TRUTHS (optional) — no parentheses in condition {% endcomment -%}
+      {%- assign myths_size = service.myths | size -%}
+      {%- assign truths_size = service.truths | size -%}
+      {%- if myths_size > 0 or truths_size > 0 -%}
         <section class="cs-card">
           <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;">
-            {%- if service.myths and service.myths.size > 0 -%}
+            {%- if myths_size > 0 -%}
               <div>
                 <h3>Common myths</h3>
                 <ul class="cs-list">
@@ -129,7 +134,7 @@
                 </ul>
               </div>
             {%- endif -%}
-            {%- if service.truths and service.truths.size > 0 -%}
+            {%- if truths_size > 0 -%}
               <div>
                 <h3>What’s actually true</h3>
                 <ul class="cs-list">
@@ -142,13 +147,13 @@
       {%- endif -%}
 
       {%- comment %} FAQ — pairs faqs_q/faqs_a; includes JSON-LD {% endcomment -%}
-      {%- assign has_faq = service.faqs_q and service.faqs_q.size > 0 -%}
-      {%- if has_faq -%}
+      {%- assign faqs_size = service.faqs_q | size -%}
+      {%- if faqs_size > 0 -%}
         <section class="cs-card" id="faqs">
           <h2>Frequently asked questions</h2>
           <div class="nb-faq__list" style="display:grid;gap:12px;">
             {%- for q in service.faqs_q -%}
-              {%- assign a = service.faqs_a[forloop.index0] -%}
+              {%- assign a = service.faqs_a | at: forloop.index0 -%}
               <details class="nb-faq__item">
                 <summary class="nb-faq__q">{{ q }}</summary>
                 <div class="nb-faq__a rte">{{ a }}</div>
@@ -168,7 +173,7 @@
               "name": {{ q | json }},
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": {{ service.faqs_a[forloop.index0] | strip_newlines | json }}
+                "text": {{ (service.faqs_a | at: forloop.index0) | strip_newlines | json }}
               }
             }{%- unless forloop.last -%},{%- endunless -%}
             {%- endfor -%}
