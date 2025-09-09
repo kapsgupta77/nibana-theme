@@ -27,37 +27,43 @@
     --nb-chocolate:#C86B2A;
   }
 
+  /* Utilities / layout */
   .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
   .nb-grid{display:grid;gap:22px}
 
+  /* Type */
   .nb-h1,.nb-h2,.nb-h3{font-family:var(--font-heading-family,inherit);color:var(--nb-ink)}
   .nb-h1{font-size:clamp(30px,4.4vw,48px);line-height:1.1;margin:0 0 10px;font-weight:800}
   .nb-h2{font-size:clamp(22px,2.8vw,28px);font-weight:800;margin:0 0 6px}
   .nb-h3{font-size:clamp(18px,2.1vw,22px);font-weight:750;margin:0 0 10px}
-
   .nb-copy,.nb-tray,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
+  .nb-eyebrow{letter-spacing:.08em;text-transform:uppercase;color:var(--nb-deep);margin:0 0 .35rem;font-weight:600}
+  .nb-sub{color:var(--nb-muted);max-width:60ch;margin:0 0 16px}
 
+  /* CTA */
   .nb-cta{display:inline-flex;align-items:center;justify-content:center;padding:.9rem 1.1rem;border-radius:999px;background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
   .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
+  /* Trays / cards */
   .nb-tray{background:var(--nb-sage);border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
   .nb-card{background:#fff;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);padding:12px 14px}
   .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
 
+  /* Duo cards */
   .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
   @media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
   .nb-duo .nb-card{padding:18px 20px}
 
+  /* Lists */
   .nb-list{margin:0;padding-left:1.15rem}
   .nb-list li{margin:.28rem 0}
 
-  .nb-rte{line-height:1.65}
+  /* Method pills + RTE callouts */
   .nb-method__body h3 + ul,
   .nb-method__body ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
   .nb-method__body h3 + ul li,
   .nb-method__body ul li{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:.4rem .65rem;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,.05)}
-
   .nb-method .nb-rte p + ul,
   .nb-method .nb-rte p + ol,
   .nb-method .nb-rte ul,
@@ -98,32 +104,32 @@
   .nb-hero-skit.is-band{padding:clamp(28px,6vw,64px) 0;background:var(--nb-sage)}
   .nb-hero-skit.is-band.tone-teal{
     background:
-      radial-gradient(120% 120% at 85% -10%, rgba(16,99,108,.18) 0 40%, rgba(16,99,108,0) 55%),
+      radial-gradient(140% 120% at 85% -10%, rgba(16,99,108,.22) 0 42%, rgba(16,99,108,0) 58%),
       var(--nb-sage)
   }
   .nb-hero-skit.is-band.tone-ink{
     background:
-      radial-gradient(120% 120% at 85% -10%, rgba(34,50,56,.22) 0 40%, rgba(34,50,56,0) 55%),
+      radial-gradient(140% 120% at 85% -10%, rgba(34,50,56,.26) 0 42%, rgba(34,50,56,0) 58%),
       #f6f9f8
   }
   .nb-hero-skit.is-band.tone-pebble{
     background:
-      radial-gradient(120% 120% at 85% -10%, rgba(210,203,200,.28) 0 40%, rgba(210,203,200,0) 55%),
-      #fbfbfa
+      radial-gradient(140% 120% at 85% -10%, rgba(210,203,200,.38) 0 42%, rgba(210,203,200,0) 58%),
+      #f7f5f4
   }
-  /* Stronger noise so it’s visible */
+  /* Visible noise over band (optional via flag) */
   .nb-hero-skit.is-band.has-noise::after{
     content:"";position:absolute;inset:0;pointer-events:none;
     background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);
     background-size:2px 2px
   }
 
-  .nb-eyebrow{letter-spacing:.08em;text-transform:uppercase;color:var(--nb-deep);margin:0 0 .35rem;font-weight:600}
-  .nb-sub{color:var(--nb-muted);max-width:60ch;margin:0 0 16px}
+  /* Copy / CTA tweaks */
   .nb-skit__cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
   .nb-hero-skit.has-glass .nb-cta{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.40);backdrop-filter:blur(10px) saturate(140%);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
-  .nb-skit__media{position:relative}
+  /* Media frame */
+  .nb-skit__media{position:relative;z-index:0}
   .nb-skit__frame{position:relative;filter:drop-shadow(0 18px 40px rgba(0,0,0,.12));transform-style:preserve-3d;transition:transform .25s ease}
   .nb-hero-skit.has-tilt .nb-skit__frame:hover{transform:perspective(1200px) rotateX(1.5deg) rotateY(-1.5deg) translateY(-2px)}
   @media (prefers-reduced-motion:reduce){.nb-hero-skit.has-tilt .nb-skit__frame:hover{transform:none}}
@@ -135,26 +141,31 @@
     filter:blur(18px);opacity:.9
   }
 
-  /* Angled stripe */
+  /* Angled stripe (cannot hide) */
   .nb-hero-skit.has-stripe .nb-skit__media::before{
-    content:"";position:absolute;inset:-18px -26px auto -26px;height:52%;transform:skewY(-5deg);z-index:-1;
+    content:"";position:absolute;inset:-18px -26px auto -26px;height:52%;transform:skewY(-5deg);z-index:0;
     background:linear-gradient(90deg, rgba(116,162,155,.18), rgba(210,203,200,.12));
     border-radius:18px
   }
 
-  /* Micro dots (if you ever enable 'dots') */
+  /* Micro dots (optional) */
   .nb-hero-skit.has-dots .nb-skit__media::after{
     content:"";position:absolute;inset:14px;z-index:-1;background-image:radial-gradient(rgba(0,0,0,.06) 1px, transparent 1px);background-size:10px 10px;border-radius:22px;opacity:.35
   }
 
-  /* Mat + corner cut (apply to mat + inner media) */
-  .nb-skit__mat{position:relative;border-radius:22px;background:#fff;padding:10px;border:1px solid rgba(0,0,0,.06)}
+  /* Mat + corner cut (mat + inner media clip) */
+  .nb-skit__mat{position:relative;border-radius:22px;background:#fff;padding:10px;border:1px solid rgba(0,0,0,.06);overflow:hidden}
   .nb-skit__mat > *{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:14px;overflow:hidden}
-  .nb-hero-skit.has-corner .nb-skit__mat{clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)}
-  .nb-hero-skit.has-corner .nb-skit__mat > *{clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)}
-  .nb-hero-skit.has-corner .nb-skit__mat::after{content:"";position:absolute;top:0;right:0;width:16%;height:11%;background:linear-gradient(135deg, rgba(0,0,0,.06), rgba(0,0,0,0));border-top-right-radius:18px;pointer-events:none;opacity:.6}
+  .nb-hero-skit.has-corner .nb-skit__mat,
+  .nb-hero-skit.has-corner .nb-skit__mat > *{
+    clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)
+  }
+  .nb-hero-skit.has-corner .nb-skit__mat::after{
+    content:"";position:absolute;top:0;right:0;width:18%;height:12%;
+    background:linear-gradient(135deg, rgba(0,0,0,.08), rgba(0,0,0,0));pointer-events:none;border-top-right-radius:18px;opacity:.55
+  }
 
-  /* Lite video / image */
+  /* Media (img / lite video / placeholder) */
   .nb-media-img{display:block;width:100%;height:auto;border-radius:14px}
   .nb-media-ph{width:100%;aspect-ratio:16/9;border-radius:14px;background:linear-gradient(135deg,#e9f1ef,#f3f6ef)}
   .nb-video{position:relative;background-size:cover;background-position:center;border-radius:14px;overflow:hidden}
@@ -172,37 +183,47 @@
   .nb-hero-skit.is-band + *{position:relative;z-index:1}
 </style>
 
-{%- comment -%} ========= HERO SUPERKIT OUTSIDE THE PAGE-WIDTH WRAPPER (full-bleed) ========= {%- endcomment -%}
+{%- comment -%} ========= HERO SUPERKIT OUTSIDE PAGE-WIDTH (full-bleed) ========= {%- endcomment -%}
 {%- liquid
   assign vid_id = ''
   if service.hero_video_url
     assign vid_id = service.hero_video_url | split: 'v=' | last | split: '&' | first
   endif
 
+  comment
+    Defensive parse: normalize bullets/commas and trim tokens.
+  endcomment
   assign flags_raw = service.hero_flags | default: 'band, teal, ring, tilt'
-  assign flags = flags_raw | split: ','
+  assign flags_norm = flags_raw | replace: '•', ',' | replace: '，', ',' | replace: '  ', ' '
+  assign tokens = flags_norm | split: ','
 
   assign hero_classes = 'nb-hero-skit'
-  for f in flags
+  assign any_matched = false
+  for f in tokens
     assign t = f | strip | downcase
-    case t
-      when 'band'     then assign hero_classes = hero_classes | append: ' is-band'
-      when 'teal'     then assign hero_classes = hero_classes | append: ' tone-teal'
-      when 'ink'      then assign hero_classes = hero_classes | append: ' tone-ink'
-      when 'pebble'   then assign hero_classes = hero_classes | append: ' tone-pebble'
-      when 'ring'     then assign hero_classes = hero_classes | append: ' has-ring'
-      when 'tilt'     then assign hero_classes = hero_classes | append: ' has-tilt'
-      when 'stripe'   then assign hero_classes = hero_classes | append: ' has-stripe'
-      when 'glass'    then assign hero_classes = hero_classes | append: ' has-glass'
-      when 'noise'    then assign hero_classes = hero_classes | append: ' has-noise'
-      when 'dots'     then assign hero_classes = hero_classes | append: ' has-dots'
-      when 'corner'   then assign hero_classes = hero_classes | append: ' has-corner'
-      when 'parallax' then assign hero_classes = hero_classes | append: ' has-parallax'
-    endcase
+    if t == 'band' or t == 'full-bleed'     then assign hero_classes = hero_classes | append: ' is-band'     and assign any_matched = true endif
+    if t == 'teal'                          then assign hero_classes = hero_classes | append: ' tone-teal'    and assign any_matched = true endif
+    if t == 'ink'                           then assign hero_classes = hero_classes | append: ' tone-ink'     and assign any_matched = true endif
+    if t == 'pebble'                        then assign hero_classes = hero_classes | append: ' tone-pebble'  and assign any_matched = true endif
+    if t == 'ring'                          then assign hero_classes = hero_classes | append: ' has-ring'     and assign any_matched = true endif
+    if t == 'tilt'                          then assign hero_classes = hero_classes | append: ' has-tilt'     and assign any_matched = true endif
+    if t == 'stripe'                        then assign hero_classes = hero_classes | append: ' has-stripe'   and assign any_matched = true endif
+    if t == 'glass'                         then assign hero_classes = hero_classes | append: ' has-glass'    and assign any_matched = true endif
+    if t == 'noise'                         then assign hero_classes = hero_classes | append: ' has-noise'    and assign any_matched = true endif
+    if t == 'dots'                          then assign hero_classes = hero_classes | append: ' has-dots'     and assign any_matched = true endif
+    if t == 'corner'                        then assign hero_classes = hero_classes | append: ' has-corner'   and assign any_matched = true endif
+    if t == 'parallax'                      then assign hero_classes = hero_classes | append: ' has-parallax' and assign any_matched = true endif
   endfor
+
+  comment
+    Failsafe: if nothing matched (odd characters), force a visible preset.
+  endcomment
+  if any_matched == false
+    assign hero_classes = 'nb-hero-skit is-band tone-teal has-ring has-tilt has-stripe has-corner'
+  endif
 -%}
 
-<section class="{{ hero_classes }}">
+<section class="{{ hero_classes }}" data-hero-flags="{{ flags_raw | strip }}">
   <div class="nb-skit__inner">
     <div class="nb-skit__copy">
       {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
@@ -272,7 +293,7 @@
 })();
 </script>
 
-{%- comment -%} ========= MAIN PAGE CONTENT (unchanged structure) ========= {%- endcomment -%}
+{%- comment -%} ========= MAIN PAGE CONTENT ========= {%- endcomment -%}
 <section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
 
   {%- liquid
