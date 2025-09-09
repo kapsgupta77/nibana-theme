@@ -58,6 +58,11 @@
   .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
 
+/* Duo cards (myths / truths) */
+.nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
+.nb-duo .nb-card{padding:18px 20px}
+
   /* Lists */
   .nb-list{margin:0;padding-left:1.15rem}
   .nb-list li{margin:.28rem 0}
@@ -261,67 +266,68 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%} ---------- MYTHS / TRUTHS (two-card layout) ---------- {%- endcomment -%}
+  {%- comment -%} ---------- MYTHS / TRUTHS (two-column cards) ---------- {%- endcomment -%}
 {%- liquid
-  assign br_tag = '<br />'
+  assign nl = '\n'
 
   assign myths_raw  = service.myths  | append: ''
   assign truths_raw = service.truths | append: ''
 
-  assign myths_html  = myths_raw  | newline_to_br
-  assign truths_html = truths_raw | newline_to_br
+  assign myths_norm  = myths_raw  | replace: '\r\n', nl | replace: '\r', nl
+  assign truths_norm = truths_raw | replace: '\r\n', nl | replace: '\r', nl
 
-  assign myths_norm  = myths_html  | replace: '<br/>', br_tag | replace: '<br>', br_tag
-  assign truths_norm = truths_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+  if myths_norm contains nl
+    assign myths = myths_norm | split: nl
+  else
+    assign myths = myths_norm | split: ','
+  endif
 
-  assign myths_pipe  = myths_norm  | replace: br_tag, '|||'
-  assign truths_pipe = truths_norm | replace: br_tag, '|||'
+  if truths_norm contains nl
+    assign truths = truths_norm | split: nl
+  else
+    assign truths = truths_norm | split: ','
+  endif
 
-  assign myths  = myths_pipe  | split: '|||'
-  assign truths = truths_pipe | split: '|||'
-
-  assign myths_count  = 0
+  assign myths_count = 0
   for m in myths
-    assign t = m | strip
-    if t != '' 
+    if m | strip != '' 
       assign myths_count = myths_count | plus: 1
     endif
   endfor
 
   assign truths_count = 0
   for t in truths
-    assign x = t | strip
-    if x != '' 
+    if t | strip != '' 
       assign truths_count = truths_count | plus: 1
     endif
   endfor
 -%}
 
 {%- if myths_count > 0 or truths_count > 0 -%}
-  <div class="nb-tray">
-    <div class="nb-pair">
-      {%- if myths_count > 0 -%}
-        <div class="nb-panel">
-          <h3 class="nb-panel__title"><span class="dot"></span>Common myths</h3>
-          <ul class="nb-list">
-            {%- for m in myths -%}
-              {%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}
-            {%- endfor -%}
-          </ul>
-        </div>
-      {%- endif -%}
+  <div class="nb-tray nb-duo">
+    {%- if myths_count > 0 -%}
+      <div class="nb-card nb-duo__col">
+        <h3 class="nb-h3">Common myths</h3>
+        <ul class="nb-list">
+          {%- for m in myths -%}
+            {%- assign mm = m | strip -%}
+            {%- if mm != '' -%}<li>{{ mm }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
 
-      {%- if truths_count > 0 -%}
-        <div class="nb-panel">
-          <h3 class="nb-panel__title"><span class="dot"></span>What’s actually true</h3>
-          <ul class="nb-list">
-            {%- for t in truths -%}
-              {%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}
-            {%- endfor -%}
-          </ul>
-        </div>
-      {%- endif -%}
-    </div>
+    {%- if truths_count > 0 -%}
+      <div class="nb-card nb-duo__col">
+        <h3 class="nb-h3">What’s actually true</h3>
+        <ul class="nb-list">
+          {%- for t in truths -%}
+            {%- assign tt = t | strip -%}
+            {%- if tt != '' -%}<li>{{ tt }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
   </div>
 {%- endif -%}
 
