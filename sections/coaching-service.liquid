@@ -104,13 +104,23 @@
   {% endif %}
 
   {%- comment %} Is this for you? {%- endcomment %}
-  {% if service.is_for_you %}
-  <div class="nb-tray page-width">
-    <h2 class="nb-h2">Is this for you?</h2>
-    {%- assign src = service.is_for_you -%}
-    {%- include '', src: src, class: 'nb-list' -%}{{ render_list }}
-  </div>
-  {% endif %}
+  {%- if service.is_for_you and service.is_for_you != blank -%}
+<section class="nb-tray">
+  <h2 class="nb-h2">Is this for you?</h2>
+
+  {%- assign for_you_raw   = service.is_for_you | strip -%}
+  {%- assign for_you_items = for_you_raw | newline_to_br | split: '<br />' -%}
+
+  <ul class="nb-pills">
+    {%- for i in for_you_items -%}
+      {%- assign txt = i | strip | remove: '• ' | remove: '* ' -%}
+      {%- if txt != '' -%}
+        <li class="nb-pill">{{ txt }}</li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</section>
+{%- endif -%}
 
   {%- comment %} How it works {%- endcomment %}
   {% if service.process_bodies %}
@@ -135,22 +145,37 @@
   {% endif %}
 
   {%- comment %} Myths / truths {%- endcomment %}
-  {% if service.myths or service.truths %}
-  <div class="nb-tray page-width nb-split">
-    {% if service.myths %}
-      <div>
+  {%- if (service.myths and service.myths != blank) or (service.truths and service.truths != blank) -%}
+<section class="nb-tray">
+  <div class="nb-grid-2">
+    {%- if service.myths and service.myths != blank -%}
+      {%- assign myths = service.myths | strip | newline_to_br | split: '<br />' -%}
+      <div class="nb-card">
         <h3 class="nb-h3">Common myths</h3>
-        {%- include '', src: service.myths, class: 'nb-list' -%}{{ render_list }}
+        <ul class="nb-list">
+          {%- for m in myths -%}
+            {%- assign t = m | strip | remove: '• ' | remove: '* ' -%}
+            {%- if t != '' -%}<li>{{ t }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
       </div>
-    {% endif %}
-    {% if service.truths %}
-      <div>
+    {%- endif -%}
+
+    {%- if service.truths and service.truths != blank -%}
+      {%- assign truths = service.truths | strip | newline_to_br | split: '<br />' -%}
+      <div class="nb-card">
         <h3 class="nb-h3">What’s actually true</h3>
-        {%- include '', src: service.truths, class: 'nb-list' -%}{{ render_list }}
+        <ul class="nb-list">
+          {%- for t2 in truths -%}
+            {%- assign t = t2 | strip | remove: '• ' | remove: '* ' -%}
+            {%- if t != '' -%}<li>{{ t }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
       </div>
-    {% endif %}
+    {%- endif -%}
   </div>
-  {% endif %}
+</section>
+{%- endif -%}
 </section>
 
 <style>
