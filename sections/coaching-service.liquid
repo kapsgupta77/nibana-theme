@@ -266,32 +266,40 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%} ---------- MYTHS / TRUTHS (two-column cards) ---------- {%- endcomment -%}
+  {%- comment -%} ---------- MYTHS / TRUTHS (two-column cards; robust splitting) ---------- {%- endcomment -%}
 {%- liquid
   assign nl = '\n'
 
+  # Raw strings
   assign myths_raw  = service.myths  | append: ''
   assign truths_raw = service.truths | append: ''
 
-  assign myths_norm  = myths_raw  | replace: '\r\n', nl | replace: '\r', nl
-  assign truths_norm = truths_raw | replace: '\r\n', nl | replace: '\r', nl
+  # --- Normalize to HTML breaks
+  assign myths_html  = myths_raw  | newline_to_br
+  assign truths_html = truths_raw | newline_to_br
 
-  if myths_norm contains nl
-    assign myths = myths_norm | split: nl
-  else
-    assign myths = myths_norm | split: ','
-  endif
+  # --- Standardize <br> variants and nbsp
+  assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+  assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
 
-  if truths_norm contains nl
-    assign truths = truths_norm | split: nl
-  else
-    assign truths = truths_norm | split: ','
-  endif
+  # --- Also split on the pattern: closing smart quote + space + opening smart quote
+  #     e.g. “One.” “Two.” → “One.”|||“Two.”
+  assign myths_norm  = myths_norm  | replace: '” “', '”|||“'
+  assign truths_norm = truths_norm | replace: '” “', '”|||“'
 
+  # --- Convert single <br /> to our pipe delimiter
+  assign myths_pipe  = myths_norm  | replace: '<br />', '|||'
+  assign truths_pipe = truths_norm | replace: '<br />', '|||'
+
+  # --- Arrays
+  assign myths  = myths_pipe  | split: '|||'
+  assign truths = truths_pipe | split: '|||'
+
+  # --- Count non-blank items
   assign myths_count = 0
   for m in myths
     assign mm = m | strip
-    if mm != ''
+    if mm != '' 
       assign myths_count = myths_count | plus: 1
     endif
   endfor
@@ -299,7 +307,7 @@
   assign truths_count = 0
   for t in truths
     assign tt = t | strip
-    if tt != ''
+    if tt != '' 
       assign truths_count = truths_count | plus: 1
     endif
   endfor
@@ -331,6 +339,13 @@
       </div>
     {%- endif -%}
   </div>
+
+  <style>
+    /* two-column layout for myths/truths */
+    .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    @media (max-width: 780px){ .nb-duo{grid-template-columns:1fr} }
+    .nb-duo__col{padding:16px 18px}
+  </style>
 {%- endif -%}
 
   {%- comment -%} ---------- FAQ (global pill look + robust splitting; keeps single-open) ---------- {%- endcomment -%}
