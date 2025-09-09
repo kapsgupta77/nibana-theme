@@ -98,7 +98,7 @@
           <div style="display:grid;gap:16px;">
             {%- for title in service.process_titles -%}
               {%- assign idx = forloop.index0 -%}
-              {%- assign body = service.process_bodies | at: idx -%}
+              {%- assign body = service.process_bodies[idx] -%}
               <div class="cs-step" style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.05);">
                 <h3 style="margin:0 0 6px;">{{ title }}</h3>
                 {%- if body != blank -%}<div class="rte">{{ body }}</div>{%- endif -%}
@@ -120,7 +120,7 @@
         </section>
       {%- endif -%}
 
-      {%- comment %} MYTHS / TRUTHS (optional) — no parentheses in condition {% endcomment -%}
+      {%- comment %} MYTHS / TRUTHS (optional) — safe condition {% endcomment -%}
       {%- assign myths_size = service.myths | size -%}
       {%- assign truths_size = service.truths | size -%}
       {%- if myths_size > 0 or truths_size > 0 -%}
@@ -153,7 +153,7 @@
           <h2>Frequently asked questions</h2>
           <div class="nb-faq__list" style="display:grid;gap:12px;">
             {%- for q in service.faqs_q -%}
-              {%- assign a = service.faqs_a | at: forloop.index0 -%}
+              {%- assign a = service.faqs_a[forloop.index0] -%}
               <details class="nb-faq__item">
                 <summary class="nb-faq__q">{{ q }}</summary>
                 <div class="nb-faq__a rte">{{ a }}</div>
@@ -168,12 +168,13 @@
           "@type": "FAQPage",
           "mainEntity": [
             {%- for q in service.faqs_q -%}
+            {%- assign ans = service.faqs_a[forloop.index0] -%}
             {
               "@type": "Question",
               "name": {{ q | json }},
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": {{ (service.faqs_a | at: forloop.index0) | strip_newlines | json }}
+                "text": {{ ans | strip_newlines | json }}
               }
             }{%- unless forloop.last -%},{%- endunless -%}
             {%- endfor -%}
