@@ -1,0 +1,123 @@
+{% comment %}
+  Coaching Service — Metaobject-driven section for Page templates
+  Looks up page.metafields.custom.coaching_service (one entry reference)
+  Defensive mapping so field IDs can vary a bit.
+{% endcomment %}
+
+{% assign svc_ref = page.metafields.custom.coaching_service %}
+{% if svc_ref and svc_ref.value %}
+  {% assign svc = svc_ref.value %}
+{% else %}
+  <section class="nb-coach-shell">
+    <div class="nb-coach">
+      <h2>Attach a CoachingService entry</h2>
+      <p>In this page’s metafields, set <em>custom.coaching_service</em> to a CoachingService entry.</p>
+    </div>
+  </section>
+  {% comment %}Stop early if nothing attached{% endcomment %}
+  {% break %}
+{% endif %}
+
+{%- comment -%}
+  ---- Field mapping (adjust here if your field IDs differ) ----
+{%- endcomment -%}
+{% assign hero_title     = svc.hero_title     | default: svc.title | default: page.title %}
+{% assign hero_subtitle  = svc.hero_subtitle  | default: svc.subtitle %}
+{% assign cta_label      = svc.cta_label      | default: 'Book a free 20-min call' %}
+{% assign cta_url        = svc.cta_url        | default: '/pages/book-a-call' %}
+{% assign outcomes_list  = svc.outcomes.value | default: svc.benefits.value %}
+{% assign social_list    = svc.social_proof.value | default: blank %}
+{% assign method_title   = svc.method_title   | default: 'Our approach' %}
+{% assign method_rich    = svc.method_richtext | default: svc.longform %}
+
+{%- comment -%}
+  Media options — supports either image or YouTube/Vimeo URL.
+{%- endcomment -%}
+{% assign media_enable   = svc.media_enable | default: true %}
+{% assign media_type     = svc.media_type   | default: 'video' %}
+{% assign media_image    = svc.media_image  %}
+{% assign media_url      = svc.media_youtube_url | default: svc.video_url %}
+
+{%- capture embed_url -%}
+  {%- if media_url contains 'youtu.be/' -%}
+    {{ media_url | replace: 'youtu.be/', 'www.youtube.com/embed/' }}
+  {%- elsif media_url contains 'watch?v=' -%}
+    {{ media_url | replace: 'watch?v=', 'embed/' }}
+  {%- else -%}
+    {{ media_url }}
+  {%- endif -%}
+{%- endcapture -%}
+
+<style>
+  .nb-coach-shell{padding:clamp(22px,3vw,44px) 0; background:transparent}
+  .nb-coach{max-width:min(1160px,94vw); margin-inline:auto}
+  .nb-coach .tray{background:#E6ECEA; border-radius:18px; box-shadow:0 10px 28px rgba(0,0,0,.06); padding:clamp(18px,2vw,28px)}
+  .nb-coach h1{font-weight:800; font-size:clamp(28px,4vw,44px); margin:0 0 8px}
+  .nb-coach p.lead{font-size:clamp(16px,2.1vw,18px); opacity:.9; margin:0 0 16px}
+  .nb-coach .cta{display:inline-flex; align-items:center; gap:.5rem; text-decoration:none; padding:12px 18px; border-radius:9999px; background:#C86B2A; color:#fff; border:2px solid #C86B2A; font-weight:700; box-shadow:0 10px 28px rgba(0,0,0,.06)}
+  .nb-coach .cta:hover{background:#9E4E19; border-color:#9E4E19}
+  .nb-coach .hero{display:grid; grid-template-columns: 1.1fr .9fr; gap:clamp(14px,2vw,24px); align-items:center}
+  @media (max-width: 980px){ .nb-coach .hero{grid-template-columns:1fr} }
+
+  .nb-coach .media{aspect-ratio:16/9; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,.05)}
+  .nb-coach iframe, .nb-coach img{width:100%; height:100%; border:0; display:block}
+
+  .nb-coach .outcomes{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(14px,2vw,18px); margin-top:clamp(16px,2.2vw,22px)}
+  @media (max-width: 900px){ .nb-coach .outcomes{grid-template-columns:1fr} }
+  .nb-coach .card{background:#fff; border-radius:14px; padding:16px 18px; box-shadow:0 12px 30px rgba(0,0,0,.05)}
+
+  .nb-coach .trust{display:flex; flex-wrap:wrap; gap:10px 16px; margin:14px 0 0; opacity:.9}
+  .nb-coach .trust span{background:#fff; border-radius:999px; padding:6px 10px; box-shadow:0 6px 16px rgba(0,0,0,.04)}
+
+  .nb-coach .method{margin-top:clamp(22px,3vw,34px)}
+</style>
+
+<section class="nb-coach-shell">
+  <div class="nb-coach">
+    <div class="tray">
+      <!-- HERO -->
+      <div class="hero">
+        <div>
+          <h1>{{ hero_title }}</h1>
+          {% if hero_subtitle %}<p class="lead">{{ hero_subtitle }}</p>{% endif %}
+          <a class="cta" href="{{ cta_url }}">{{ cta_label }}</a>
+
+          {% if social_list and social_list.size > 0 %}
+            <div class="trust">
+              {% for item in social_list %}
+                <span>{{ item }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if media_enable %}
+          <div class="media">
+            {% if media_type == 'image' and media_image %}
+              {{ media_image | image_url: width: 1440 | image_tag: loading: 'lazy' }}
+            {% elsif embed_url %}
+              <iframe src="{{ embed_url | escape }}?rel=0&modestbranding=1"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen></iframe>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if outcomes_list and outcomes_list.size > 0 %}
+        <div class="outcomes">
+          {% for o in outcomes_list %}
+            <div class="card">{{ o }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if method_rich %}
+        <div class="method">
+          {% if method_title %}<h2>{{ method_title }}</h2>{% endif %}
+          <div class="rte">{{ method_rich }}</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
