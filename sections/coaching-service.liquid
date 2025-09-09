@@ -1,243 +1,182 @@
 {% comment %}
-  Coaching Service template section (v2.1 — compile-safe)
-  - Reads metaobject via page.metafields.custom.coaching_service
-  - One hero CTA, brand-styled
-  - Graceful hero placeholder when no media
-  - Renders lists, process, method, myths/truths, FAQ if present
+  Coaching Service — metaobject-driven page section
+  Expects a Page metafield: custom.coaching_service -> CoachingService entry
 {% endcomment %}
 
-{%- assign svc_ref = page.metafields.custom.coaching_service -%}
-{%- assign service = nil -%}
-{%- if svc_ref and svc_ref.value -%}{% assign service = svc_ref.value %}{%- endif -%}
+{%- assign service = page.metafields.custom.coaching_service.value -%}
+{%- if service == blank -%}
+  <div class="page-width">
+    <p>Missing coaching service data. Assign a “CoachingService” entry to this page’s metafield.</p>
+  </div>
+  {%- break -%}
+{%- endif -%}
 
-<section id="coaching-service" class="nb-coach">
-  {% if service %}
+{%- comment %}
+  Helpers
+{%- endcomment %}
+{%- assign cta_href = service.cta_link -%}
+{%- if cta_href == blank -%}{% assign cta_href = '/pages/book-a-call' %}{% endif %}
 
-    {%- comment -%} ---------- Hero ---------- {%- endcomment -%}
-    {%- assign cta_url = service.cta_link | default: '' -%}
-    {%- if cta_url == blank -%}{% assign cta_url = '/pages/book-a-call' %}{%- endif -%}
+{%- assign hero_title = service.hero_heading | default: service.title -%}
+{%- assign hero_sub  = service.hero_subheading -%}
+{%- assign hero_vid  = service.hero_video_url | strip -%}
+{%- assign hero_img  = service.hero_image -%}
 
-    <header class="nb-hero">
-      <div class="nb-hero__copy">
-        <h1 class="nb-hero__title">
-          {{ service.hero_heading | default: page.title | escape }}
-        </h1>
-        {% if service.hero_subheading != blank %}
-          <p class="nb-hero__sub">{{ service.hero_subheading }}</p>
-        {% endif %}
-        <a href="{{ cta_url }}" class="nb-btn nb-btn--cta" data-cta="service-hero">
-          {{ service.cta_label | default: 'Book a free 20-min call' }}
-        </a>
-      </div>
+{%- comment %}
+  Utility: render a bullet list from a multi-line text field.
+  Strips common bullet chars and ignores blank lines.
+{%- endcomment %}
+{%- capture render_list -%}
+  {%- assign raw = include.src | newline_to_br | split: '<br />' -%}
+  <ul class="{{ include.class | default: '' }}">
+    {%- for line in raw -%}
+      {%- assign item = line | strip | remove: '•' | remove: '*' | remove: '-' | strip -%}
+      {%- if item != '' -%}
+        <li>{{ item }}</li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endcapture -%}
 
-      <div class="nb-hero__media">
-        {% if service.hero_video_url %}
-          <div class="nb-embed">
-            <iframe
-              src="{{ service.hero_video_url | replace: 'watch?v=', 'embed/' }}"
-              title="Intro video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
-        {% elsif service.hero_image %}
-  <img
-    src="{{ service.hero_image | image_url: width: 1400 }}"
-    srcset="
-      {{ service.hero_image | image_url: width: 700 }} 700w,
-      {{ service.hero_image | image_url: width: 1000 }} 1000w,
-      {{ service.hero_image | image_url: width: 1400 }} 1400w
-    "
-    sizes="(max-width: 989px) 100vw, 640px"
-    alt="{{ service.hero_heading | default: service.title | escape }}"
-    class="nb-hero__img"
-    loading="eager" fetchpriority="high"
-  >
-{% else %}
-          <div class="nb-hero__placeholder">
-            <div class="nb-hero__ph-card">
-              <p>Preview your hero image / video here.</p>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-    </header>
+<section class="nb-coaching">
+  <div class="nb-hero page-width">
+    <div class="nb-hero__copy">
+      {% if hero_title %}<h1 class="nb-hero__title">{{ hero_title }}</h1>{% endif %}
+      {% if hero_sub %}<p class="nb-hero__sub">{{ hero_sub }}</p>{% endif %}
 
-    {%- comment -%} ---------- Outcomes / Is this for you ---------- {%- endcomment -%}
-    {% assign has_outcomes = false %}
-    {% if service.outcomes and service.outcomes.size > 0 %}
-      {% assign has_outcomes = true %}
-    {% endif %}
-    {% assign has_for_you = false %}
-    {% if service.is_for_you and service.is_for_you.size > 0 %}
-      {% assign has_for_you = true %}
-    {% endif %}
-
-    {% if has_outcomes or has_for_you %}
-      <section class="nb-panels">
-        {% if has_outcomes %}
-          <article class="nb-card">
-            <h2 class="nb-card__title">What you’ll get</h2>
-            <ul class="nb-list">
-              {% for item in service.outcomes %}
-                {% if item != blank %}<li>{{ item }}</li>{% endif %}
-              {% endfor %}
-            </ul>
-          </article>
-        {% endif %}
-        {% if has_for_you %}
-          <article class="nb-card">
-            <h2 class="nb-card__title">Is this for you?</h2>
-            <ul class="nb-list">
-              {% for item in service.is_for_you %}
-                {% if item != blank %}<li>{{ item }}</li>{% endif %}
-              {% endfor %}
-            </ul>
-          </article>
-        {% endif %}
-      </section>
-    {% endif %}
-
-    {%- comment -%} ---------- Process steps ---------- {%- endcomment -%}
-    {% assign has_steps = false %}
-    {% if service.process_bodies and service.process_bodies.size > 0 %}
-      {% assign has_steps = true %}
-    {% endif %}
-    {% if has_steps %}
-      <section class="nb-proc">
-        <h2 class="nb-proc__title">{{ service.process_titles | default: 'How it works' }}</h2>
-        <ol class="nb-steps">
-          {% for body in service.process_bodies %}
-            {% if body != blank %}
-              <li class="nb-step">{{ body }}</li>
-            {% endif %}
-          {% endfor %}
-        </ol>
-      </section>
-    {% endif %}
-
-    {%- comment -%} ---------- Method longform ---------- {%- endcomment -%}
-    {% if service.method_title != blank or service.method_richtext != blank %}
-      <section class="nb-method">
-        {% if service.method_title != blank %}
-          <h2 class="nb-method__title">{{ service.method_title }}</h2>
-        {% endif %}
-        {% if service.method_richtext != blank %}
-          <div class="nb-method__body rte">{{ service.method_richtext }}</div>
-        {% endif %}
-      </section>
-    {% endif %}
-
-    {%- comment -%} ---------- Myths / Truths ---------- {%- endcomment -%}
-    {% assign has_myths = false %}
-    {% if service.myths and service.myths.size > 0 %}
-      {% assign has_myths = true %}
-    {% endif %}
-    {% assign has_truths = false %}
-    {% if service.truths and service.truths.size > 0 %}
-      {% assign has_truths = true %}
-    {% endif %}
-
-    {% if has_myths or has_truths %}
-      <section class="nb-myths">
-        {% if has_myths %}
-          <article class="nb-card">
-            <h3 class="nb-card__title">Common myths</h3>
-            <ul class="nb-list">
-              {% for item in service.myths %}
-                {% if item != blank %}<li>{{ item }}</li>{% endif %}
-              {% endfor %}
-            </ul>
-          </article>
-        {% endif %}
-        {% if has_truths %}
-          <article class="nb-card">
-            <h3 class="nb-card__title">What’s actually true</h3>
-            <ul class="nb-list">
-              {% for item in service.truths %}
-                {% if item != blank %}<li>{{ item }}</li>{% endif %}
-              {% endfor %}
-            </ul>
-          </article>
-        {% endif %}
-      </section>
-    {% endif %}
-
-    {%- comment -%} ---------- FAQ (Q/A lists) ---------- {%- endcomment -%}
-    {% assign has_faq = false %}
-    {% if service.faqs_q and service.faqs_a and service.faqs_q.size > 0 and service.faqs_a.size > 0 %}
-      {% assign has_faq = true %}
-    {% endif %}
-    {% if has_faq %}
-      <section class="nb-faq">
-        <h2 class="nb-faq__title">Frequently asked questions</h2>
-        <div class="nb-faq__list">
-          {% for q in service.faqs_q %}
-            {% assign a = service.faqs_a | at: forloop.index0 %}
-            {% if q != blank and a != blank %}
-              <details class="nb-faq__item">
-                <summary class="nb-faq__q">{{ q }}</summary>
-                <div class="nb-faq__a rte">{{ a }}</div>
-              </details>
-            {% endif %}
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
-
-  {% else %}
-    <div class="page-width">
-      <p>Attach a <em>CoachingService</em> entry to this page via the <strong>coaching_service</strong> metafield.</p>
+      <a class="nb-btn nb-btn--cta" href="{{ cta_href }}" data-cta="service-hero">
+        {{ service.cta_label | default: 'Book a free 20-min call' }}
+      </a>
     </div>
+
+    <div class="nb-hero__media">
+      {% if hero_vid %}
+        {% if hero_vid contains 'youtube' or hero_vid contains 'youtu.be' %}
+          {%- assign y = hero_vid
+            | replace: 'watch?v=', 'embed/'
+            | replace: 'youtu.be/', 'www.youtube.com/embed/' -%}
+          <div class="nb-embed">
+            <iframe src="{{ y }}?rel=0&modestbranding=1"
+                    title="Service video" allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen loading="lazy"></iframe>
+          </div>
+        {% elsif hero_vid contains 'vimeo' %}
+          <div class="nb-embed">
+            <iframe src="{{ hero_vid | replace: 'vimeo.com/', 'player.vimeo.com/video/' }}"
+                    title="Service video" allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen loading="lazy"></iframe>
+          </div>
+        {% endif %}
+      {% elsif hero_img != blank %}
+        <img
+          src="{{ hero_img | image_url: width: 1400 }}"
+          srcset="
+            {{ hero_img | image_url: width: 700  }} 700w,
+            {{ hero_img | image_url: width: 1000 }} 1000w,
+            {{ hero_img | image_url: width: 1400 }} 1400w
+          "
+          sizes="(max-width: 989px) 100vw, 640px"
+          alt="{{ hero_title | escape }}"
+          class="nb-hero__img"
+          loading="eager" fetchpriority="high">
+      {% else %}
+        <div class="nb-hero__placeholder">
+          <div class="nb-hero__blob"></div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {%- comment %} Outcomes (cards) {%- endcomment %}
+  {% if service.outcomes %}
+  <div class="nb-tray page-width">
+    <h2 class="nb-h2">What you’ll get</h2>
+    <div class="nb-cards">
+      {%- assign lines = service.outcomes | newline_to_br | split: '<br />' -%}
+      {%- for line in lines -%}
+        {%- assign item = line | strip | remove: '•' | remove: '*' | remove: '-' | strip -%}
+        {%- if item != '' -%}
+          <div class="nb-card">{{ item }}</div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  {% endif %}
+
+  {%- comment %} Is this for you? {%- endcomment %}
+  {% if service.is_for_you %}
+  <div class="nb-tray page-width">
+    <h2 class="nb-h2">Is this for you?</h2>
+    {%- assign src = service.is_for_you -%}
+    {%- include '', src: src, class: 'nb-list' -%}{{ render_list }}
+  </div>
+  {% endif %}
+
+  {%- comment %} How it works {%- endcomment %}
+  {% if service.process_bodies %}
+  <div class="nb-tray page-width">
+    <h2 class="nb-h2">{{ service.process_titles | default: 'How it works' }}</h2>
+    {%- assign steps = service.process_bodies | newline_to_br | split: '<br />' -%}
+    <ol class="nb-steps">
+      {%- for s in steps -%}
+        {%- assign item = s | strip | remove: '•' | remove: '*' | remove: '-' | strip -%}
+        {%- if item != '' -%}<li>{{ item }}</li>{%- endif -%}
+      {%- endfor -%}
+    </ol>
+  </div>
+  {% endif %}
+
+  {%- comment %} Approach / method {%- endcomment %}
+  {% if service.method_title or service.method_richtext %}
+  <div class="nb-tray page-width">
+    {% if service.method_title %}<h2 class="nb-h2">{{ service.method_title }}</h2>{% endif %}
+    {% if service.method_richtext %}<div class="rte">{{ service.method_richtext }}</div>{% endif %}
+  </div>
+  {% endif %}
+
+  {%- comment %} Myths / truths {%- endcomment %}
+  {% if service.myths or service.truths %}
+  <div class="nb-tray page-width nb-split">
+    {% if service.myths %}
+      <div>
+        <h3 class="nb-h3">Common myths</h3>
+        {%- include '', src: service.myths, class: 'nb-list' -%}{{ render_list }}
+      </div>
+    {% endif %}
+    {% if service.truths %}
+      <div>
+        <h3 class="nb-h3">What’s actually true</h3>
+        {%- include '', src: service.truths, class: 'nb-list' -%}{{ render_list }}
+      </div>
+    {% endif %}
+  </div>
   {% endif %}
 </section>
 
 <style>
-  /* ====== Nibana Coaching — scoped styles ====== */
-  .nb-coach{ --nb-sage:#E6ECEA; --nb-ink:#223238; --nb-cta:#C86B2A; --nb-cta-600:#9E4E19; }
-  .nb-coach .page-width{max-width:min(1160px,94vw);margin-inline:auto;}
-
-  /* Hero */
-  .nb-hero{display:grid;gap:24px;align-items:center;grid-template-columns:1.1fr .9fr;max-width:min(1160px,94vw);margin:32px auto;}
-  .nb-hero__title{margin:0 0 8px;line-height:1.1;}
-  .nb-hero__sub{margin:0 0 18px;font-size:1.08rem;opacity:.92}
-  .nb-hero__media{width:100%}
-  .nb-embed{position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.06)}
-  .nb-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .nb-hero__img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.06)}
-  .nb-hero__placeholder{background:var(--nb-sage);border-radius:16px;padding:24px;display:grid;place-items:center;height:320px;box-shadow:0 10px 28px rgba(0,0,0,.06)}
-  .nb-hero__ph-card{background:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 8px 22px rgba(0,0,0,.06);color:#2d4046}
-
-  .nb-btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:9999px;font-weight:700;line-height:1.1;text-decoration:none}
-  .nb-btn--cta{background:var(--nb-cta);color:#fff;padding:12px 20px;border:2px solid var(--nb-cta);box-shadow:0 10px 28px rgba(0,0,0,.06);transition:background .15s, box-shadow .2s, transform .08s}
-  .nb-btn--cta:hover{background:var(--nb-cta-600);border-color:var(--nb-cta-600);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.10)}
-
-  /* Panels */
-  .nb-panels{max-width:min(1160px,94vw);margin:28px auto;display:grid;gap:18px;grid-template-columns:1fr 1fr}
-  .nb-card{background:var(--nb-sage);border-radius:18px;padding:18px 22px;box-shadow:0 10px 28px rgba(0,0,0,.06)}
-  .nb-card__title{margin:0 0 8px}
-  .nb-list{margin:0;padding-left:1.1rem}
-  .nb-list li{margin:.35rem 0}
-
-  /* Process */
-  .nb-proc{max-width:min(1160px,94vw);margin:32px auto}
-  .nb-steps{margin:0;padding-left:1.25rem}
-  .nb-step{margin:.35rem 0}
-
-  /* Method */
-  .nb-method{max-width:min(1160px,94vw);margin:32px auto}
-  .nb-method__title{margin:0 0 10px}
-
-  /* FAQ */
-  .nb-faq{max-width:min(1160px,94vw);margin:34px auto}
-  .nb-faq__title{text-align:center;margin:0 0 14px}
-  .nb-faq__list{display:grid;gap:12px}
-  .nb-faq__item{background:#fff;border-radius:14px;border:1px solid rgba(0,0,0,.05);box-shadow:0 8px 22px rgba(0,0,0,.05);overflow:hidden}
-  .nb-faq__q{cursor:pointer;list-style:none;padding:14px 18px;font-weight:650}
-  .nb-faq__q::-webkit-details-marker{display:none}
-  .nb-faq__a{padding:0 18px 16px;color:#2d4046}
-
-  @media (max-width: 990px){
-    .nb-hero{grid-template-columns:1fr}
-    .nb-panels{grid-template-columns:1fr}
-  }
+  .nb-coaching{ --ink:#223238; --teal:#0F5B59; --shell:#E6ECEA; --cta:#C86B2A; --cta-600:#9E4E19; }
+  .page-width{ max-width:min(1160px,94vw); margin-inline:auto; }
+  .nb-hero{ display:grid; grid-template-columns: 1.1fr .9fr; gap:28px; align-items:center; padding:28px 0; }
+  @media (max-width: 989px){ .nb-hero{ grid-template-columns:1fr; } }
+  .nb-hero__title{ font-size: clamp(28px,4.4vw,48px); line-height:1.1; margin:0 0 12px; }
+  .nb-hero__sub{ font-size: clamp(16px,2.1vw,18px); opacity:.9; margin:0 0 18px; }
+  .nb-hero__media .nb-embed{ position:relative; padding-top:56.25%; border-radius:14px; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,.08); background:#000; }
+  .nb-hero__media iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .nb-hero__img{ width:100%; height:auto; border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.08); }
+  .nb-hero__placeholder{ height:320px; border-radius:14px; background:linear-gradient(140deg, var(--shell), #f4f6f5); position:relative; overflow:hidden; }
+  .nb-hero__blob{ position:absolute; inset:auto -10% -40% -10%; height:140%; background:radial-gradient(ellipse at 30% 40%, rgba(15,91,89,.18), transparent 60%);}
+  .nb-btn{ display:inline-flex; align-items:center; gap:.5rem; padding:12px 20px; border-radius:9999px; font-weight:600; text-decoration:none; }
+  .nb-btn--cta{ background:var(--cta); color:#fff; border:2px solid var(--cta); box-shadow:0 10px 28px rgba(0,0,0,.06); }
+  .nb-btn--cta:hover{ background:var(--cta-600); border-color:var(--cta-600); color:#fff; transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,0,0,.10); }
+  .nb-tray{ background:var(--shell); border-radius:18px; box-shadow:0 10px 28px rgba(0,0,0,.06); padding: clamp(18px,2vw,28px); margin: 10px auto 26px; }
+  .nb-h2{ font-size: clamp(22px,3.2vw,32px); margin:0 0 12px; }
+  .nb-h3{ font-size: clamp(18px,2.2vw,22px); margin:0 0 10px; }
+  .nb-cards{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:14px; }
+  @media (max-width: 680px){ .nb-cards{ grid-template-columns:1fr; } }
+  .nb-card{ background:#fff; border-radius:14px; padding:16px 18px; box-shadow:0 12px 30px rgba(0,0,0,.05); }
+  .nb-list{ padding-left:1.1rem; }
+  .nb-list li{ margin:.35rem 0; }
+  .nb-steps{ counter-reset:num; list-style: decimal inside; padding-left:1rem; }
+  .nb-split{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width: 820px){ .nb-split{ grid-template-columns:1fr; } }
 </style>
