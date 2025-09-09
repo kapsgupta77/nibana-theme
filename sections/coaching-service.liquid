@@ -1,202 +1,207 @@
 {% comment %}
-  Coaching Service — metaobject-driven page section
-  Expects a Page metafield: custom.coaching_service -> CoachingService entry
+  Coaching Service (metaobject-driven)
+  - Page metafield: pages → metafield "coaching_service" (reference → CoachingService)
 {% endcomment %}
 
-{%- assign service = page.metafields.custom.coaching_service.value -%}
-{%- if service == blank -%}
-  <div class="page-width" style="padding:20px 0">
-    <p>Missing coaching service data. Assign a “CoachingService” entry to this page’s metafield (<em>custom.coaching_service</em>).</p>
-  </div>
-  {%- break -%}
-{%- endif -%}
+{% liquid
+  assign ref = page.metafields.coachingservice.coaching_service
+  if ref == blank or ref.value == blank
+    echo '<section class="page-width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>'
+    return
+  endif
 
-{%- comment %} Derive basics & sensible fallbacks {%- endcomment -%}
-{%- assign cta_href   = service.cta_link -%}
-{%- if cta_href == blank -%}{% assign cta_href = '/pages/book-a-call' %}{% endif %}
-{%- assign hero_title = service.hero_heading | default: service.title -%}
-{%- assign hero_sub   = service.hero_subheading -%}
-{%- assign hero_vid   = service.hero_video_url | strip -%}
-{%- assign hero_img   = service.hero_image -%}
+  assign service = ref.value
 
-<section class="nb-coaching">
-
-  <!-- HERO -->
-  <div class="nb-hero page-width">
-    <div class="nb-hero__copy">
-      {% if hero_title %}<h1 class="nb-hero__title">{{ hero_title }}</h1>{% endif %}
-      {% if hero_sub %}<p class="nb-hero__sub">{{ hero_sub }}</p>{% endif %}
-
-      <a class="nb-btn nb-btn--cta" href="{{ cta_href }}" data-cta="service-hero">
-        {{ service.cta_label | default: 'Book a free 20-min call' }}
-      </a>
-    </div>
-
-    <div class="nb-hero__media">
-      {% if hero_vid %}
-        {% if hero_vid contains 'youtube' or hero_vid contains 'youtu.be' %}
-          {%- assign y = hero_vid
-            | replace: 'watch?v=', 'embed/'
-            | replace: 'youtu.be/', 'www.youtube.com/embed/' -%}
-          <div class="nb-embed">
-            <iframe src="{{ y }}?rel=0&modestbranding=1"
-                    title="Service video" allow="autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen loading="lazy"></iframe>
-          </div>
-        {% elsif hero_vid contains 'vimeo' %}
-          <div class="nb-embed">
-            <iframe src="{{ hero_vid | replace: 'vimeo.com/', 'player.vimeo.com/video/' }}"
-                    title="Service video" allow="autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen loading="lazy"></iframe>
-          </div>
-        {% endif %}
-      {% elsif hero_img != blank %}
-        <img
-          src="{{ hero_img | image_url: width: 1400 }}"
-          srcset="
-            {{ hero_img | image_url: width: 700  }} 700w,
-            {{ hero_img | image_url: width: 1000 }} 1000w,
-            {{ hero_img | image_url: width: 1400 }} 1400w
-          "
-          sizes="(max-width: 989px) 100vw, 640px"
-          alt="{{ hero_title | escape }}"
-          class="nb-hero__img"
-          loading="eager" fetchpriority="high">
-      {% else %}
-        <div class="nb-hero__placeholder">
-          <div class="nb-hero__blob"></div>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- OUTCOMES -->
-  {% if service.outcomes %}
-  <div class="nb-tray page-width">
-    <h2 class="nb-h2">What you’ll get</h2>
-    <div class="nb-cards">
-      {%- assign lines = service.outcomes | newline_to_br | split: '<br />' -%}
-      {%- for line in lines -%}
-        {%- assign item = line | strip | remove: '•' | remove: '*' | remove: '-' | strip -%}
-        {%- if item != '' -%}
-          <div class="nb-card">{{ item }}</div>
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- IS THIS FOR YOU -->
-  {% if service.is_for_you and service.is_for_you != blank %}
-  <div class="nb-tray page-width">
-    <h2 class="nb-h2">Is this for you?</h2>
-    {%- assign for_you_raw   = service.is_for_you | strip -%}
-    {%- assign for_you_items = for_you_raw | newline_to_br | split: '<br />' -%}
-    <ul class="nb-pills">
-      {%- for i in for_you_items -%}
-        {%- assign txt = i | strip | remove: '• ' | remove: '* ' | remove: '- ' -%}
-        {%- if txt != '' -%}<li class="nb-pill">{{ txt }}</li>{%- endif -%}
-      {%- endfor -%}
-    </ul>
-  </div>
-  {% endif %}
-
-  <!-- HOW IT WORKS -->
-  {% if service.process_bodies %}
-  <div class="nb-tray page-width">
-    <h2 class="nb-h2">{{ service.process_titles | default: 'How it works' }}</h2>
-    {%- assign steps = service.process_bodies | newline_to_br | split: '<br />' -%}
-    <ol class="nb-steps">
-      {%- for s in steps -%}
-        {%- assign item = s | strip | remove: '•' | remove: '*' | remove: '-' | strip -%}
-        {%- if item != '' -%}<li>{{ item }}</li>{%- endif -%}
-      {%- endfor -%}
-    </ol>
-  </div>
-  {% endif %}
-
-  <!-- METHOD / APPROACH -->
-  {% if service.method_title or service.method_richtext %}
-  <div class="nb-tray page-width">
-    {% if service.method_title %}<h2 class="nb-h2">{{ service.method_title }}</h2>{% endif %}
-    {% if service.method_richtext %}<div class="rte">{{ service.method_richtext }}</div>{% endif %}
-  </div>
-  {% endif %}
-
-  <!-- MYTHS / TRUTHS -->
-  {%- assign myths_text  = service.myths  | default: '' | strip -%}
-  {%- assign truths_text = service.truths | default: '' | strip -%}
-  {% if myths_text != '' or truths_text != '' %}
-  <div class="nb-tray page-width">
-    <div class="nb-grid-2">
-      {% if myths_text != '' %}
-        {%- assign myths = myths_text | newline_to_br | split: '<br />' -%}
-        <div class="nb-card">
-          <h3 class="nb-h3">Common myths</h3>
-          <ul class="nb-list">
-            {%- for m in myths -%}
-              {%- assign t = m | strip | remove: '• ' | remove: '* ' | remove: '- ' -%}
-              {%- if t != '' -%}<li>{{ t }}</li>{%- endif -%}
-            {%- endfor -%}
-          </ul>
-        </div>
-      {% endif %}
-
-      {% if truths_text != '' %}
-        {%- assign truths = truths_text | newline_to_br | split: '<br />' -%}
-        <div class="nb-card">
-          <h3 class="nb-h3">What’s actually true</h3>
-          <ul class="nb-list">
-            {%- for t2 in truths -%}
-              {%- assign t = t2 | strip | remove: '• ' | remove: '* ' | remove: '- ' -%}
-              {%- if t != '' -%}<li>{{ t }}</li>{%- endif -%}
-            {%- endfor -%}
-          </ul>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-
-</section>
+  assign btn_label = service.cta_label | default: 'Book a free 20-min call'
+  assign btn_href  = service.cta_link
+  if btn_href == blank
+    assign btn_href = '/pages/book-a-call'
+  endif
+%}
 
 <style>
-  /* ===== NIBANA Coaching Service (lux finish) ===== */
-  .nb-coaching{ --ink:#223238; --teal:#0F5B59; --shell:#E6ECEA; --cta:#C86B2A; --cta-600:#9E4E19; color:var(--ink); }
-  .page-width{ max-width:min(1160px,94vw); margin-inline:auto; }
-
-  /* Hero */
-  .nb-hero{ display:grid; grid-template-columns: 1.12fr .88fr; gap:28px; align-items:center; padding:26px 0; }
-  @media (max-width: 989px){ .nb-hero{ grid-template-columns:1fr; } }
-  .nb-hero__title{ font-size: clamp(28px,4.4vw,48px); line-height:1.12; margin:0 0 12px; letter-spacing:.2px; }
-  .nb-hero__sub{ font-size: clamp(16px,2.1vw,18px); opacity:.92; margin:0 0 18px; }
-  .nb-hero__media .nb-embed{ position:relative; padding-top:56.25%; border-radius:14px; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,.08); background:#000; }
-  .nb-hero__media iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
-  .nb-hero__img{ width:100%; height:auto; border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.08); }
-  .nb-hero__placeholder{ height:320px; border-radius:14px; background:linear-gradient(140deg, var(--shell), #f4f6f5); position:relative; overflow:hidden; }
-  .nb-hero__blob{ position:absolute; inset:auto -10% -40% -10%; height:140%; background:radial-gradient(ellipse at 30% 40%, rgba(15,91,89,.18), transparent 60%); }
-
-  /* Buttons */
-  .nb-btn{ display:inline-flex; align-items:center; gap:.5rem; padding:12px 20px; border-radius:9999px; font-weight:600; text-decoration:none; }
-  .nb-btn--cta{ background:var(--cta); color:#fff; border:2px solid var(--cta); box-shadow:0 10px 28px rgba(0,0,0,.06); transition:transform .08s, box-shadow .2s, background-color .15s, border-color .15s; }
-  .nb-btn--cta:hover{ background:var(--cta-600); border-color:var(--cta-600); color:#fff; transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,0,0,.10); }
-
-  /* Trays & headings */
-  .nb-tray{ background:var(--shell); border-radius:18px; box-shadow:0 10px 28px rgba(0,0,0,.06); padding: clamp(18px,2vw,28px); margin: 10px auto 26px; }
-  .nb-h2{ font-size: clamp(22px,3.2vw,32px); margin:0 0 12px; }
-  .nb-h3{ font-size: clamp(18px,2.2vw,22px); margin:0 0 10px; }
-
-  /* Cards / pills / steps */
-  .nb-cards{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:14px; }
-  @media (max-width: 680px){ .nb-cards{ grid-template-columns:1fr; } }
-  .nb-card{ background:#fff; border-radius:14px; padding:16px 18px; box-shadow:0 12px 30px rgba(0,0,0,.05); }
-  .nb-pills{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; list-style:none; padding:0; margin:0; }
-  .nb-pill{ background:#fff; border-radius:9999px; padding:10px 14px; box-shadow:0 12px 30px rgba(0,0,0,.05); }
-  .nb-steps{ list-style: decimal inside; padding-left:1rem; margin:0; }
-  .nb-list{ padding-left:1.1rem; margin:0; }
-  .nb-list li{ margin:.35rem 0; }
-
-  /* Two-column grid */
-  .nb-grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  @media (max-width: 860px){ .nb-grid-2{ grid-template-columns:1fr; } }
+  /* minimal, page-scoped polish */
+  .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
+  .nb-grid{display:grid;gap:16px}
+  .nb-pill{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:9999px;padding:.65rem .9rem;box-shadow:0 4px 12px rgba(0,0,0,.05);white-space:nowrap}
+  .nb-tray{background:#e6ecea;border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.06);padding:18px}
+  .nb-h{margin:0 0 12px}
+  .nb-h2{font-size:clamp(22px,3vw,28px);font-weight:800}
+  .nb-h3{font-size:clamp(18px,2.2vw,22px);font-weight:750}
+  .nb-chiprow{display:flex; flex-wrap:wrap; gap:8px}
+  .nb-hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:22px;padding:32px 0}
+  .nb-hero_img{width:100%;height:auto;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+  .nb-hero_placeholder{aspect-ratio:16/9;border-radius:16px;background:linear-gradient(135deg,#e9f1ef,#f5faf9);display:grid;place-items:center;color:#47635e}
+  .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate,#C86B2A);background:var(--nb-chocolate,#C86B2A);color:#fff;font-weight:650;box-shadow:0 10px 28px rgba(0,0,0,.06);text-decoration:none;transition:transform .08s,box-shadow .2s}
+  .nb-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.10);background:var(--nb-choc-600,#9E4E19);border-color:var(--nb-choc-600,#9E4E19)}
+  .nb-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .nb-card{background:#fff;border-radius:12px;box-shadow:0 10px 24px rgba(0,0,0,.06);padding:12px 14px}
+  .nb-list{margin:0;padding-left:1.1rem}
+  .nb-faq details{background:#fff;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.05);margin:10px 0;overflow:hidden;border:1px solid rgba(0,0,0,.05)}
+  .nb-faq summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:grid;grid-template-columns:1fr auto;align-items:center}
+  .nb-faq summary::-webkit-details-marker{display:none}
+  .nb-faq .ans{padding:0 16px 16px;color:#324247}
+  @media (max-width: 990px){ .nb-hero{grid-template-columns:1fr} }
 </style>
+
+<section class="nb-shell nb-hero">
+  <div>
+    <h1 class="nb-h" style="font-size:clamp(28px,5vw,48px);line-height:1.1;">
+      {{ service.hero_heading | default: service.title }}
+    </h1>
+    {% if service.hero_subheading != blank %}
+      <p style="max-width:58ch">{{ service.hero_subheading }}</p>
+    {% endif %}
+    <p style="margin-top:16px">
+      <a href="{{ btn_href }}" class="nb-cta">{{ btn_label }}</a>
+    </p>
+
+    {% if service.social_proof and service.social_proof != blank %}
+      <div style="margin-top:14px" class="nb-chiprow">
+        {% for item in service.social_proof %}
+          <span class="nb-pill">{{ item }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div>
+    {% if service.hero_video_url != blank %}
+      <div style="position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.08)">
+        <iframe src="https://www.youtube.com/embed/{{ service.hero_video_url | split: 'v=' | last | split: '&' | first }}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:16px"></iframe>
+      </div>
+    {% elsif service.hero_image %}
+      <img src="{{ service.hero_image | image_url: width: 1400 }}"
+           srcset="
+             {{ service.hero_image | image_url: width: 700 }} 700w,
+             {{ service.hero_image | image_url: width: 1000 }} 1000w,
+             {{ service.hero_image | image_url: width: 1400 }} 1400w"
+           sizes="(max-width: 990px) 100vw, 640px"
+           alt="{{ service.hero_heading | default: service.title | escape }}"
+           class="nb-hero_img" loading="eager" fetchpriority="high">
+    {% else %}
+      <div class="nb-hero_placeholder">
+        <strong>{{ service.title }}</strong>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if service.outcomes and service.outcomes != blank %}
+<section class="nb-shell nb-tray" style="margin-top:8px">
+  <h2 class="nb-h nb-h2">What you’ll get</h2>
+  <div class="nb-cols">
+    {% for item in service.outcomes %}
+      <div class="nb-card">{{ item }}</div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if service.is_for_you and service.is_for_you != blank %}
+<section class="nb-shell nb-tray" style="margin-top:14px">
+  <h2 class="nb-h nb-h2">Is this for you?</h2>
+  <ul class="nb-list">
+    {% for item in service.is_for_you %}
+      <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if service.process_titles or service.process_bodies %}
+<section class="nb-shell nb-tray" style="margin-top:14px">
+  <h2 class="nb-h nb-h2">{{ service.process_titles | default: 'The Process' }}</h2>
+  {% if service.process_bodies and service.process_bodies != blank %}
+    <ol class="nb-list">
+      {% for step in service.process_bodies %}
+        <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+  {% endif %}
+</section>
+{% endif %}
+
+{% if service.method_title or service.method_richtext %}
+<section class="nb-shell nb-tray" style="margin-top:14px">
+  <h2 class="nb-h nb-h2">{{ service.method_title | default: 'Our approach' }}</h2>
+  <div class="rte">
+    {%- comment -%}
+      Rich text metafield must be rendered with metafield_tag to output HTML.
+    {%- endcomment -%}
+    {{ service.method_richtext | metafield_tag }}
+  </div>
+</section>
+{% endif %}
+
+{% if service.myths and service.myths != blank or service.truths and service.truths != blank %}
+<section class="nb-shell nb-tray" style="margin-top:14px">
+  <h2 class="nb-h nb-h2">Common myths</h2>
+  {% if service.myths and service.myths != blank %}
+    <ul class="nb-list">
+      {% for m in service.myths %}
+        <li>{{ m }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if service.truths and service.truths != blank %}
+    <h3 class="nb-h nb-h3" style="margin-top:12px">What’s actually true</h3>
+    <ul class="nb-list">
+      {% for t in service.truths %}
+        <li>{{ t }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>
+{% endif %}
+
+{%- liquid
+  assign qs = service.faqs_q
+  assign as = service.faqs_a
+  assign faq_count = 0
+  if qs and qs != blank and as and as != blank
+    assign qlen = qs.size
+    assign alen = as.size
+    if qlen < alen
+      assign faq_count = qlen
+    else
+      assign faq_count = alen
+    endif
+  endif
+-%}
+{% if faq_count > 0 %}
+<section class="nb-shell nb-tray nb-faq" style="margin-top:14px">
+  <h2 class="nb-h nb-h2">Frequently asked questions</h2>
+  {% for i in (0..faq_count-1) %}
+    {% assign q = qs[i] %}
+    {% assign a = as[i] %}
+    <details {% if forloop.first %}open{% endif %}>
+      <summary>{{ q }}</summary>
+      <div class="ans">
+        {{ a | newline_to_br }}
+      </div>
+    </details>
+  {% endfor %}
+</section>
+
+{%- comment -%} FAQ schema {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {% for i in (0..faq_count-1) %}
+      {% assign q = qs[i] %}{% assign a = as[i] %}
+      {
+        "@type":"Question",
+        "name": {{ q | strip | json }},
+        "acceptedAnswer": { "@type":"Answer", "text": {{ a | strip | newline_to_br | json }} }
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
