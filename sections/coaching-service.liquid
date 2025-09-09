@@ -290,14 +290,16 @@
 
   assign myths_count = 0
   for m in myths
-    if m | strip != '' 
+    assign mm = m | strip
+    if mm != ''
       assign myths_count = myths_count | plus: 1
     endif
   endfor
 
   assign truths_count = 0
   for t in truths
-    if t | strip != '' 
+    assign tt = t | strip
+    if tt != ''
       assign truths_count = truths_count | plus: 1
     endif
   endfor
