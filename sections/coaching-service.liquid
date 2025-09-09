@@ -13,7 +13,7 @@
   {%- assign service = service_ref.value -%}
 
   <style>
-    /* --- page-scoped styles (kept minimal; we can refine later) --- */
+    /* Page-scoped styles (kept minimal) */
     .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
     .nb-grid{display:grid;gap:16px}
     .nb-hero{display:grid;grid-template-columns:1fr .9fr;align-items:center;gap:24px}
@@ -66,7 +66,7 @@
               title="Intro video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
-        {%- elsif service.hero_image != blank -%}
+        {%- elsif service.hero_image -%}
           <img
             src="{{ service.hero_image | image_url: width: 1400 }}"
             srcset="
@@ -83,63 +83,72 @@
       </div>
     </div>
 
-    {%- comment -%} ---------- SOCIAL PROOF (optional) ---------- {%- endcomment -%}
-    {%- assign social = service.social_proof -%}
-    {%- if social != blank -%}
-      {%- if social contains "\n" -%}{% assign social = social | split: "\n" %}{% endif -%}
+    {%- comment -%} UTIL: normalize a multi-line text field into an array {%- endcomment -%}
+    {%- assign social_raw   = service.social_proof   | default: '' -%}
+    {%- assign outcomes_raw = service.outcomes       | default: '' -%}
+    {%- assign ify_raw      = service.is_for_you     | default: '' -%}
+    {%- assign steps_raw    = service.process_bodies | default: '' -%}
+    {%- assign myths_raw    = service.myths          | default: '' -%}
+    {%- assign truths_raw   = service.truths         | default: '' -%}
+    {%- assign faqq_raw     = service.faqs_q         | default: '' -%}
+    {%- assign faqa_raw     = service.faqs_a         | default: '' -%}
+
+    {%- assign social   = social_raw   | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign outcomes = outcomes_raw | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign ify      = ify_raw      | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign steps    = steps_raw    | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign myths    = myths_raw    | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign truths   = truths_raw   | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign faqs_q   = faqq_raw     | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+    {%- assign faqs_a   = faqa_raw     | replace: '\r\n','\n' | replace: '\r','\n' | split: '\n' -%}
+
+    {%- comment -%} ---------- SOCIAL PROOF ---------- {%- endcomment -%}
+    {%- if social.size > 0 -%}
       <div class="nb-tray" style="margin:22px 0">
         <div class="nb-badges">
           {%- for badge in social -%}
-            {%- assign b = badge | strip -%}{% if b != '' %}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{% endif %}
+            {%- assign b = badge | strip -%}
+            {%- if b != '' -%}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{%- endif -%}
           {%- endfor -%}
         </div>
       </div>
     {%- endif -%}
 
     {%- comment -%} ---------- OUTCOMES ---------- {%- endcomment -%}
-    {%- assign outcomes = service.outcomes -%}
-    {%- if outcomes != blank -%}
-      {%- if outcomes contains "\n" -%}{% assign outcomes = outcomes | split: "\n" %}{% endif -%}
-      {%- if outcomes.size > 0 -%}
-        <div class="nb-tray" style="margin:22px 0">
-          <h2 class="nb-h2">What you’ll get</h2>
-          <div class="nb-badges">
-            {%- for item in outcomes -%}
-              {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
-            {%- endfor -%}
-          </div>
+    {%- if outcomes.size > 0 -%}
+      <div class="nb-tray" style="margin:22px 0">
+        <h2 class="nb-h2">What you’ll get</h2>
+        <div class="nb-badges">
+          {%- for item in outcomes -%}
+            {%- assign it = item | strip -%}
+            {%- if it != '' -%}<div class="nb-card">{{ it }}</div>{%- endif -%}
+          {%- endfor -%}
         </div>
-      {%- endif -%}
+      </div>
     {%- endif -%}
 
     {%- comment -%} ---------- IS THIS FOR YOU ---------- {%- endcomment -%}
-    {%- assign ify = service.is_for_you -%}
-    {%- if ify != blank -%}
-      {%- if ify contains "\n" -%}{% assign ify = ify | split: "\n" %}{% endif -%}
-      {%- if ify.size > 0 -%}
-        <div class="nb-tray" style="margin:22px 0">
-          <h3 class="nb-h3">Is this for you?</h3>
-          <ul class="nb-list">
-            {%- for line in ify -%}
-              {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
-            {%- endfor -%}
-          </ul>
-        </div>
-      {%- endif -%}
+    {%- if ify.size > 0 -%}
+      <div class="nb-tray" style="margin:22px 0">
+        <h3 class="nb-h3">Is this for you?</h3>
+        <ul class="nb-list">
+          {%- for line in ify -%}
+            {%- assign l = line | strip -%}
+            {%- if l != '' -%}<li>{{ l }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
     {%- endif -%}
 
     {%- comment -%} ---------- PROCESS ---------- {%- endcomment -%}
-    {%- assign steps = service.process_bodies -%}
-    {%- if steps != blank -%}
-      {%- if steps contains "\n" -%}{% assign steps = steps | split: "\n" %}{% endif -%}
-    {%- endif -%}
-    {%- if service.process_titles != blank or steps != blank -%}
+    {%- if service.process_titles != blank or steps.size > 0 -%}
       <div class="nb-tray" style="margin:22px 0">
         <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
-        {%- if steps != blank and steps.size > 0 -%}
+        {%- if steps.size > 0 -%}
           <ol class="nb-list">
             {%- for step in steps -%}
-              {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
+              {%- assign s = step | strip -%}
+              {%- if s != '' -%}<li>{{ s }}</li>{%- endif -%}
             {%- endfor -%}
           </ol>
         {%- endif -%}
@@ -147,63 +156,49 @@
     {%- endif -%}
 
     {%- comment -%} ---------- METHOD (RICH TEXT) ---------- {%- endcomment -%}
-    {%- if service.method_title != blank or service.method_richtext != blank -%}
+    {%- if service.method_title != blank or service.method_richtext -%}
       <div class="nb-tray" style="margin:22px 0">
         <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
-        {%- if service.method_richtext != blank -%}
-          <div class="rte">
-            {{ service.method_richtext | metafield_tag }}
-          </div>
+        {%- if service.method_richtext -%}
+          <div class="rte">{{ service.method_richtext | metafield_tag }}</div>
         {%- endif -%}
       </div>
     {%- endif -%}
 
-    {%- comment -%} ---------- MYTHS / TRUTHS (optional) ---------- {%- endcomment -%}
-    {%- assign myths  = service.myths  -%}
-    {%- assign truths = service.truths -%}
-    {%- if myths  != blank and myths  contains "\n" -%}{% assign myths  = myths  | split: "\n" %}{% endif -%}
-    {%- if truths != blank and truths contains "\n" -%}{% assign truths = truths | split: "\n" %}{% endif -%}
-    {%- if myths != blank and myths.size > 0 -%}
+    {%- comment -%} ---------- MYTHS / TRUTHS ---------- {%- endcomment -%}
+    {%- if myths.size > 0 or truths.size > 0 -%}
       <div class="nb-tray" style="margin:22px 0">
-        <h3 class="nb-h3">Common myths</h3>
-        <ul class="nb-list">
-          {%- for m in myths -%}
-            {%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}
-          {%- endfor -%}
-        </ul>
-        {%- if truths != blank and truths.size > 0 -%}
+        {%- if myths.size > 0 -%}
+          <h3 class="nb-h3">Common myths</h3>
+          <ul class="nb-list">
+            {%- for m in myths -%}
+              {%- assign mm = m | strip -%}
+              {%- if mm != '' -%}<li>{{ mm }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if truths.size > 0 -%}
           <h3 class="nb-h3" style="margin-top:12px">What’s actually true</h3>
           <ul class="nb-list">
             {%- for t in truths -%}
-              {%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}
+              {%- assign tt = t | strip -%}
+              {%- if tt != '' -%}<li>{{ tt }}</li>{%- endif -%}
             {%- endfor -%}
           </ul>
         {%- endif -%}
       </div>
-    {%- elsif truths != blank and truths.size > 0 -%}
-      <div class="nb-tray" style="margin:22px 0">
-        <h3 class="nb-h3">What’s actually true</h3>
-        <ul class="nb-list">
-          {%- for t in truths -%}
-            {%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}
-          {%- endfor -%}
-        </ul>
-      </div>
     {%- endif -%}
 
     {%- comment -%} ---------- FAQ ---------- {%- endcomment -%}
-    {%- assign faqs_q = service.faqs_q -%}
-    {%- assign faqs_a = service.faqs_a -%}
-    {%- if faqs_q != blank and faqs_q contains "\n" -%}{% assign faqs_q = faqs_q | split: "\n" %}{% endif -%}
-    {%- if faqs_a != blank and faqs_a contains "\n" -%}{% assign faqs_a = faqs_a | split: "\n" %}{% endif -%}
-    {%- if faqs_q != blank and faqs_a != blank and faqs_q.size > 0 -%}
+    {%- if faqs_q.size > 0 -%}
       <div class="nb-tray nb-faq" style="margin:22px 0">
         <h2 class="nb-h2">Frequently asked questions</h2>
         {%- for q in faqs_q -%}
           {%- assign qq = q | strip -%}
-          {%- assign a = faqs_a[forloop.index0] | default: '' | strip -%}
+          {%- assign a  = faqs_a[forloop.index0] | default: '' | strip -%}
           {%- if qq != '' -%}
-            <details{% if forloop.first %} open{% endif %}>
+            <details>
               <summary>{{ qq }}</summary>
               <div class="nb-a">{{ a }}</div>
             </details>
@@ -216,21 +211,19 @@
     <div style="margin:28px 0;text-align:center">
       <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
     </div>
-<script>
-  console.log('CoachingService debug', {
-    id: {{ service.id | json }},
-    title: {{ service.title | json }},
-    outcomes: {{ service.outcomes | json }},
-    is_for_you: {{ service.is_for_you | json }},
-    process_titles: {{ service.process_titles | json }},
-    process_bodies: {{ service.process_bodies | json }},
-    myths: {{ service.myths | json }},
-    truths: {{ service.truths | json }},
-    faqs_q: {{ service.faqs_q | json }},
-    faqs_a: {{ service.faqs_a | json }},
-    thumbnail: {{ service.thumbnail | image_url: width: 800 | json }}
-  });
-</script>
+
+    {%- comment -%} Dev-time logger (safe to remove when satisfied) {%- endcomment -%}
+    <script>
+      console.log('CoachingService debug',
+        'outcomes:', {{ outcomes | json }},
+        'is_for_you:', {{ ify | json }},
+        'steps:', {{ steps | json }},
+        'myths:', {{ myths | json }},
+        'truths:', {{ truths | json }},
+        'faqs_q:', {{ faqs_q | json }},
+        'faqs_a:', {{ faqs_a | json }}
+      );
+    </script>
   </section>
 
 {%- else -%}
