@@ -14,9 +14,8 @@
 
 <style>
   /* ===========================
-     Nibana page-scoped styling
+     Local tokens (kept aligned with brand)
      =========================== */
-
   :root{
     --nb-ink:#223238;
     --nb-muted:#324247;
@@ -48,7 +47,7 @@
   .nb-hero_placeholder{aspect-ratio:16/9;border-radius:18px;background:linear-gradient(135deg,#e8f1ee,#f3f6ef)}
 
   /* CTA */
-  .nb-cta{display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;padding:12px 18px;border:2px solid var(--nb-chocolate);background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
+  .nb-cta{display:inline-flex;align-items:center;justify-content:center;padding:.9rem 1.1rem;border-radius:999px;background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
   .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
   /* Trays / cards */
@@ -69,48 +68,24 @@
   /* General RTE */
   .nb-rte{line-height:1.65}
   .nb-rte h3{margin:.25rem 0 .35rem}
-  .nb-rte ul{padding-left:1.25rem}
 
-  /* --- METHOD (rich text) enhancements --- */
-  .nb-method{ padding:22px 22px 24px; }
-  .nb-method .nb-h2{ margin-bottom:10px; }
-
-  /* H3s inside the rich text get a brand accent */
-  .nb-method__body h3{
-    color:var(--nb-deep);
-    font-weight:800;
-    margin:16px 0 8px;
+  /* Method pills (your existing behavior h3+ul + any ul inside method body) */
+  .nb-method__body h3 + ul,
+  .nb-method__body ul{
+    list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px
   }
-
-  /* Turn the first UL after each H3 into pill cards, two columns on desktop */
-  .nb-method__body h3 + ul{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:12px;
-    margin:10px 0 6px;
-    padding:0; /* override default UL padding for this layout */
-  }
-  @media (max-width: 860px){
-    .nb-method__body h3 + ul{ grid-template-columns:1fr; }
-  }
-  .nb-method__body h3 + ul li{
-    list-style:none;
-    background:#fff;
-    border-radius:12px;
-    box-shadow:0 8px 22px rgba(0,0,0,.06);
-    padding:10px 12px 10px 36px;
-    position:relative;
-    line-height:1.5;
-  }
-  .nb-method__body h3 + ul li::before{
-    content:"✓";
-    position:absolute; left:12px; top:11px;
-    font-weight:800; color:var(--nb-deep);
+  .nb-method__body h3 + ul li,
+  .nb-method__body ul li{
+    background:#fff;border:1px solid rgba(0,0,0,.06);
+    border-radius:999px;padding:.4rem .65rem;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,.05)
   }
 
-  /* Card-style the paragraph immediately after each H3 */
-  .nb-method__body h3 + p{
-    background:#fff;
+  /* Rich text callouts */
+  .nb-method .nb-rte p + ul,
+  .nb-method .nb-rte p + ol,
+  .nb-method .nb-rte ul,
+  .nb-method .nb-rte ol{
+    border:1px solid rgba(0,0,0,.06);
     border-radius:12px;
     box-shadow:0 8px 22px rgba(0,0,0,.06);
     padding:14px 16px;
@@ -121,7 +96,7 @@
 
   /* FAQ (global pill look) */
   .nb-faq--wrap{ margin:22px 0; }
-  .nb-faq__title{ color:var(--nb-ink); text-align:center; font-weight:800; font-size:clamp(28px,3.6vw,40px); margin:0 0 16px; font-family:var(--font-heading-family,inherit); }
+  .nb-faq__title{ color:var(--nb-ink); text-align:center; font-weight:800; margin:0 0 16px; font-family:var(--font-heading-family,inherit); }
   .nb-faq__list{ display:grid; gap:18px; }
   .nb-faq__item{ background:transparent; border:0; box-shadow:none; overflow:visible; }
   .nb-faq__q{
@@ -141,8 +116,29 @@
   .nb-faq__a{
     background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:14px;
     margin:10px 14px 2px; padding:16px 20px; color:var(--nb-muted); line-height:1.65;
-    box-shadow:0 1px 0 rgba(255,255,255,.4) inset;
   }
+
+  /* ===========================
+     New: Process timeline + Sticky CTA
+     =========================== */
+  /* Process timeline */
+  .nb-steps{counter-reset:step;display:grid;gap:12px;list-style:none;padding-left:0;margin:0;}
+  .nb-steps li{position:relative;background:#fff;border:1px solid #e8ecef;border-radius:14px;padding:12px 14px 12px 48px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .nb-steps li::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border-radius:999px;background:var(--nb-sage);color:var(--nb-deep);font-weight:700;border:1px solid rgba(0,0,0,.06);}
+  .nb-steps li + li{margin-top:8px;}
+  .nb-steps li + li::after{content:"";position:absolute;left:25px;top:-8px;bottom:calc(100% - 8px);width:2px;background:rgba(0,0,0,.06);}
+
+  /* Sticky mobile CTA */
+  .nb-sticky-cta{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;
+    padding:max(10px, env(safe-area-inset-bottom));background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));
+    border-top:1px solid #e8ecef;backdrop-filter:saturate(180%) blur(6px);
+  }
+  .nb-sticky-cta__btn{
+    display:block;text-align:center;font-weight:700;text-decoration:none;
+    background:var(--nb-chocolate);color:#fff;padding:.9rem 1.1rem;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12);
+  }
+  @media (max-width:860px){ .nb-sticky-cta{display:block;} .nb-shell{padding-bottom:84px;} }
 </style>
 
 <section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
@@ -159,7 +155,8 @@
   {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
   <div class="nb-hero">
     <div class="nb-copy">
-      <h1 class="nb-h1">{{ service.hero_heading | default: service.title | escape }}</h1>
+      <h1 
+        class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
       {%- if service.hero_subheading != blank -%}
         <p>{{ service.hero_subheading }}</p>
       {%- endif -%}
@@ -171,7 +168,7 @@
         <div class="nb-hero_placeholder">
           <iframe width="100%" height="100%" style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px"
             src="https://www.youtube.com/embed/{{ service.hero_video_url | split: 'v=' | last | split: '&' | first }}"
-            title="Intro video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            title="Intro video" allow="accelerometer; autoplay; ...rite; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
       {%- elsif service.hero_image -%}
@@ -191,9 +188,8 @@
     </div>
   </div>
 
-  {%- comment -%}
-    Helper: robust splitter for list fields
-    – accepts raw text with newlines or <br> variants; falls back to commas
+  {%- comment -%} ---------- line break normalization token ---------- {%- endcomment -%}
+  {%- comment -%} Using a fixed token as BR surrogate to normalize newline_to_br → <br> variants; falls back to commas
   {%- endcomment -%}
   {%- assign br_tag = '<br />' -%}
 
@@ -215,10 +211,7 @@
   {%- if sp_filled > 0 -%}
     <div class="nb-tray">
       <div class="nb-badges">
-        {%- for badge in sp -%}
-          {%- assign b = badge | strip -%}
-          {%- if b != '' -%}<div class="nb-card" style="text-align:center;font-weight:650">{{ b }}</div>{%- endif -%}
-        {%- endfor -%}
+        {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}<div class="nb-card">{{ sv }}</div>{% endif %}{%- endfor -%}
       </div>
     </div>
   {%- endif -%}
@@ -227,7 +220,7 @@
   {%- liquid
     assign oc_raw  = service.outcomes | append: ''
     assign oc_html = oc_raw | newline_to_br
-    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
     assign oc_pipe = oc_norm | replace: br_tag, '|||'
     assign outcomes = oc_pipe | split: '|||'
     assign oc_count = 0
@@ -294,7 +287,8 @@
     <div class="nb-tray">
       <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
       {%- if steps_count > 0 -%}
-        <ol class="nb-list">
+        <!-- New: add nb-steps for timeline look -->
+        <ol class="nb-list nb-steps">
           {%- for step in steps -%}
             {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
           {%- endfor -%}
@@ -323,37 +317,33 @@
     assign myths_html  = myths_raw  | newline_to_br
     assign truths_html = truths_raw | newline_to_br
 
-    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
-    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
 
-    assign myths_norm  = myths_norm  | replace: '” “', '”|||“'
-    assign truths_norm = truths_norm | replace: '” “', '”|||“'
-
-    assign myths_pipe  = myths_norm  | replace: '<br />', '|||'
-    assign truths_pipe = truths_norm | replace: '<br />', '|||'
+    assign myths_pipe  = myths_norm  | replace: '<br />','|||'
+    assign truths_pipe = truths_norm | replace: '<br />','|||'
 
     assign myths  = myths_pipe  | split: '|||'
     assign truths = truths_pipe | split: '|||'
 
     assign myths_count = 0
     for m in myths
-      assign mm = m | strip
-      if mm != '' 
+      assign t = m | strip
+      if t != '' 
         assign myths_count = myths_count | plus: 1
       endif
     endfor
 
     assign truths_count = 0
     for t in truths
-      assign tt = t | strip
-      if tt != '' 
+      assign z = t | strip
+      if z != '' 
         assign truths_count = truths_count | plus: 1
       endif
     endfor
   -%}
-
   {%- if myths_count > 0 or truths_count > 0 -%}
-    <div class="nb-tray nb-duo">
+    <div class="nb-duo">
       {%- if myths_count > 0 -%}
         <div class="nb-card nb-duo__col">
           <h3 class="nb-h3">Common myths</h3>
@@ -445,6 +435,32 @@
       </div>
     </div>
 
+    {%- comment -%} FAQ JSON-LD {%- endcomment -%}
+    {%- assign a_count = as.size -%}
+    {%- assign pair_count = q_count -%}
+    {%- if a_count < q_count -%}{%- assign pair_count = a_count -%}{%- endif -%}
+    {%- if pair_count > 0 -%}
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"FAQPage",
+      "mainEntity":[
+        {%- assign last = pair_count | minus: 1 -%}
+        {%- assign first = true -%}
+        {%- for i in (0..last) -%}
+          {%- assign q = qs[i] | strip_html | strip -%}
+          {%- assign a = as[i] | strip -%}
+          {%- if q != '' and a != '' -%}
+            {%- unless first -%},{%- endunless -%}
+            { "@type":"Question", "name": {{ q | json }}, "acceptedAnswer": { "@type":"Answer", "text": {{ a | json }} } }
+            {%- assign first = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    </script>
+    {%- endif -%}
+
     <script>
       (function(){
         var root = document.getElementById('nb-faq-{{ section.id }}-svc');
@@ -461,6 +477,11 @@
   {%- comment -%} ---------- BOTTOM CTA ---------- {%- endcomment -%}
   <div style="text-align:center;padding:10px 0 24px">
     <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+
+    <!-- Sticky Mobile CTA -->
+    <div class="nb-sticky-cta" data-cta="service-sticky-cta">
+      <a class="nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a>
+    </div>
   </div>
 
 </section>
