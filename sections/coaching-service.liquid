@@ -574,7 +574,7 @@
 </section>
 {%- endif -%}
 
- {%- comment -%} IS THIS FOR YOU (Lux Text+Image) {%- endcomment -%}
+{%- comment -%} IS THIS FOR YOU (Lux Text+Image) — parentheses-free conditions {%- endcomment -%}
 {%- liquid
   assign ify_raw  = service.is_for_you | append: ''
   assign ify_html = ify_raw | newline_to_br
@@ -594,10 +594,22 @@
   assign if_img     = service.is_for_you_image
   assign if_layout  = service.is_for_you_layout | downcase | strip
   assign if_tone    = service.is_for_you_tone   | downcase | strip | default: 'white'
+
+  # tone class
   assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
   assign if_tone_class = 'tone-white'
   if tone_whitelist contains if_tone
     assign if_tone_class = 'tone-' | append: if_tone
+  endif
+
+  # layout booleans (Liquid: avoid parentheses)
+  assign is_left_layout  = false
+  if if_layout == 'left' or if_layout == 'image-left'
+    assign is_left_layout = true
+  endif
+  assign is_right_layout = true
+  if is_left_layout
+    assign is_right_layout = false
   endif
 -%}
 
@@ -656,11 +668,11 @@
   }
 </style>
 
-<section class="nb-if {{ if_tone_class }} {% if if_layout == 'left' or if_layout == 'image-left' %}nb-if--left{% else %}nb-if--right{% endif %}">
+<section class="nb-if {{ if_tone_class }} {% if is_left_layout %}nb-if--left{% else %}nb-if--right{% endif %}">
   <div class="nb-shell">
     <div class="nb-if__wrap">
       <div class="nb-if__grid">
-        {%- if if_img and (if_layout == 'left' or if_layout == 'image-left') -%}
+        {%- if if_img and is_left_layout -%}
           <div class="nb-if__media">
             <div class="nb-if__frame">
               {{ if_img | image_url: width: 1200 | image_tag: sizes: "(max-width: 900px) 100vw, 520px", widths: "520,800,1200", class: "nb-if__image", alt: service.is_for_you_title | default: "Is this for you?" }}
@@ -678,7 +690,7 @@
           </ul>
         </div>
 
-        {%- if if_img and (if_layout == 'right' or if_layout == 'image-right' or if_layout == '') -%}
+        {%- if if_img and is_right_layout -%}
           <div class="nb-if__media">
             <div class="nb-if__frame">
               {{ if_img | image_url: width: 1200 | image_tag: sizes: "(max-width: 900px) 100vw, 520px", widths: "520,800,1200", class: "nb-if__image", alt: service.is_for_you_title | default: "Is this for you?" }}
@@ -879,6 +891,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
