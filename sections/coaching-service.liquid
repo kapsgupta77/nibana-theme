@@ -482,31 +482,90 @@
     {%- endif -%}
   {%- endif -%}
 
-  {%- comment -%} OUTCOMES {%- endcomment -%}
-  {%- liquid
-    assign oc_raw  = service.outcomes | append: ''
-    assign oc_html = oc_raw | newline_to_br
-    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
-    assign oc_pipe = oc_norm | replace: br_tag, '|||'
-    assign outcomes = oc_pipe | split: '|||'
-    assign oc_count = 0
-    for it in outcomes
-      assign t = it | strip
-      if t != '' 
-        assign oc_count = oc_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if oc_count > 0 -%}
-    <div class="nb-tray">
-      <h2 class="nb-h2">What you’ll get</h2>
-      <div class="nb-badges">
-        {%- for item in outcomes -%}
-          {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
-        {%- endfor -%}
-      </div>
+  {%- comment -%} ---------- OUTCOMES (Impact Cards) ---------- {%- endcomment -%}
+<style>
+  /* Section tone wrapper */
+  .nb-section{ padding:clamp(20px,3.8vw,44px) 0; }
+  .nb-section--tone-white{ background:#fff; }
+  .nb-section--tone-pebble{ background:#faf7f5; } /* warm off-white to avoid teal fatigue */
+  .nb-section--tone-sage{ background:var(--nb-sage); }
+
+  /* Impact cards grid */
+  .nb-outcomes__grid{
+    display:grid; gap:12px;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+  @media (max-width:780px){
+    .nb-outcomes__grid{ grid-template-columns:1fr; }
+  }
+
+  /* Single outcome card */
+  .nb-outcome{
+    position:relative;
+    background:#fff;
+    border:1px solid #e8ecef;
+    border-radius:16px;
+    padding:14px 16px 14px 18px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-outcome::before{
+    content:"";
+    position:absolute; left:-1px; top:-1px; bottom:-1px;
+    width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--nb-chocolate), #b75e25);
+  }
+  .nb-outcome:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 28px rgba(0,0,0,.08);
+  }
+  @media (prefers-reduced-motion:reduce){
+    .nb-outcome:hover{ transform:none; }
+  }
+</style>
+
+{%- liquid
+  /* Parse outcomes as list items */
+  assign oc_raw  = service.outcomes | append: ''
+  assign oc_html = oc_raw | newline_to_br
+  assign br_tag  = '<br />'
+  assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+  assign oc_pipe = oc_norm | replace: br_tag, '|||'
+  assign outcomes = oc_pipe | split: '|||'
+
+  assign oc_count = 0
+  for it in outcomes
+    assign t = it | strip
+    if t != '' 
+      assign oc_count = oc_count | plus: 1
+    endif
+  endfor
+
+  /* Tone toggle via metaobject (optional) */
+  assign oc_tone = service.outcomes_tone | downcase | strip | default: 'white'
+  assign oc_tone_class = 'nb-section--tone-white'
+  if oc_tone == 'pebble'
+    assign oc_tone_class = 'nb-section--tone-pebble'
+  elsif oc_tone == 'sage'
+    assign oc_tone_class = 'nb-section--tone-sage'
+  endif
+-%}
+
+{%- if oc_count > 0 -%}
+<section class="nb-section nb-outcomes {{ oc_tone_class }}">
+  <div class="nb-shell">
+    <h2 class="nb-h2">What you’ll get</h2>
+    <div class="nb-outcomes__grid">
+      {%- for item in outcomes -%}
+        {%- assign it = item | strip -%}
+        {%- if it != '' -%}
+          <div class="nb-outcome">{{ it }}</div>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
-  {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
 
   {%- comment -%} IS THIS FOR YOU {%- endcomment -%}
   {%- liquid
@@ -722,6 +781,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
