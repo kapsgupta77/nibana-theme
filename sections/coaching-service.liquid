@@ -131,7 +131,7 @@
   .nb-eyebrow{letter-spacing:.08em;text-transform:uppercase;color:var(--nb-deep);margin:0 0 .35rem;font-weight:600}
   .nb-sub{color:var(--nb-muted);max-width:60ch;margin:0 0 16px}
   .nb-skit__cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-  .nb-hero-skit.has-glass .nb-cta{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.40);backdrop-filter:blur(10px) saturate(140%);box-shadow:0 8px 20px rgba(0,0,0,.10)}
+  .nb-hero-skit.has-glass .button{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.40);backdrop-filter:blur(10px) saturate(140%);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
   /* Media frame */
   .nb-skit__media{position:relative;z-index:0}
@@ -253,7 +253,7 @@
 }
 
 /* Optional: if you want the CTA to match the home contrast on band */
-.nb-hero-skit.typ-home .nb-cta{
+.nb-hero-skit.typ-home .button{
   box-shadow: 0 10px 24px rgba(0,0,0,.10);
 }
 </style>
@@ -353,7 +353,13 @@
       {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
       <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
       {%- if service.hero_subheading != blank -%}<p class="nb-sub">{{ service.hero_subheading }}</p>{%- endif -%}
-      <div class="nb-skit__cta"><a class="nb-cta" href="{{ service.cta_link | default: '/pages/book-a-call' }}" data-cta="service-hero-cta">{{ service.cta_label | default: 'Book a free 20-min call' }}</a></div>
+      <div class="nb-skit__cta">
+  <a class="button"
+     href="{{ service.cta_link | default: '/pages/book-a-call' }}"
+     data-cta="service-hero-cta">
+    {{ service.cta_label | default: 'Book a free 20-min call' }}
+  </a>
+</div>
     </div>
 
     <div class="nb-skit__media">
@@ -709,12 +715,15 @@
   {%- endif -%}
 
   <div style="text-align:center;padding:10px 0 24px">
-    <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
-    <div class="nb-sticky-cta" data-cta="service-sticky-cta"><a class="nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a></div>
+  <a class="button" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+  <div class="nb-sticky-cta" data-cta="service-sticky-cta">
+    <a class="button nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a>
   </div>
+</div>
 
 </section>
 
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
