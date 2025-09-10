@@ -5250,3 +5250,42 @@ body.nb-typography{
   /* if you want pill buttons like Home (optional) */
   --style-border-radius-buttons-primary: 9999px;
 }
+
+/* === NIBANA — Global CTA pill (shared across the site) === */
+.nb-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+  border-radius:9999px;
+  padding:10px 18px;
+  font-weight:600;
+  line-height:1.1;
+  border:2px solid var(--nb-chocolate, #C86B2A);
+  background:var(--nb-chocolate, #C86B2A);
+  color:#fff;
+  box-shadow:0 10px 28px rgba(0,0,0,.06);
+  transition: background-color .15s ease, box-shadow .2s ease, transform .08s ease;
+}
+.nb-cta:hover{
+  background:var(--nb-choc-600, #9E4E19);
+  border-color:var(--nb-choc-600, #9E4E19);
+  color:#fff;
+  transform: translateY(-1px);
+}
+
+/* Size helper for hero / big CTAs (optional) */
+.nb-cta--xl{
+  padding:14px 22px;
+  font-size:clamp(15px, 1.1vw, 17px);
+}
+
+/* Ghost/outline variant (optional, if you ever need it) */
+.nb-cta--ghost{
+  background:transparent;
+  color:var(--nb-chocolate, #C86B2A);
+}
+.nb-cta--ghost:hover{
+  background:rgba(200,107,42,.06);
+}
