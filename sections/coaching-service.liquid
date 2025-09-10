@@ -968,60 +968,163 @@
 </section>
 {%- endif -%}
 
-  {%- comment -%} MYTHS / TRUTHS {%- endcomment -%}
-  {%- liquid
-    assign myths_raw  = service.myths  | append: ''
-    assign truths_raw = service.truths | append: ''
+ {%- comment -%} MYTHS / TRUTHS — Before → After compare rows {%- endcomment -%}
+{%- liquid
+  assign myths_raw  = service.myths  | append: ''
+  assign truths_raw = service.truths | append: ''
 
-    assign myths_html  = myths_raw  | newline_to_br
-    assign truths_html = truths_raw | newline_to_br
+  assign br = '<br />'
 
-    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
-    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+  assign myths_html  = myths_raw  | newline_to_br
+  assign truths_html = truths_raw | newline_to_br
 
-    assign myths_pipe  = myths_norm  | replace: '<br />','|||'
-    assign truths_pipe = truths_norm | replace: '<br />','|||'
+  assign myths_norm  = myths_html  | replace: '<br/>', br | replace: '<br>', br | replace: '&nbsp;',' '
+  assign truths_norm = truths_html | replace: '<br/>', br | replace: '<br>', br | replace: '&nbsp;',' '
 
-    assign myths  = myths_pipe  | split: '|||'
-    assign truths = truths_pipe | split: '|||'
+  assign myths_pipe  = myths_norm  | replace: br, '|||'
+  assign truths_pipe = truths_norm | replace: br, '|||'
 
-    assign myths_count = 0
-    for m in myths
-      assign t = m | strip
-      if t != '' 
-        assign myths_count = myths_count | plus: 1
-      endif
-    endfor
+  assign myths  = myths_pipe  | split: '|||'
+  assign truths = truths_pipe | split: '|||'
 
-    assign truths_count = 0
-    for t in truths
-      assign z = t | strip
-      if z != '' 
-        assign truths_count = truths_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if myths_count > 0 or truths_count > 0 -%}
-    <div class="nb-duo">
-      {%- if myths_count > 0 -%}
-        <div class="nb-card nb-duo__col">
-          <h3 class="nb-h3">Common myths</h3>
+  assign myths_count  = 0
+  for m in myths
+    assign t = m | strip
+    if t != '' 
+      assign myths_count = myths_count | plus: 1
+    endif
+  endfor
+
+  assign truths_count = 0
+  for t in truths
+    assign z = t | strip
+    if z != '' 
+      assign truths_count = truths_count | plus: 1
+    endif
+  endfor
+
+  assign pair_count = 0
+  if myths_count > 0 and truths_count > 0
+    assign pair_count = myths_count
+    if truths_count < pair_count
+      assign pair_count = truths_count
+    endif
+  endif
+-%}
+
+{%- if myths_count > 0 or truths_count > 0 -%}
+<style>
+  /* ===== Compare Rows (scoped) ===== */
+  .nb-compare{
+    --cmp-surface:#fff;
+    --cmp-accent-myth:#B67955;   /* warm pebble/chocolate tint */
+    --cmp-accent-truth:var(--nb-deep); /* brand deep / teal */
+    --cmp-radius:22px;
+    --cmp-pad:clamp(16px,2.6vw,28px);
+    margin-top: clamp(10px,2vw,18px);
+  }
+  .nb-compare__tray{
+    background:var(--cmp-surface);
+    border-radius:var(--cmp-radius);
+    padding:var(--cmp-pad);
+    box-shadow:0 10px 24px rgba(0,0,0,.06);
+  }
+  .nb-compare__title{ margin:0 0 clamp(12px,2vw,16px); }
+
+  .nb-compare__row{
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: clamp(10px,2vw,16px);
+    align-items: stretch;
+    margin-bottom: clamp(10px,2vw,16px);
+  }
+  .nb-compare__arrow{
+    display:grid; place-items:center;
+    align-self:center; justify-self:center;
+    width:44px; height:44px; border-radius:999px;
+    background: radial-gradient(circle at 30% 30%, rgba(0,0,0,.08), rgba(0,0,0,.02));
+    box-shadow:0 6px 14px rgba(0,0,0,.08) inset;
+    font-weight:800; color:var(--nb-muted);
+  }
+  .nb-compare__arrow::before{ content:"→"; }
+  @media (max-width: 860px){
+    .nb-compare__row{
+      grid-template-columns:1fr;
+      grid-template-rows:auto auto auto;
+    }
+    .nb-compare__arrow{
+      width:38px; height:38px; margin: -4px auto;
+    }
+    .nb-compare__arrow::before{ content:"↓"; }
+  }
+
+  .nb-card{
+    position:relative; background:#fff;
+    border:1px solid #e8ecef; border-radius:16px;
+    padding:14px 16px 14px 18px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-card:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.08); }
+  @media (prefers-reduced-motion:reduce){ .nb-card:hover{ transform:none; } }
+
+  .nb-card__badge{
+    position:absolute; top:8px; left:10px;
+    font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    background:rgba(0,0,0,.04); color:var(--nb-muted);
+    border-radius:999px; padding:.25rem .5rem;
+  }
+
+  .nb-card--myth{ padding-top:30px; }
+  .nb-card--myth::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--cmp-accent-myth), color-mix(in oklab, var(--cmp-accent-myth), #000 14%));
+  }
+
+  .nb-card--truth{ padding-top:30px; }
+  .nb-card--truth::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--cmp-accent-truth), color-mix(in oklab, var(--cmp-accent-truth), #000 14%));
+  }
+</style>
+
+<section class="nb-compare">
+  <div class="nb-compare__tray">
+    <h3 class="nb-h3 nb-compare__title">Common myths → What’s actually true</h3>
+
+    {%- if pair_count > 0 -%}
+      {%- assign last = pair_count | minus: 1 -%}
+      {%- for i in (0..last) -%}
+        {%- assign myth  = myths[i]  | strip -%}
+        {%- assign truth = truths[i] | strip -%}
+        {%- if myth != '' or truth != '' -%}
+          <div class="nb-compare__row">
+            <div class="nb-card nb-card--myth">
+              <span class="nb-card__badge">Myth</span>
+              {{ myth }}
+            </div>
+            <div class="nb-compare__arrow" aria-hidden="true"></div>
+            <div class="nb-card nb-card--truth">
+              <span class="nb-card__badge">Truth</span>
+              {{ truth }}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} Fallback: if only one side exists, show that list as simple cards {%- endcomment -%}
+      <div class="nb-compare__row" style="grid-template-columns:1fr;">
+        <div class="nb-card">
           <ul class="nb-list">
             {%- for m in myths -%}{%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}{%- endfor -%}
-          </ul>
-        </div>
-      {%- endif -%}
-      {%- if truths_count > 0 -%}
-        <div class="nb-card nb-duo__col">
-          <h3 class="nb-h3">What’s actually true</h3>
-          <ul class="nb-list">
             {%- for t in truths -%}{%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}{%- endfor -%}
           </ul>
         </div>
-      {%- endif -%}
-    </div>
-    <style>.nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:780px){.nb-duo{grid-template-columns:1fr}}.nb-duo__col{padding:16px 18px}</style>
-  {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
 
   {%- comment -%} FAQ {%- endcomment -%}
   {%- liquid
@@ -1118,6 +1221,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
