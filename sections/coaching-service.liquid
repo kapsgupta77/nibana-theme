@@ -27,6 +27,36 @@
     --nb-chocolate:#C86B2A;
   }
 
+/* --- MICRO POLISH --------------------------------------------------- */
+
+/* 1) Consistent vertical rhythm between custom trays */
+.nb-outcomes{ margin: clamp(18px,3vw,36px) 0; }
+.nb-if{ --if-mt: clamp(16px,2vw,22px); --if-mb: clamp(18px,2.6vw,28px); }
+
+/* 2) Gentle, luxurious pebble tone for the Image+List tray */
+.nb-if.tone-pebble .nb-if__wrap{
+  background:
+    radial-gradient(140% 120% at 88% -12%, rgba(182,121,85,.10) 0 18%, transparent 42%),
+    #fbf7f5;
+}
+
+/* 3) Make corner radii & elevation feel consistent across cards */
+.nb-outcome,
+.nb-if__li,
+.nb-trustgrid__chip,
+.nb-faq__a{ border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.06); }
+
+/* 4) Hover nudge (already subtle; make it silky) */
+.nb-outcome:hover,
+.nb-if__li:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(0,0,0,.08); }
+
+/* 5) Process numbers: ensure crisp contrast against sage band (if used) */
+.nb-steps li::before{
+  background: var(--nb-sage);
+  border-color: rgba(0,0,0,.06);
+  color: var(--nb-deep);
+}
+
   .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
   .nb-grid{display:grid;gap:22px}
 
@@ -1221,6 +1251,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
