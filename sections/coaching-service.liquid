@@ -170,6 +170,18 @@
 
   /* Ensure content after hero sits above band */
   .nb-hero-skit.is-band + *{position:relative;z-index:1}
+
+/* --- HERO intensity & stripe visibility overrides --- */
+.nb-skit__media{ position:relative; z-index:0; } /* ensure stripe sits above band */
+.nb-hero-skit.has-stripe .nb-skit__media::before{ z-index:0; }
+
+.nb-hero-skit.is-band.tone-teal{
+  /* richer base + stronger radial so the band reads clearly */
+  background:
+    radial-gradient(140% 120% at 85% -10%, rgba(16,99,108,.30) 0 44%, rgba(16,99,108,0) 60%),
+    #e7f3f2;
+}
+
 </style>
 
 {%- comment -%} ========= HERO SUPERKIT OUTSIDE THE PAGE-WIDTH WRAPPER (full-bleed) ========= {%- endcomment -%}
