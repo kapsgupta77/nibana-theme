@@ -469,52 +469,72 @@
     {%- endif -%}
   {%- endif -%}
 
-{%- comment -%} ---------- OUTCOMES (compact cards, tone accent only) ---------- {%- endcomment -%}
+{%- comment -%} ---------- OUTCOMES (Impact Cards — toned tray) ---------- {%- endcomment -%}
 <style>
-/* Section wrapper – no big background, no extra padding */
-.nb-outcomes{ background:transparent; padding:14px 0 0; }
-.nb-outcomes__wrap{ background:transparent; padding:0; border-radius:0; box-shadow:none; position:static; }
-.nb-outcomes__wrap::before{ content:none; }
+  .nb-outcomes{ padding:clamp(16px,2.8vw,28px) 0; background:transparent; }
 
-/* Title */
-.nb-outcomes__title{ margin:0 0 12px; }
+  /* Tray */
+  .nb-outcomes__wrap{
+    background:var(--oc-surface);
+    border-radius:22px;
+    padding:clamp(16px,2.6vw,26px);
+    box-shadow:0 14px 36px rgba(0,0,0,.08);
+    position:relative; overflow:hidden;
+  }
+  /* subtle vignette for depth */
+  .nb-outcomes__wrap::before{
+    content:""; position:absolute; inset:-6% -3%; pointer-events:none;
+    background:radial-gradient(120% 80% at 50% -10%, rgba(0,0,0,.06), transparent 55%);
+  }
 
-/* Grid */
-.nb-outcomes__grid{
-  display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px 22px;
-}
-@media (max-width:780px){ .nb-outcomes__grid{ grid-template-columns:1fr; gap:10px; } }
+  .nb-outcomes__title{ margin:0 0 clamp(10px,1.6vw,16px); }
 
-/* Cards */
-.nb-outcome{
-  position:relative;
-  background:#fff;
-  border-radius:14px;
-  border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 10px 20px rgba(0,0,0,.06);
-  padding:.9rem 1.05rem .95rem 1.05rem;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.nb-outcome::before{
-  content:"";
-  position:absolute; left:-1px; top:-1px; bottom:-1px;
-  width:6px; border-radius:14px 0 0 14px;
-  background:var(--oc-accent, var(--nb-chocolate));
-}
-.nb-outcome:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.08); }
-@media (prefers-reduced-motion:reduce){ .nb-outcome:hover{ transform:none; } }
+  /* Grid */
+  .nb-outcomes__grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:14px 18px;
+    align-items:stretch;
+  }
+  @media (max-width:780px){ .nb-outcomes__grid{ grid-template-columns:1fr; } }
 
-/* Tone -> only changes the accent sliver color */
-.nb-outcomes.tone-white   { --oc-accent: var(--nb-chocolate); }
-.nb-outcomes.tone-sage    { --oc-accent: #8bc4bc; }
-.nb-outcomes.tone-teal    { --oc-accent: #0F5B59; }
-.nb-outcomes.tone-ink     { --oc-accent: #223238; }
-.nb-outcomes.tone-pebble  { --oc-accent: #b7a99f; }
-.nb-outcomes.tone-gradient{ --oc-accent: var(--nb-chocolate); } /* same as white for now */
+  /* Cards */
+  .nb-outcome{
+    position:relative; display:flex; align-items:center;
+    background:#fff;
+    border:1px solid rgba(0,0,0,.06);
+    border-radius:16px;
+    padding:14px 16px 14px 18px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-outcome::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px;
+    width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--oc-accent), color-mix(in oklab, var(--oc-accent), #000 14%));
+  }
+  .nb-outcome:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 30px rgba(0,0,0,.10);
+  }
+  @media (prefers-reduced-motion:reduce){ .nb-outcome:hover{ transform:none; } }
+
+  /* Tones — control the tray color (and the card accent) */
+  .nb-outcomes.tone-white { --oc-surface:#fff;     --oc-accent:var(--nb-chocolate); }
+  .nb-outcomes.tone-sage  { --oc-surface:var(--nb-sage); --oc-accent:var(--nb-chocolate); }
+  .nb-outcomes.tone-pebble{ --oc-surface:#fbf7f5;  --oc-accent:var(--nb-chocolate); }
+  .nb-outcomes.tone-ink   { --oc-surface:#f6f9f8;  --oc-accent:var(--nb-teal); }
+  .nb-outcomes.tone-teal  { --oc-surface:#edf7f6;  --oc-accent:var(--nb-chocolate); }
+
+  /* Optional: soft brand tint on white */
+  .nb-outcomes.tone-gradient .nb-outcomes__wrap{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(16,99,108,.10) 0 45%, transparent 60%),
+      #ffffff;
+  }
 </style>
 
 {%- liquid
-  # Parse outcomes list (split on <br>)
   assign oc_raw  = service.outcomes | append: ''
   assign oc_html = oc_raw | newline_to_br
   assign br_tag  = '<br />'
@@ -530,11 +550,10 @@
     endif
   endfor
 
-  # Tone class from metaobject (whitelisted)
   assign oc_tone = service.outcomes_tone | downcase | strip | default: 'white'
-  assign tone_allowed = 'white,sage,pebble,ink,teal,gradient' | split: ','
+  assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
   assign oc_tone_class = 'tone-white'
-  if tone_allowed contains oc_tone
+  if tone_whitelist contains oc_tone
     assign oc_tone_class = 'tone-' | append: oc_tone
   endif
 -%}
@@ -547,9 +566,7 @@
       <div class="nb-outcomes__grid">
         {%- for item in outcomes -%}
           {%- assign it = item | strip -%}
-          {%- if it != '' -%}
-            <div class="nb-outcome">{{ it }}</div>
-          {%- endif -%}
+          {%- if it != '' -%}<div class="nb-outcome">{{ it }}</div>{%- endif -%}
         {%- endfor -%}
       </div>
     </div>
@@ -771,6 +788,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
