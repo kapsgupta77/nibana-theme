@@ -1,0 +1,720 @@
+{%- comment -%}
+  Coaching Service (metaobject-driven)
+  Page metafield: either custom.coaching_service OR coachingservice.coaching_service
+{%- endcomment -%}
+
+{%- liquid
+  assign cs_custom    = page.metafields.custom.coaching_service
+  assign cs_canonical = page.metafields.coachingservice.coaching_service
+  assign service_ref  = cs_custom | default: cs_canonical
+-%}
+
+{%- if service_ref and service_ref.value -%}
+{%- assign service = service_ref.value -%}
+
+<style>
+  /* ===========================
+     Brand tokens (fallbacks)
+     =========================== */
+  :root{
+    --nb-ink:#223238;
+    --nb-muted:#324247;
+    --nb-deep:#0F5B59;
+    --nb-sage:#EAF4F3;
+    --nb-sage-strong:#e6eeea;
+    --nb-pebble:#d2cbc8;
+    --nb-teal:#10636c;
+    --nb-chocolate:#C86B2A;
+  }
+
+  /* Layout helpers */
+  .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
+  .nb-grid{display:grid;gap:22px}
+
+  /* Headings follow global theme (no custom sizes here) */
+  .nb-h1,.nb-h2,.nb-h3{
+    font-family: var(--font-heading-family, inherit);
+    font-weight: var(--font-heading-weight, 800);
+    color: var(--color-foreground, var(--nb-ink));
+  }
+  .nb-h1{ margin: 0 0 10px; }
+  .nb-h2{ margin: 0 0 6px; }
+  .nb-h3{ margin: 0 0 10px; }
+
+  .nb-copy,.nb-tray,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
+
+  /* CTA */
+  .nb-cta{display:inline-flex;align-items:center;justify-content:center;padding:.9rem 1.1rem;border-radius:999px;background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
+  .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
+
+  /* Trays / cards */
+  .nb-tray{background:var(--nb-sage);border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .nb-card{background:#fff;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);padding:12px 14px}
+  .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
+
+  /* Duo cards */
+  .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
+  .nb-duo .nb-card{padding:18px 20px}
+
+  /* Lists */
+  .nb-list{margin:0;padding-left:1.15rem}
+  .nb-list li{margin:.28rem 0}
+
+  /* RTE enhancements (method) */
+  .nb-rte{line-height:1.65}
+  .nb-method__body h3 + ul,
+  .nb-method__body ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+  .nb-method__body h3 + ul li,
+  .nb-method__body ul li{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:.4rem .65rem;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+  .nb-method .nb-rte p + ul,
+  .nb-method .nb-rte p + ol,
+  .nb-method .nb-rte ul,
+  .nb-method .nb-rte ol{border:1px solid rgba(0,0,0,.06);border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.06);padding:14px 16px;line-height:1.65;margin:10px 0 16px;color:var(--nb-muted)}
+
+  /* FAQ styling */
+  .nb-faq--wrap{margin:22px 0}
+  .nb-faq__title{color:var(--nb-ink);text-align:center;font-weight:800;margin:0 0 16px;font-family:var(--font-heading-family,inherit)}
+  .nb-faq__list{display:grid;gap:18px}
+  .nb-faq__item{background:transparent;border:0;box-shadow:none;overflow:visible}
+  .nb-faq__q{position:relative;background:var(--nb-deep);color:#fff;border:0;border-radius:9999px;padding:16px 64px 16px 22px;font-weight:720;box-shadow:0 4px 14px rgba(0,0,0,.05);display:grid;grid-template-columns:1fr auto;align-items:center;list-style:none;cursor:pointer;font-family:var(--font-body-family,inherit)}
+  .nb-faq__q::-webkit-details-marker{display:none}
+  .nb-faq__q:hover{background:#0e5452}
+  .nb-faq__q::after{content:"+";position:absolute;right:10px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:9999px;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.14);font-size:22px;font-weight:800;line-height:1}
+  details[open] .nb-faq__q::after{content:"–"}
+  .nb-faq__a{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;margin:10px 14px 2px;padding:16px 20px;color:var(--nb-muted);line-height:1.65}
+
+  /* Process timeline */
+  .nb-steps{counter-reset:step;display:grid;gap:12px;list-style:none;padding-left:0;margin:0}
+  .nb-steps li{position:relative;background:#fff;border:1px solid #e8ecef;border-radius:14px;padding:12px 14px 12px 48px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .nb-steps li::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border-radius:999px;background:var(--nb-sage);color:var(--nb-deep);font-weight:700;border:1px solid rgba(0,0,0,.06)}
+  .nb-steps li + li{margin-top:8px}
+  .nb-steps li + li::after{content:"";position:absolute;left:25px;top:-8px;bottom:calc(100% - 8px);width:2px;background:rgba(0,0,0,.06)}
+
+  /* Sticky mobile CTA */
+  .nb-sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;padding:max(10px, env(safe-area-inset-bottom));background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));border-top:1px solid #e8ecef;backdrop-filter:saturate(180%) blur(6px)}
+  .nb-sticky-cta__btn{display:block;text-align:center;font-weight:700;text-decoration:none;background:var(--nb-chocolate);color:#fff;padding:.9rem 1.1rem;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  @media (max-width:860px){ .nb-sticky-cta{display:block} .nb-shell{padding-bottom:84px} }
+
+  /* ===========================
+     HERO SUPERKIT (full-bleed + effects)
+     =========================== */
+  .nb-hero-skit{position:relative}
+  .nb-skit__inner{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:clamp(18px,4vw,32px);max-width:min(1160px,94vw);margin-inline:auto}
+  @media (max-width:990px){.nb-skit__inner{grid-template-columns:1fr}}
+
+  /* Full-bleed band + tones */
+  .nb-hero-skit.is-band{padding:clamp(28px,6vw,64px) 0;background:var(--nb-sage)}
+  .nb-hero-skit.is-band.tone-teal{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(16,99,108,.18) 0 40%, rgba(16,99,108,0) 55%),
+      var(--nb-sage)
+  }
+  .nb-hero-skit.is-band.tone-ink{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(34,50,56,.22) 0 40%, rgba(34,50,56,0) 55%),
+      #f6f9f8
+  }
+  .nb-hero-skit.is-band.tone-pebble{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(210,203,200,.28) 0 40%, rgba(210,203,200,0) 55%),
+      #fbfbfa
+  }
+  /* Optional band grain */
+  .nb-hero-skit.is-band.has-noise::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);
+    background-size:2px 2px
+  }
+
+  .nb-eyebrow{letter-spacing:.08em;text-transform:uppercase;color:var(--nb-deep);margin:0 0 .35rem;font-weight:600}
+  .nb-sub{color:var(--nb-muted);max-width:60ch;margin:0 0 16px}
+  .nb-skit__cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .nb-hero-skit.has-glass .nb-cta{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.40);backdrop-filter:blur(10px) saturate(140%);box-shadow:0 8px 20px rgba(0,0,0,.10)}
+
+  /* Media frame */
+  .nb-skit__media{position:relative;z-index:0}
+  .nb-skit__frame{position:relative;filter:drop-shadow(0 18px 40px rgba(0,0,0,.12));transform-style:preserve-3d;transition:transform .25s ease}
+  .nb-hero-skit.has-tilt .nb-skit__frame:hover{transform:perspective(1200px) rotateX(1.5deg) rotateY(-1.5deg) translateY(-2px)}
+  @media (prefers-reduced-motion:reduce){.nb-hero-skit.has-tilt .nb-skit__frame:hover{transform:none}}
+
+  /* Gradient ring */
+  .nb-hero-skit.has-ring .nb-skit__frame::before{
+    content:"";position:absolute;inset:-22px;border-radius:28px;z-index:-1;
+    background:conic-gradient(from 180deg, rgba(16,99,108,.14), rgba(200,107,42,.12), rgba(16,99,108,.14));
+    filter:blur(18px);opacity:.9
+  }
+
+  /* Angled stripe */
+  .nb-hero-skit.has-stripe .nb-skit__media::before{
+    content:"";position:absolute;inset:-18px -26px auto -26px;height:52%;transform:skewY(-5deg);z-index:0;
+    background:linear-gradient(90deg, rgba(116,162,155,.18), rgba(210,203,200,.12));
+    border-radius:18px
+  }
+
+  /* Corner cut (mat + inner media) */
+  .nb-skit__mat{position:relative;border-radius:22px;background:#fff;padding:10px;border:1px solid rgba(0,0,0,.06);overflow:hidden}
+  .nb-skit__mat > *{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:14px;overflow:hidden}
+  .nb-hero-skit.has-corner .nb-skit__mat,
+  .nb-hero-skit.has-corner .nb-skit__mat > *{
+    clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)
+  }
+  .nb-hero-skit.has-corner .nb-skit__mat::after{
+    content:"";position:absolute;top:0;right:0;width:16%;height:11%;
+    background:linear-gradient(135deg, rgba(0,0,0,.06), rgba(0,0,0,0));border-top-right-radius:18px;pointer-events:none;opacity:.6
+  }
+
+  /* Media (img / lite video / placeholder) */
+  .nb-media-img{display:block;width:100%;height:auto;border-radius:14px}
+  .nb-media-ph{width:100%;aspect-ratio:16/9;border-radius:14px;background:linear-gradient(135deg,#e9f1ef,#f3f6ef)}
+  .nb-video{position:relative;background-size:cover;background-position:center;border-radius:14px;overflow:hidden}
+  .nb-video--lite{background-image:var(--poster);cursor:pointer}
+  .nb-video__play{position:absolute;inset:0;margin:auto;width:74px;height:74px;border-radius:999px;background:#fff;box-shadow:0 10px 24px rgba(0,0,0,.22)}
+  .nb-video__play::before{content:"";position:absolute;left:29px;top:22px;border-style:solid;border-width:15px 0 15px 22px;border-color:transparent transparent transparent var(--nb-chocolate)}
+  .nb-video:hover .nb-video__play{transform:scale(1.03)}
+  @media (prefers-reduced-motion:reduce){.nb-video:hover .nb-video__play{transform:none}}
+
+  /* Parallax line */
+  .nb-skit__line{position:absolute;left:0;right:0;bottom:-1px;height:2px;transform:translateY(0);background:linear-gradient(90deg, rgba(34,50,56,.0), rgba(34,50,56,.25), rgba(34,50,56,.0));opacity:.5;pointer-events:none;display:none}
+  .nb-hero-skit.has-parallax .nb-skit__line{display:block}
+
+  /* Ensure content after hero sits above band */
+  .nb-hero-skit.is-band + *{position:relative;z-index:1}
+
+  /* === Trust BELT === */
+  .nb-trustbelt{
+    background:#fff;
+    padding: 8px 0 4px;
+    border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef;
+  }
+  .nb-trustbelt__viewport{
+    position:relative; overflow:hidden; border-radius:14px;
+    background:linear-gradient(180deg, #ffffff, #fafcfc);
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    -webkit-mask-image: linear-gradient( to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+    mask-image: linear-gradient( to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  }
+  .nb-trustbelt__track{
+    display:flex; gap:14px; padding:12px 18px;
+    animation: nb-marquee var(--nb-marquee-speed, 22s) linear infinite;
+    will-change: transform;
+  }
+  .nb-trustbelt__chip{
+    display:inline-flex; align-items:center; gap:10px;
+    white-space:nowrap; background:#fff; border:1px solid #e8ecef;
+    border-radius:999px; padding:.55rem .9rem; line-height:1.1;
+    box-shadow:0 6px 16px rgba(0,0,0,.05);
+    color: var(--nb-muted);
+  }
+  .nb-trustbelt__chip i{
+    width:18px; height:18px; border-radius:999px; display:inline-block;
+    background: radial-gradient(circle at 30% 30%, #8bc4bc, #0F5B59);
+    mask-image: radial-gradient(circle, transparent 42%, black 43%);
+  }
+  @keyframes nb-marquee { from{ transform: translateX(0) } to{ transform: translateX(-50%) } }
+  .nb-trustbelt__viewport:hover .nb-trustbelt__track{ animation-play-state: paused; }
+  @media (prefers-reduced-motion:reduce){ .nb-trustbelt__track{ animation: none; } }
+
+  /* === Trust GRID (optional layout via metaobject) === */
+  .nb-trustgrid{ background:#fff; padding: 18px 0; border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef; }
+  .nb-trustgrid__list{
+    list-style:none; margin:0; padding:0;
+    display:grid; gap:12px;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+  @media (min-width: 900px){ .nb-trustgrid__list{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+  .nb-trustgrid__chip{
+    background:#fff; border:1px solid #e8ecef; border-radius:14px; padding:.8rem 1rem;
+    box-shadow:0 8px 22px rgba(0,0,0,.06); color: var(--nb-muted); display:flex; align-items:center; gap:10px;
+  }
+  .nb-trustgrid__tick{
+    width:18px; height:18px; border-radius:999px; flex:0 0 18px;
+    background: radial-gradient(circle at 30% 30%, #8bc4bc, #0F5B59);
+    mask-image: radial-gradient(circle, transparent 42%, black 43%);
+  }
+
+/* ===== Match Home-hero typography (scoped) ===== */
+.nb-hero-skit.typ-home .nb-h1{
+  /* align to home: teal tone, gentler weight, graceful spacing */
+  color: var(--nb-deep);
+  font-weight: 600;          /* lighter than the default 700/800 */
+  line-height: 1.15;
+  letter-spacing: 0;
+  font-style: normal;        /* remove any accidental italics */
+}
+.nb-hero-skit.typ-home .nb-sub{
+  color: color-mix(in srgb, var(--nb-muted) 88%, #000 12%);
+  opacity: .95;
+}
+.nb-hero-skit.typ-home .nb-eyebrow{
+  color: color-mix(in srgb, var(--nb-deep) 80%, #000 20%);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* Optional: if you want the CTA to match the home contrast on band */
+.nb-hero-skit.typ-home .nb-cta{
+  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+}
+</style>
+
+{%- comment -%} ========= HERO (full-bleed) ========= {%- endcomment -%}
+{%- liquid
+  assign vid_id = ''
+  if service.hero_video_url
+    assign vid_id = service.hero_video_url | split: 'v=' | last | split: '&' | first
+  endif
+
+  assign flags_raw  = service.hero_flags | default: 'band, teal, ring, tilt'
+  assign flags_norm = flags_raw | replace: '•', ',' | replace: '，', ',' | replace: '  ', ' '
+  assign tokens     = flags_norm | split: ','
+
+  assign hero_classes = 'nb-hero-skit'
+  assign any_matched  = false
+
+  for f in tokens
+    assign t = f | strip | downcase
+
+    if t == 'band' or t == 'full-bleed'
+      assign hero_classes = hero_classes | append: ' is-band'
+      assign any_matched  = true
+    endif
+
+    if t == 'teal'
+      assign hero_classes = hero_classes | append: ' tone-teal'
+      assign any_matched  = true
+    endif
+
+    if t == 'ink'
+      assign hero_classes = hero_classes | append: ' tone-ink'
+      assign any_matched  = true
+    endif
+
+    if t == 'pebble'
+      assign hero_classes = hero_classes | append: ' tone-pebble'
+      assign any_matched  = true
+    endif
+
+    if t == 'ring'
+      assign hero_classes = hero_classes | append: ' has-ring'
+      assign any_matched  = true
+    endif
+
+    if t == 'tilt'
+      assign hero_classes = hero_classes | append: ' has-tilt'
+      assign any_matched  = true
+    endif
+
+    if t == 'stripe'
+      assign hero_classes = hero_classes | append: ' has-stripe'
+      assign any_matched  = true
+    endif
+
+    if t == 'glass'
+      assign hero_classes = hero_classes | append: ' has-glass'
+      assign any_matched  = true
+    endif
+
+    if t == 'noise'
+      assign hero_classes = hero_classes | append: ' has-noise'
+      assign any_matched  = true
+    endif
+
+    if t == 'dots'
+      assign hero_classes = hero_classes | append: ' has-dots'
+      assign any_matched  = true
+    endif
+
+    if t == 'corner'
+      assign hero_classes = hero_classes | append: ' has-corner'
+      assign any_matched  = true
+    endif
+
+    if t == 'parallax'
+      assign hero_classes = hero_classes | append: ' has-parallax'
+      assign any_matched  = true
+    endif
+
+    if t == 'type-home' or t == 'home-typo' or t == 'home-style'
+      assign hero_classes = hero_classes | append: ' typ-home'
+      assign any_matched  = true
+    endif
+
+  endfor
+
+  if any_matched == false
+    assign hero_classes = 'nb-hero-skit is-band tone-teal has-ring has-tilt has-stripe has-corner'
+  endif
+-%}
+
+<section class="{{ hero_classes }}" data-hero-flags="{{ flags_raw | strip }}">
+  <div class="nb-skit__inner">
+    <div class="nb-skit__copy">
+      {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
+      <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
+      {%- if service.hero_subheading != blank -%}<p class="nb-sub">{{ service.hero_subheading }}</p>{%- endif -%}
+      <div class="nb-skit__cta"><a class="nb-cta" href="{{ service.cta_link | default: '/pages/book-a-call' }}" data-cta="service-hero-cta">{{ service.cta_label | default: 'Book a free 20-min call' }}</a></div>
+    </div>
+
+    <div class="nb-skit__media">
+      <div class="nb-skit__frame">
+        <div class="nb-skit__mat">
+          {%- if vid_id != '' -%}
+            <button type="button" class="nb-video nb-video--lite" data-video="{{ vid_id }}" style="--poster:url('https://i.ytimg.com/vi/{{ vid_id }}/hqdefault.jpg')" aria-label="Play intro video">
+              <span class="nb-video__play" aria-hidden="true"></span>
+            </button>
+          {%- elsif service.hero_image -%}
+            {{ service.hero_image
+              | image_url: width: 1400
+              | image_tag:
+                alt: service.hero_heading | default: service.title,
+                sizes: "(max-width: 990px) 100vw, 640px",
+                widths: "700,1000,1400",
+                class: "nb-media-img" }}
+          {%- else -%}
+            <div class="nb-media-ph"></div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nb-skit__line" aria-hidden="true"></div>
+</section>
+
+<script>
+(function(){
+  // Lite YouTube loader
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.nb-video--lite'); if(!btn) return;
+    var id = btn.getAttribute('data-video'); if(!id) return;
+    var url = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('allowfullscreen',''); iframe.setAttribute('loading','eager');
+    iframe.setAttribute('referrerpolicy','no-referrer-when-downgrade');
+    iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    iframe.style.width='100%'; iframe.style.height='100%'; iframe.style.border='0';
+    btn.replaceWith(iframe);
+    iframe.src = url;
+  }, {passive:true});
+
+  // Parallax line (gentle; honors reduced motion)
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.querySelector('.nb-hero-skit.has-parallax');
+  var line = hero ? hero.querySelector('.nb-skit__line') : null;
+  if(hero && line && !reduce){
+    var raf, lastY = 0;
+    var onScroll = function(){
+      var rect = hero.getBoundingClientRect();
+      var dy = Math.max(-2, Math.min(2, (window.innerHeight - rect.top) * 0.004));
+      if(Math.abs(dy - lastY) > 0.1){
+        line.style.transform = 'translateY(' + dy.toFixed(2) + 'px)';
+        lastY = dy;
+      }
+      raf = null;
+    };
+    window.addEventListener('scroll', function(){ if(!raf) raf = requestAnimationFrame(onScroll); }, {passive:true});
+    onScroll();
+  }
+})();
+</script>
+
+{%- comment -%} ========= MAIN PAGE CONTENT ========= {%- endcomment -%}
+<section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
+
+  {%- liquid
+    assign btn_label = service.cta_label | default: 'Book a free 20-min call'
+    assign btn_href  = service.cta_link | default: '/pages/book-a-call'
+  -%}
+
+  {%- assign br_tag = '<br />' -%}
+
+  {%- comment -%} ---------- SOCIAL PROOF (belt with grid fallback by metaobject) ---------- {%- endcomment -%}
+  {%- liquid
+    assign sp_raw  = service.social_proof | append: ''
+    assign sp_html = sp_raw | newline_to_br
+    assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign sp_pipe = sp_norm | replace: br_tag, '|||'
+    assign sp      = sp_pipe | split: '|||'
+
+    assign sp_filled = 0
+    for x in sp
+      assign t = x | strip
+      if t != '' 
+        assign sp_filled = sp_filled | plus: 1
+      endif
+    endfor
+
+    assign sp_layout = service.social_proof_layout | downcase | strip
+  -%}
+
+  {%- if sp_filled > 0 -%}
+    {%- if sp_layout == 'grid' or sp_layout == 'cards' -%}
+      <!-- GRID variant -->
+      <section class="nb-trustgrid">
+        <div class="nb-trustgrid__inner nb-shell">
+          <ul class="nb-trustgrid__list">
+            {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
+              <li class="nb-trustgrid__chip">
+                <span class="nb-trustgrid__tick" aria-hidden="true"></span>{{ sv }}
+              </li>
+            {% endif %}{%- endfor -%}
+          </ul>
+        </div>
+      </section>
+    {%- else -%}
+      <!-- BELT (marquee) variant -->
+      <section class="nb-trustbelt">
+        <div class="nb-trustbelt__inner nb-shell">
+          <div class="nb-trustbelt__viewport">
+            <div class="nb-trustbelt__track">
+              {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
+                <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
+              {% endif %}{%- endfor -%}
+              {%- comment -%} duplicate for seamless loop {%- endcomment -%}
+              {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
+                <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
+              {% endif %}{%- endfor -%}
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- comment -%} OUTCOMES {%- endcomment -%}
+  {%- liquid
+    assign oc_raw  = service.outcomes | append: ''
+    assign oc_html = oc_raw | newline_to_br
+    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+    assign oc_pipe = oc_norm | replace: br_tag, '|||'
+    assign outcomes = oc_pipe | split: '|||'
+    assign oc_count = 0
+    for it in outcomes
+      assign t = it | strip
+      if t != '' 
+        assign oc_count = oc_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if oc_count > 0 -%}
+    <div class="nb-tray">
+      <h2 class="nb-h2">What you’ll get</h2>
+      <div class="nb-badges">
+        {%- for item in outcomes -%}
+          {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} IS THIS FOR YOU {%- endcomment -%}
+  {%- liquid
+    assign ify_raw  = service.is_for_you | append: ''
+    assign ify_html = ify_raw | newline_to_br
+    assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign ify_pipe = ify_norm | replace: br_tag, '|||'
+    assign ify = ify_pipe | split: '|||'
+    assign ify_count = 0
+    for it in ify
+      assign t = it | strip
+      if t != '' 
+        assign ify_count = ify_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if ify_count > 0 -%}
+    <div class="nb-tray">
+      <h3 class="nb-h3">Is this for you?</h3>
+      <ul class="nb-list">
+        {%- for line in ify -%}
+          {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} PROCESS {%- endcomment -%}
+  {%- liquid
+    assign steps_raw  = service.process_bodies | append: ''
+    assign steps_html = steps_raw | newline_to_br
+    assign steps_norm = steps_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign steps_pipe = steps_norm | replace: br_tag, '|||'
+    assign steps = steps_pipe | split: '|||'
+    assign steps_count = 0
+    for s in steps
+      assign t = s | strip
+      if t != ''
+        assign steps_count = steps_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if service.process_titles or steps_count > 0 -%}
+    <div class="nb-tray">
+      <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
+      {%- if steps_count > 0 -%}
+        <ol class="nb-list nb-steps">
+          {%- for step in steps -%}
+            {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} METHOD (RICH TEXT) {%- endcomment -%}
+  {%- if service.method_title or service.method_richtext -%}
+    <div class="nb-tray nb-method">
+      <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
+      {%- if service.method_richtext -%}
+        <div class="nb-rte nb-method__body">{{ service.method_richtext | metafield_tag }}</div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} MYTHS / TRUTHS {%- endcomment -%}
+  {%- liquid
+    assign myths_raw  = service.myths  | append: ''
+    assign truths_raw = service.truths | append: ''
+
+    assign myths_html  = myths_raw  | newline_to_br
+    assign truths_html = truths_raw | newline_to_br
+
+    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+
+    assign myths_pipe  = myths_norm  | replace: '<br />','|||'
+    assign truths_pipe = truths_norm | replace: '<br />','|||'
+
+    assign myths  = myths_pipe  | split: '|||'
+    assign truths = truths_pipe | split: '|||'
+
+    assign myths_count = 0
+    for m in myths
+      assign t = m | strip
+      if t != '' 
+        assign myths_count = myths_count | plus: 1
+      endif
+    endfor
+
+    assign truths_count = 0
+    for t in truths
+      assign z = t | strip
+      if z != '' 
+        assign truths_count = truths_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if myths_count > 0 or truths_count > 0 -%}
+    <div class="nb-duo">
+      {%- if myths_count > 0 -%}
+        <div class="nb-card nb-duo__col">
+          <h3 class="nb-h3">Common myths</h3>
+          <ul class="nb-list">
+            {%- for m in myths -%}{%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}{%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+      {%- if truths_count > 0 -%}
+        <div class="nb-card nb-duo__col">
+          <h3 class="nb-h3">What’s actually true</h3>
+          <ul class="nb-list">
+            {%- for t in truths -%}{%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}{%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
+    <style>.nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:780px){.nb-duo{grid-template-columns:1fr}}.nb-duo__col{padding:16px 18px}</style>
+  {%- endif -%}
+
+  {%- comment -%} FAQ {%- endcomment -%}
+  {%- liquid
+    assign q_raw = service.faqs_q | append: ''
+    assign a_raw = service.faqs_a | append: ''
+
+    assign q_html = q_raw | newline_to_br
+    assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign q_pipe = q_norm | replace: br_tag, '|||'
+    assign qs     = q_pipe | split: '|||'
+
+    assign a_html = a_raw | newline_to_br
+    assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+    assign a_norm = a_norm | replace: '<br /><br /><br />', '§§' | replace: '<br /><br />', '§§' | replace: '<br /> <br />', '§§' | replace: '<br />  <br />', '§§' | replace: '<br />   <br />', '§§' | replace: '---','§§'
+    assign as     = a_norm | split: '§§'
+
+    assign q_count = 0
+    for q in qs
+      assign qq = q | strip_html | strip
+      if qq != '' 
+        assign q_count = q_count | plus: 1
+      endif
+    endfor
+  -%}
+
+  {%- if q_count > 0 -%}
+    <div class="nb-tray nb-faq--wrap">
+      <h2 class="nb-faq__title">Frequently asked questions</h2>
+      <div class="nb-faq__list" id="nb-faq-{{ section.id }}-svc">
+        {%- assign idx = 0 -%}
+        {%- for q in qs -%}
+          {%- assign qq = q | strip_html | strip -%}
+          {%- if qq != '' -%}
+            {%- assign a_block = as[idx] | default: '' -%}
+            {%- assign a_clean = a_block | strip -%}
+            {%- assign head6 = a_clean | slice: 0,6 -%}{%- assign head5 = a_clean | slice: 0,5 -%}{%- assign head4 = a_clean | slice: 0,4 -%}
+            {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+            {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+            {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+            <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+              <summary class="nb-faq__q">{{ qq }}</summary>
+              <div class="nb-faq__a rte">{{ a_clean }}</div>
+            </details>
+            {%- assign idx = idx | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- assign a_count = as.size -%}
+    {%- assign pair_count = q_count -%}
+    {%- if a_count < q_count -%}{%- assign pair_count = a_count -%}{%- endif -%}
+    {%- if pair_count > 0 -%}
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {%- assign last = pair_count | minus: 1 -%}
+      {%- assign first = true -%}
+      {%- for i in (0..last) -%}
+        {%- assign q = qs[i] | strip_html | strip -%}
+        {%- assign a = as[i] | strip -%}
+        {%- if q != '' and a != '' -%}
+          {%- unless first -%},{%- endunless -%}
+          {"@type":"Question","name":{{ q | json }},"acceptedAnswer":{"@type":"Answer","text":{{ a | json }}}}
+          {%- assign first = false -%}
+        {%- endif -%}
+      {%- endfor -%}
+    ]}
+    </script>
+    {%- endif -%}
+
+    <script>
+      (function(){
+        var root = document.getElementById('nb-faq-{{ section.id }}-svc');
+        if(!root) return;
+        root.addEventListener('toggle', function(ev){
+          var d = ev.target;
+          if(d.tagName !== 'DETAILS' || !d.open) return;
+          root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+        }, true);
+      })();
+    </script>
+  {%- endif -%}
+
+  <div style="text-align:center;padding:10px 0 24px">
+    <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+    <div class="nb-sticky-cta" data-cta="service-sticky-cta"><a class="nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a></div>
+  </div>
+
+</section>
+
+{%- else -%}
+<section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
+{%- endif -%}
