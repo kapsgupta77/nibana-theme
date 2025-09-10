@@ -482,12 +482,12 @@
     {%- endif -%}
   {%- endif -%}
 
-  {%- comment -%} ---------- OUTCOMES (Impact Cards) ---------- {%- endcomment -%}
+ {%- comment -%} ---------- OUTCOMES (Impact Cards) ---------- {%- endcomment -%}
 <style>
   /* Section tone wrapper */
   .nb-section{ padding:clamp(20px,3.8vw,44px) 0; }
   .nb-section--tone-white{ background:#fff; }
-  .nb-section--tone-pebble{ background:#faf7f5; } /* warm off-white to avoid teal fatigue */
+  .nb-section--tone-pebble{ background:#faf7f5; } /* warm off-white */
   .nb-section--tone-sage{ background:var(--nb-sage); }
 
   /* Impact cards grid */
@@ -525,7 +525,7 @@
 </style>
 
 {%- liquid
-  /* Parse outcomes as list items */
+  # Parse outcomes as list items
   assign oc_raw  = service.outcomes | append: ''
   assign oc_html = oc_raw | newline_to_br
   assign br_tag  = '<br />'
@@ -541,7 +541,7 @@
     endif
   endfor
 
-  /* Tone toggle via metaobject (optional) */
+  # Tone toggle via metaobject (optional)
   assign oc_tone = service.outcomes_tone | downcase | strip | default: 'white'
   assign oc_tone_class = 'nb-section--tone-white'
   if oc_tone == 'pebble'
@@ -781,6 +781,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
