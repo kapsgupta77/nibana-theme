@@ -233,6 +233,29 @@
     background: radial-gradient(circle at 30% 30%, #8bc4bc, #0F5B59);
     mask-image: radial-gradient(circle, transparent 42%, black 43%);
   }
+
+/* ===== Match Home-hero typography (scoped) ===== */
+.nb-hero-skit.typ-home .nb-h1{
+  /* align to home: teal tone, gentler weight, graceful spacing */
+  color: var(--nb-deep);
+  font-weight: 600;          /* lighter than the default 700/800 */
+  line-height: 1.15;
+  letter-spacing: 0;
+  font-style: normal;        /* remove any accidental italics */
+}
+.nb-hero-skit.typ-home .nb-sub{
+  color: color-mix(in srgb, var(--nb-muted) 88%, #000 12%);
+  opacity: .95;
+}
+.nb-hero-skit.typ-home .nb-eyebrow{
+  color: color-mix(in srgb, var(--nb-deep) 80%, #000 20%);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* Optional: if you want the CTA to match the home contrast on band */
+.nb-hero-skit.typ-home .nb-cta{
+  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+}
 </style>
 
 {%- comment -%} ========= HERO (full-bleed) ========= {%- endcomment -%}
@@ -311,6 +334,13 @@
       assign hero_classes = hero_classes | append: ' has-parallax'
       assign any_matched  = true
     endif
+
+    {# --- HOME STYLE TYPOGRAPHY --- #}
+    if t == 'type-home' or t == 'home-typo' or t == 'home-style'
+      assign hero_classes = hero_classes | append: ' typ-home'
+      assign any_matched  = true
+    endif
+
   endfor
 
   if any_matched == false
