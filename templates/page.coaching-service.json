@@ -1,9 +1,0 @@
-{
-  "sections": {
-    "main": {
-      "type": "coaching-service",
-      "settings": {}
-    }
-  },
-  "order": ["main"]
-}
