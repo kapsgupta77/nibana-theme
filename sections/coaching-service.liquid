@@ -119,19 +119,6 @@
   .nb-sub{color:var(--nb-muted);max-width:60ch;margin:0 0 16px}
   .nb-skit__cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 
-  /* Ensure the hero CTA is Nibana chocolate and pill-shaped, regardless of other stylesheets */
-  .nb-hero-skit .nb-skit__copy .button{
-    background: var(--nb-chocolate) !important;
-    border-color: var(--nb-chocolate) !important;
-    color:#fff !important;
-    border-radius: 9999px;
-    box-shadow: 0 10px 24px rgba(0,0,0,.10);
-    padding:.9rem 1.1rem;
-  }
-  .nb-hero-skit .nb-skit__copy .button:hover{
-    filter: brightness(.96);
-    transform: translateY(-1px);
-  }
 
   .nb-skit__media{position:relative}
   .nb-skit__frame{position:relative;filter:drop-shadow(0 18px 40px rgba(0,0,0,.12));transform-style:preserve-3d;transition:transform .25s ease}
@@ -316,12 +303,12 @@
       <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
       {%- if service.hero_subheading != blank -%}<p class="nb-sub">{{ service.hero_subheading }}</p>{%- endif -%}
       <div class="nb-skit__cta">
-        <a class="button"
-           href="{{ service.cta_link | default: '/pages/book-a-call' }}"
-           data-cta="service-hero-cta">
-          {{ service.cta_label | default: 'Book a free 20-min call' }}
-        </a>
-      </div>
+  <a class="nb-cta nb-cta--xl"
+     href="{{ service.cta_link | default: '/pages/book-a-call' }}"
+     data-cta="service-hero-cta">
+    {{ service.cta_label | default: 'Book a free 20-min call' }}
+  </a>
+</div>
     </div>
 
     <div class="nb-skit__media">
@@ -678,14 +665,15 @@
 
   <!-- Bottom CTA centered (flex wrapper) -->
   <div style="padding:10px 0 24px; display:flex; justify-content:center;">
-    <a class="button" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
-    <div class="nb-sticky-cta" data-cta="service-sticky-cta">
-      <a class="button nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a>
-    </div>
+  <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+  <div class="nb-sticky-cta" data-cta="service-sticky-cta">
+    <a class="button nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a>
   </div>
+</div>
 
 </section>
 
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
