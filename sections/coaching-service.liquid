@@ -27,25 +27,45 @@
     --nb-chocolate:#C86B2A;
   }
 
-  /* Layout helpers */
+/* --- MICRO POLISH --------------------------------------------------- */
+
+/* 1) Consistent vertical rhythm between custom trays */
+.nb-outcomes{ margin: clamp(6px,1.2vw,12px) 0; }
+.nb-if{ --if-mt: clamp(16px,2vw,22px); --if-mb: clamp(18px,2.6vw,28px); }
+
+/* 2) Gentle, luxurious pebble tone for the Image+List tray */
+.nb-if.tone-pebble .nb-if__wrap{
+  background:
+    radial-gradient(140% 120% at 88% -12%, rgba(182,121,85,.10) 0 18%, transparent 42%),
+    #fbf7f5;
+}
+
+/* 3) Make corner radii & elevation feel consistent across cards */
+.nb-outcome,
+.nb-if__li,
+.nb-trustgrid__chip,
+.nb-faq__a{ border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.06); }
+
+/* 4) Hover nudge (already subtle; make it silky) */
+.nb-outcome:hover,
+.nb-if__li:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(0,0,0,.08); }
+
+/* 5) Process numbers: ensure crisp contrast against sage band (if used) */
+.nb-steps li::before{
+  background: var(--nb-sage);
+  border-color: rgba(0,0,0,.06);
+  color: var(--nb-deep);
+}
+
   .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
   .nb-grid{display:grid;gap:22px}
 
-  /* Headings follow global theme (no custom sizes here) */
-  .nb-h1,.nb-h2,.nb-h3{
-    font-family: var(--font-heading-family, inherit);
-    font-weight: var(--font-heading-weight, 800);
-    color: var(--color-foreground, var(--nb-ink));
-  }
-  .nb-h1{ margin: 0 0 10px; }
-  .nb-h2{ margin: 0 0 6px; }
-  .nb-h3{ margin: 0 0 10px; }
+  .nb-h1,.nb-h2,.nb-h3{font-family:var(--font-heading-family,inherit);color:var(--nb-ink)}
+  .nb-h1{font-size:clamp(30px,4.4vw,48px);line-height:1.1;margin:0 0 10px;font-weight:800}
+  .nb-h2{font-size:clamp(22px,2.8vw,28px);font-weight:800;margin:0 0 6px}
+  .nb-h3{font-size:clamp(18px,2.1vw,22px);font-weight:750;margin:0 0 10px}
 
   .nb-copy,.nb-tray,.nb-card,.nb-faq__a{font-family:var(--font-body-family,inherit);color:var(--nb-muted)}
-
-  /* CTA */
-  .nb-cta{display:inline-flex;align-items:center;justify-content:center;padding:.9rem 1.1rem;border-radius:999px;background:var(--nb-chocolate);color:#fff;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.08)}
-  .nb-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
   /* Trays / cards */
   .nb-tray{background:var(--nb-sage);border-radius:18px;padding:18px 20px;box-shadow:0 10px 26px rgba(0,0,0,.06)}
@@ -53,21 +73,19 @@
   .nb-badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   @media (max-width:720px){ .nb-badges{grid-template-columns:1fr} }
 
-  /* Duo cards */
   .nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
   @media (max-width:900px){.nb-duo{grid-template-columns:1fr}}
   .nb-duo .nb-card{padding:18px 20px}
 
-  /* Lists */
   .nb-list{margin:0;padding-left:1.15rem}
   .nb-list li{margin:.28rem 0}
 
-  /* RTE enhancements (method) */
   .nb-rte{line-height:1.65}
   .nb-method__body h3 + ul,
   .nb-method__body ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
   .nb-method__body h3 + ul li,
   .nb-method__body ul li{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:999px;padding:.4rem .65rem;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+
   .nb-method .nb-rte p + ul,
   .nb-method .nb-rte p + ol,
   .nb-method .nb-rte ul,
@@ -85,12 +103,75 @@
   details[open] .nb-faq__q::after{content:"–"}
   .nb-faq__a{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;margin:10px 14px 2px;padding:16px 20px;color:var(--nb-muted);line-height:1.65}
 
-  /* Process timeline */
-  .nb-steps{counter-reset:step;display:grid;gap:12px;list-style:none;padding-left:0;margin:0}
-  .nb-steps li{position:relative;background:#fff;border:1px solid #e8ecef;border-radius:14px;padding:12px 14px 12px 48px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-  .nb-steps li::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border-radius:999px;background:var(--nb-sage);color:var(--nb-deep);font-weight:700;border:1px solid rgba(0,0,0,.06)}
-  .nb-steps li + li{margin-top:8px}
-  .nb-steps li + li::after{content:"";position:absolute;left:25px;top:-8px;bottom:calc(100% - 8px);width:2px;background:rgba(0,0,0,.06)}
+/* ===== Curved Timeline (Process) ===== */
+.nb-steps--curve{
+  --tl-line:#e6efed;               /* spine + elbows */
+  --tl-pearl-bg:var(--nb-sage);
+  --tl-pearl-fg:var(--nb-deep);
+
+  counter-reset:step;
+  position:relative;
+  list-style:none;
+  margin:0;
+  padding:10px 0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 28px;
+}
+.nb-steps--curve::before{
+  content:"";
+  position:absolute; left:50%; top:0; bottom:0;
+  width:2px; transform:translateX(-50%);
+  background:linear-gradient(180deg,rgba(34,50,56,.10),rgba(34,50,56,.14));
+  border-radius:2px;
+}
+.nb-steps--curve li{
+  position:relative; background:#fff;
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px; padding:12px 16px; min-height:52px;
+  display:flex; align-items:center;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.nb-steps--curve li:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.08); }
+@media (prefers-reduced-motion:reduce){ .nb-steps--curve li:hover{ transform:none; } }
+
+.nb-steps--curve li:nth-child(odd){  grid-column:1; margin-right:28px; }
+.nb-steps--curve li:nth-child(even){ grid-column:2; margin-left:28px; }
+
+.nb-steps--curve li::before{
+  counter-increment:step;
+  content:counter(step);
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:32px; height:32px; border-radius:999px;
+  display:grid; place-items:center;
+  font-weight:700; font-size:14px;
+  background:var(--tl-pearl-bg); color:var(--tl-pearl-fg);
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
+.nb-steps--curve li:nth-child(odd)::before{  right:-16px; }
+.nb-steps--curve li:nth-child(even)::before{ left:-16px; }
+
+.nb-steps--curve li::after{
+  content:""; position:absolute; top:50%;
+  width:28px; height:18px; border:2px solid var(--tl-line);
+  transform:translateY(-50%); background:transparent;
+}
+.nb-steps--curve li:nth-child(odd)::after{
+  right:-28px; border-left:none; border-radius:0 20px 20px 0;
+}
+.nb-steps--curve li:nth-child(even)::after{
+  left:-28px; border-right:none; border-radius:20px 0 0 20px;
+}
+
+@media (max-width:780px){
+  .nb-steps--curve{ grid-template-columns:1fr; gap:12px; }
+  .nb-steps--curve::before{ display:none; }
+  .nb-steps--curve li{ margin:0; padding-left:48px; }
+  .nb-steps--curve li::before{ left:12px; right:auto; }
+  .nb-steps--curve li::after{ display:none; }
+}
 
   /* Sticky mobile CTA */
   .nb-sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;padding:max(10px, env(safe-area-inset-bottom));background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));border-top:1px solid #e8ecef;backdrop-filter:saturate(180%) blur(6px)}
@@ -121,7 +202,6 @@
       radial-gradient(120% 120% at 85% -10%, rgba(210,203,200,.28) 0 40%, rgba(210,203,200,0) 55%),
       #fbfbfa
   }
-  /* Optional band grain */
   .nb-hero-skit.is-band.has-noise::after{
     content:"";position:absolute;inset:0;pointer-events:none;
     background-image:radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);
@@ -131,10 +211,9 @@
   .nb-eyebrow{letter-spacing:.08em;text-transform:uppercase;color:var(--nb-deep);margin:0 0 .35rem;font-weight:600}
   .nb-sub{color:var(--nb-muted);max-width:60ch;margin:0 0 16px}
   .nb-skit__cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-  .nb-hero-skit.has-glass .nb-cta{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.40);backdrop-filter:blur(10px) saturate(140%);box-shadow:0 8px 20px rgba(0,0,0,.10)}
 
-  /* Media frame */
-  .nb-skit__media{position:relative;z-index:0}
+
+  .nb-skit__media{position:relative}
   .nb-skit__frame{position:relative;filter:drop-shadow(0 18px 40px rgba(0,0,0,.12));transform-style:preserve-3d;transition:transform .25s ease}
   .nb-hero-skit.has-tilt .nb-skit__frame:hover{transform:perspective(1200px) rotateX(1.5deg) rotateY(-1.5deg) translateY(-2px)}
   @media (prefers-reduced-motion:reduce){.nb-hero-skit.has-tilt .nb-skit__frame:hover{transform:none}}
@@ -148,24 +227,18 @@
 
   /* Angled stripe */
   .nb-hero-skit.has-stripe .nb-skit__media::before{
-    content:"";position:absolute;inset:-18px -26px auto -26px;height:52%;transform:skewY(-5deg);z-index:0;
+    content:"";position:absolute;inset:-18px -26px auto -26px;height:52%;transform:skewY(-5deg);z-index:-1;
     background:linear-gradient(90deg, rgba(116,162,155,.18), rgba(210,203,200,.12));
     border-radius:18px
   }
 
-  /* Corner cut (mat + inner media) */
-  .nb-skit__mat{position:relative;border-radius:22px;background:#fff;padding:10px;border:1px solid rgba(0,0,0,.06);overflow:hidden}
+  .nb-skit__mat{position:relative;border-radius:22px;background:#fff;padding:10px;border:1px solid rgba(0,0,0,.06)}
   .nb-skit__mat > *{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:14px;overflow:hidden}
-  .nb-hero-skit.has-corner .nb-skit__mat,
-  .nb-hero-skit.has-corner .nb-skit__mat > *{
-    clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)
-  }
-  .nb-hero-skit.has-corner .nb-skit__mat::after{
-    content:"";position:absolute;top:0;right:0;width:16%;height:11%;
-    background:linear-gradient(135deg, rgba(0,0,0,.06), rgba(0,0,0,0));border-top-right-radius:18px;pointer-events:none;opacity:.6
-  }
+  .nb-hero-skit.has-corner .nb-skit__mat{clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)}
+  .nb-hero-skit.has-corner .nb-skit__mat > *{clip-path:polygon(0% 0%, 86% 0%, 100% 10%, 100% 100%, 0% 100%)}
+  .nb-hero-skit.has-corner .nb-skit__mat::after{content:"";position:absolute;top:0;right:0;width:16%;height:11%;background:linear-gradient(135deg, rgba(0,0,0,.06), rgba(0,0,0,0));border-top-right-radius:18px;pointer-events:none;opacity:.6}
 
-  /* Media (img / lite video / placeholder) */
+  /* Lite video / image */
   .nb-media-img{display:block;width:100%;height:auto;border-radius:14px}
   .nb-media-ph{width:100%;aspect-ratio:16/9;border-radius:14px;background:linear-gradient(135deg,#e9f1ef,#f3f6ef)}
   .nb-video{position:relative;background-size:cover;background-position:center;border-radius:14px;overflow:hidden}
@@ -182,7 +255,7 @@
   /* Ensure content after hero sits above band */
   .nb-hero-skit.is-band + *{position:relative;z-index:1}
 
-  /* === Trust BELT === */
+  /* === Trust BELT / GRID styles (unchanged) === */
   .nb-trustbelt{
     background:#fff;
     padding: 8px 0 4px;
@@ -204,8 +277,7 @@
     display:inline-flex; align-items:center; gap:10px;
     white-space:nowrap; background:#fff; border:1px solid #e8ecef;
     border-radius:999px; padding:.55rem .9rem; line-height:1.1;
-    box-shadow:0 6px 16px rgba(0,0,0,.05);
-    color: var(--nb-muted);
+    box-shadow:0 6px 16px rgba(0,0,0,.05); color: var(--nb-muted);
   }
   .nb-trustbelt__chip i{
     width:18px; height:18px; border-radius:999px; display:inline-block;
@@ -216,7 +288,6 @@
   .nb-trustbelt__viewport:hover .nb-trustbelt__track{ animation-play-state: paused; }
   @media (prefers-reduced-motion:reduce){ .nb-trustbelt__track{ animation: none; } }
 
-  /* === Trust GRID (optional layout via metaobject) === */
   .nb-trustgrid{ background:#fff; padding: 18px 0; border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef; }
   .nb-trustgrid__list{
     list-style:none; margin:0; padding:0;
@@ -234,28 +305,100 @@
     mask-image: radial-gradient(circle, transparent 42%, black 43%);
   }
 
-/* ===== Match Home-hero typography (scoped) ===== */
-.nb-hero-skit.typ-home .nb-h1{
-  /* align to home: teal tone, gentler weight, graceful spacing */
-  color: var(--nb-deep);
-  font-weight: 600;          /* lighter than the default 700/800 */
-  line-height: 1.15;
-  letter-spacing: 0;
-  font-style: normal;        /* remove any accidental italics */
-}
-.nb-hero-skit.typ-home .nb-sub{
-  color: color-mix(in srgb, var(--nb-muted) 88%, #000 12%);
-  opacity: .95;
-}
-.nb-hero-skit.typ-home .nb-eyebrow{
-  color: color-mix(in srgb, var(--nb-deep) 80%, #000 20%);
-  letter-spacing: .08em; text-transform: uppercase;
+/* === Force hero CTA to match site-wide button style (override pill rules) === */
+.nb-hero-skit .nb-skit__cta a,
+.nb-hero-skit .nb-cta,
+.nb-hero-skit a[class*="button"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* size + spacing (matches Home) */
+  min-height: 52px !important;
+  padding: 14px 22px !important;
+
+  /* brand */
+  background: var(--nb-chocolate) !important;
+  color: #fff !important;
+  border: 2px solid var(--nb-chocolate) !important;
+
+  /* <- the key line (kill the pill) */
+  border-radius: 12px !important;
+
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.08) !important;
 }
 
-/* Optional: if you want the CTA to match the home contrast on band */
-.nb-hero-skit.typ-home .nb-cta{
-  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+.nb-hero-skit .nb-skit__cta a:hover,
+.nb-hero-skit .nb-cta:hover,
+.nb-hero-skit a[class*="button"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.10);
 }
+
+/* === PATCH 1: Outcomes — tighter, consistent spacing + mobile tidy === */
+
+/* default / desktop */
+.nb-outcomes{               /* reduce the tall whitespace above/below */
+  margin: 12px 0 18px;
+}
+.nb-outcomes__wrap{         /* slightly tighter padding + softer shadow */
+  padding: 16px clamp(14px, 2.2vw, 20px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.05), 0 18px 36px rgba(0,0,0,.05);
+}
+.nb-outcomes__grid{ gap: 12px 18px; }
+
+/* cards keep their current look; just unify paddings/radii */
+.nb-outcome{
+  border-radius: 14px;
+  padding: 12px 14px 12px 18px;
+}
+.nb-outcome::before{ width: 6px; }
+
+/* large desktop: a touch more air so it matches other trays */
+@media (min-width: 1160px){
+  .nb-outcomes{ margin: 14px 0 20px; }
+  .nb-outcomes__wrap{ padding: 18px 22px; }
+}
+
+/* mobile: compact spacing + 1-column grid and softer shadows */
+@media (max-width: 740px){
+  .nb-outcomes{ margin: 8px 0 12px; }            /* << tightens the gap */
+  .nb-outcomes__wrap{
+    padding: 12px 12px;
+    border-radius: 18px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.05);
+  }
+  .nb-outcomes__grid{
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .nb-outcome{
+    padding: 12px 12px 12px 16px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.05);
+  }
+  .nb-outcome::before{ width: 4px; }
+}
+
+/* === PATCH 2: “Is this for you?” Image + List — bulletproof mobile stack === */
+
+/* force 1-col on tablets/phones, with higher specificity so it wins */
+@media (max-width: 1024px){
+  .nb-if .nb-if__grid{ grid-template-columns: 1fr !important; }
+  .nb-if__media, .nb-if__copy{ width: 100%; }
+  .nb-if__frame{ width: 100%; border-radius: 18px; }
+  .nb-if__image{ width: 100%; height: auto; display: block; }
+  .nb-if__copy{ margin-top: 12px; }               /* space between image & list */
+}
+
+/* optional: slightly tighten list spacing on small screens */
+@media (max-width: 740px){
+  .nb-if__list{ gap: 8px; }
+  .nb-if__li{ padding: .8rem .95rem .85rem 2.1rem; border-radius: 12px; }
+}
+
 </style>
 
 {%- comment -%} ========= HERO (full-bleed) ========= {%- endcomment -%}
@@ -334,12 +477,6 @@
       assign hero_classes = hero_classes | append: ' has-parallax'
       assign any_matched  = true
     endif
-
-    if t == 'type-home' or t == 'home-typo' or t == 'home-style'
-      assign hero_classes = hero_classes | append: ' typ-home'
-      assign any_matched  = true
-    endif
-
   endfor
 
   if any_matched == false
@@ -353,7 +490,13 @@
       {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
       <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
       {%- if service.hero_subheading != blank -%}<p class="nb-sub">{{ service.hero_subheading }}</p>{%- endif -%}
-      <div class="nb-skit__cta"><a class="nb-cta" href="{{ service.cta_link | default: '/pages/book-a-call' }}" data-cta="service-hero-cta">{{ service.cta_label | default: 'Book a free 20-min call' }}</a></div>
+      <div class="nb-skit__cta">
+  <a class="nb-cta nb-cta--xl"
+     href="{{ service.cta_link | default: '/pages/book-a-call' }}"
+     data-cta="service-hero-cta">
+    {{ service.cta_label | default: 'Book a free 20-min call' }}
+  </a>
+</div>
     </div>
 
     <div class="nb-skit__media">
@@ -394,7 +537,6 @@
     iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
     iframe.style.width='100%'; iframe.style.height='100%'; iframe.style.border='0';
     btn.replaceWith(iframe);
-    iframe.src = url;
   }, {passive:true});
 
   // Parallax line (gentle; honors reduced motion)
@@ -428,10 +570,11 @@
 
   {%- assign br_tag = '<br />' -%}
 
-  {%- comment -%} ---------- SOCIAL PROOF (belt with grid fallback by metaobject) ---------- {%- endcomment -%}
+  {%- comment -%} ---------- SOCIAL PROOF (Trust belt with grid fallback) ---------- {%- endcomment -%}
   {%- liquid
     assign sp_raw  = service.social_proof | append: ''
     assign sp_html = sp_raw | newline_to_br
+    assign br_tag  = '<br />'
     assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
     assign sp_pipe = sp_norm | replace: br_tag, '|||'
     assign sp      = sp_pipe | split: '|||'
@@ -481,57 +624,315 @@
     {%- endif -%}
   {%- endif -%}
 
-  {%- comment -%} OUTCOMES {%- endcomment -%}
-  {%- liquid
-    assign oc_raw  = service.outcomes | append: ''
-    assign oc_html = oc_raw | newline_to_br
-    assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
-    assign oc_pipe = oc_norm | replace: br_tag, '|||'
-    assign outcomes = oc_pipe | split: '|||'
-    assign oc_count = 0
-    for it in outcomes
-      assign t = it | strip
-      if t != '' 
-        assign oc_count = oc_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if oc_count > 0 -%}
-    <div class="nb-tray">
-      <h2 class="nb-h2">What you’ll get</h2>
-      <div class="nb-badges">
+{%- comment -%} ---------- OUTCOMES (Impact Cards — toned tray) ---------- {%- endcomment -%}
+<style>
+  .nb-outcomes{ padding:clamp(6px,1.2vw,12px) 0; background:transparent; }
+
+  /* Tray */
+  .nb-outcomes__wrap{
+    background:var(--oc-surface);
+    border-radius:22px;
+    padding:clamp(14px,2vw,22px);
+    box-shadow:0 14px 36px rgba(0,0,0,.08);
+    position:relative; overflow:hidden;
+  }
+  /* subtle vignette for depth */
+  .nb-outcomes__wrap::before{
+    content:""; position:absolute; inset:-6% -3%; pointer-events:none;
+    background:radial-gradient(120% 80% at 50% -10%, rgba(0,0,0,.06), transparent 55%);
+  }
+
+  .nb-outcomes__title{ margin:0 0 clamp(10px,1.6vw,16px); }
+
+  /* Grid */
+  .nb-outcomes__grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:14px 18px;
+    align-items:stretch;
+  }
+  @media (max-width:780px){ .nb-outcomes__grid{ grid-template-columns:1fr; } }
+
+  /* Cards */
+  .nb-outcome{
+    position:relative; display:flex; align-items:center;
+    background:#fff;
+    border:1px solid rgba(0,0,0,.06);
+    border-radius:16px;
+    padding:14px 16px 14px 18px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-outcome::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px;
+    width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--oc-accent), color-mix(in oklab, var(--oc-accent), #000 14%));
+  }
+  .nb-outcome:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 30px rgba(0,0,0,.10);
+  }
+  @media (prefers-reduced-motion:reduce){ .nb-outcome:hover{ transform:none; } }
+
+  /* Tones — control the tray color (and the card accent) */
+  .nb-outcomes.tone-white { --oc-surface:#fff;     --oc-accent:var(--nb-chocolate); }
+  .nb-outcomes.tone-sage  { --oc-surface:var(--nb-sage); --oc-accent:var(--nb-chocolate); }
+  .nb-outcomes.tone-pebble{ --oc-surface:#fbf7f5;  --oc-accent:var(--nb-chocolate); }
+  .nb-outcomes.tone-ink   { --oc-surface:#f6f9f8;  --oc-accent:var(--nb-teal); }
+  .nb-outcomes.tone-teal  { --oc-surface:#edf7f6;  --oc-accent:var(--nb-chocolate); }
+
+  /* Optional: soft brand tint on white */
+  .nb-outcomes.tone-gradient .nb-outcomes__wrap{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(16,99,108,.10) 0 45%, transparent 60%),
+      #ffffff;
+  }
+</style>
+
+<style>
+  /* ---- RHYTHM FIX: rely on the grid gap, not extra margins/padding ---- */
+
+  /* remove outer margins on custom sections that sit inside .nb-grid */
+  .nb-shell.nb-grid > .nb-outcomes,
+  .nb-shell.nb-grid > .nb-if,
+  .nb-shell.nb-grid > .nb-method-lite,
+  .nb-shell.nb-grid > .nb-compare{
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* kill extra top/bottom padding on the outcomes section */
+  .nb-outcomes{
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* tighten mobile tray padding a bit */
+  @media (max-width: 740px){
+    .nb-outcomes__wrap{ padding: 12px 12px !important; }
+    .nb-if .nb-if__wrap{ padding: 14px !important; }
+  }
+
+  /* slightly trim the trustbelt below the hero so rhythm matches */
+  .nb-trustbelt{ padding-bottom: 6px; }
+</style>
+
+{%- liquid
+  assign oc_raw  = service.outcomes | append: ''
+  assign oc_html = oc_raw | newline_to_br
+  assign br_tag  = '<br />'
+  assign oc_norm = oc_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+  assign oc_pipe = oc_norm | replace: br_tag, '|||'
+  assign outcomes = oc_pipe | split: '|||'
+
+  assign oc_count = 0
+  for it in outcomes
+    assign t = it | strip
+    if t != '' 
+      assign oc_count = oc_count | plus: 1
+    endif
+  endfor
+
+  assign oc_tone = service.outcomes_tone | downcase | strip | default: 'white'
+  assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
+  assign oc_tone_class = 'tone-white'
+  if tone_whitelist contains oc_tone
+    assign oc_tone_class = 'tone-' | append: oc_tone
+  endif
+-%}
+
+{%- if oc_count > 0 -%}
+<section class="nb-outcomes {{ oc_tone_class }}">
+  <div class="nb-shell">
+    <div class="nb-outcomes__wrap">
+      <h2 class="nb-h2 nb-outcomes__title">What you’ll get</h2>
+      <div class="nb-outcomes__grid">
         {%- for item in outcomes -%}
-          {%- assign it = item | strip -%}{% if it != '' %}<div class="nb-card">{{ it }}</div>{% endif %}
+          {%- assign it = item | strip -%}
+          {%- if it != '' -%}<div class="nb-outcome">{{ it }}</div>{%- endif -%}
         {%- endfor -%}
       </div>
     </div>
-  {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
 
-  {%- comment -%} IS THIS FOR YOU {%- endcomment -%}
-  {%- liquid
-    assign ify_raw  = service.is_for_you | append: ''
-    assign ify_html = ify_raw | newline_to_br
-    assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
-    assign ify_pipe = ify_norm | replace: br_tag, '|||'
-    assign ify = ify_pipe | split: '|||'
-    assign ify_count = 0
-    for it in ify
-      assign t = it | strip
-      if t != '' 
-        assign ify_count = ify_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if ify_count > 0 -%}
-    <div class="nb-tray">
-      <h3 class="nb-h3">Is this for you?</h3>
-      <ul class="nb-list">
-        {%- for line in ify -%}
-          {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
-        {%- endfor -%}
-      </ul>
+{%- comment -%} IS THIS FOR YOU (Lux Text+Image) — parentheses-free conditions {%- endcomment -%}
+{%- liquid
+  assign ify_raw  = service.is_for_you | append: ''
+  assign ify_html = ify_raw | newline_to_br
+  assign br_tag   = '<br />'
+  assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+  assign ify_pipe = ify_norm | replace: br_tag, '|||'
+  assign ify      = ify_pipe | split: '|||'
+
+  assign ify_count = 0
+  for it in ify
+    assign t = it | strip
+    if t != '' 
+      assign ify_count = ify_count | plus: 1
+    endif
+  endfor
+
+  assign if_img     = service.is_for_you_image
+  assign if_layout  = service.is_for_you_layout | downcase | strip
+  assign if_tone    = service.is_for_you_tone   | downcase | strip | default: 'white'
+
+  # tone class
+  assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
+  assign if_tone_class = 'tone-white'
+  if tone_whitelist contains if_tone
+    assign if_tone_class = 'tone-' | append: if_tone
+  endif
+
+  # layout booleans (Liquid: avoid parentheses)
+  assign is_left_layout  = false
+  if if_layout == 'left' or if_layout == 'image-left'
+    assign is_left_layout = true
+  endif
+  assign is_right_layout = true
+  if is_left_layout
+    assign is_right_layout = false
+  endif
+-%}
+
+{%- if ify_count > 0 -%}
+<style>
+  /* ====== Lux “Image + Text” block (scoped) ====== */
+  .nb-if{
+    /* tray + accents (overridden by tones below) */
+    --if-surface:#fff;
+    --if-frame:#f4f7f6;
+    --if-accent:var(--nb-chocolate);
+
+    /* easy spacing knobs */
+    --if-mt: clamp(8px,1.6vw,14px);
+    --if-mb: clamp(10px,2vw,16px);
+
+    margin-top:var(--if-mt);
+    margin-bottom:var(--if-mb);
+  }
+
+  .nb-if__wrap{
+    /* gentler default vignette */
+    background:
+      radial-gradient(140% 120% at 88% -12%,
+        color-mix(in oklab, var(--if-accent), #000 4%) 0 18%,
+        transparent 42%),
+      var(--if-surface);
+    border-radius:24px;
+    padding: clamp(16px,2.4vw,24px);          /* tighter */
+    box-shadow: 0 10px 22px rgba(0,0,0,.05),
+                0 28px 50px rgba(0,0,0,.06);  /* lighter, more refined */
+  }
+
+  .nb-if__grid{
+    display:grid; align-items:center;
+    gap: clamp(14px,1.8vw,22px);              /* tighter */
+    grid-template-columns: 1.05fr .95fr;
+  }
+  .nb-if.nb-if--left  .nb-if__grid{ grid-template-columns:.95fr 1.05fr; }
+  @media (max-width: 900px){ .nb-if__grid{ grid-template-columns:1fr; } }
+
+  /* media */
+  .nb-if__media{ position:relative; }
+  .nb-if__frame{
+    border-radius:22px; overflow:hidden; background:#f7f9f8;
+    border:1px solid rgba(0,0,0,.06);         /* hairline frame */
+    box-shadow: 0 14px 32px rgba(0,0,0,.08);
+  }
+  .nb-if__image{
+    display:block; width:100%; height:auto;
+    transform:scale(1);
+    transition: transform .6s cubic-bezier(.2,.6,.2,1), filter .3s ease;
+  }
+  .nb-if__frame:hover .nb-if__image{ transform:scale(1.03); }
+  @media (prefers-reduced-motion:reduce){ .nb-if__frame:hover .nb-if__image{ transform:none; } }
+
+  /* copy */
+  .nb-if__title{ margin:0 0 10px; }           /* crisper title spacing */
+  .nb-if__list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+
+  .nb-if__li{
+    position:relative; background:#fff;
+    border:1px solid #e8ecef; border-radius:14px;
+    padding:.8rem 1rem .85rem 2.25rem;        /* slightly tighter */
+    box-shadow:0 6px 16px rgba(0,0,0,.05);    /* subtler elevation */
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-if__li::before{
+    content:""; position:absolute; left:.9rem; top:50%; transform:translateY(-50%);
+    width:8px; height:8px; border-radius:50%;
+    background:var(--if-accent);
+    box-shadow:0 0 0 6px color-mix(in oklab, var(--if-accent), #fff 85%);
+  }
+  .nb-if__li:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.08); }
+  @media (prefers-reduced-motion:reduce){ .nb-if__li:hover{ transform:none; } }
+
+  /* tones (set palette + accent) */
+  .nb-if.tone-white { --if-surface:#fff;        --if-frame:#f4f7f6; --if-accent:var(--nb-chocolate); }
+  .nb-if.tone-sage  { --if-surface:var(--nb-sage); --if-frame:#e8f1ef; --if-accent:var(--nb-deep); }
+  .nb-if.tone-pebble{ --if-surface:#fbf7f5;     --if-frame:#eee7e3; --if-accent:#B67955; }
+  .nb-if.tone-ink   { --if-surface:#f6f9f8;     --if-frame:#eef3f2; --if-accent:#223238; }
+  .nb-if.tone-teal  { --if-surface:#edf7f6;     --if-frame:#e6f1f0; --if-accent:#0F5B59; }
+
+  /* Pebble gets a softer, luxe gradient + warm shadow */
+  .nb-if.tone-pebble .nb-if__wrap{
+    background:
+      radial-gradient(120% 120% at 90% -10%, rgba(182,121,85,.10) 0 22%, transparent 46%),
+      linear-gradient(180deg, #fbf7f5 0%, #f8f1ec 100%);
+    box-shadow:0 10px 22px rgba(0,0,0,.05), 0 30px 60px rgba(182,121,85,.08);
+  }
+
+  /* Optional: subtle teal tint when tone=teal */
+  .nb-if.tone-teal .nb-if__wrap{
+    background:
+      radial-gradient(120% 120% at 90% -10%, rgba(16,99,108,.10) 0 22%, transparent 46%),
+      linear-gradient(180deg, #edf7f6 0%, #eaf3f2 100%);
+  }
+
+  /* Gradient option */
+  .nb-if.tone-gradient .nb-if__wrap{
+    background:
+      radial-gradient(140% 120% at 88% -12%, rgba(16,99,108,.14) 0 24%, transparent 48%),
+      #ffffff;
+  }
+</style>
+
+<section class="nb-if {{ if_tone_class }} {% if is_left_layout %}nb-if--left{% else %}nb-if--right{% endif %}">
+  <div class="nb-shell">
+    <div class="nb-if__wrap">
+      <div class="nb-if__grid">
+        {%- if if_img and is_left_layout -%}
+          <div class="nb-if__media">
+            <div class="nb-if__frame">
+              {{ if_img | image_url: width: 1200 | image_tag: sizes: "(max-width: 900px) 100vw, 520px", widths: "520,800,1200", class: "nb-if__image", alt: service.is_for_you_title | default: "Is this for you?" }}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="nb-if__copy">
+          <h3 class="nb-h3 nb-if__title">{{ service.is_for_you_title | default: 'Is this for you?' }}</h3>
+          <ul class="nb-if__list">
+            {%- for line in ify -%}
+              {%- assign l = line | strip -%}
+              {%- if l != '' -%}<li class="nb-if__li">{{ l }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- if if_img and is_right_layout -%}
+          <div class="nb-if__media">
+            <div class="nb-if__frame">
+              {{ if_img | image_url: width: 1200 | image_tag: sizes: "(max-width: 900px) 100vw, 520px", widths: "520,800,1200", class: "nb-if__image", alt: service.is_for_you_title | default: "Is this for you?" }}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
     </div>
-  {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
 
   {%- comment -%} PROCESS {%- endcomment -%}
   {%- liquid
@@ -552,7 +953,7 @@
     <div class="nb-tray">
       <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
       {%- if steps_count > 0 -%}
-        <ol class="nb-list nb-steps">
+        <ol class="nb-list nb-steps nb-steps--curve">
           {%- for step in steps -%}
             {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
           {%- endfor -%}
@@ -561,70 +962,289 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%} METHOD (RICH TEXT) {%- endcomment -%}
-  {%- if service.method_title or service.method_richtext -%}
-    <div class="nb-tray nb-method">
-      <h2 class="nb-h2">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
-      {%- if service.method_richtext -%}
-        <div class="nb-rte nb-method__body">{{ service.method_richtext | metafield_tag }}</div>
-      {%- endif -%}
-    </div>
-  {%- endif -%}
+  {%- comment -%} METHOD (Chips + Mini-Manifesto, tone-aware) {%- endcomment -%}
+{%- liquid
+  assign method_tone = service.method_tone | downcase | strip | default: 'white'
+  assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
+  assign method_tone_class = 'tone-white'
+  if tone_whitelist contains method_tone
+    assign method_tone_class = 'tone-' | append: method_tone
+  endif
+-%}
 
-  {%- comment -%} MYTHS / TRUTHS {%- endcomment -%}
-  {%- liquid
-    assign myths_raw  = service.myths  | append: ''
-    assign truths_raw = service.truths | append: ''
+{%- if service.method_title or service.method_richtext -%}
+<style>
+  /* ===== Method: chips + manifesto (scoped) ===== */
+  .nb-method-lite{
+    --m-surface:#fff;             /* tray */
+    --m-frame:#f4f7f6;            /* page tint behind tray (unused here but available) */
+    --m-accent:var(--nb-chocolate);
+    --m-radius:22px;
+    --m-pad:clamp(16px,2.6vw,28px);
 
-    assign myths_html  = myths_raw  | newline_to_br
-    assign truths_html = truths_raw | newline_to_br
+    background:var(--m-surface);
+    border-radius:var(--m-radius);
+    padding:var(--m-pad);
+    box-shadow:0 10px 24px rgba(0,0,0,.06);
+  }
 
-    assign myths_norm  = myths_html  | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
-    assign truths_norm = truths_html | replace: '<br/>','<br />' | replace: '<br>','<br />' | replace: '<br />\r\n','<br />' | replace: '<br />\r','<br />' | replace: '<br />\n','<br />' | replace: '&nbsp;',' '
+  /* Tones */
+  .nb-method-lite.tone-white { --m-surface:#fff;      --m-accent:var(--nb-chocolate); }
+  .nb-method-lite.tone-sage  { --m-surface:var(--nb-sage); --m-accent:var(--nb-deep); }
+  .nb-method-lite.tone-pebble{ --m-surface:#fbf7f5;   --m-accent:#B67955; }
+  .nb-method-lite.tone-ink   { --m-surface:#f6f9f8;   --m-accent:#223238; }
+  .nb-method-lite.tone-teal  { --m-surface:#edf7f6;   --m-accent:#0F5B59; }
+  .nb-method-lite.tone-gradient .nb-method__wrap{
+    background:
+      radial-gradient(120% 120% at 90% -10%, rgba(16,99,108,.12) 0 40%, transparent 55%),
+      var(--m-surface);
+    border-radius:var(--m-radius);
+  }
 
-    assign myths_pipe  = myths_norm  | replace: '<br />','|||'
-    assign truths_pipe = truths_norm | replace: '<br />','|||'
+  .nb-method__wrap{ border-radius:var(--m-radius); }
 
-    assign myths  = myths_pipe  | split: '|||'
-    assign truths = truths_pipe | split: '|||'
+  /* Heading */
+  .nb-method__title{ margin:0 0 clamp(10px,2vw,16px); }
 
-    assign myths_count = 0
-    for m in myths
-      assign t = m | strip
-      if t != '' 
-        assign myths_count = myths_count | plus: 1
-      endif
-    endfor
+  /* CHIPS: style the FIRST ul in the richtext as a chip grid */
+  .nb-method__rte > ul:first-of-type{
+    list-style:none; margin:0 0 clamp(12px,2vw,18px); padding:0;
+    display:grid; gap:12px;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+  @media (max-width: 900px){
+    .nb-method__rte > ul:first-of-type{ grid-template-columns:1fr; }
+  }
+  .nb-method__rte > ul:first-of-type > li{
+    position:relative;
+    background:#fff;
+    border:1px solid #e8ecef;
+    border-radius:14px;
+    padding:.85rem 1rem .9rem 2.25rem;
+    box-shadow:0 8px 18px rgba(0,0,0,.05);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-method__rte > ul:first-of-type > li::before{
+    content:""; position:absolute; left:.9rem; top:50%; transform:translateY(-50%);
+    width:8px; height:8px; border-radius:50%;
+    background:var(--m-accent);
+    box-shadow:0 0 0 6px color-mix(in oklab, var(--m-accent), #fff 85%);
+  }
+  .nb-method__rte > ul:first-of-type > li:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 26px rgba(0,0,0,.08);
+  }
+  @media (prefers-reduced-motion:reduce){
+    .nb-method__rte > ul:first-of-type > li:hover{ transform:none; }
+  }
 
-    assign truths_count = 0
-    for t in truths
-      assign z = t | strip
-      if z != '' 
-        assign truths_count = truths_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if myths_count > 0 or truths_count > 0 -%}
-    <div class="nb-duo">
-      {%- if myths_count > 0 -%}
-        <div class="nb-card nb-duo__col">
-          <h3 class="nb-h3">Common myths</h3>
+  /* MINI-MANIFESTO BANDS
+     Style any h3 + p (or h2 + p) groups that come AFTER the chip list */
+  .nb-method__rte h2, .nb-method__rte h3{ margin: clamp(12px,2.6vw,20px) 0 8px; }
+  .nb-method__rte h2 + p, .nb-method__rte h3 + p{
+    background:#fff;
+    border:1px solid #e8ecef;
+    border-radius:16px;
+    padding:14px 16px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    margin:0 0 clamp(10px,2vw,16px);
+    position:relative;
+  }
+  /* subtle accent sliver on the left of each band */
+  .nb-method__rte h2 + p::before, .nb-method__rte h3 + p::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px;
+    width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--m-accent), color-mix(in oklab, var(--m-accent), #000 14%));
+  }
+
+  /* General RTE tweaks inside the tray */
+  .nb-method__rte p{ color:var(--nb-muted); line-height:1.65; }
+</style>
+
+<section class="nb-method-lite {{ method_tone_class }}">
+  <div class="nb-method__wrap">
+    <h2 class="nb-h2 nb-method__title">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
+
+    {%- if service.method_richtext -%}
+      <div class="nb-rte nb-method__rte">
+        {{ service.method_richtext | metafield_tag }}
+      </div>
+    {%- else -%}
+      {#-- Simple fallback if richtext is empty --#}
+      <div class="nb-method__rte">
+        <ul>
+          <li><strong>Identity work</strong> — clarify who you are beneath roles and expectations.</li>
+          <li><strong>Inner skills</strong> — attention, emotional literacy, and embodied practices.</li>
+          <li><strong>Practices</strong> — repeatable reps that create durable change.</li>
+          <li><strong>Life as Play</strong> — principles for a life that is meaningful and alive.</li>
+        </ul>
+        <h3>How change becomes durable</h3>
+        <p>We pair insight with <em>embodied practices</em>—simple daily reps that re-train attention, emotion, and energy. Over weeks, these compound into a steadier nervous system and visible results at work and in relationships.</p>
+        <h3>Our vibe</h3>
+        <p>Straight, respectful conversations. No fluff. We go at the pace of truth—and we make room for play and mystery along the way.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+ {%- comment -%} MYTHS / TRUTHS — Before → After compare rows {%- endcomment -%}
+{%- liquid
+  assign myths_raw  = service.myths  | append: ''
+  assign truths_raw = service.truths | append: ''
+
+  assign br = '<br />'
+
+  assign myths_html  = myths_raw  | newline_to_br
+  assign truths_html = truths_raw | newline_to_br
+
+  assign myths_norm  = myths_html  | replace: '<br/>', br | replace: '<br>', br | replace: '&nbsp;',' '
+  assign truths_norm = truths_html | replace: '<br/>', br | replace: '<br>', br | replace: '&nbsp;',' '
+
+  assign myths_pipe  = myths_norm  | replace: br, '|||'
+  assign truths_pipe = truths_norm | replace: br, '|||'
+
+  assign myths  = myths_pipe  | split: '|||'
+  assign truths = truths_pipe | split: '|||'
+
+  assign myths_count  = 0
+  for m in myths
+    assign t = m | strip
+    if t != '' 
+      assign myths_count = myths_count | plus: 1
+    endif
+  endfor
+
+  assign truths_count = 0
+  for t in truths
+    assign z = t | strip
+    if z != '' 
+      assign truths_count = truths_count | plus: 1
+    endif
+  endfor
+
+  assign pair_count = 0
+  if myths_count > 0 and truths_count > 0
+    assign pair_count = myths_count
+    if truths_count < pair_count
+      assign pair_count = truths_count
+    endif
+  endif
+-%}
+
+{%- if myths_count > 0 or truths_count > 0 -%}
+<style>
+  /* ===== Compare Rows (scoped) ===== */
+  .nb-compare{
+    --cmp-surface:#fff;
+    --cmp-accent-myth:#B67955;   /* warm pebble/chocolate tint */
+    --cmp-accent-truth:var(--nb-deep); /* brand deep / teal */
+    --cmp-radius:22px;
+    --cmp-pad:clamp(16px,2.6vw,28px);
+    margin-top: clamp(10px,2vw,18px);
+  }
+  .nb-compare__tray{
+    background:var(--cmp-surface);
+    border-radius:var(--cmp-radius);
+    padding:var(--cmp-pad);
+    box-shadow:0 10px 24px rgba(0,0,0,.06);
+  }
+  .nb-compare__title{ margin:0 0 clamp(12px,2vw,16px); }
+
+  .nb-compare__row{
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: clamp(10px,2vw,16px);
+    align-items: stretch;
+    margin-bottom: clamp(10px,2vw,16px);
+  }
+  .nb-compare__arrow{
+    display:grid; place-items:center;
+    align-self:center; justify-self:center;
+    width:44px; height:44px; border-radius:999px;
+    background: radial-gradient(circle at 30% 30%, rgba(0,0,0,.08), rgba(0,0,0,.02));
+    box-shadow:0 6px 14px rgba(0,0,0,.08) inset;
+    font-weight:800; color:var(--nb-muted);
+  }
+  .nb-compare__arrow::before{ content:"→"; }
+  @media (max-width: 860px){
+    .nb-compare__row{
+      grid-template-columns:1fr;
+      grid-template-rows:auto auto auto;
+    }
+    .nb-compare__arrow{
+      width:38px; height:38px; margin: -4px auto;
+    }
+    .nb-compare__arrow::before{ content:"↓"; }
+  }
+
+  .nb-card{
+    position:relative; background:#fff;
+    border:1px solid #e8ecef; border-radius:16px;
+    padding:14px 16px 14px 18px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-card:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.08); }
+  @media (prefers-reduced-motion:reduce){ .nb-card:hover{ transform:none; } }
+
+  .nb-card__badge{
+    position:absolute; top:8px; left:10px;
+    font-size:.72rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    background:rgba(0,0,0,.04); color:var(--nb-muted);
+    border-radius:999px; padding:.25rem .5rem;
+  }
+
+  .nb-card--myth{ padding-top:30px; }
+  .nb-card--myth::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--cmp-accent-myth), color-mix(in oklab, var(--cmp-accent-myth), #000 14%));
+  }
+
+  .nb-card--truth{ padding-top:30px; }
+  .nb-card--truth::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:16px 0 0 16px;
+    background:linear-gradient(180deg, var(--cmp-accent-truth), color-mix(in oklab, var(--cmp-accent-truth), #000 14%));
+  }
+</style>
+
+<section class="nb-compare">
+  <div class="nb-compare__tray">
+    <h3 class="nb-h3 nb-compare__title">Common myths → What’s actually true</h3>
+
+    {%- if pair_count > 0 -%}
+      {%- assign last = pair_count | minus: 1 -%}
+      {%- for i in (0..last) -%}
+        {%- assign myth  = myths[i]  | strip -%}
+        {%- assign truth = truths[i] | strip -%}
+        {%- if myth != '' or truth != '' -%}
+          <div class="nb-compare__row">
+            <div class="nb-card nb-card--myth">
+              <span class="nb-card__badge">Myth</span>
+              {{ myth }}
+            </div>
+            <div class="nb-compare__arrow" aria-hidden="true"></div>
+            <div class="nb-card nb-card--truth">
+              <span class="nb-card__badge">Truth</span>
+              {{ truth }}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} Fallback: if only one side exists, show that list as simple cards {%- endcomment -%}
+      <div class="nb-compare__row" style="grid-template-columns:1fr;">
+        <div class="nb-card">
           <ul class="nb-list">
             {%- for m in myths -%}{%- assign mm = m | strip -%}{% if mm != '' %}<li>{{ mm }}</li>{% endif %}{%- endfor -%}
-          </ul>
-        </div>
-      {%- endif -%}
-      {%- if truths_count > 0 -%}
-        <div class="nb-card nb-duo__col">
-          <h3 class="nb-h3">What’s actually true</h3>
-          <ul class="nb-list">
             {%- for t in truths -%}{%- assign tt = t | strip -%}{% if tt != '' %}<li>{{ tt }}</li>{% endif %}{%- endfor -%}
           </ul>
         </div>
-      {%- endif -%}
-    </div>
-    <style>.nb-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:780px){.nb-duo{grid-template-columns:1fr}}.nb-duo__col{padding:16px 18px}</style>
-  {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
 
   {%- comment -%} FAQ {%- endcomment -%}
   {%- liquid
@@ -708,13 +1328,34 @@
     </script>
   {%- endif -%}
 
-  <div style="text-align:center;padding:10px 0 24px">
-    <a class="nb-cta" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
-    <div class="nb-sticky-cta" data-cta="service-sticky-cta"><a class="nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a></div>
+  <!-- Bottom CTA centered (flex wrapper) -->
+  <div style="padding:10px 0 24px; display:flex; justify-content:center;">
+  <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
+  <div class="nb-sticky-cta" data-cta="service-sticky-cta">
+    <a class="button nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a>
   </div>
+</div>
 
 </section>
 
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

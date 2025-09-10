@@ -136,36 +136,6 @@ body {
 }
 */
 
-/* Primary buttons — cocoa accent */
-.button,
-.btn,
-.shopify-payment-button__button--unbranded,
-button[type="submit"],
-[role="button"].button {
-  background: var(--nb-choc-600);
-  border-color: var(--nb-choc-600);
-  color: #fff;
-  border-radius: var(--nb-radius-md);
-  box-shadow: var(--nb-shadow-1);
-  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
-}
-.button:hover,
-.btn:hover,
-.shopify-payment-button__button--unbranded:hover,
-button[type="submit"]:hover {
-  filter: brightness(.95);
-  transform: translateY(-1px);
-  box-shadow: var(--nb-shadow-2);
-}
-
-/* Secondary buttons — deep teal */
-.button--secondary,
-.btn--secondary {
-  background: var(--nb-teal-700);
-  border-color: var(--nb-teal-700);
-  color: #fff;
-}
-
 /* Link color + tasteful hover */
 a {
   color: var(--nb-teal-700);
@@ -189,7 +159,6 @@ html {
   /* Firefox */
   scrollbar-width: thin;
   scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) var(--color-background);
-  scroll-behavior: smooth;
 }
 
 html[scroll-lock] {
@@ -674,11 +643,6 @@ p:empty {
     /* stylelint-disable-next-line declaration-no-important */
     word-wrap: normal !important;
   }
-}
-
-.flex {
-  display: flex;
-  gap: var(--gap-md);
 }
 
 .grid {
@@ -5059,28 +5023,14 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
 @media (min-width: 750px){
   .nb-fab { display: none !important; }
 }
-/* ===== NIBANA — Header “Book a call” CTA (desktop) ===== */
+/* Header CTA: only visibility & spacing; styling comes from .nb-cta */
 .header .nb-cta{
   display:none;
-  text-decoration:none;
-  border-radius:9999px;
-  padding:10px 18px;
-  font-weight:600;
-  line-height:1.1;
-  border:2px solid var(--nb-chocolate, #C86B2A);
-  background:var(--nb-chocolate, #C86B2A);
-  color:#fff;
-  box-shadow:0 10px 28px rgba(0,0,0,.06);
-  transition:background-color .15s ease, box-shadow .2s ease, transform .08s ease;
   margin-inline-start:var(--gap-xl, 16px);
   white-space:nowrap;
 }
-.header .nb-cta:hover{
-  background:var(--nb-choc-600, #9E4E19);
-  border-color:var(--nb-choc-600, #9E4E19);
-  color:#fff;
-  transform:translateY(-1px);
-  box-shadow:0 6px 20px rgba(0,0,0,.10);
+@media (min-width: 990px){
+  .header .nb-cta{ display:inline-flex; align-items:center; }
 }
 @media (min-width: 990px){
   .header .nb-cta{ display:inline-flex; align-items:center; }
@@ -5151,4 +5101,195 @@ main[data-template="page.coaching"] [id$="custom_liquid_calendly"] .calendly-inl
     min-width: 0 !important;     /* stop forcing desktop on phones */
     height: 1000px !important;    /* room for Calendly mobile layout */
   }
+}
+
+/* ==========================================================
+   NIBANA — Global hero typography & CTA sync (scoped)
+   Scope: only when the site toggle adds `nb-typography` to <body>.
+   No changes to images, videos or backgrounds.
+   ========================================================== */
+body.nb-typography {
+  /* nothing here — all rules are scoped below */
+}
+
+/* HERO text (Service) → use the same global variables as Home */
+body.nb-typography .nb-hero-skit .nb-skit__copy .nb-h1 {
+  /* Map to theme H1 tokens (same ones Home hero uses) */
+  font-family: var(--font-h1--family);
+  font-style: var(--font-h1--style);
+  font-weight: var(--font-h1--weight);
+  font-size: var(--font-h1--size);
+  line-height: var(--font-h1--line-height);
+  letter-spacing: var(--font-h1--letter-spacing);
+  text-transform: var(--font-h1--case);
+  color: inherit; /* defer to scheme; overrides any custom color */
+  margin: 0 0 .25em;
+}
+
+body.nb-typography .nb-hero-skit .nb-skit__copy .nb-sub {
+  /* Map subhead to paragraph tokens for consistency */
+  font-family: var(--font-paragraph--family);
+  font-style: var(--font-paragraph--style, normal);
+  font-weight: var(--font-paragraph--weight, var(--font-weight));
+  font-size: var(--font-paragraph--size);
+  line-height: var(--font-paragraph--line-height);
+  color: var(--color-foreground);
+  opacity: var(--opacity-80);
+  margin: 0 0 1rem;
+}
+
+body.nb-typography .nb-hero-skit .nb-skit__copy .nb-eyebrow {
+  /* Eyebrow feels like small heading: use H6 tokens */
+  font-family: var(--font-h6--family, var(--font-paragraph--family));
+  font-style: var(--font-h6--style, normal);
+  font-weight: var(--font-h6--weight, 600);
+  font-size: var(--font-h6--size, var(--font-size--xs));
+  line-height: var(--font-h6--line-height, 1.2);
+  letter-spacing: var(--font-h6--letter-spacing, .08em);
+  text-transform: var(--font-h6--case, uppercase);
+  color: var(--color-foreground);
+  opacity: var(--opacity-60);
+  margin: 0 0 .5rem;
+}
+
+/* CTA in Service Hero → match theme primary button look */
+body.nb-typography .nb-hero-skit .nb-skit__copy .nb-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--button-font-family-primary);
+  font-weight: var(--button-font-weight-primary);
+  text-transform: var(--button-text-case-primary);
+
+  padding: var(--button-padding-block) var(--button-padding-inline);
+  border-radius: var(--style-border-radius-buttons-primary);
+  border: var(--button-border-width, 0) solid var(--color-primary-button-border);
+
+  background: var(--color-primary-button);
+  color: var(--color-primary-button-text);
+  box-shadow: var(--shadow-button);
+  text-decoration: none;
+}
+body.nb-typography .nb-hero-skit .nb-skit__copy .nb-cta:hover {
+  background: var(--color-primary-button-hover-background);
+  color: var(--color-primary-button-hover-text);
+  border-color: var(--color-primary-button-hover-border);
+}
+
+/* Optional: unify Home hero CTA too (without touching other buttons) */
+body.nb-typography .hero .button,
+body.nb-typography .hero .button:not(.button-secondary, .button-unstyled) {
+  border-radius: var(--style-border-radius-buttons-primary);
+  box-shadow: var(--shadow-button);
+}
+
+/* Nibana primary button tokens (only when toggle is on) */
+body.nb-typography{
+  --color-primary-button: #C86B2A;                    /* chocolate */
+  --color-primary-button-text: #ffffff;
+
+  /* hover */
+  --color-primary-button-hover-background: #AD5D26;   /* slightly darker */
+  --color-primary-button-hover-text: #ffffff;
+
+  /* keep borders clean */
+  --color-primary-button-border: transparent;
+  --color-primary-button-hover-border: transparent;
+
+  /* if you want pill buttons like Home (optional) */
+  --style-border-radius-buttons-primary: 9999px;
+}
+
+/* === NIBANA — Global CTA pill aligned to Home button style === */
+.nb-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+
+  /* match Home button shape/feel */
+  border-radius: var(--nb-radius-md, 12px);
+  min-height: 44px;
+  padding: 12px 20px;
+
+  /* brand color + shadow (same tokens the Home button uses) */
+  border: 2px solid var(--nb-chocolate, #C86B2A);
+  background: var(--nb-chocolate, #C86B2A);
+  color:#fff;
+  box-shadow: var(--nb-shadow-1, 0 10px 28px rgba(0,0,0,.06));
+
+  font-weight:600;
+  line-height:1.1;
+  transition: background-color .15s ease, box-shadow .2s ease, transform .08s ease;
+}
+.nb-cta:hover{
+  background: var(--nb-choc-600, #9E4E19);
+  border-color: var(--nb-choc-600, #9E4E19);
+  color:#fff;
+  transform: translateY(-1px);
+}
+
+/* XL helper for hero + bottom CTAs (still keep Home proportions) */
+.nb-cta.nb-cta--xl{
+  min-height: 48px;
+  padding: 14px 22px;
+  font-size: clamp(16px, 1.25vw, 18px);
+  letter-spacing: 0.01em;
+}
+
+/* Keep sticky-CTA look distinct but color-aligned */
+.nb-sticky-cta__btn{
+  border-radius:9999px;
+  border:2px solid var(--nb-chocolate, #C86B2A);
+  background:var(--nb-chocolate, #C86B2A);
+  color:#fff;
+  font-weight:600;
+}
+
+/* Ghost/outline variant (optional, if you ever need it) */
+.nb-cta--ghost{
+  background:transparent;
+  color:var(--nb-chocolate, #C86B2A);
+}
+.nb-cta--ghost:hover{
+  background:rgba(200,107,42,.06);
+}
+
+/* ===== NIBANA — Global CTA (pill) ===== */
+.nb-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  white-space:nowrap;
+
+  background:var(--nb-chocolate, #C86B2A);
+  color:#fff;
+  border:0;
+  border-radius:9999px;
+
+  padding:12px 20px;
+  font-weight:600;
+  line-height:1.1;
+
+  box-shadow:0 10px 28px rgba(0,0,0,.06);
+  transition:background-color .15s ease, box-shadow .2s ease, transform .08s ease;
+}
+.nb-cta:hover{
+  background:var(--nb-choc-600, #9E4E19);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(0,0,0,.10);
+}
+.nb-cta:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
+
+/* Size variant used in hero + big calls to action */
+.nb-cta--xl{
+  padding:14px 22px;
+  font-size:clamp(16px,1.05vw,18px);
 }
