@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "coaching": { "type": "coaching-service", "settings": {} }
+  },
+  "order": ["coaching"]
+}
