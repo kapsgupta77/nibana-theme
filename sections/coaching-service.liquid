@@ -179,30 +179,85 @@
     assign vid_id = service.hero_video_url | split: 'v=' | last | split: '&' | first
   endif
 
-  assign flags_raw = service.hero_flags | default: 'band, teal, ring, tilt'
-  assign flags = flags_raw | split: ','
+  # Defensive parse: normalize bullets/commas and trim tokens
+  assign flags_raw  = service.hero_flags | default: 'band, teal, ring, tilt'
+  assign flags_norm = flags_raw | replace: '•', ',' | replace: '，', ',' | replace: '  ', ' '
+  assign tokens     = flags_norm | split: ','
 
   assign hero_classes = 'nb-hero-skit'
-  for f in flags
+  assign any_matched  = false
+
+  for f in tokens
     assign t = f | strip | downcase
-    case t
-      when 'band'     then assign hero_classes = hero_classes | append: ' is-band'
-      when 'teal'     then assign hero_classes = hero_classes | append: ' tone-teal'
-      when 'ink'      then assign hero_classes = hero_classes | append: ' tone-ink'
-      when 'pebble'   then assign hero_classes = hero_classes | append: ' tone-pebble'
-      when 'ring'     then assign hero_classes = hero_classes | append: ' has-ring'
-      when 'tilt'     then assign hero_classes = hero_classes | append: ' has-tilt'
-      when 'stripe'   then assign hero_classes = hero_classes | append: ' has-stripe'
-      when 'glass'    then assign hero_classes = hero_classes | append: ' has-glass'
-      when 'noise'    then assign hero_classes = hero_classes | append: ' has-noise'
-      when 'dots'     then assign hero_classes = hero_classes | append: ' has-dots'
-      when 'corner'   then assign hero_classes = hero_classes | append: ' has-corner'
-      when 'parallax' then assign hero_classes = hero_classes | append: ' has-parallax'
-    endcase
+
+    if t == 'band' or t == 'full-bleed'
+      assign hero_classes = hero_classes | append: ' is-band'
+      assign any_matched  = true
+    endif
+
+    if t == 'teal'
+      assign hero_classes = hero_classes | append: ' tone-teal'
+      assign any_matched  = true
+    endif
+
+    if t == 'ink'
+      assign hero_classes = hero_classes | append: ' tone-ink'
+      assign any_matched  = true
+    endif
+
+    if t == 'pebble'
+      assign hero_classes = hero_classes | append: ' tone-pebble'
+      assign any_matched  = true
+    endif
+
+    if t == 'ring'
+      assign hero_classes = hero_classes | append: ' has-ring'
+      assign any_matched  = true
+    endif
+
+    if t == 'tilt'
+      assign hero_classes = hero_classes | append: ' has-tilt'
+      assign any_matched  = true
+    endif
+
+    if t == 'stripe'
+      assign hero_classes = hero_classes | append: ' has-stripe'
+      assign any_matched  = true
+    endif
+
+    if t == 'glass'
+      assign hero_classes = hero_classes | append: ' has-glass'
+      assign any_matched  = true
+    endif
+
+    if t == 'noise'
+      assign hero_classes = hero_classes | append: ' has-noise'
+      assign any_matched  = true
+    endif
+
+    if t == 'dots'
+      assign hero_classes = hero_classes | append: ' has-dots'
+      assign any_matched  = true
+    endif
+
+    if t == 'corner'
+      assign hero_classes = hero_classes | append: ' has-corner'
+      assign any_matched  = true
+    endif
+
+    if t == 'parallax'
+      assign hero_classes = hero_classes | append: ' has-parallax'
+      assign any_matched  = true
+    endif
   endfor
+
+  # Failsafe: if nothing matched (odd characters), force a visible preset
+  if any_matched == false
+    assign hero_classes = 'nb-hero-skit is-band tone-teal has-ring has-tilt has-stripe has-corner'
+  endif
 -%}
 
-<section class="{{ hero_classes }}">
+<section class="{{ hero_classes }}" data-hero-flags="{{ flags_raw | strip }}">
   <div class="nb-skit__inner">
     <div class="nb-skit__copy">
       {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
