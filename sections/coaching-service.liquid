@@ -182,6 +182,78 @@
     #e7f3f2;
 }
 
+/* --- Hero type tuning (brand) --- */
+.nb-h1{
+  font-size: clamp(36px, 5.6vw, 64px);   /* +headroom on desktop */
+  line-height: 1.06;                     /* a hair tighter */
+  letter-spacing: -0.01em;               /* optical tightening */
+  color: var(--nb-ink);
+}
+.nb-sub{ color: var(--nb-muted); opacity: .96; }
+@media (min-width: 1100px){
+  .nb-skit__copy{ max-width: 54ch; }     /* prevents overly long lines */
+}
+
+/* === Trust BELT === */
+.nb-trustbelt{
+  background:#fff;                       /* breaks the same-color stack */
+  padding: 8px 0 4px;                    /* slim belt */
+  border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef;
+}
+.nb-trustbelt__viewport{
+  position:relative; overflow:hidden; border-radius:14px;
+  background:linear-gradient(180deg, #ffffff, #fafcfc);
+  box-shadow:0 8px 22px rgba(0,0,0,.06);
+}
+.nb-trustbelt__track{
+  display:flex; gap:14px; padding:12px 18px;
+  animation: nb-marquee var(--nb-marquee-speed, 22s) linear infinite;
+  will-change: transform;
+}
+.nb-trustbelt__chip{
+  display:inline-flex; align-items:center; gap:10px;
+  white-space:nowrap; background:#fff; border:1px solid #e8ecef;
+  border-radius:999px; padding:.55rem .9rem; line-height:1.1;
+  box-shadow:0 6px 16px rgba(0,0,0,.05);
+  color: var(--nb-muted);
+}
+.nb-trustbelt__chip i{
+  width:18px; height:18px; border-radius:999px; display:inline-block;
+  background: radial-gradient(circle at 30% 30%, #8bc4bc, #0F5B59);
+  mask-image: radial-gradient(circle, transparent 42%, black 43%); /* subtle inner dot */
+}
+
+/* mask edges for fade-in/out */
+.nb-trustbelt__viewport{
+  -webkit-mask-image: linear-gradient( to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient( to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+/* Motion preferences + hover pause */
+@keyframes nb-marquee { from{ transform: translateX(0) } to{ transform: translateX(-50%) } }
+.nb-trustbelt__viewport:hover .nb-trustbelt__track{ animation-play-state: paused; }
+@media (prefers-reduced-motion:reduce){
+  .nb-trustbelt__track{ animation: none; }
+}
+
+/* === Trust GRID (optional layout via metaobject) === */
+.nb-trustgrid{ background:#fff; padding: 18px 0; border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef; }
+.nb-trustgrid__list{
+  list-style:none; margin:0; padding:0;
+  display:grid; gap:12px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+@media (min-width: 900px){ .nb-trustgrid__list{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+.nb-trustgrid__chip{
+  background:#fff; border:1px solid #e8ecef; border-radius:14px; padding:.8rem 1rem;
+  box-shadow:0 8px 22px rgba(0,0,0,.06); color: var(--nb-muted); display:flex; align-items:center; gap:10px;
+}
+.nb-trustgrid__tick{
+  width:18px; height:18px; border-radius:999px; flex:0 0 18px;
+  background: radial-gradient(circle at 30% 30%, #8bc4bc, #0F5B59);
+  mask-image: radial-gradient(circle, transparent 42%, black 43%);
+}
+
 </style>
 
 {%- comment -%} ========= HERO SUPERKIT OUTSIDE THE PAGE-WIDTH WRAPPER (full-bleed) ========= {%- endcomment -%}
@@ -349,28 +421,59 @@
 
   {%- assign br_tag = '<br />' -%}
 
-  {%- comment -%} SOCIAL PROOF {%- endcomment -%}
-  {%- liquid
-    assign sp_raw  = service.social_proof | append: ''
-    assign sp_html = sp_raw | newline_to_br
-    assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
-    assign sp_pipe = sp_norm | replace: br_tag, '|||'
-    assign sp      = sp_pipe | split: '|||'
-    assign sp_filled = 0
-    for x in sp
-      assign t = x | strip
-      if t != '' 
-        assign sp_filled = sp_filled | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if sp_filled > 0 -%}
-    <div class="nb-tray">
-      <div class="nb-badges">
-        {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}<div class="nb-card">{{ sv }}</div>{% endif %}{%- endfor -%}
+  {%- comment -%} ---------- SOCIAL PROOF (Trust belt with grid fallback) ---------- {%- endcomment -%}
+{%- liquid
+  assign sp_raw  = service.social_proof | append: ''
+  assign sp_html = sp_raw | newline_to_br
+  assign br_tag  = '<br />'
+  assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+  assign sp_pipe = sp_norm | replace: br_tag, '|||'
+  assign sp      = sp_pipe | split: '|||'
+
+  assign sp_filled = 0
+  for x in sp
+    assign t = x | strip
+    if t != '' 
+      assign sp_filled = sp_filled | plus: 1
+    endif
+  endfor
+
+  assign sp_layout = service.social_proof_layout | downcase | strip
+-%}
+
+{%- if sp_filled > 0 -%}
+  {%- if sp_layout == 'grid' or sp_layout == 'cards' -%}
+    <!-- GRID variant -->
+    <section class="nb-trustgrid">
+      <div class="nb-trustgrid__inner nb-shell">
+        <ul class="nb-trustgrid__list">
+          {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
+            <li class="nb-trustgrid__chip">
+              <span class="nb-trustgrid__tick" aria-hidden="true"></span>{{ sv }}
+            </li>
+          {% endif %}{%- endfor -%}
+        </ul>
       </div>
-    </div>
+    </section>
+  {%- else -%}
+    <!-- BELT (marquee) variant -->
+    <section class="nb-trustbelt">
+      <div class="nb-trustbelt__inner nb-shell">
+        <div class="nb-trustbelt__viewport">
+          <div class="nb-trustbelt__track">
+            {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
+              <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
+            {% endif %}{%- endfor -%}
+            {%- comment -%} duplicate for seamless loop {%- endcomment -%}
+            {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
+              <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
+            {% endif %}{%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </section>
   {%- endif -%}
+{%- endif -%}
 
   {%- comment -%} OUTCOMES {%- endcomment -%}
   {%- liquid
