@@ -689,6 +689,34 @@
   }
 </style>
 
+<style>
+  /* ---- RHYTHM FIX: rely on the grid gap, not extra margins/padding ---- */
+
+  /* remove outer margins on custom sections that sit inside .nb-grid */
+  .nb-shell.nb-grid > .nb-outcomes,
+  .nb-shell.nb-grid > .nb-if,
+  .nb-shell.nb-grid > .nb-method-lite,
+  .nb-shell.nb-grid > .nb-compare{
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* kill extra top/bottom padding on the outcomes section */
+  .nb-outcomes{
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* tighten mobile tray padding a bit */
+  @media (max-width: 740px){
+    .nb-outcomes__wrap{ padding: 12px 12px !important; }
+    .nb-if .nb-if__wrap{ padding: 14px !important; }
+  }
+
+  /* slightly trim the trustbelt below the hero so rhythm matches */
+  .nb-trustbelt{ padding-bottom: 6px; }
+</style>
+
 {%- liquid
   assign oc_raw  = service.outcomes | append: ''
   assign oc_html = oc_raw | newline_to_br
@@ -1313,6 +1341,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
