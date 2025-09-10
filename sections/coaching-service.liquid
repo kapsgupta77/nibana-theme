@@ -73,12 +73,75 @@
   details[open] .nb-faq__q::after{content:"–"}
   .nb-faq__a{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;margin:10px 14px 2px;padding:16px 20px;color:var(--nb-muted);line-height:1.65}
 
-  /* Process timeline */
-  .nb-steps{counter-reset:step;display:grid;gap:12px;list-style:none;padding-left:0;margin:0}
-  .nb-steps li{position:relative;background:#fff;border:1px solid #e8ecef;border-radius:14px;padding:12px 14px 12px 48px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-  .nb-steps li::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:12px;width:28px;height:28px;display:grid;place-items:center;border-radius:999px;background:var(--nb-sage);color:var(--nb-deep);font-weight:700;border:1px solid rgba(0,0,0,.06)}
-  .nb-steps li + li{margin-top:8px}
-  .nb-steps li + li::after{content:"";position:absolute;left:25px;top:-8px;bottom:calc(100% - 8px);width:2px;background:rgba(0,0,0,.06)}
+/* ===== Curved Timeline (Process) ===== */
+.nb-steps--curve{
+  --tl-line:#e6efed;               /* spine + elbows */
+  --tl-pearl-bg:var(--nb-sage);
+  --tl-pearl-fg:var(--nb-deep);
+
+  counter-reset:step;
+  position:relative;
+  list-style:none;
+  margin:0;
+  padding:10px 0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 28px;
+}
+.nb-steps--curve::before{
+  content:"";
+  position:absolute; left:50%; top:0; bottom:0;
+  width:2px; transform:translateX(-50%);
+  background:linear-gradient(180deg,rgba(34,50,56,.10),rgba(34,50,56,.14));
+  border-radius:2px;
+}
+.nb-steps--curve li{
+  position:relative; background:#fff;
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px; padding:12px 16px; min-height:52px;
+  display:flex; align-items:center;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.nb-steps--curve li:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.08); }
+@media (prefers-reduced-motion:reduce){ .nb-steps--curve li:hover{ transform:none; } }
+
+.nb-steps--curve li:nth-child(odd){  grid-column:1; margin-right:28px; }
+.nb-steps--curve li:nth-child(even){ grid-column:2; margin-left:28px; }
+
+.nb-steps--curve li::before{
+  counter-increment:step;
+  content:counter(step);
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:32px; height:32px; border-radius:999px;
+  display:grid; place-items:center;
+  font-weight:700; font-size:14px;
+  background:var(--tl-pearl-bg); color:var(--tl-pearl-fg);
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
+.nb-steps--curve li:nth-child(odd)::before{  right:-16px; }
+.nb-steps--curve li:nth-child(even)::before{ left:-16px; }
+
+.nb-steps--curve li::after{
+  content:""; position:absolute; top:50%;
+  width:28px; height:18px; border:2px solid var(--tl-line);
+  transform:translateY(-50%); background:transparent;
+}
+.nb-steps--curve li:nth-child(odd)::after{
+  right:-28px; border-left:none; border-radius:0 20px 20px 0;
+}
+.nb-steps--curve li:nth-child(even)::after{
+  left:-28px; border-right:none; border-radius:20px 0 0 20px;
+}
+
+@media (max-width:780px){
+  .nb-steps--curve{ grid-template-columns:1fr; gap:12px; }
+  .nb-steps--curve::before{ display:none; }
+  .nb-steps--curve li{ margin:0; padding-left:48px; }
+  .nb-steps--curve li::before{ left:12px; right:auto; }
+  .nb-steps--curve li::after{ display:none; }
+}
 
   /* Sticky mobile CTA */
   .nb-sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;padding:max(10px, env(safe-area-inset-bottom));background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));border-top:1px solid #e8ecef;backdrop-filter:saturate(180%) blur(6px)}
@@ -770,7 +833,7 @@
     <div class="nb-tray">
       <h3 class="nb-h3">{{ service.process_titles | default: 'The Process' }}</h3>
       {%- if steps_count > 0 -%}
-        <ol class="nb-list nb-steps">
+        <ol class="nb-list nb-steps nb-steps--curve">
           {%- for step in steps -%}
             {%- assign s = step | strip -%}{% if s != '' %}<li>{{ s }}</li>{% endif %}
           {%- endfor -%}
@@ -939,6 +1002,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
