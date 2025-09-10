@@ -616,34 +616,65 @@
 {%- if ify_count > 0 -%}
 <style>
   /* ====== Lux “Image + Text” block (scoped) ====== */
-  .nb-if{ --if-surface:#fff; --if-frame:#f4f7f6; --if-accent:var(--nb-chocolate);
-          --if-mt: clamp(10px,2vw,18px); --if-mb: clamp(14px,2.6vw,24px);
-          margin-top:var(--if-mt); margin-bottom:var(--if-mb); }
+  .nb-if{
+    /* tray + accents (overridden by tones below) */
+    --if-surface:#fff;
+    --if-frame:#f4f7f6;
+    --if-accent:var(--nb-chocolate);
+
+    /* easy spacing knobs */
+    --if-mt: clamp(8px,1.6vw,14px);
+    --if-mb: clamp(10px,2vw,16px);
+
+    margin-top:var(--if-mt);
+    margin-bottom:var(--if-mb);
+  }
+
   .nb-if__wrap{
+    /* gentler default vignette */
     background:
-      radial-gradient(140% 120% at 88% -12%, color-mix(in oklab, var(--if-accent), #000 6%) 0 20%, transparent 45%),
+      radial-gradient(140% 120% at 88% -12%,
+        color-mix(in oklab, var(--if-accent), #000 4%) 0 18%,
+        transparent 42%),
       var(--if-surface);
     border-radius:24px;
-    padding: clamp(18px,3vw,28px);
-    box-shadow: 0 12px 28px rgba(0,0,0,.06), 0 32px 60px rgba(0,0,0,.06);
+    padding: clamp(16px,2.4vw,24px);          /* tighter */
+    box-shadow: 0 10px 22px rgba(0,0,0,.05),
+                0 28px 50px rgba(0,0,0,.06);  /* lighter, more refined */
   }
-  .nb-if__grid{ display:grid; align-items:center; gap: clamp(16px,2.2vw,28px); grid-template-columns: 1.05fr .95fr; }
+
+  .nb-if__grid{
+    display:grid; align-items:center;
+    gap: clamp(14px,1.8vw,22px);              /* tighter */
+    grid-template-columns: 1.05fr .95fr;
+  }
   .nb-if.nb-if--left  .nb-if__grid{ grid-template-columns:.95fr 1.05fr; }
   @media (max-width: 900px){ .nb-if__grid{ grid-template-columns:1fr; } }
 
   /* media */
   .nb-if__media{ position:relative; }
-  .nb-if__frame{ border-radius:22px; overflow:hidden; background:#f7f9f8; box-shadow: 0 14px 32px rgba(0,0,0,.08); }
-  .nb-if__image{ display:block; width:100%; height:auto; transform:scale(1); transition: transform .6s cubic-bezier(.2,.6,.2,1), filter .3s ease; }
+  .nb-if__frame{
+    border-radius:22px; overflow:hidden; background:#f7f9f8;
+    border:1px solid rgba(0,0,0,.06);         /* hairline frame */
+    box-shadow: 0 14px 32px rgba(0,0,0,.08);
+  }
+  .nb-if__image{
+    display:block; width:100%; height:auto;
+    transform:scale(1);
+    transition: transform .6s cubic-bezier(.2,.6,.2,1), filter .3s ease;
+  }
   .nb-if__frame:hover .nb-if__image{ transform:scale(1.03); }
   @media (prefers-reduced-motion:reduce){ .nb-if__frame:hover .nb-if__image{ transform:none; } }
 
   /* copy */
-  .nb-if__title{ margin:0 0 clamp(8px,1.6vw,14px); }
+  .nb-if__title{ margin:0 0 10px; }           /* crisper title spacing */
   .nb-if__list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+
   .nb-if__li{
-    position:relative; background:#fff; border:1px solid #e8ecef; border-radius:14px;
-    padding:.85rem 1rem .9rem 2.25rem; box-shadow:0 8px 18px rgba(0,0,0,.05);
+    position:relative; background:#fff;
+    border:1px solid #e8ecef; border-radius:14px;
+    padding:.8rem 1rem .85rem 2.25rem;        /* slightly tighter */
+    box-shadow:0 6px 16px rgba(0,0,0,.05);    /* subtler elevation */
     transition: transform .18s ease, box-shadow .18s ease;
   }
   .nb-if__li::before{
@@ -655,12 +686,29 @@
   .nb-if__li:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.08); }
   @media (prefers-reduced-motion:reduce){ .nb-if__li:hover{ transform:none; } }
 
-  /* tones */
-  .nb-if.tone-white { --if-surface:#fff;      --if-frame:#f4f7f6; --if-accent:var(--nb-chocolate); }
+  /* tones (set palette + accent) */
+  .nb-if.tone-white { --if-surface:#fff;        --if-frame:#f4f7f6; --if-accent:var(--nb-chocolate); }
   .nb-if.tone-sage  { --if-surface:var(--nb-sage); --if-frame:#e8f1ef; --if-accent:var(--nb-deep); }
-  .nb-if.tone-pebble{ --if-surface:#fbf7f5;   --if-frame:#eee7e3; --if-accent:#B67955; }
-  .nb-if.tone-ink   { --if-surface:#f6f9f8;   --if-frame:#eef3f2; --if-accent:#223238; }
-  .nb-if.tone-teal  { --if-surface:#edf7f6;   --if-frame:#e6f1f0; --if-accent:#0F5B59; }
+  .nb-if.tone-pebble{ --if-surface:#fbf7f5;     --if-frame:#eee7e3; --if-accent:#B67955; }
+  .nb-if.tone-ink   { --if-surface:#f6f9f8;     --if-frame:#eef3f2; --if-accent:#223238; }
+  .nb-if.tone-teal  { --if-surface:#edf7f6;     --if-frame:#e6f1f0; --if-accent:#0F5B59; }
+
+  /* Pebble gets a softer, luxe gradient + warm shadow */
+  .nb-if.tone-pebble .nb-if__wrap{
+    background:
+      radial-gradient(120% 120% at 90% -10%, rgba(182,121,85,.10) 0 22%, transparent 46%),
+      linear-gradient(180deg, #fbf7f5 0%, #f8f1ec 100%);
+    box-shadow:0 10px 22px rgba(0,0,0,.05), 0 30px 60px rgba(182,121,85,.08);
+  }
+
+  /* Optional: subtle teal tint when tone=teal */
+  .nb-if.tone-teal .nb-if__wrap{
+    background:
+      radial-gradient(120% 120% at 90% -10%, rgba(16,99,108,.10) 0 22%, transparent 46%),
+      linear-gradient(180deg, #edf7f6 0%, #eaf3f2 100%);
+  }
+
+  /* Gradient option */
   .nb-if.tone-gradient .nb-if__wrap{
     background:
       radial-gradient(140% 120% at 88% -12%, rgba(16,99,108,.14) 0 24%, transparent 48%),
@@ -891,6 +939,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
