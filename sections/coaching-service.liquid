@@ -234,25 +234,33 @@
     mask-image: radial-gradient(circle, transparent 42%, black 43%);
   }
 
-/* ===== Match Home-hero typography (scoped) ===== */
-.nb-hero-skit.typ-home .nb-h1{
-  /* align to home: teal tone, gentler weight, graceful spacing */
+/* ===== Match Home-hero typography (scoped) — UPDATED ===== */
+.nb-hero-skit.typ-home .nb-skit__copy .nb-h1{
+  /* Prefer the contrast/display family if your theme provides it,
+     else fall back to the regular heading family. */
+  font-family: var(--font-heading-contrast, var(--font-hero-family, var(--font-heading-family, inherit)));
+  /* Use a weight that reads clearly lighter even if 600 isn't loaded */
+  font-weight: 500;
+  /* Slightly smaller + tighter, like Home */
+  font-size: clamp(34px, 5.2vw, 58px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   color: var(--nb-deep);
-  font-weight: 600;          /* lighter than the default 700/800 */
-  line-height: 1.15;
-  letter-spacing: 0;
-  font-style: normal;        /* remove any accidental italics */
-}
-.nb-hero-skit.typ-home .nb-sub{
-  color: color-mix(in srgb, var(--nb-muted) 88%, #000 12%);
-  opacity: .95;
-}
-.nb-hero-skit.typ-home .nb-eyebrow{
-  color: color-mix(in srgb, var(--nb-deep) 80%, #000 20%);
-  letter-spacing: .08em; text-transform: uppercase;
 }
 
-/* Optional: if you want the CTA to match the home contrast on band */
+.nb-hero-skit.typ-home .nb-sub{
+  /* Softer copy tone to match Home */
+  color: color-mix(in srgb, var(--nb-muted) 85%, #000 15%);
+  opacity: .95;
+}
+
+.nb-hero-skit.typ-home .nb-eyebrow{
+  font-family: var(--font-heading-contrast, var(--font-heading-family, inherit));
+  color: color-mix(in srgb, var(--nb-deep) 82%, #000 18%);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
 .nb-hero-skit.typ-home .nb-cta{
   box-shadow: 0 10px 24px rgba(0,0,0,.10);
 }
