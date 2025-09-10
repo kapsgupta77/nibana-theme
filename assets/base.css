@@ -5233,3 +5233,20 @@ body.nb-typography .hero .button:not(.button-secondary, .button-unstyled) {
   border-radius: var(--style-border-radius-buttons-primary);
   box-shadow: var(--shadow-button);
 }
+
+/* Nibana primary button tokens (only when toggle is on) */
+body.nb-typography{
+  --color-primary-button: #C86B2A;                    /* chocolate */
+  --color-primary-button-text: #ffffff;
+
+  /* hover */
+  --color-primary-button-hover-background: #AD5D26;   /* slightly darker */
+  --color-primary-button-hover-text: #ffffff;
+
+  /* keep borders clean */
+  --color-primary-button-border: transparent;
+  --color-primary-button-hover-border: transparent;
+
+  /* if you want pill buttons like Home (optional) */
+  --style-border-radius-buttons-primary: 9999px;
+}
