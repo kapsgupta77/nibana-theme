@@ -1330,7 +1330,14 @@
           }
         ],
         "default": "none"
-      }
+      },
+    {
+      "type": "checkbox",
+      "id": "enable_nb_typography",
+      "label": "Use Nibana typography & CTAs sitewide",
+      "default": true,
+      "info": "Makes headings/subheads/eyebrows + CTA buttons use the same look as the Home hero. No changes to images, videos or backgrounds."
+    }
     ]
   },
   {
