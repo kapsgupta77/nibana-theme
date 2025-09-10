@@ -482,26 +482,52 @@
     {%- endif -%}
   {%- endif -%}
 
- {%- comment -%} ---------- OUTCOMES (Impact Cards) ---------- {%- endcomment -%}
+{%- comment -%} ---------- OUTCOMES (Impact Cards v2) ---------- {%- endcomment -%}
 <style>
-  /* Section tone wrapper */
-  .nb-section{ padding:clamp(20px,3.8vw,44px) 0; }
-  .nb-section--tone-white{ background:#fff; }
-  .nb-section--tone-pebble{ background:#faf7f5; } /* warm off-white */
-  .nb-section--tone-sage{ background:var(--nb-sage); }
+  /* ====== Section tray (curved + elevated) ====== */
+  .nb-outcomes{
+    --oc-surface:#fff;                  /* tray background */
+    --oc-frame:#f1f6f5;                 /* frame tint outside tray */
+    --oc-accent: var(--nb-chocolate);   /* left bar on cards */
+    position:relative;
+    padding:clamp(22px,4vw,48px) 0;
+    background:var(--oc-frame);
+  }
+  .nb-outcomes__wrap{
+    position:relative;
+    background:var(--oc-surface);
+    border-radius:22px;
+    padding:clamp(16px,2.8vw,26px);
+    box-shadow:
+      0 10px 24px rgba(0,0,0,.06),
+      0 24px 50px rgba(0,0,0,.06);
+    overflow:hidden;
+  }
+  /* Soft vignette for depth */
+  .nb-outcomes__wrap::before{
+    content:""; position:absolute; inset:-20% -10%;
+    background:
+      radial-gradient(120% 80% at 50% -10%,
+        rgba(0,0,0,.06), transparent 55%);
+    pointer-events:none;
+  }
 
-  /* Impact cards grid */
+  /* ====== Heading spacing ====== */
+  .nb-outcomes__title{ margin:0 0 clamp(10px,1.8vw,16px); }
+
+  /* ====== Grid ====== */
   .nb-outcomes__grid{
     display:grid; gap:12px;
     grid-template-columns:repeat(2, minmax(0,1fr));
+    align-items:stretch;
   }
   @media (max-width:780px){
     .nb-outcomes__grid{ grid-template-columns:1fr; }
   }
 
-  /* Single outcome card */
+  /* ====== Cards ====== */
   .nb-outcome{
-    position:relative;
+    position:relative; display:flex; align-items:center;
     background:#fff;
     border:1px solid #e8ecef;
     border-radius:16px;
@@ -510,10 +536,9 @@
     transition:transform .18s ease, box-shadow .18s ease;
   }
   .nb-outcome::before{
-    content:"";
-    position:absolute; left:-1px; top:-1px; bottom:-1px;
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px;
     width:6px; border-radius:16px 0 0 16px;
-    background:linear-gradient(180deg, var(--nb-chocolate), #b75e25);
+    background:linear-gradient(180deg, var(--oc-accent), color-mix(in oklab, var(--oc-accent), #000 14%));
   }
   .nb-outcome:hover{
     transform:translateY(-2px);
@@ -522,10 +547,37 @@
   @media (prefers-reduced-motion:reduce){
     .nb-outcome:hover{ transform:none; }
   }
+
+  /* ====== Tones (set CSS vars per tone) ====== */
+  /* Default (white) */
+  .nb-outcomes.tone-white{ --oc-surface:#fff; --oc-frame:#f4f7f6; --oc-accent:var(--nb-chocolate); }
+
+  /* Warm neutral */
+  .nb-outcomes.tone-pebble{ --oc-surface:#fbf7f5; --oc-frame:#f2ece8; --oc-accent:var(--nb-chocolate); }
+
+  /* Sage / brand mint */
+  .nb-outcomes.tone-sage{ --oc-surface:var(--nb-sage); --oc-frame:#e8f1ef; --oc-accent:var(--nb-chocolate); }
+
+  /* Ink (cool, editorial) */
+  .nb-outcomes.tone-ink{ --oc-surface:#f6f9f8; --oc-frame:#eef3f2; --oc-accent:var(--nb-teal); }
+
+  /* Teal (soft) */
+  .nb-outcomes.tone-teal{ --oc-surface:#edf7f6; --oc-frame:#e6f1f0; --oc-accent:var(--nb-chocolate); }
+
+  /* Subtle gradient option */
+  .nb-outcomes.tone-gradient{
+    --oc-frame:#eef4f3;
+    --oc-accent:var(--nb-chocolate);
+  }
+  .nb-outcomes.tone-gradient .nb-outcomes__wrap{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(16,99,108,.12) 0 45%, transparent 60%),
+      #ffffff;
+  }
 </style>
 
 {%- liquid
-  # Parse outcomes as list items
+  # Parse outcomes list
   assign oc_raw  = service.outcomes | append: ''
   assign oc_html = oc_raw | newline_to_br
   assign br_tag  = '<br />'
@@ -541,27 +593,28 @@
     endif
   endfor
 
-  # Tone toggle via metaobject (optional)
+  # Tone class from metaobject
   assign oc_tone = service.outcomes_tone | downcase | strip | default: 'white'
-  assign oc_tone_class = 'nb-section--tone-white'
-  if oc_tone == 'pebble'
-    assign oc_tone_class = 'nb-section--tone-pebble'
-  elsif oc_tone == 'sage'
-    assign oc_tone_class = 'nb-section--tone-sage'
+  assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
+  assign oc_tone_class = 'tone-white'
+  if tone_whitelist contains oc_tone
+    assign oc_tone_class = 'tone-' | append: oc_tone
   endif
 -%}
 
 {%- if oc_count > 0 -%}
-<section class="nb-section nb-outcomes {{ oc_tone_class }}">
+<section class="nb-outcomes {{ oc_tone_class }}">
   <div class="nb-shell">
-    <h2 class="nb-h2">What you’ll get</h2>
-    <div class="nb-outcomes__grid">
-      {%- for item in outcomes -%}
-        {%- assign it = item | strip -%}
-        {%- if it != '' -%}
-          <div class="nb-outcome">{{ it }}</div>
-        {%- endif -%}
-      {%- endfor -%}
+    <div class="nb-outcomes__wrap">
+      <h2 class="nb-h2 nb-outcomes__title">What you’ll get</h2>
+      <div class="nb-outcomes__grid">
+        {%- for item in outcomes -%}
+          {%- assign it = item | strip -%}
+          {%- if it != '' -%}
+            <div class="nb-outcome">{{ it }}</div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
     </div>
   </div>
 </section>
@@ -781,6 +834,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
