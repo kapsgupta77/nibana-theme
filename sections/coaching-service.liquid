@@ -574,31 +574,122 @@
 </section>
 {%- endif -%}
 
-  {%- comment -%} IS THIS FOR YOU {%- endcomment -%}
-  {%- liquid
-    assign ify_raw  = service.is_for_you | append: ''
-    assign ify_html = ify_raw | newline_to_br
-    assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
-    assign ify_pipe = ify_norm | replace: br_tag, '|||'
-    assign ify = ify_pipe | split: '|||'
-    assign ify_count = 0
-    for it in ify
-      assign t = it | strip
-      if t != '' 
-        assign ify_count = ify_count | plus: 1
-      endif
-    endfor
-  -%}
-  {%- if ify_count > 0 -%}
-    <div class="nb-tray">
-      <h3 class="nb-h3">Is this for you?</h3>
-      <ul class="nb-list">
-        {%- for line in ify -%}
-          {%- assign l = line | strip -%}{% if l != '' %}<li>{{ l }}</li>{% endif %}
-        {%- endfor -%}
-      </ul>
+ {%- comment -%} IS THIS FOR YOU (Lux Text+Image) {%- endcomment -%}
+{%- liquid
+  assign ify_raw  = service.is_for_you | append: ''
+  assign ify_html = ify_raw | newline_to_br
+  assign br_tag   = '<br />'
+  assign ify_norm = ify_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+  assign ify_pipe = ify_norm | replace: br_tag, '|||'
+  assign ify      = ify_pipe | split: '|||'
+
+  assign ify_count = 0
+  for it in ify
+    assign t = it | strip
+    if t != '' 
+      assign ify_count = ify_count | plus: 1
+    endif
+  endfor
+
+  assign if_img     = service.is_for_you_image
+  assign if_layout  = service.is_for_you_layout | downcase | strip
+  assign if_tone    = service.is_for_you_tone   | downcase | strip | default: 'white'
+  assign tone_whitelist = 'white|sage|pebble|ink|teal|gradient'
+  assign if_tone_class = 'tone-white'
+  if tone_whitelist contains if_tone
+    assign if_tone_class = 'tone-' | append: if_tone
+  endif
+-%}
+
+{%- if ify_count > 0 -%}
+<style>
+  /* ====== Lux “Image + Text” block (scoped) ====== */
+  .nb-if{ --if-surface:#fff; --if-frame:#f4f7f6; --if-accent:var(--nb-chocolate);
+          --if-mt: clamp(10px,2vw,18px); --if-mb: clamp(14px,2.6vw,24px);
+          margin-top:var(--if-mt); margin-bottom:var(--if-mb); }
+  .nb-if__wrap{
+    background:
+      radial-gradient(140% 120% at 88% -12%, color-mix(in oklab, var(--if-accent), #000 6%) 0 20%, transparent 45%),
+      var(--if-surface);
+    border-radius:24px;
+    padding: clamp(18px,3vw,28px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.06), 0 32px 60px rgba(0,0,0,.06);
+  }
+  .nb-if__grid{ display:grid; align-items:center; gap: clamp(16px,2.2vw,28px); grid-template-columns: 1.05fr .95fr; }
+  .nb-if.nb-if--left  .nb-if__grid{ grid-template-columns:.95fr 1.05fr; }
+  @media (max-width: 900px){ .nb-if__grid{ grid-template-columns:1fr; } }
+
+  /* media */
+  .nb-if__media{ position:relative; }
+  .nb-if__frame{ border-radius:22px; overflow:hidden; background:#f7f9f8; box-shadow: 0 14px 32px rgba(0,0,0,.08); }
+  .nb-if__image{ display:block; width:100%; height:auto; transform:scale(1); transition: transform .6s cubic-bezier(.2,.6,.2,1), filter .3s ease; }
+  .nb-if__frame:hover .nb-if__image{ transform:scale(1.03); }
+  @media (prefers-reduced-motion:reduce){ .nb-if__frame:hover .nb-if__image{ transform:none; } }
+
+  /* copy */
+  .nb-if__title{ margin:0 0 clamp(8px,1.6vw,14px); }
+  .nb-if__list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  .nb-if__li{
+    position:relative; background:#fff; border:1px solid #e8ecef; border-radius:14px;
+    padding:.85rem 1rem .9rem 2.25rem; box-shadow:0 8px 18px rgba(0,0,0,.05);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .nb-if__li::before{
+    content:""; position:absolute; left:.9rem; top:50%; transform:translateY(-50%);
+    width:8px; height:8px; border-radius:50%;
+    background:var(--if-accent);
+    box-shadow:0 0 0 6px color-mix(in oklab, var(--if-accent), #fff 85%);
+  }
+  .nb-if__li:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.08); }
+  @media (prefers-reduced-motion:reduce){ .nb-if__li:hover{ transform:none; } }
+
+  /* tones */
+  .nb-if.tone-white { --if-surface:#fff;      --if-frame:#f4f7f6; --if-accent:var(--nb-chocolate); }
+  .nb-if.tone-sage  { --if-surface:var(--nb-sage); --if-frame:#e8f1ef; --if-accent:var(--nb-deep); }
+  .nb-if.tone-pebble{ --if-surface:#fbf7f5;   --if-frame:#eee7e3; --if-accent:#B67955; }
+  .nb-if.tone-ink   { --if-surface:#f6f9f8;   --if-frame:#eef3f2; --if-accent:#223238; }
+  .nb-if.tone-teal  { --if-surface:#edf7f6;   --if-frame:#e6f1f0; --if-accent:#0F5B59; }
+  .nb-if.tone-gradient .nb-if__wrap{
+    background:
+      radial-gradient(140% 120% at 88% -12%, rgba(16,99,108,.14) 0 24%, transparent 48%),
+      #ffffff;
+  }
+</style>
+
+<section class="nb-if {{ if_tone_class }} {% if if_layout == 'left' or if_layout == 'image-left' %}nb-if--left{% else %}nb-if--right{% endif %}">
+  <div class="nb-shell">
+    <div class="nb-if__wrap">
+      <div class="nb-if__grid">
+        {%- if if_img and (if_layout == 'left' or if_layout == 'image-left') -%}
+          <div class="nb-if__media">
+            <div class="nb-if__frame">
+              {{ if_img | image_url: width: 1200 | image_tag: sizes: "(max-width: 900px) 100vw, 520px", widths: "520,800,1200", class: "nb-if__image", alt: service.is_for_you_title | default: "Is this for you?" }}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="nb-if__copy">
+          <h3 class="nb-h3 nb-if__title">{{ service.is_for_you_title | default: 'Is this for you?' }}</h3>
+          <ul class="nb-if__list">
+            {%- for line in ify -%}
+              {%- assign l = line | strip -%}
+              {%- if l != '' -%}<li class="nb-if__li">{{ l }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- if if_img and (if_layout == 'right' or if_layout == 'image-right' or if_layout == '') -%}
+          <div class="nb-if__media">
+            <div class="nb-if__frame">
+              {{ if_img | image_url: width: 1200 | image_tag: sizes: "(max-width: 900px) 100vw, 520px", widths: "520,800,1200", class: "nb-if__image", alt: service.is_for_you_title | default: "Is this for you?" }}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
     </div>
-  {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
 
   {%- comment -%} PROCESS {%- endcomment -%}
   {%- liquid
@@ -788,6 +879,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
