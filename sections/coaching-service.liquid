@@ -224,6 +224,39 @@
   transform:translateY(-1px);
   box-shadow:0 8px 20px rgba(0,0,0,.10);
 }
+
+/* === Force hero CTA to match site-wide button style (override pill rules) === */
+.nb-hero-skit .nb-skit__cta a,
+.nb-hero-skit .nb-cta,
+.nb-hero-skit a[class*="button"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* size + spacing (matches Home) */
+  min-height: 52px !important;
+  padding: 14px 22px !important;
+
+  /* brand */
+  background: var(--nb-chocolate) !important;
+  color: #fff !important;
+  border: 2px solid var(--nb-chocolate) !important;
+
+  /* <- the key line (kill the pill) */
+  border-radius: 12px !important;
+
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.08) !important;
+}
+
+.nb-hero-skit .nb-skit__cta a:hover,
+.nb-hero-skit .nb-cta:hover,
+.nb-hero-skit a[class*="button"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.10);
+}
 </style>
 
 {%- comment -%} ========= HERO (full-bleed) ========= {%- endcomment -%}
@@ -689,5 +722,6 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
