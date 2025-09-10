@@ -337,6 +337,68 @@
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(0,0,0,.10);
 }
+
+/* === PATCH 1: Outcomes — tighter, consistent spacing + mobile tidy === */
+
+/* default / desktop */
+.nb-outcomes{               /* reduce the tall whitespace above/below */
+  margin: 12px 0 18px;
+}
+.nb-outcomes__wrap{         /* slightly tighter padding + softer shadow */
+  padding: 16px clamp(14px, 2.2vw, 20px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.05), 0 18px 36px rgba(0,0,0,.05);
+}
+.nb-outcomes__grid{ gap: 12px 18px; }
+
+/* cards keep their current look; just unify paddings/radii */
+.nb-outcome{
+  border-radius: 14px;
+  padding: 12px 14px 12px 18px;
+}
+.nb-outcome::before{ width: 6px; }
+
+/* large desktop: a touch more air so it matches other trays */
+@media (min-width: 1160px){
+  .nb-outcomes{ margin: 14px 0 20px; }
+  .nb-outcomes__wrap{ padding: 18px 22px; }
+}
+
+/* mobile: compact spacing + 1-column grid and softer shadows */
+@media (max-width: 740px){
+  .nb-outcomes{ margin: 8px 0 12px; }            /* << tightens the gap */
+  .nb-outcomes__wrap{
+    padding: 12px 12px;
+    border-radius: 18px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.05);
+  }
+  .nb-outcomes__grid{
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .nb-outcome{
+    padding: 12px 12px 12px 16px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.05);
+  }
+  .nb-outcome::before{ width: 4px; }
+}
+
+/* === PATCH 2: “Is this for you?” Image + List — bulletproof mobile stack === */
+
+/* force 1-col on tablets/phones, with higher specificity so it wins */
+@media (max-width: 1024px){
+  .nb-if .nb-if__grid{ grid-template-columns: 1fr !important; }
+  .nb-if__media, .nb-if__copy{ width: 100%; }
+  .nb-if__frame{ width: 100%; border-radius: 18px; }
+  .nb-if__image{ width: 100%; height: auto; display: block; }
+  .nb-if__copy{ margin-top: 12px; }               /* space between image & list */
+}
+
+/* optional: slightly tighten list spacing on small screens */
+@media (max-width: 740px){
+  .nb-if__list{ gap: 8px; }
+  .nb-if__li{ padding: .8rem .95rem .85rem 2.1rem; border-radius: 12px; }
+}
+
 </style>
 
 {%- comment -%} ========= HERO (full-bleed) ========= {%- endcomment -%}
@@ -1251,6 +1313,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
