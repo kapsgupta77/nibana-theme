@@ -1,0 +1,27 @@
+{%- comment -%}
+  Expects a testimonial object "t" with:
+  t.quote, t.name, t.title, t.location, t.avatar (image object or blank)
+{%- endcomment -%}
+<div class="nb-tcard">
+  <div class="nb-tcard__quote">“{{ t.quote | strip }}”</div>
+  <div class="nb-tcard__meta">
+    {% if t.avatar %}
+      {{ t.avatar
+        | image_url: width: 160
+        | image_tag: alt: t.name, class: 'nb-tcard__avatar', widths: '80,120,160' }}
+    {% else %}
+      <div class="nb-tcard__avatar nb-tcard__avatar--placeholder" aria-hidden="true">
+        {{ t.name | slice: 0, 1 | upcase }}
+      </div>
+    {% endif %}
+    <div class="nb-tcard__who">
+      <div class="nb-tcard__name">{{ t.name }}</div>
+      {% if t.title != blank %}
+        <div class="nb-tcard__title">{{ t.title }}</div>
+      {% endif %}
+      {% if t.location != blank %}
+        <div class="nb-tcard__loc">{{ t.location }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
