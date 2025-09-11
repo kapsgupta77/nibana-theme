@@ -1,0 +1,14 @@
+{%- liquid
+  assign _label = article.metafields.custom.cta_label | default: 'Book a free 20-min call'
+  assign _href  = article.metafields.custom.cta_link  | default: '/pages/contact'
+-%}
+
+<div id="nb-cta-inline" class="nb-cta-inline" data-label="{{ _label | escape }}" data-link="{{ _href | escape }}">
+  <div class="nb-cta-inline__inner">
+    <div class="nb-cta-inline__copy">
+      <h3 class="nb-cta-inline__title">Ready for your next chapter?</h3>
+      <p class="nb-cta-inline__dek">Let’s map what you want—and the first moves to get there.</p>
+    </div>
+    <a class="nb-cta nb-cta--md" href="{{ _href }}">{{ _label }}</a>
+  </div>
+</div>
