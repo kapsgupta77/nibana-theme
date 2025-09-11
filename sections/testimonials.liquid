@@ -1,179 +1,226 @@
 {% comment %}
-Testimonials – page grid with filter chips
-Source: Manual blocks (default) or Metaobject 'nb_testimonial'
+  Testimonials — page grid with filter chips
+  Source: Manual blocks (default) or Metaobject type "nb_testimonial" (optional)
 {% endcomment %}
+
 <section class="nb-testimonials tone-pebble">
   {%- liquid
     assign source = section.settings.source | default: 'blocks'
-    assign limit  = section.settings.limit  | default: 50
-
-    assign has_any    = false
+    assign limit  = section.settings.limit  | default: 24
+    assign has_any = false
     assign tag_bucket = ''
   -%}
 
-  {% if section.settings.heading != blank or section.settings.subheading != blank %}
-    <header class="nb-testimonials__head">
-      {% if section.settings.heading != blank %}
-        <h1 class="nb-h2 nb-testimonials__title">{{ section.settings.heading }}</h1>
-      {% endif %}
-      {% if section.settings.subheading != blank %}
-        <p class="nb-testimonials__dek">{{ section.settings.subheading }}</p>
-      {% endif %}
-    </header>
-  {% endif %}
+  <div class="nb-shell">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <header class="nb-testimonials__head">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="nb-h2 nb-testimonials__title">{{ section.settings.heading }}</h1>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="nb-testimonials__dek">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
 
-  {%- capture render_cards -%}
-    <div class="nb-testimonials__grid" data-grid>
-      {%- if source == 'metaobject' -%}
-        {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-        {%- if mo and mo.values and mo.values.size > 0 -%}
-          {%- for m in mo.values limit: limit -%}
-            {%- assign q = m.quote      | default: '' -%}
-            {%- assign n = m.name       | default: '' -%}
-            {%- assign tt = m.title     | default: '' -%}
-            {%- assign loc = m.location | default: '' -%}
-            {%- assign av = m.avatar -%}
-            {%- assign tg = m.tags | join: ',' | default: '' -%}
-            {%- if q != '' and n != '' -%}
+    {%- capture render_cards -%}
+      <div class="nb-testimonials__grid" data-grid>
+        {%- if source == 'metaobject' -%}
+          {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+          {%- if mo and mo.values and mo.values.size > 0 -%}
+            {%- for m in mo.values limit: limit -%}
+              {%- assign q   = m.quote    | default: '' -%}
+              {%- assign n   = m.name     | default: '' -%}
+              {%- assign tt  = m.title    | default: '' -%}
+              {%- assign loc = m.location | default: '' -%}
+              {%- assign av  = m.avatar -%}
+              {%- assign tg  = m.tags | join: ',' | default: '' -%}
+
+              {%- if q != '' -%}
+                {%- assign has_any = true -%}
+                {%- assign tags_norm  = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
+                {%- assign tags_piped = tags_norm | replace: ',', '||' -%}
+                {%- assign tag_bucket = tag_bucket | append: '||' | append: tags_piped | append: '||' -%}
+
+                <article class="nb-tcard-wrap" data-tags="{{ tags_norm | escape }}">
+                  <blockquote class="nb-t-quote">“{{ q }}”</blockquote>
+
+                  <footer class="nb-t-meta">
+                    {%- if av -%}
+                      {{ av | image_url: width: 96 | image_tag: class: 'nb-t-avatar', alt: n | escape }}
+                    {%- endif -%}
+                    <div class="nb-t-person">
+                      {%- if n   != blank -%}<div class="nb-t-name">{{ n }}</div>{%- endif -%}
+                      {%- if tt  != blank -%}<div class="nb-t-role">{{ tt }}</div>{%- endif -%}
+                      {%- if loc != blank -%}<div class="nb-t-loc">{{ loc }}</div>{%- endif -%}
+                    </div>
+                  </footer>
+                </article>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- for block in section.blocks limit: limit -%}
+            {%- assign q   = block.settings.quote    | strip -%}
+            {%- assign n   = block.settings.name     | default: '' -%}
+            {%- assign tt  = block.settings.title    | default: '' -%}
+            {%- assign loc = block.settings.location | default: '' -%}
+            {%- assign av  = block.settings.avatar -%}
+            {%- assign tg  = block.settings.tags     | default: '' -%}
+
+            {%- if q != '' -%}
               {%- assign has_any = true -%}
               {%- assign tags_norm  = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
               {%- assign tags_piped = tags_norm | replace: ',', '||' -%}
               {%- assign tag_bucket = tag_bucket | append: '||' | append: tags_piped | append: '||' -%}
+
               <article class="nb-tcard-wrap" data-tags="{{ tags_norm | escape }}">
-                {%- render 'nb-testimonial-card',
-                  t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
+                <blockquote class="nb-t-quote">“{{ q }}”</blockquote>
+
+                <footer class="nb-t-meta">
+                  {%- if av -%}
+                    {{ av | image_url: width: 96 | image_tag: class: 'nb-t-avatar', alt: n | escape }}
+                  {%- endif -%}
+                  <div class="nb-t-person">
+                    {%- if n   != blank -%}<div class="nb-t-name">{{ n }}</div>{%- endif -%}
+                    {%- if tt  != blank -%}<div class="nb-t-role">{{ tt }}</div>{%- endif -%}
+                    {%- if loc != blank -%}<div class="nb-t-loc">{{ loc }}</div>{%- endif -%}
+                  </div>
+                </footer>
               </article>
             {%- endif -%}
           {%- endfor -%}
         {%- endif -%}
-      {%- else -%}
-        {%- for block in section.blocks limit: limit -%}
-          {%- assign q = block.settings.quote      | default: '' -%}
-          {%- assign n = block.settings.name       | default: '' -%}
-          {%- assign tt = block.settings.title     | default: '' -%}
-          {%- assign loc = block.settings.location | default: '' -%}
-          {%- assign av = block.settings.avatar -%}
-          {%- assign tg = block.settings.tags      | default: '' -%}
-          {%- if q != '' and n != '' -%}
-            {%- assign has_any = true -%}
-            {%- assign tags_norm  = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
-            {%- assign tags_piped = tags_norm | replace: ',', '||' -%}
-            {%- assign tag_bucket = tag_bucket | append: '||' | append: tags_piped | append: '||' -%}
-            <article class="nb-tcard-wrap" data-tags="{{ tags_norm | escape }}">
-              {%- render 'nb-testimonial-card',
-                t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
-            </article>
-          {%- endif -%}
-        {%- endfor -%}
+      </div>
+    {%- endcapture -%}
+
+    {%- if has_any -%}
+      {%- if section.settings.show_chips -%}
+        {%- assign chips_all = tag_bucket | split: '||' | uniq | sort -%}
+        <nav class="nb-tchips" aria-label="Filter testimonials">
+          <button class="nb-chip is-active" type="button" data-chip="*">All</button>
+          {%- for chip in chips_all -%}
+            {%- assign c = chip | strip -%}
+            {%- if c != '' -%}
+              <button class="nb-chip" type="button" data-chip="{{ c | escape }}">{{ c }}</button>
+            {%- endif -%}
+          {%- endfor -%}
+        </nav>
       {%- endif -%}
-    </div>
-  {%- endcapture -%}
 
-  {%- if has_any -%}
-    {%- assign chips = '' -%}
-    {%- assign tb = tag_bucket | downcase -%}
-    {%- if tb != '' -%}
-      {%- assign tb = tb | replace: '||||', '||' -%}
-      {%- assign arr = tb | split: '||' -%}
-      {%- assign uniq = '' -%}
-      {%- for t in arr -%}
-        {%- assign tt = t | strip -%}
-        {%- if tt != '' -%}
-          {%- assign needle = '||' | append: tt | append: '||' -%}
-          {%- unless uniq contains needle -%}
-            {%- assign uniq = uniq | append: needle -%}
-          {%- endunless -%}
-        {%- endif -%}
-      {%- endfor -%}
-      {%- assign chips_str = uniq | remove_first: '||' -%}
-      {%- assign chips = chips_str | split: '||' -%}
+      {{ render_cards }}
+    {%- else -%}
+      <p>No testimonials to show yet.</p>
     {%- endif -%}
-
-    <nav class="nb-testimonials__filter" aria-label="Filter testimonials" data-filter>
-      <button class="nb-chip is-active" data-chip="*">All</button>
-      {%- for tag in chips -%}
-        {%- assign t = tag | strip -%}
-        {%- if t != '' -%}
-          <button class="nb-chip" data-chip="{{ t | escape }}">{{ tag }}</button>
-        {%- endif -%}
-      {%- endfor -%}
-    </nav>
-
-    {{ render_cards }}
-  {%- else -%}
-    <p class="nb-testimonials__empty">Testimonials coming soon.</p>
-  {%- endif -%}
+  </div>
 </section>
 
-<style>
-.nb-testimonials{--nb-peb:#eaf3f1;--nb-ac:#C86B2A;margin:0;padding:clamp(16px,2vw,28px) 0;background:transparent}
-.nb-testimonials__head{max-width:min(980px,94vw);margin:0 auto 10px;padding:0 12px}
-.nb-testimonials__title{margin:0 0 6px}
-.nb-testimonials__dek{margin:0 0 8px;color:#4b5a60}
-.nb-testimonials__filter{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px auto 16px;max-width:1100px;padding:0 12px}
-.nb-chip{display:inline-flex;align-items:center;gap:6px;padding:.5rem .75rem;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.06);cursor:pointer}
-.nb-chip.is-active{background:var(--nb-peb);border-color:rgba(0,0,0,.06);font-weight:600}
-.nb-testimonials__grid{display:grid;gap:14px;grid-template-columns:repeat(3,minmax(0,1fr));max-width:1100px;margin:0 auto;padding:0 12px}
-@media(max-width:980px){.nb-testimonials__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:640px){.nb-testimonials__grid{grid-template-columns:1fr}}
-.nb-tcard-wrap{transition:transform .18s ease, box-shadow .18s ease}
-.nb-tcard-wrap:hover{transform:translateY(-2px)}
-.nb-tcard{
-  position:relative;background:#fff;border:1px solid #e8ecef;border-radius:18px;padding:18px 16px 14px;
-  box-shadow:0 10px 24px rgba(0,0,0,.06);
-}
-.nb-tcard::before{
-  content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:18px 0 0 18px;
-  background:linear-gradient(180deg,var(--nb-ac),color-mix(in oklab,var(--nb-ac),#000 14%));
-}
-.nb-tcard__quote{font-size:1.02rem;line-height:1.55;margin:0 0 14px;color:#223238}
-.nb-tcard__meta{display:flex;gap:12px;align-items:center}
-.nb-tcard__avatar{width:44px;height:44px;border-radius:999px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,.08)}
-.nb-tcard__avatar--placeholder{display:grid;place-items:center;background:#f0f3f2;border:1px solid #e8ecef;color:#667980;font-weight:700}
-.nb-tcard__who{display:grid;gap:2px}
-.nb-tcard__name{font-weight:700}
-.nb-tcard__title,.nb-tcard__loc{font-size:.9rem;color:#5b6a70}
-.nb-testimonials__empty{text-align:center;color:#5b6a70;margin:12px 0}
-</style>
-
 <script>
-(function(){
-  const root = document.currentScript.previousElementSibling;
-  const filt = root.querySelector('[data-filter]');
-  const grid = root.querySelector('[data-grid]');
-  if(!filt || !grid) return;
+  (function(){
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    if(!root) return;
+    var chips = root.querySelectorAll('.nb-tchips .nb-chip');
+    var grid  = root.querySelector('[data-grid]');
+    if(!grid) return;
 
-  const cards = Array.from(grid.querySelectorAll('.nb-tcard-wrap'));
-  const norm = s => (s||'').toString().trim().toLowerCase();
-
-  filt.addEventListener('click', (e)=>{
-    const btn = e.target.closest('[data-chip]');
-    if(!btn) return;
-    filt.querySelectorAll('.nb-chip').forEach(x=>x.classList.remove('is-active'));
-    btn.classList.add('is-active');
-    const pick = norm(btn.dataset.chip);
-    cards.forEach(card=>{
-      if(pick === '*'){ card.hidden = false; return; }
-      const tags = norm(card.getAttribute('data-tags')).split(',').map(norm);
-      card.hidden = !tags.includes(pick);
+    function applyFilter(tag){
+      var cards = grid.querySelectorAll('.nb-tcard-wrap');
+      cards.forEach(function(card){
+        var list = (card.getAttribute('data-tags') || '').toLowerCase().split(',');
+        var show = tag === '*' ? true : list.indexOf(tag.toLowerCase()) !== -1;
+        card.style.display = show ? '' : 'none';
+      });
+    }
+    chips.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        chips.forEach(function(b){ b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        var tag = btn.getAttribute('data-chip') || '*';
+        applyFilter(tag);
+      });
     });
-  }, {passive:true});
-})();
+  })();
 </script>
+
+{% stylesheet %}
+  /* Tray */
+  .nb-testimonials{ --oc-surface:#fbf7f5; padding: clamp(16px, 3vw, 28px) 0; }
+  .nb-shell{max-width: min(1100px, 92vw); margin-inline:auto;}
+
+  .nb-testimonials__head{ margin: 0 0 12px; }
+  .nb-testimonials__title{ margin: 0 0 6px; }
+  .nb-testimonials__dek{ margin: 0; color:#415058; }
+
+  /* Chips */
+  .nb-tchips{ display:flex; gap:10px; flex-wrap:wrap; margin: 12px 0 18px; }
+  .nb-chip{
+    display:inline-block; padding:.5rem .8rem; border-radius:999px;
+    background:#fff; border:1px solid rgba(0,0,0,.07); color:inherit;
+    box-shadow:0 6px 14px rgba(0,0,0,.06);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .nb-chip:hover{ transform:translateY(-1px); box-shadow:0 10px 20px rgba(0,0,0,.08); }
+  .nb-chip.is-active{ font-weight:600; background:#fff7f3; border-color:rgba(0,0,0,.06); }
+
+  /* Grid */
+  .nb-testimonials__grid{
+    display:grid; gap:14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 880px){
+    .nb-testimonials__grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  /* Card */
+  .nb-tcard-wrap{
+    position:relative; background:#fff;
+    border:1px solid #e8ecef; border-radius:14px;
+    box-shadow:0 10px 22px rgba(0,0,0,.06);
+    padding: 16px 16px 14px 16px;
+  }
+  .nb-tcard-wrap::before{
+    content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px;
+    border-radius:14px 0 0 14px; background:linear-gradient(180deg,#C86B2A,#a75821);
+  }
+  .nb-t-quote{ margin:0 0 14px; font-size:1rem; line-height:1.6; }
+  .nb-t-meta{ display:flex; align-items:center; gap:12px; }
+  .nb-t-avatar{ width:40px; height:40px; border-radius:999px; object-fit:cover; }
+  .nb-t-name{ font-weight:700; }
+  .nb-t-role, .nb-t-loc{ color:#54636a; font-size:.92rem; }
+{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Testimonials (grid)",
+  "name": "Testimonials",
+  "class": "section-wrapper",
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
     { "type": "text", "id": "subheading", "label": "Subheading" },
-    { "type": "select", "id": "source", "label": "Source", "default": "blocks",
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Data source",
+      "default": "blocks",
       "options": [
-        { "value": "blocks", "label": "Manual (blocks in this section)" },
+        { "value": "blocks", "label": "Manual blocks" },
         { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
       ]
     },
-    { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 100, "step": 1, "default": 50 }
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Max testimonials",
+      "min": 1,
+      "max": 60,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_chips",
+      "label": "Show filter chips",
+      "default": true
+    }
   ],
   "blocks": [
     {
@@ -181,15 +228,24 @@ Source: Manual blocks (default) or Metaobject 'nb_testimonial'
       "name": "Testimonial",
       "settings": [
         { "type": "textarea", "id": "quote", "label": "Quote", "default": "This work helped me get clear, make braver choices, and feel more alive in daily life." },
-        { "type": "text", "id": "name", "label": "Name", "default": "Client name" },
-        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "Entrepreneur" },
-        { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
+        { "type": "text", "id": "name", "label": "Client name", "default": "Client name" },
+        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "" },
+        { "type": "text", "id": "location", "label": "Location", "default": "" },
         { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
-        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "coaching" }
+        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "" }
       ]
     }
   ],
-  "presets": [{ "name": "Testimonials (grid)" }]
+  "max_blocks": 80,
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
 }
 {% endschema %}
-
