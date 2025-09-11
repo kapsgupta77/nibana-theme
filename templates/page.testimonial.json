@@ -153,7 +153,10 @@
         "subheading": "-",
         "source": "blocks",
         "limit": 24,
-        "show_chips": true
+        "show_filter": true,
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "175541383104550227": {
@@ -303,6 +306,7 @@
       "block_order": [
         "ai_gen_block_0ff9823_GcVjVb"
       ],
+      "disabled": true,
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
