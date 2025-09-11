@@ -16,96 +16,120 @@
           "type": "testimonial",
           "settings": {
             "quote": "Highly recommend Kapil. He is an absolute soul whisperer and genius rolled into one",
-            "title": "NJ / Invetsor",
-            "location": "London, UK"
+            "name": "NJ",
+            "title": "Invetsor",
+            "location": "London, UK",
+            "tags": "Men's Coaching, Transformational Life Coaching, Leadership"
           }
         },
         "testimonial_itpiiA": {
           "type": "testimonial",
           "settings": {
             "quote": "If you are looking for a speaker and trainer that can create a long-lasting transformation in your organisation, Kapil is your man. His presence and authenticity from the front of the room and his depth of knowledge of the field of human potential and wellbeing is second to none. Make sure you book Kapil for your next event or training day.",
-            "title": "Simone Vincenzi / Entrepreneur, Speaker, C0-Founder of GTEX",
-            "location": "London, UK"
+            "name": "Simone Vincenzi",
+            "title": "Entrepreneur, Speaker, C0-Founder of GTEX",
+            "location": "London, UK",
+            "tags": "Leadership, Transformational Life Coaching"
           }
         },
         "testimonial_YwHc4e": {
           "type": "testimonial",
           "settings": {
             "quote": "Kapil has absolutely changed my way of looking at life and relationships. When I started working with Kapil I was in a bad shape and just after working for few weeks, I could start finding balance. I cannot thank Kapil enough for his support and guidance. I admire the way Kapil works and would recommend him strongly if you are looking for help.",
-            "title": "Sandipan / Professional at AWS",
-            "location": "London, UK"
+            "name": "Sandipan",
+            "title": "Professional at AWS",
+            "location": "London, UK",
+            "tags": "Relationship"
           }
         },
         "testimonial_DHQMYw": {
           "type": "testimonial",
           "settings": {
             "quote": "I’ve had the honour of working with Kapil for the last few months and each and every session has always left me with an “aha” moment. His insightfulness, guidance and compassion has truly been a blessing. I never thought that I would need a “coach” when Kapil was recommended to me yet now I have a better understanding of my fears, more clarity around my desires, and certainty about the life that I want to live. For that, I’m truly grateful. I would highly recommend Kapil",
-            "title": "Christopher Thomas",
-            "location": "New York City, USA"
+            "name": "Christopher Thomas",
+            "title": "Global Membership Manager, Club Quarter Hotels",
+            "location": "New York City, USA",
+            "tags": "Relationship, Men's Coaching, Transformational Life Coaching"
           }
         },
         "testimonial_nnrBdg": {
           "type": "testimonial",
           "settings": {
             "quote": "Kapil is a great speaker. Highly engaging, witty and eloquent. Most importantly Kapil really knows his stuff: he has a deep understanding of human beings and the challenges they face in modern life. I really gained more insight into my relationships with women. I would highly recommend Kapil as a coach.",
-            "title": "JB / Finance Entrepreneur",
-            "location": "London, UK"
+            "name": "JB",
+            "title": "Finance Entrepreneur",
+            "location": "London, UK",
+            "tags": "Men's Coaching, Transformational Life Coaching"
           }
         },
         "testimonial_UcyDLa": {
           "type": "testimonial",
           "settings": {
             "quote": "What does one do after the big goal is achieved? What does one do when money, fame, or even impact/contribution no longer cut it out for you? I turned to Kapil for coaching.\n\nThrough a dozen sessions, I got to understand myself and the world out there more. His sessions gave me relief from the immediate, resolved what was in my head and heart, and more importantly, gave me tools and perspectives to go deeper and go beyond the immediate resolutions.\n\nThe sessions have made me unfuckwithable, and have given me a mature worldview on relationships.\n\nI gained deep, lasting clarity on my business and the purpose it can serve for me and the world.\n\nAlso, I might not have had the wonderful, magical relationship with my “current fiance and soon-to-be wife” had Kapil not entered my life!",
-            "title": "Tanuj Kalia / CEO, Lawctopus",
-            "location": "India"
+            "name": "Tanuj Kalia",
+            "title": "CEO, Lawctopus",
+            "location": "India",
+            "tags": "Relationship, Transformational Life Coaching"
           }
         },
         "testimonial_D9Pgik": {
           "type": "testimonial",
           "settings": {
             "quote": "If you are stuck in a rut, whether you’re single, in a relationship, lack confidence or direction, or just want more from life – Kapil is the answer!",
-            "title": "Patrik P / Business Owner",
-            "location": "London, UK"
+            "name": "Patrik P",
+            "title": "Business Owner",
+            "location": "London, UK",
+            "tags": "Relationship, Men's Coaching"
           }
         },
         "testimonial_6ACp9K": {
           "type": "testimonial",
           "settings": {
             "quote": "Kapil is like a mirror, he acts as a tool for you to get to really see yourself. I think the process of working with Kapil is going to be a reflection of the person he is working with. If someone wants to understand something about themselves, Kapil can help to realise things that are so routed in themselves that they became totally unaware of.",
-            "title": "Santiago Ruge / Management Consultant",
-            "location": "Bogota, Columbia"
+            "name": "Santiago Ruge",
+            "title": "Management Consultant",
+            "location": "Bogota, Columbia",
+            "tags": "Relationship, Transformational Life Coaching, Men's Coaching"
           }
         },
         "testimonial_FMr6nz": {
           "type": "testimonial",
           "settings": {
             "quote": "Kapil has a way of speaking to our desires that bypasses one’s vigilance center so that what we truly want can come out freely. He can see the rightness in the places where we often miss or deny it. There’s a gentle firmness in his teaching and a soft steadiness in his presence. I never felt his words being intrusive but they can always touch a place deep inside.",
-            "title": "J / Teacher",
-            "location": "London, UK"
+            "name": "J",
+            "title": "Teacher",
+            "location": "London, UK",
+            "tags": "Eros, Women, Relationship"
           }
         },
         "testimonial_tFFwpG": {
           "type": "testimonial",
           "settings": {
             "quote": "As a coach, Kapil is exceptional. Attention to detail, really listen to what i say and help me discover what it is underneath my problem to highlight the answer i was looking for with grace, fun, straight to the point. Very powerful. If you talk to him, be clear of doing your side of the work and the results will be worthy.",
-            "title": "Haris Abols / Associate Credit Partner, Santander UK Corporate & Commercial",
-            "location": "London, UK"
+            "name": "Haris Abols",
+            "title": "Associate Credit Partner, Santander UK Corporate & Commercial",
+            "location": "London, UK",
+            "tags": "Men's Coaching, Eros, Relationship, Transformational Life Coaching"
           }
         },
         "testimonial_LANY7i": {
           "type": "testimonial",
           "settings": {
             "quote": "Kapil is a wonderful teacher. He’s got a playful, penetrative presence in the front of them room. His ability lies in the fact that he’s comfortable discussing the taboo, sex and the shadow, which gives permission to everyone else to explore these topics too. His fierce love for teaching a path of awakening and personal responsibility shines through everything he says. And he always keeps the tone engaging and fun, so that his teachings can be easily absorbed. I highly recommend attending his classes and workshops, as they’ve changed my life",
-            "title": "Caoilfhionn / Digital Marketing Executive & Women’s Coach",
-            "location": "London, UK"
+            "name": "Caoilfhionn",
+            "title": "Digital Marketing Executive & Women’s Coach",
+            "location": "London, UK",
+            "tags": "Eros, Women, Relationship"
           }
         },
         "testimonial_r6TMaE": {
           "type": "testimonial",
           "settings": {
             "quote": "Confused, hurt, drowning in fear, victim, and super masculine, energetically is how I would describe myself at this time. He listened, comprehended, and provided the exact specific tools that were required for my situation. It felt like a magnifying mirror held close, showing me what I could do to be better, and instead I sat on fears and complained about the reasons why I couldn’t be and what all stopped me. Having worked over six months with Kapil, I can wholeheartedly say that I now have a lot of education, in various areas of life coaching, to be the best version of myself, especially be connected to my true feminine. He is always available for a chat and works a lot on himself to lead by example. Highly recommended!",
-            "title": "Pallavi / Business Owner",
-            "location": "London, UK"
+            "name": "Pallavi",
+            "title": "Business Owner",
+            "location": "London, UK",
+            "tags": "Relationship, Transformational Life Coaching, Women"
           }
         }
       },
@@ -126,11 +150,10 @@
       "name": "Testimonials",
       "settings": {
         "heading": "What our clients say",
-        "tone": "sage",
-        "show_stars": false,
-        "max_lines": 9,
-        "button_label": "Book a free 20-min call",
-        "button_link": ""
+        "subheading": "-",
+        "source": "blocks",
+        "limit": 24,
+        "show_chips": true
       }
     },
     "175541383104550227": {
