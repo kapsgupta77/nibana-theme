@@ -1,56 +1,35 @@
 {%- liquid
-  # Prefer the passed-in object "c", otherwise fall back to a parent var named "card"
-  assign card = c | default: card
-
-  # Safe field reads with fallbacks
-  assign quote    = ''
-  if card.quote
-    assign quote = card.quote | to_s | strip
-  elsif card.q
-    assign quote = card.q | to_s | strip
-  endif
-
-  assign name     = card.name     | to_s | strip
-  assign title    = card.title    | to_s | strip
-  assign location = card.location | to_s | strip
-  assign avatar   = card.avatar
+  # Read values passed from the section (support both new/legacy names)
+  assign quote_txt = quote | default: q  | to_s | strip
+  assign name_txt  = name  | default: n  | to_s | strip
+  assign title_txt = title | default: tt | to_s | strip
+  assign loc_txt   = location | default: loc | to_s | strip
+  assign avatar_img = avatar
+  assign tags_norm  = tags | to_s | downcase | strip
 -%}
 
-<div class="nb-tcard">
-  <div class="nb-tcard__bar" aria-hidden="true"></div>
+<div class="nb-tcard" data-tags="{{ tags_norm | escape }}">
+  <div class="nb-tcard__accent" aria-hidden="true"></div>
 
-  {%- if quote != '' -%}
-    <blockquote class="nb-tcard__quote">“{{ quote }}”</blockquote>
+  {%- if quote_txt != '' -%}
+    <blockquote class="nb-tcard__quote">“{{ quote_txt }}”</blockquote>
   {%- endif -%}
 
   <footer class="nb-tcard__meta">
-    <div class="nb-tcard__person">
-      {%- if avatar -%}
-        {{ avatar
+    <div class="nb-tcard__avatar">
+      {%- if avatar_img -%}
+        {{ avatar_img
           | image_url: width: 96
-          | image_tag: class: 'nb-tcard__avatar', alt: name, loading: 'lazy', decoding: 'async' }}
+          | image_tag: class: 'nb-tcard__avatar-img', alt: name_txt, loading: 'lazy', decoding: 'async' }}
       {%- else -%}
-        <span class="nb-tcard__avatar nb-tcard__avatar--placeholder" aria-hidden="true"></span>
+        <span class="nb-tcard__avatar-img" style="background:#eef2f1;border-radius:999px;display:block;width:36px;height:36px;" aria-hidden="true"></span>
       {%- endif -%}
-      <div class="nb-tcard__id">
-        {%- if name     != '' -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
-        {%- if title    != '' -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
-        {%- if location != '' -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
-      </div>
+    </div>
+
+    <div class="nb-tcard__who">
+      {%- if name_txt  != '' -%}<div class="nb-tcard__name">{{ name_txt }}</div>{%- endif -%}
+      {%- if title_txt != '' -%}<div class="nb-tcard__title">{{ title_txt }}</div>{%- endif -%}
+      {%- if loc_txt   != '' -%}<div class="nb-tcard__loc">{{ loc_txt }}</div>{%- endif -%}
     </div>
   </footer>
 </div>
-
-<style>
-/* (Tiny card styles; feel free to keep your existing CSS instead) */
-.nb-tcard{background:#fff;border:1px solid #e8ecef;border-radius:14px;box-shadow:0 8px 18px rgba(0,0,0,.05);padding:16px 16px 14px;position:relative}
-.nb-tcard__bar{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:14px 0 0 14px;background:linear-gradient(180deg,#C86B2A,#8a4a17)}
-.nb-tcard__quote{margin:0 0 14px}
-.nb-tcard__meta{margin-top:8px}
-.nb-tcard__person{display:flex;gap:10px;align-items:flex-start}
-.nb-tcard__avatar{width:40px;height:40px;border-radius:999px;object-fit:cover}
-.nb-tcard__avatar--placeholder{display:inline-block;width:40px;height:40px;border-radius:999px;background:#eef2f1}
-.nb-tcard__id{line-height:1.25}
-.nb-tcard__name{font-weight:600}
-.nb-tcard__title,.nb-tcard__loc{font-size:.9em;color:#5b6a70}
-</style>
