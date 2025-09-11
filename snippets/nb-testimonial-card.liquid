@@ -1,36 +1,36 @@
 {%- comment -%}
-Inputs (passed as named params):
-  quote (string), name (string), title (string), location (string),
-  avatar (image), tags (comma/semicolon list for filtering)
+Card snippet used by the Testimonials section (and slider).
+Expected params: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
-{%- liquid
-  assign tags_norm = tags | default: '' | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' | downcase
--%}
+{%- assign _quote = quote | strip | default: '' -%}
+{%- assign _name  = name  | strip | default: '' -%}
+{%- assign _title = title | strip | default: '' -%}
+{%- assign _loc   = location | strip | default: '' -%}
+{%- assign _tagsr = tags | default: '' | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
 
-<article class="nb-tcard" data-tags="{{ tags_norm | escape }}">
+<article class="nb-tcard" data-tags="{{ _tagsr | downcase }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
 
-  {%- if quote != blank -%}
-    <blockquote class="nb-tcard__quote" data-q>
-      {{ quote }}
-    </blockquote>
-  {%- endif -%}
+  <div class="nb-tcard__quote" data-q>
+    <p>{{ _quote }}</p>
+  </div>
 
   <div class="nb-tcard__meta">
-    <div class="nb-tcard__avatar" aria-hidden="true">
-      {%- if avatar != blank -%}
+    {%- if avatar -%}
+      <figure class="nb-tcard__avatar">
         {{ avatar
-          | image_url: width: 120
-          | image_tag: alt: name, class: 'nb-tcard__avatar-img', loading: 'lazy', widths: '60,90,120' }}
-      {%- endif -%}
-    </div>
+          | image_url: width: 128
+          | image_tag: alt: _name, class: 'nb-tcard__avatar-img', sizes: '48px', widths: '64,96,128' }}
+      </figure>
+    {%- endif -%}
+
     <div class="nb-tcard__who">
-      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
-      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
-      {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
+      {%- if _name  != '' -%}<div class="nb-tcard__name">{{ _name }}</div>{%- endif -%}
+      {%- if _title != '' -%}<div class="nb-tcard__title">{{ _title }}</div>{%- endif -%}
+      {%- if _loc   != '' -%}<div class="nb-tcard__loc">{{ _loc }}</div>{%- endif -%}
     </div>
   </div>
 
-  <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
+  <button class="nb-tcard__more" data-more hidden>Read full</button>
 </article>
