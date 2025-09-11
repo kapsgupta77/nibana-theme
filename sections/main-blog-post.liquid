@@ -48,6 +48,14 @@
       </div>
     </header>
 
+<nav class="nb-crumbs" aria-label="Breadcrumb">
+  <a href="/">Home</a>
+  <span aria-hidden="true">›</span>
+  <a href="{{ blog.url }}">{{ blog.title }}</a>
+  <span aria-hidden="true">›</span>
+  <span aria-current="page">{{ article.title }}</span>
+</nav>
+
     {% if nb_dek != blank %}
       <p class="nb-article-dek">{{ nb_dek }}</p>
     {% endif %}
@@ -68,6 +76,25 @@
     {% endif %}
 
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' -%}
+
+{% if article.tags.size > 0 %}
+  <div class="nb-article-tags" role="list">
+    {% for t in article.tags %}
+      <a class="nb-chip" role="listitem" href="{{ blog.url }}/tagged/{{ t | handleize }}">{{ t }}</a>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="nb-share">
+  <span class="nb-share__label">Share</span>
+  {% assign _share = article.url | absolute_url | url_encode %}
+  {% assign _text  = article.title | url_encode %}
+  <a class="nb-share__btn" rel="noopener" target="_blank"
+     href="https://www.linkedin.com/sharing/share-offsite/?url={{ _share }}">LinkedIn</a>
+  <a class="nb-share__btn" rel="noopener" target="_blank"
+     href="https://twitter.com/intent/tweet?url={{ _share }}&text={{ _text }}">X</a>
+  <button class="nb-share__btn" type="button" data-copy="{{ article.url | absolute_url }}">Copy link</button>
+</div>
 
     {% if nb_cta_label != blank and nb_cta_link != blank %}
       <div class="nb-article-cta">
@@ -148,6 +175,19 @@
       {%- endif -%}
     </section>
 
+<nav class="nb-article-nav" aria-label="Article pagination">
+  {% if article.previous %}
+    <a class="nb-article-nav__prev" href="{{ article.previous.url }}">
+      ← {{ article.previous.title }}
+    </a>
+  {% endif %}
+  {% if article.next %}
+    <a class="nb-article-nav__next" href="{{ article.next.url }}">
+      {{ article.next.title }} →
+    </a>
+  {% endif %}
+</nav>
+
     {% if blog.comments_enabled? %}
       <div class="blog-post-comments-container">
         <h2 class="h3">{{- 'blogs.article.comments_heading' | t: count: article.comments_count -}}</h2>
@@ -203,6 +243,20 @@
     window.addEventListener('resize', calc);
     calc();
   }
+})();
+</script>
+
+<script>
+/* Share: copy link */
+(function(){
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-copy]'); if(!btn) return;
+    var url = btn.getAttribute('data-copy') || location.href;
+    navigator.clipboard && navigator.clipboard.writeText(url).then(function(){
+      btn.textContent = 'Copied!';
+      setTimeout(function(){ btn.textContent = 'Copy link'; }, 1400);
+    });
+  }, {passive:true});
 })();
 </script>
 
@@ -298,6 +352,55 @@
   .blog-post-comments-pagination a:hover {
     border-bottom: 1px solid var(--color-foreground);
   }
+/* Breadcrumbs */
+.nb-crumbs{
+  max-width:var(--normal-content-width); margin:8px auto 10px;
+  color:#6b7a80; font-size:.92rem; display:flex; gap:8px; flex-wrap:wrap;
+}
+.nb-crumbs a{ color:inherit; text-decoration:none; }
+.nb-crumbs a:hover{ text-decoration:underline; }
+
+/* Tag chips */
+.nb-article-tags{
+  max-width:var(--normal-content-width); margin:16px auto 10px;
+  display:flex; flex-wrap:wrap; gap:10px;
+}
+.nb-chip{
+  display:inline-block; padding:.5rem .75rem; border-radius:999px;
+  background:#fff; border:1px solid #e8ecef; color:inherit; text-decoration:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.nb-chip:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.08); }
+
+/* Share row */
+.nb-share{
+  max-width:var(--normal-content-width); margin:10px auto 18px;
+  display:flex; align-items:center; flex-wrap:wrap; gap:10px 12px;
+}
+.nb-share__label{ color:#6b7a80; margin-right:4px; }
+.nb-share__btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:.5rem .8rem; border-radius:10px; border:1px solid #e8ecef;
+  background:#fff; cursor:pointer; text-decoration:none; color:inherit;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+.nb-share__btn:hover{ box-shadow:0 8px 18px rgba(0,0,0,.08); }
+
+/* Prev/Next */
+.nb-article-nav{
+  max-width:var(--wide-content-width, 1100px);
+  margin:24px auto 6px; display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap;
+}
+.nb-article-nav a{
+  flex:1 1 320px; text-decoration:none; color:inherit;
+  background:#fff; border:1px solid #e8ecef; border-radius:14px; padding:12px 14px;
+  box-shadow:0 8px 18px rgba(0,0,0,.06);
+}
+.nb-article-nav a:hover{ box-shadow:0 12px 24px rgba(0,0,0,.08); }
+.nb-article-nav__prev{ text-align:left; }
+.nb-article-nav__next{ text-align:right; }
+
 {% endstylesheet %}
 
 {% schema %}
