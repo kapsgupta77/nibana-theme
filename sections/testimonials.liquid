@@ -1,144 +1,202 @@
-{% comment %} sections/testimonials.liquid – Nibana v2 {% endcomment %}
+{% comment %} testimonials.liquid - Section file {% endcomment %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
-
 <style>
-  /* ===== NIBANA — Testimonials v2 (lux, calm, credible) ===== */
-  .nb-tm{ --tone-bg:#e8f4f2; --tone-ink:#0f5b62; --card-r:16px; --panel-r:22px; }
-  .nb-tm.tone-white  { --tone-bg:#ffffff; --tone-ink:#223238; }
-  .nb-tm.tone-sage   { --tone-bg:#EAF4F3; --tone-ink:#0F5B59; }
-  .nb-tm.tone-pebble { --tone-bg:#fbf7f5; --tone-ink:#B67955; }
-  .nb-tm.tone-ink    { --tone-bg:#f6f9f8; --tone-ink:#223238; }
+  /* ===== NIBANA — Testimonials ===== */
 
-  .nb-tm{
-    margin-block: clamp(24px,3vw,44px);
-    padding: clamp(22px,3vw,32px);
-    background: var(--tone-bg);
-    border-radius: var(--panel-r);
+  /* Panel: soft tint, rounded, shadow, consistent rhythm */
+  .testimonial-section{
+    --brand-teal: #0f5b62;
+    --tint: #e8f4f2;              /* matches Mission / Contact vibe */
+    --panel-radius: 20px;
+
+    position: relative;
+    overflow: visible;            /* allow arrows to sit slightly outside */
+    margin-block: clamp(28px, 3.2vw, 48px);
+    padding: clamp(28px, 3.2vw, 44px) clamp(16px, 3vw, 32px);
+    background: var(--tint);
+    border-radius: var(--panel-radius);
     box-shadow: 0 10px 28px rgba(0,0,0,.06);
     text-align: center;
-    position:relative;
   }
-  .nb-tm__title{
-    color: var(--tone-ink);
+
+  /* Heading */
+  .testimonial-section h2{
+    color: var(--brand-teal);
     font-weight: 800;
-    font-size: clamp(26px,3vw,40px);
-    line-height:1.15;
-    margin: 0 0 16px;
+    font-size: clamp(28px, 3.2vw, 44px);
+    line-height: 1.15;
+    margin: 0 0 22px 0;
   }
 
-  /* Swiper rail */
-  .nb-tm__rail{ overflow:hidden; padding: 0 clamp(44px,4vw,64px) 22px; position:relative; }
-  .nb-tm .swiper-pagination{ position:relative; bottom:auto; margin-top:4px; }
-  .nb-tm .swiper-pagination-bullet{ background: rgba(15,91,98,.35); opacity:1; width:8px; height:8px; margin:0 3px !important; }
-  .nb-tm .swiper-pagination-bullet-active{ background: var(--tone-ink); }
+ /* Swiper rail — add L/R gutters and keep slides clipped */
+.testimonial-swiper{
+  overflow: hidden;                                /* keep hidden slides hidden */
+  padding: 0 clamp(64px, 7vw, 36px) 24px;          /* <-- gutters + room for dots */
+  position: relative;                              /* anchors arrows */
+}
 
-  /* Arrows (outside rail) */
-  .nb-tm .swiper-button-prev,
-  .nb-tm .swiper-button-next{
-    position:absolute; top:50%; transform:translateY(-50%); z-index:3;
-    width:44px; height:44px; border-radius:999px; display:grid; place-items:center;
-    background:#fff; color: var(--tone-ink); box-shadow:0 6px 20px rgba(0,0,0,.14);
+/* Arrows sit inside those gutters (not overlapping cards) */
+.testimonial-section .swiper-button-prev{ left: clamp(16px, 2vw, 28px); }
+.testimonial-section .swiper-button-next{ right: clamp(16px, 2vw, 28px); }
+
+@media (max-width: 1024px){
+  .testimonial-section .swiper-button-prev{ left: 12px; }
+  .testimonial-section .swiper-button-next{ right: 12px; }
+}
+
+  /* Slides and cards */
+  .testimonial-card{
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    text-align: left;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.08);
   }
-  .nb-tm .swiper-button-prev{ left:-22px; }
-  .nb-tm .swiper-button-next{ right:-22px; }
-  .nb-tm .swiper-button-prev::after, .nb-tm .swiper-button-next::after{
-    content:""; width:10px; height:10px; border-right:2px solid currentColor; border-bottom:2px solid currentColor;
+
+  .testimonial-name{
+    font-weight: 700;
+    color: var(--brand-teal);
   }
-  .nb-tm .swiper-button-prev::after{ transform:rotate(135deg); }
-  .nb-tm .swiper-button-next::after{ transform:rotate(-45deg); }
+
+  .testimonial-location{
+    font-size: 14px;
+    color: #4a4a4a;
+    margin-bottom: 6px;
+  }
+
+  .stars{
+    color: var(--brand-teal);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* Keep card heights visually consistent:
+     limit body height and allow scroll inside long quotes */
+  .testimonial-content{
+    font-size: 16px;
+    color: #2b2b2b;
+    line-height: 1.5;
+    max-height: 10.5rem;          /* tune if you want taller cards */
+    overflow-y: auto;
+  }
+
+  /* Pagination dots */
+  .testimonial-section .swiper-pagination{
+    position: relative;
+    bottom: auto;
+    margin-top: 4px;
+  }
+  .testimonial-section .swiper-pagination-bullet{
+    background: rgba(15,91,98,.35);
+    opacity: 1;
+    width: 8px; height: 8px;
+    margin: 0 3px !important;
+  }
+  .testimonial-section .swiper-pagination-bullet-active{
+    background: var(--brand-teal);
+  }
+
+  /* “View All” button */
+  .testimonial-button{
+    margin-top: 10px;             /* keeps the section tight with FAQ */
+  }
+  .testimonial-button a{
+    background: var(--brand-teal);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  }
+  .testimonial-button a:hover{
+    filter: brightness(1.04);
+  }
+  .testimonial-button a:focus-visible{
+    outline: 3px solid #10636c;
+    outline-offset: 3px;
+  }
+
+  /* Arrows — outside the card rail */
+  .testimonial-section .swiper-button-prev,
+  .testimonial-section .swiper-button-next{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    display: grid; place-items: center;
+    background: #fff;
+    color: var(--brand-teal);
+    box-shadow: 0 6px 20px rgba(0,0,0,.14);
+  }
+  .testimonial-section .swiper-button-prev{ left: -28px; }
+  .testimonial-section .swiper-button-next{ right: -28px; }
+
+  /* Replace default arrow glyphs with clean chevrons */
+  .testimonial-section .swiper-button-prev::after,
+  .testimonial-section .swiper-button-next::after{
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+  }
+  .testimonial-section .swiper-button-prev::after{ transform: rotate(135deg); }
+  .testimonial-section .swiper-button-next::after{ transform: rotate(-45deg); }
+
+  /* Tuck arrows slightly on tablets/smaller screens */
+  @media (max-width: 1024px){
+    .testimonial-section .swiper-button-prev{ left: -12px; }
+    .testimonial-section .swiper-button-next{ right: -12px; }
+  }
   @media (max-width: 680px){
-    .nb-tm .swiper-button-prev, .nb-tm .swiper-button-next{ display:none; }
+    /* Optional: hide arrows on very small screens if they feel tight */
+    .testimonial-section .swiper-button-prev,
+    .testimonial-section .swiper-button-next{ display:none; }
   }
-
-  /* Card */
-  .nb-tm__card{
-    background:#fff; border-radius: var(--card-r); padding:18px;
-    text-align:left; height:100%;
-    display:flex; flex-direction:column; gap:12px;
-    box-shadow:0 6px 20px rgba(0,0,0,.08); position:relative; overflow:hidden;
-  }
-  .nb-tm__card::before{
-    /* subtle accent sliver */
-    content:""; position:absolute; inset:-1px auto -1px -1px; width:6px; border-radius:var(--card-r) 0 0 var(--card-r);
-    background: linear-gradient(180deg, var(--tone-ink), color-mix(in oklab, var(--tone-ink), #000 14%));
-  }
-
-  /* Header (avatar + name/role) */
-  .nb-tm__hdr{ display:flex; align-items:center; gap:12px; }
-  .nb-tm__ava{ width:42px; height:42px; border-radius:999px; overflow:hidden; flex:0 0 42px; background:#f3f3f3; }
-  .nb-tm__ava img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .nb-tm__who{ line-height:1.2; }
-  .nb-tm__name{ font-weight:700; color: var(--tone-ink); }
-  .nb-tm__meta{ font-size:14px; color:#4a4a4a; }
-
-  /* Stars (optional) */
-  .nb-tm__stars{ color: var(--tone-ink); letter-spacing:1px; font-size:14px; }
-
-  /* Quote */
-  .nb-tm__quote{
-    font-size:16px; color:#2b2b2b; line-height:1.55;
-    display:-webkit-box; -webkit-line-clamp: var(--clamp, 9); -webkit-box-orient: vertical; overflow:hidden;
-  }
-  .nb-tm__quote em{ font-style:normal; background:#fff1e7; padding:0 2px; border-radius:4px; }
-
-  /* Footer button */
-  .nb-tm__cta{ margin-top:10px; }
-  .nb-tm__cta a{
-    background: var(--tone-ink); color:#fff; padding:12px 26px; border-radius:999px; text-decoration:none; font-weight:600;
-    display:inline-block; box-shadow:0 6px 20px rgba(0,0,0,.12);
-  }
-  .nb-tm__cta a:hover{ filter:brightness(1.04); }
-  .nb-tm__cta a:focus-visible{ outline:3px solid #10636c; outline-offset:3px; }
 </style>
 
-<section class="nb-tm tone-{{ section.settings.tone | default: 'sage' }}">
-  {% if section.settings.heading != blank %}
-    <h2 class="nb-tm__title">{{ section.settings.heading }}</h2>
-  {% endif %}
 
-  <div class="swiper nb-tm__rail" id="nbTm-{{ section.id }}">
-    <div class="swiper-wrapper">
-      {% for block in section.blocks %}
-        <div class="swiper-slide">
-          <div class="nb-tm__card">
-            <div class="nb-tm__hdr">
-              {% if block.settings.avatar != blank %}
-                <span class="nb-tm__ava">
-                  {{ block.settings.avatar | image_url: width: 84 | image_tag: alt: block.settings.name, class: 'nb-tm__ava-img', loading: 'lazy' }}
-                </span>
-              {% endif %}
-              <div class="nb-tm__who">
-                <div class="nb-tm__name">{{ block.settings.name }}</div>
-                <div class="nb-tm__meta">
-                  {% if block.settings.title != blank %}{{ block.settings.title }}{% endif %}
-                  {% if block.settings.location != blank %}{% if block.settings.title != blank %}, {% endif %}{{ block.settings.location }}{% endif %}
-                </div>
-              </div>
+
+<section class="testimonial-section">
+  <h2>{{ section.settings.heading }}</h2>
+
+ <div class="swiper testimonial-swiper">
+  <div class="swiper-wrapper">
+    {% for block in section.blocks %}
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <div>
+            <div class="testimonial-name">{{ block.settings.name }}</div>
+            <div class="testimonial-location">{{ block.settings.title }}, {{ block.settings.location }}</div>
+            <div class="stars">
+              {% for i in (1..5) %}<span>★</span>{% endfor %}
             </div>
-
-            {% if section.settings.show_stars and block.settings.rating > 0 %}
-              <div class="nb-tm__stars">
-                {% for i in (1..block.settings.rating) %}★{% endfor %}
-              </div>
-            {% endif %}
-
-            <div class="nb-tm__quote" style="--clamp: {{ section.settings.max_lines | default: 9 }}">
-              {{ block.settings.testimonial }}
-            </div>
+            <div class="testimonial-content">{{ block.settings.testimonial }}</div>
           </div>
         </div>
-      {% endfor %}
-    </div>
-
-    <div class="swiper-pagination"></div>
+      </div>
+    {% endfor %}
   </div>
 
-  <!-- Arrows outside so they don't clip -->
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-button-next"></div>
+  <!-- Dots -->
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- Arrows moved OUTSIDE the swiper so they aren’t clipped -->
+<div class="swiper-button-prev"></div>
+<div class="swiper-button-next"></div>
+
 
   {% if section.settings.button_label != blank and section.settings.button_link != blank %}
-    <div class="nb-tm__cta">
+    <div class="testimonial-button">
       <a href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
     </div>
   {% endif %}
@@ -146,55 +204,61 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <script>
-  (function(){
-    var el = document.getElementById('nbTm-{{ section.id }}');
-    if(!el) return;
-    new Swiper(el, {
-      slidesPerView: 1,
-      spaceBetween: 24,
-      pagination: { el: el.querySelector('.swiper-pagination'), clickable: true },
-      navigation: {
-        nextEl: el.closest('.nb-tm').querySelector('.swiper-button-next'),
-        prevEl: el.closest('.nb-tm').querySelector('.swiper-button-prev')
-      },
-      breakpoints: { 768:{slidesPerView:2}, 1024:{slidesPerView:3} },
-      autoplay: {{ section.settings.autoplay | default: false | json }} ? { delay: 4200, pauseOnMouseEnter: true, disableOnInteraction: false } : false
-    });
-  })();
+  new Swiper(".testimonial-swiper", {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    pagination: {
+      el: ".testimonial-swiper .swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+  nextEl: ".testimonial-section .swiper-button-next",
+  prevEl: ".testimonial-section .swiper-button-prev",
+},
+    breakpoints: {
+      768:  { slidesPerView: 2 },
+      1024: { slidesPerView: 3 }
+    }
+  });
 </script>
 
 {% schema %}
 {
   "name": "Testimonials",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Section heading", "default": "What our clients say" },
-    { "type": "select", "id": "tone", "label": "Tone", "default": "sage",
-      "options": [
-        { "value": "sage",   "label": "Sage" },
-        { "value": "pebble", "label": "Pebble" },
-        { "value": "ink",    "label": "Ink" },
-        { "value": "white",  "label": "White" }
-      ]
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Our Testimonial"
     },
-    { "type": "checkbox", "id": "show_stars", "label": "Show star rating", "default": false },
-    { "type": "range", "id": "max_lines", "label": "Max lines per quote", "min": 4, "max": 14, "step": 1, "default": 9 },
-    { "type": "checkbox", "id": "autoplay", "label": "Autoplay carousel", "default": false },
-    { "type": "text", "id": "button_label", "label": "CTA label", "default": "" },
-    { "type": "url",  "id": "button_link",  "label": "CTA link" }
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "VIEW ALL"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
   ],
   "blocks": [
-    { "type": "testimonial", "name": "Testimonial",
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
       "settings": [
-        { "type":"image_picker", "id":"avatar", "label":"Avatar (optional)" },
-        { "type":"text", "id":"name", "label":"Name", "default":"Client name" },
-        { "type":"text", "id":"title", "label":"Title / Role (optional)", "default": "" },
-        { "type":"text", "id":"location", "label":"Location (optional)", "default": "" },
-        { "type":"range", "id":"rating", "label":"Rating (1–5, optional)", "min":1, "max":5, "step":1, "default":5 },
-        { "type":"textarea", "id":"testimonial", "label":"Testimonial text", "default":"Short, specific win or transformation." }
+        { "type": "text",     "id": "name",        "label": "Name",             "default": "John Doe" },
+        { "type": "text",     "id": "title",       "label": "Title / Position", "default": "CEO" },
+        { "type": "text",     "id": "location",    "label": "Location",         "default": "New York" },
+        { "type": "textarea", "id": "testimonial", "label": "Testimonial Text", "default": "This is a sample testimonial content that will scroll if it gets too long." }
       ]
     }
   ],
-  "max_blocks": 24,
-  "presets": [{ "name": "Testimonials", "category": "Custom" }]
+  "max_blocks": 12,
+  "presets": [
+    { "name": "Testimonials", "category": "Custom" }
+  ]
 }
 {% endschema %}
