@@ -1,36 +1,36 @@
 {%- comment -%}
-Reusable testimonial card
-Expected params: quote, name, title, location, avatar (image), tags (comma string)
+Inputs (passed as named params):
+  quote (string), name (string), title (string), location (string),
+  avatar (image), tags (comma/semicolon list for filtering)
 {%- endcomment -%}
 
-{%- assign q   = quote    | default: '' -%}
-{%- assign n   = name     | default: '' -%}
-{%- assign tt  = title    | default: '' -%}
-{%- assign loc = location | default: '' -%}
-{%- assign av  = avatar -%}
-{%- assign tg  = tags     | default: '' -%}
+{%- liquid
+  assign tags_norm = tags | default: '' | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' | downcase
+-%}
 
-<article class="nb-tcard" data-tags="{{ tg | downcase | replace: ', ', ',' }}">
+<article class="nb-tcard" data-tags="{{ tags_norm | escape }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
 
-  <blockquote class="nb-tcard__quote" data-q>
-    {{ q }}
-  </blockquote>
+  {%- if quote != blank -%}
+    <blockquote class="nb-tcard__quote" data-q>
+      {{ quote }}
+    </blockquote>
+  {%- endif -%}
 
   <div class="nb-tcard__meta">
-    <div class="nb-tcard__avatar">
-      {%- if av -%}
-        {{ av
-          | image_url: width: 96
-          | image_tag: widths: '96', alt: n, class: 'nb-tcard__avatar-img' }}
+    <div class="nb-tcard__avatar" aria-hidden="true">
+      {%- if avatar != blank -%}
+        {{ avatar
+          | image_url: width: 120
+          | image_tag: alt: name, class: 'nb-tcard__avatar-img', loading: 'lazy', widths: '60,90,120' }}
       {%- endif -%}
     </div>
     <div class="nb-tcard__who">
-      {%- if n  != '' -%}<div class="nb-tcard__name">{{ n }}</div>{%- endif -%}
-      {%- if tt != '' -%}<div class="nb-tcard__title">{{ tt }}</div>{%- endif -%}
-      {%- if loc != '' -%}<div class="nb-tcard__loc">{{ loc }}</div>{%- endif -%}
+      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
+      {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
     </div>
   </div>
 
-  <button class="nb-tcard__more" type="button" data-more hidden>Read full</button>
+  <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 </article>
