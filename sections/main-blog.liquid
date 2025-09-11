@@ -66,6 +66,31 @@
     </ul>
   </nav>
 {% endif %}
+
+{% if blog.all_tags.size > 0 %}
+  <div class="nb-tagsearch"
+       data-tags='{{ blog.all_tags | json }}'
+       data-blog-url='{{ blog.url }}'>
+    <label for="nbTagSearch-{{ section.id }}" class="nb-tagsearch__label">Search topics</label>
+    <div class="nb-tagsearch__field">
+      <input id="nbTagSearch-{{ section.id }}"
+             type="search"
+             inputmode="search"
+             autocomplete="off"
+             placeholder="Search topics…"
+             aria-autocomplete="list"
+             aria-controls="nbTagList-{{ section.id }}"
+             aria-expanded="false"
+             class="nb-tagsearch__input" />
+      <button class="nb-tagsearch__clear" type="button" aria-label="Clear search" hidden>&times;</button>
+      <ul id="nbTagList-{{ section.id }}"
+          class="nb-tagsearch__list"
+          role="listbox"
+          hidden></ul>
+    </div>
+  </div>
+{% endif %}
+
   <div class="section-background color-{{ section.settings.color_scheme }}"></div>
   <div
     class="
@@ -107,8 +132,142 @@
   </div>
 </blog-posts-list>
 
+<script>
+(() => {
+  const root = document.querySelector('.nb-tagsearch[data-blog-url]');
+  if (!root) return;
+
+  const input   = root.querySelector('.nb-tagsearch__input');
+  const clear   = root.querySelector('.nb-tagsearch__clear');
+  const list    = root.querySelector('.nb-tagsearch__list');
+  const blogUrl = root.dataset.blogUrl || '/blogs/news';
+  const allTags = (() => { try { return JSON.parse(root.dataset.tags || '[]'); } catch(e){ return []; } })();
+
+  const MAX_SUGGESTIONS = 8;
+
+  const norm = s => (s||'').toString().trim();
+  const handle = s => norm(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+  function score(tag, q){
+    const t = norm(tag).toLowerCase();
+    const qq = norm(q).toLowerCase();
+    if (!qq) return 0;
+    if (t === qq) return 100;
+    if (t.startsWith(qq)) return 80;
+    if (t.includes(qq)) return 50;
+    return 0;
+  }
+
+  function highlight(tag, q){
+    const t = tag.toString();
+    const i = t.toLowerCase().indexOf(q.toLowerCase());
+    if (i < 0) return t;
+    return t.slice(0,i) + '<em>' + t.slice(i, i+q.length) + '</em>' + t.slice(i+q.length);
+  }
+
+  function render(items, q){
+    list.innerHTML = '';
+    items.slice(0, MAX_SUGGESTIONS).forEach((tag, idx) => {
+      const li = document.createElement('li');
+      li.className = 'nb-tagsearch__item';
+      li.role = 'option';
+      li.innerHTML = `<span class="nb-tagsearch__badge" aria-hidden="true"></span><span>${highlight(tag, q)}</span>`;
+      li.addEventListener('mousedown', (ev) => {
+        ev.preventDefault();
+        location.href = blogUrl + '/tagged/' + handle(tag);
+      });
+      list.appendChild(li);
+      if (idx === 0) li.setAttribute('aria-selected','true');
+    });
+    const has = items.length > 0;
+    list.hidden = !has;
+    input.setAttribute('aria-expanded', String(has));
+  }
+
+  function onInput(){
+    const q = norm(input.value);
+    clear.hidden = q === '';
+    if (q === '') { list.hidden = true; input.setAttribute('aria-expanded','false'); return; }
+
+    const results = allTags
+      .map(t => ({ t, s: score(t, q) }))
+      .filter(x => x.s > 0)
+      .sort((a,b) => b.s - a.s || a.t.localeCompare(b.t))
+      .map(x => x.t);
+
+    render(results, q);
+  }
+
+  function onKey(e){
+    if (e.key === 'Escape'){ input.value = ''; clear.hidden = true; list.hidden = true; input.setAttribute('aria-expanded','false'); return; }
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      const q = norm(input.value);
+      if (!q) return;
+      const exact = allTags.find(t => norm(t).toLowerCase() === q.toLowerCase());
+      if (exact){ location.href = blogUrl + '/tagged/' + handle(exact); return; }
+      // Fallback: site search for articles
+      location.href = '/search?q=' + encodeURIComponent(q) + '&type=article';
+    }
+  }
+
+  function clearSearch(){
+    input.value = '';
+    clear.hidden = true;
+    list.hidden = true;
+    input.focus();
+    input.setAttribute('aria-expanded','false');
+  }
+
+  input.addEventListener('input', onInput);
+  input.addEventListener('keydown', onKey);
+  clear.addEventListener('click', clearSearch);
+
+  // hide suggestions when blurring (allow click)
+  input.addEventListener('blur', () => setTimeout(() => { list.hidden = true; input.setAttribute('aria-expanded','false'); }, 120));
+})();
+</script>
+
 {% stylesheet %}
-  /**
+/* --- Topic search --- */
+.nb-tagsearch{margin:8px 0 18px}
+.nb-tagsearch__label{position:absolute;left:-9999px}
+.nb-tagsearch__field{position:relative;max-width:min(680px,100%)}
+.nb-tagsearch__input{
+  width:100%;padding:.8rem 2.5rem .8rem 1rem;border:1px solid #e8ecef;
+  border-radius:12px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.04);
+  font:inherit
+}
+.nb-tagsearch__input:focus{outline:none;border-color:#d9e6e4;box-shadow:0 8px 22px rgba(0,0,0,.06)}
+.nb-tagsearch__clear{
+  position:absolute;right:.4rem;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;border:0;background:#f4f7f6;border-radius:999px;
+  font-size:18px;line-height:1;cursor:pointer;color:#54636a
+}
+.nb-tagsearch__list{
+  position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:2;
+  background:#fff;border:1px solid #e8ecef;border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.08);padding:6px;max-height:48vh;overflow:auto
+}
+.nb-tagsearch__item{
+  display:flex;gap:8px;align-items:center;padding:.55rem .7rem;border-radius:10px;cursor:pointer
+}
+.nb-tagsearch__item:hover,.nb-tagsearch__item[aria-selected="true"]{background:#f7faf9}
+.nb-tagsearch__item em{font-style:normal;background:#fff1e7;padding:0 2px;border-radius:4px}
+.nb-tagsearch__badge{
+  flex:0 0 auto;width:8px;height:8px;border-radius:999px;background:#C86B2A;
+  box-shadow:0 0 0 6px rgba(200,107,42,.12)
+}
+
+/* Tag bar (unchanged) – keep scroller & fades */
+.nb-tagbar{position:relative;margin:8px 0 18px}
+.nb-tagbar__list{display:flex;gap:10px;overflow:auto;padding:6px 8px 8px;scrollbar-width:none}
+.nb-tagbar__list::-webkit-scrollbar{display:none}
+.nb-tagbar::before,.nb-tagbar::after{content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none}
+.nb-tagbar::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0))}
+.nb-tagbar::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0))}
+
+/**
    * Blog posts page layout
    */
   .blog-posts {
