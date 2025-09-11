@@ -3,7 +3,10 @@
   assign _href  = article.metafields.custom.cta_link  | default: '/pages/contact'
 -%}
 
-<div id="nb-cta-inline" class="nb-cta-inline" data-label="{{ _label | escape }}" data-link="{{ _href | escape }}">
+<div id="nb-cta-inline"
+     class="nb-cta-inline"
+     data-label="{{ _label | escape }}"
+     data-link="{{ _href  | escape }}">
   <div class="nb-cta-inline__inner">
     <div class="nb-cta-inline__copy">
       <h3 class="nb-cta-inline__title">Ready for your next chapter?</h3>
@@ -12,3 +15,27 @@
     <a class="nb-cta nb-cta--md" href="{{ _href }}">{{ _label }}</a>
   </div>
 </div>
+
+<style>
+  /* --- Inline article CTA (scoped to this snippet) --- */
+  #nb-cta-inline{ margin:32px 0 22px; }
+  #nb-cta-inline .nb-cta-inline__inner{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:16px 18px; border:1px solid #e8ecef; border-radius:14px; background:#fff;
+    box-shadow:0 8px 18px rgba(0,0,0,.06);
+  }
+  #nb-cta-inline .nb-cta-inline__title{
+    margin:0 0 6px; font-size:clamp(18px,2.2vw,22px); line-height:1.25;
+  }
+  #nb-cta-inline .nb-cta-inline__dek{
+    margin:0; color:#42525a;
+  }
+  #nb-cta-inline .nb-cta{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-height:48px; padding:14px 22px;
+  }
+  @media (max-width: 760px){
+    #nb-cta-inline .nb-cta-inline__inner{ flex-direction:column; align-items:flex-start; gap:10px; padding:14px; }
+    #nb-cta-inline .nb-cta{ width:100%; text-align:center; }
+  }
+</style>
