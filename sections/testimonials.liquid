@@ -16,16 +16,21 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     assign sub     = sub_raw | strip
   -%}
 
-  {%- if heading != blank or (sub != '-' and sub != '') -%}
-  <header class="nb-testimonials__head">
-    {%- if heading != blank -%}
-      <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
-    {%- endif -%}
-    {%- if sub != '-' and sub != '' -%}
-      <p class="nb-testimonials__dek">{{ sub }}</p>
-    {%- endif -%}
-  </header>
+  {%- assign show_sub = false -%}
+{%- if sub != '-' and sub != '' -%}
+  {%- assign show_sub = true -%}
+{%- endif -%}
+
+{%- if heading != blank or show_sub -%}
+<header class="nb-testimonials__head">
+  {%- if heading != blank -%}
+    <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
   {%- endif -%}
+  {%- if show_sub -%}
+    <p class="nb-testimonials__dek">{{ sub }}</p>
+  {%- endif -%}
+</header>
+{%- endif -%}
 
   {%- capture render_cards -%}
   <div class="nb-tgrid" data-grid>
@@ -183,3 +188,4 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
