@@ -1,13 +1,15 @@
 {% comment %}
 Testimonials slider
 - Source: Manual blocks OR Metaobject nb_testimonial
-- Filter by tags (comma-separated). Bind to a service metafield (e.g., service.testimonial_tags)
+- Filter by tags (CSV). Default "*" to satisfy validator; we strip it to blank in Liquid.
 {% endcomment %}
 <section class="nb-tslider">
   {%- liquid
-    assign source     = section.settings.source     | default: 'blocks'
-    assign limit      = section.settings.limit      | default: 12
-    assign filter_raw = section.settings.filter_tags | default: ''
+    assign source = section.settings.source | default: 'blocks'
+    assign limit  = section.settings.limit  | default: 12
+
+    assign filter_raw = section.settings.filter_tags | default: '*'
+    assign filter_raw = filter_raw | replace: '*', ''
     assign filter_csv = filter_raw | downcase | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ','
     assign filter     = filter_csv | split: ','
 
@@ -25,11 +27,11 @@ Testimonials slider
         {%- if mo and mo.values and mo.values.size > 0 -%}
           {%- for m in mo.values -%}
             {%- if count >= limit -%}{%- break -%}{%- endif -%}
-            {%- assign q = m.quote | default: '' -%}
-            {%- assign n = m.name  | default: '' -%}
-            {%- assign t = m.title | default: '' -%}
-            {%- assign l = m.location | default: '' -%}
-            {%- assign a = m.avatar -%}
+            {%- assign q = m.quote    | default: '' -%}
+            {%- assign n = m.name     | default: '' -%}
+            {%- assign tt = m.title   | default: '' -%}
+            {%- assign loc = m.location | default: '' -%}
+            {%- assign av = m.avatar  -%}
             {%- assign tg = m.tags | join: ',' | default: '' | downcase -%}
 
             {%- assign show = true -%}
@@ -45,7 +47,7 @@ Testimonials slider
               {%- assign count = count | plus: 1 -%}
               <article class="nb-tcard-wrap nb-tslider__cell">
                 {%- render 'nb-testimonial-card',
-                  t: { 'quote': q, 'name': n, 'title': t, 'location': l, 'avatar': a } -%}
+                  t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
               </article>
             {%- endif -%}
           {%- endfor -%}
@@ -53,12 +55,12 @@ Testimonials slider
       {%- else -%}
         {%- for block in section.blocks -%}
           {%- if count >= limit -%}{%- break -%}{%- endif -%}
-          {%- assign q = block.settings.quote | default: '' -%}
-          {%- assign n = block.settings.name  | default: '' -%}
-          {%- assign t = block.settings.title | default: '' -%}
-          {%- assign l = block.settings.location | default: '' -%}
-          {%- assign a = block.settings.avatar -%}
-          {%- assign tg = block.settings.tags | default: '' | downcase -%}
+          {%- assign q = block.settings.quote    | default: '' -%}
+          {%- assign n = block.settings.name     | default: '' -%}
+          {%- assign tt = block.settings.title   | default: '' -%}
+          {%- assign loc = block.settings.location | default: '' -%}
+          {%- assign av = block.settings.avatar  -%}
+          {%- assign tg = block.settings.tags    | default: '' | downcase -%}
 
           {%- assign show = true -%}
           {%- if filter_csv != '' -%}
@@ -73,7 +75,7 @@ Testimonials slider
             {%- assign count = count | plus: 1 -%}
             <article class="nb-tcard-wrap nb-tslider__cell">
               {%- render 'nb-testimonial-card',
-                t: { 'quote': q, 'name': n, 'title': t, 'location': l, 'avatar': a } -%}
+                t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
             </article>
           {%- endif -%}
         {%- endfor -%}
@@ -92,7 +94,6 @@ Testimonials slider
 .nb-tslider__row::-webkit-scrollbar{display:none}
 .nb-tslider__cell{flex:0 0 340px;scroll-snap-align:start}
 @media(max-width:640px){.nb-tslider__cell{flex-basis:84vw}}
-
 .nb-tslider__nav{
   position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:999px;
   border:1px solid #e8ecef;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.08);cursor:pointer
@@ -108,9 +109,7 @@ Testimonials slider
   const prev = wrap.querySelector('.nb-tslider__nav--prev');
   const next = wrap.querySelector('.nb-tslider__nav--next');
   if(!row) return;
-
   const step = () => row.querySelector('.nb-tslider__cell')?.getBoundingClientRect().width || 320;
-
   prev?.addEventListener('click', () => row.scrollBy({left: -step()-14, behavior:'smooth'}));
   next?.addEventListener('click', () => row.scrollBy({left:  step()+14, behavior:'smooth'}));
 })();
@@ -127,7 +126,7 @@ Testimonials slider
         { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
       ]
     },
-    { "type": "text", "id": "filter_tags", "label": "Filter by tags (CSV, supports dynamic source)", "default": "" },
+    { "type": "text", "id": "filter_tags", "label": "Filter by tags (CSV, supports dynamic source)", "default": "*" },
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 24, "step": 1, "default": 9 }
   ],
   "blocks": [

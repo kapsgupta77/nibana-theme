@@ -1,19 +1,15 @@
 {% comment %}
 Testimonials – page grid with filter chips
 - Source: Manual blocks (default) or Metaobject 'nb_testimonial'
-- Filter chips built from tags
+- Filter chips are built from tags on items
 {% endcomment %}
 <section class="nb-testimonials tone-pebble">
   {%- liquid
-    assign source = section.settings.source | default: 'blocks'  # 'blocks' or 'metaobject'
-    assign limit  = section.settings.limit | default: 1000
+    assign source = section.settings.source | default: 'blocks'
+    assign limit  = section.settings.limit  | default: 1000
 
-    assign items = ''            # we'll render directly in loops
-    assign has_any = false
-    assign tag_bucket = ''       # we'll build "||tag||tag||" for uniq chips
-
-    # helper to normalize a CSV tags string -> 'tag1||tag2||'
-    # done inline in loops
+    assign has_any    = false
+    assign tag_bucket = ''
   -%}
 
   {% if section.settings.heading != blank or section.settings.subheading != blank %}
@@ -33,54 +29,40 @@ Testimonials – page grid with filter chips
         {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
         {%- if mo and mo.values and mo.values.size > 0 -%}
           {%- for m in mo.values limit: limit -%}
-            {%- assign q     = m.quote    | default: '' -%}
-            {%- assign name  = m.name     | default: '' -%}
-            {%- assign title = m.title    | default: '' -%}
-            {%- assign loc   = m.location | default: '' -%}
-            {%- assign avatar= m.avatar   -%}
-            {%- assign tags  = m.tags     | default: '' -%}
-            {%- if q != '' and name != '' -%}
+            {%- assign q = m.quote    | default: '' -%}
+            {%- assign n = m.name     | default: '' -%}
+            {%- assign tt = m.title   | default: '' -%}
+            {%- assign loc = m.location | default: '' -%}
+            {%- assign av = m.avatar -%}
+            {%- assign tg = m.tags | join: ',' | default: '' -%}
+            {%- if q != '' and n != '' -%}
               {%- assign has_any = true -%}
-              {%- assign tags_norm = tags | join: ',' | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
+              {%- assign tags_norm  = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
               {%- assign tags_piped = tags_norm | replace: ',', '||' -%}
               {%- assign tag_bucket = tag_bucket | append: '||' | append: tags_piped | append: '||' -%}
               <article class="nb-tcard-wrap" data-tags="{{ tags_norm | escape }}">
                 {%- render 'nb-testimonial-card',
-                  t: hash,
-                  hash: nil,
-                  t: {
-                    'quote': q,
-                    'name': name,
-                    'title': title,
-                    'location': loc,
-                    'avatar': avatar
-                  } -%}
+                  t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
               </article>
             {%- endif -%}
           {%- endfor -%}
         {%- endif -%}
       {%- else -%}
         {%- for block in section.blocks limit: limit -%}
-          {%- assign q     = block.settings.quote   | default: '' -%}
-          {%- assign name  = block.settings.name    | default: '' -%}
-          {%- assign title = block.settings.title   | default: '' -%}
-          {%- assign loc   = block.settings.location| default: '' -%}
-          {%- assign avatar= block.settings.avatar  -%}
-          {%- assign tags  = block.settings.tags    | default: '' -%}
-          {%- if q != '' and name != '' -%}
+          {%- assign q = block.settings.quote    | default: '' -%}
+          {%- assign n = block.settings.name     | default: '' -%}
+          {%- assign tt = block.settings.title   | default: '' -%}
+          {%- assign loc = block.settings.location | default: '' -%}
+          {%- assign av = block.settings.avatar  -%}
+          {%- assign tg = block.settings.tags    | default: '' -%}
+          {%- if q != '' and n != '' -%}
             {%- assign has_any = true -%}
-            {%- assign tags_norm = tags | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
+            {%- assign tags_norm  = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
             {%- assign tags_piped = tags_norm | replace: ',', '||' -%}
             {%- assign tag_bucket = tag_bucket | append: '||' | append: tags_piped | append: '||' -%}
             <article class="nb-tcard-wrap" data-tags="{{ tags_norm | escape }}">
               {%- render 'nb-testimonial-card',
-                t: {
-                  'quote': q,
-                  'name': name,
-                  'title': title,
-                  'location': loc,
-                  'avatar': avatar
-                } -%}
+                t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
             </article>
           {%- endif -%}
         {%- endfor -%}
@@ -89,12 +71,11 @@ Testimonials – page grid with filter chips
   {%- endcapture -%}
 
   {%- if has_any -%}
-    {%- comment -%} Filter chips (unique tags) {%- endcomment -%}
-    {% assign chips = '' %}
-    {% assign tb = tag_bucket | downcase %}
-    {% if tb != '' %}
-      {% assign tb = tb | replace: '||||', '||' %}
-      {% assign arr = tb | split: '||' %}
+    {%- assign chips = '' -%}
+    {%- assign tb = tag_bucket | downcase -%}
+    {%- if tb != '' -%}
+      {%- assign tb = tb | replace: '||||', '||' -%}
+      {%- assign arr = tb | split: '||' -%}
       {%- assign uniq = '' -%}
       {%- for t in arr -%}
         {%- assign tt = t | strip -%}
@@ -105,7 +86,7 @@ Testimonials – page grid with filter chips
         {%- endif -%}
       {%- endfor -%}
       {%- assign chips = uniq | replace: '||||', '||' | split: '||' -%}
-    {% endif %}
+    {%- endif -%}
 
     <nav class="nb-testimonials__filter" aria-label="Filter testimonials" data-filter>
       <button class="nb-chip is-active" data-chip="*">All</button>
@@ -124,23 +105,16 @@ Testimonials – page grid with filter chips
 </section>
 
 <style>
-/* tray */
 .nb-testimonials{--nb-peb:#eaf3f1;--nb-ac:#C86B2A;margin:0;padding:clamp(16px,2vw,28px) 0;background:transparent}
 .nb-testimonials__head{max-width:min(980px,94vw);margin:0 auto 10px;padding:0 12px}
 .nb-testimonials__title{margin:0 0 6px}
 .nb-testimonials__dek{margin:0 0 8px;color:#4b5a60}
-
-/* chips */
 .nb-testimonials__filter{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px auto 16px;max-width:1100px;padding:0 12px}
 .nb-chip{display:inline-flex;align-items:center;gap:6px;padding:.5rem .75rem;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.06);cursor:pointer}
 .nb-chip.is-active{background:var(--nb-peb);border-color:rgba(0,0,0,.06);font-weight:600}
-
-/* grid */
 .nb-testimonials__grid{display:grid;gap:14px;grid-template-columns:repeat(3,minmax(0,1fr));max-width:1100px;margin:0 auto;padding:0 12px}
 @media(max-width:980px){.nb-testimonials__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.nb-testimonials__grid{grid-template-columns:1fr}}
-
-/* card look */
 .nb-tcard-wrap{transition:transform .18s ease, box-shadow .18s ease}
 .nb-tcard-wrap:hover{transform:translateY(-2px)}
 .nb-tcard{
@@ -158,28 +132,26 @@ Testimonials – page grid with filter chips
 .nb-tcard__who{display:grid;gap:2px}
 .nb-tcard__name{font-weight:700}
 .nb-tcard__title,.nb-tcard__loc{font-size:.9rem;color:#5b6a70}
-
-/* empty */
 .nb-testimonials__empty{text-align:center;color:#5b6a70;margin:12px 0}
 </style>
 
 <script>
 (function(){
-  const root = document.currentScript.previousElementSibling; // <section>
+  const root = document.currentScript.previousElementSibling;
   const filt = root.querySelector('[data-filter]');
   const grid = root.querySelector('[data-grid]');
   if(!filt || !grid) return;
 
   const cards = Array.from(grid.querySelectorAll('.nb-tcard-wrap'));
-  function norm(s){ return (s||'').toString().trim().toLowerCase(); }
+  const norm = s => (s||'').toString().trim().toLowerCase();
 
-  filt.addEventListener('click', function(e){
+  filt.addEventListener('click', (e)=>{
     const btn = e.target.closest('[data-chip]');
     if(!btn) return;
-    filt.querySelectorAll('.nb-chip').forEach(x => x.classList.remove('is-active'));
+    filt.querySelectorAll('.nb-chip').forEach(x=>x.classList.remove('is-active'));
     btn.classList.add('is-active');
     const pick = norm(btn.dataset.chip);
-    cards.forEach(card => {
+    cards.forEach(card=>{
       if(pick === '*'){ card.hidden = false; return; }
       const tags = norm(card.getAttribute('data-tags')).split(',').map(norm);
       card.hidden = !tags.includes(pick);
