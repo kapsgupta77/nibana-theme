@@ -1,5 +1,3 @@
-
-
 <script
   src="{{ 'blog-posts-list.js' | asset_url }}"
   type="module"
@@ -17,8 +15,14 @@
   assign b_show_tags  = blog.metafields.custom.show_tags  | default: false
 -%}
 
+{%- comment -%} ---------------- HERO ---------------- {%- endcomment -%}
+{%- assign hero_classes = 'nb-blog-hero tone-' | append: b_hero_tone -%}
+{%- if b_hero_img == blank -%}
+  {%- assign hero_classes = hero_classes | append: ' has-no-media' -%}
+{%- endif -%}
+
 {% if b_hero_title != '' or b_hero_img %}
-  <section class="nb-blog-hero tone-{{ b_hero_tone }}">
+  <section class="{{ hero_classes }}">
     <div class="nb-blog-hero__inner">
       {% if b_hero_img %}
         <figure class="nb-blog-hero__media">
@@ -42,174 +46,106 @@
   </section>
 {% endif %}
 
-{%- comment -%}
-  Curated tag bar:
-  - Uses Blog metafield `custom.featured_tag` (list of single-line text)
-  - Also accepts a comma-separated string
-  - Falls back to the first 12 blog tags if nothing is curated
+{%- comment -%} ---------------- TAG CHIPS + SEARCH ----------------
+Build curated tag list from blog metafield `custom.featured_tag`.
+Accepts a comma-separated string OR a list.single_line_text metafield.
+Fallback to first 12 tags if nothing curated.
 {%- endcomment -%}
-{% assign _ft_src   = blog.metafields.custom.featured_tag | default: '' %}
-{% assign _ft_csv   = _ft_src | join: ',' %}
-{% assign _ft_piped = _ft_csv
+{%- assign curated_csv = '' -%}
+{%- if blog.metafields.custom.featured_tag -%}
+  {%- assign ft_val = blog.metafields.custom.featured_tag -%}
+  {%- if ft_val contains ',' -%}
+    {%- assign curated_csv = ft_val -%}
+  {%- else -%}
+    {%- assign curated_csv = ft_val | join: ',' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign curated_piped = curated_csv
   | replace: ';', ','
   | replace: ' ,', ','
   | replace: ', ', ','
-  | replace: ',', '||' %}
-{% assign featured_tags = _ft_piped | split: '||' %}
+  | replace: ',', '||' -%}
+{%- assign featured_tags = curated_piped | split: '||' -%}
 
-{%- comment -%} Clean empties + trim {%- endcomment -%}
-{% assign curated = '' %}
-{% for t in featured_tags %}
-  {% assign tt = t | strip %}
-  {% if tt != '' %}
-    {% assign curated = curated | append: tt | append: '||' %}
-  {% endif %}
-{% endfor %}
-{% assign curated = curated | split: '||' %}
+{%- assign curated_clean = '' -%}
+{%- for t in featured_tags -%}
+  {%- assign tt = t | strip -%}
+  {%- if tt != '' -%}
+    {%- assign curated_clean = curated_clean | append: tt | append: '||' -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign curated_clean = curated_clean | split: '||' -%}
 
-{%- comment -%} Fallback to a small slice of all tags if nothing curated {%- endcomment -%}
-{% assign tag_list = curated %}
-{% if tag_list.size == 0 %}
-  {% assign tag_list = blog.all_tags | slice: 0, 12 %}
-{% endif %}
+{%- if curated_clean.size == 0 -%}
+  {%- assign tag_list = blog.all_tags | slice: 0, 12 -%}
+{%- else -%}
+  {%- assign tag_list = curated_clean -%}
+{%- endif -%}
 
 {% if b_show_tags and blog.all_tags.size > 0 %}
-
-  {%- comment -%}
-    Featured tags: enter a CSV in Metafields → Blogs → Featured tag
-    e.g. "Leadership, Emotional Intelligence, Relationship Coach"
-    We’ll normalize it and fall back to the first 12 tags if empty.
-  {%- endcomment -%}
-  {% liquid
-    assign feat_raw = blog.metafields.custom.featured_tag | default: ''
-    assign feat_csv = feat_raw | replace: ';', ',' | replace: ', ', ',' | strip
-    assign featured = feat_csv | split: ','
-    if featured.size == 1 and featured.first == ''
-      assign featured = '' | split: ','
-    endif
-
-    assign tag_pool = featured
-    if tag_pool.size == 0
-      assign tag_pool = blog.all_tags | slice: 0, 12
-    endif
-
-    assign is_all = false
-    if current_tags == blank
-      assign is_all = true
-    endif
-  %}
-
-  <nav class="nb-tagbar" aria-label="Topics">
+  <nav class="nb-tagbar" aria-label="Topics" data-tag-root="{{ section.id }}">
     <ul class="nb-tagbar__list">
       <li>
-        <a class="nb-tagbar__chip{% if is_all %} is-active{% endif %}" href="{{ blog.url }}">All</a>
+        <a class="nb-chip{% if current_tags == blank %} is-active{% endif %}" href="{{ blog.url }}">All</a>
       </li>
-
-      {%- for tag in tag_pool -%}
-        {% liquid
-          assign is_current = false
-          if current_tags and current_tags contains tag
-            assign is_current = true
-          endif
-        %}
-        <li>
-          <a class="nb-tagbar__chip{% if is_current %} is-active{% endif %}"
-             href="{{ blog.url }}/tagged/{{ tag | handle }}">
-            {{ tag }}
-          </a>
-        </li>
+      {%- for tag in tag_list -%}
+        {%- assign t = tag | strip -%}
+        {%- if t != '' -%}
+          {%- assign is_current = false -%}
+          {%- if current_tags -%}
+            {%- if current_tags contains t -%}{%- assign is_current = true -%}{%- endif -%}
+          {%- endif -%}
+          <li>
+            <a class="nb-chip{% if is_current %} is-active{% endif %}"
+               href="{{ blog.url }}/tagged/{{ t | handleize }}">{{ t }}</a>
+          </li>
+        {%- endif -%}
       {%- endfor -%}
     </ul>
 
-    {#-- Tag search (client-side) --#}
-    <form class="nb-tagbar__search" id="nb-tag-search-{{ section.id }}" action="{{ blog.url }}">
-      <input
-        id="nb-tag-search-input-{{ section.id }}"
-        class="nb-tagbar__search-input"
-        type="search"
-        placeholder="Search topics…"
-        list="nb-tags-{{ section.id }}"
-        autocomplete="off"
-        enterkeyhint="go"
-      >
-      <datalist id="nb-tags-{{ section.id }}">
-        {%- for tag in blog.all_tags -%}
-          <option value="{{ tag }}"></option>
-        {%- endfor -%}
-      </datalist>
-      <button class="nb-tagbar__search-btn" type="submit" aria-label="Search topics">↵</button>
-    </form>
+    <div class="nb-tagbar__search">
+      <label class="sr-only" for="nb-tag-search-{{ section.id }}">Search topics</label>
+      <input id="nb-tag-search-{{ section.id }}" type="text" placeholder="Search topics…" autocomplete="off" />
+      <ul class="nb-tagbar__results" data-results></ul>
+    </div>
   </nav>
 
   <script>
+    window.NB_BLOG_TAGS_{{ section.id }} = {{ blog.all_tags | json }};
     (function(){
-      var form  = document.getElementById('nb-tag-search-{{ section.id }}');
-      if (!form) return;
-      var input = document.getElementById('nb-tag-search-input-{{ section.id }}');
+      var input  = document.getElementById('nb-tag-search-{{ section.id }}');
+      if(!input) return;
+      var box    = input.closest('.nb-tagbar__search');
+      var list   = box ? box.querySelector('[data-results]') : null;
+      var all    = window.NB_BLOG_TAGS_{{ section.id }} || [];
+      var base   = {{ blog.url | json }};
 
-      form.addEventListener('submit', function(ev){
-        ev.preventDefault();
-        var v = (input.value || '').trim();
-        if (!v) { window.location.href = '{{ blog.url }}'; return; }
-        var h = v.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-        window.location.href = '{{ blog.url }}/tagged/' + h;
+      function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+      function render(items){
+        if(!list) return;
+        list.innerHTML = '';
+        items.slice(0, 16).forEach(function(t){
+          var li = document.createElement('li');
+          var a  = document.createElement('a');
+          a.className = 'nb-chip';
+          a.textContent = t;
+          a.href = base + '/tagged/' + slug(t);
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+      }
+      input.addEventListener('input', function(){
+        var q = this.value.trim().toLowerCase();
+        if(!q){ list && (list.innerHTML = ''); return; }
+        var m = all.filter(function(t){ return (t||'').toLowerCase().indexOf(q) !== -1; });
+        render(m);
       });
     })();
   </script>
-
-  <style>
-    /* minimal styling for the tag bar & search to match your chip style */
-    .nb-tagbar{ margin: 8px 0 16px; }
-    .nb-tagbar__list{
-      display:flex; flex-wrap:wrap; gap:10px; list-style:none; margin:0 0 10px; padding:0;
-    }
-    .nb-tagbar__chip{
-      display:inline-block; padding:.5rem .75rem; border-radius:999px;
-      background:#fff; border:1px solid rgba(0,0,0,.08);
-      box-shadow:0 4px 12px rgba(0,0,0,.05); text-decoration:none; color:inherit;
-      transition:transform .15s ease, box-shadow .15s ease;
-    }
-    .nb-tagbar__chip:hover{ transform: translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.08); }
-    .nb-tagbar__chip.is-active{
-      background: var(--nb-sage,#EAF4F3); border-color: rgba(0,0,0,.06); font-weight:600;
-    }
-    .nb-tagbar__search{ display:flex; gap:8px; align-items:center; }
-    .nb-tagbar__search-input{
-      flex:1 1 auto; min-width: 220px;
-      padding:.6rem .8rem; border-radius:999px; border:1px solid rgba(0,0,0,.12);
-      outline:none;
-    }
-    .nb-tagbar__search-btn{
-      padding:.55rem .9rem; border-radius:999px; border:1px solid rgba(0,0,0,.08);
-      background:#fff; cursor:pointer;
-    }
-  </style>
 {% endif %}
 
-{% if blog.all_tags.size > 0 %}
-  <div class="nb-tagsearch"
-       data-tags='{{ blog.all_tags | json }}'
-       data-blog-url='{{ blog.url }}'>
-    <label for="nbTagSearch-{{ section.id }}" class="nb-tagsearch__label">Search topics</label>
-    <div class="nb-tagsearch__field">
-      <input id="nbTagSearch-{{ section.id }}"
-             type="search"
-             inputmode="search"
-             autocomplete="off"
-             placeholder="Search topics…"
-             aria-autocomplete="list"
-             aria-controls="nbTagList-{{ section.id }}"
-             aria-expanded="false"
-             class="nb-tagsearch__input" />
-      <button class="nb-tagsearch__clear" type="button" aria-label="Clear search" hidden>&times;</button>
-      <ul id="nbTagList-{{ section.id }}"
-          class="nb-tagsearch__list"
-          role="listbox"
-          hidden></ul>
-    </div>
-  </div>
-{% endif %}
-
+{%- comment -%} ---------------- POSTS GRID ---------------- {%- endcomment -%}
   <div class="section-background color-{{ section.settings.color_scheme }}"></div>
   <div
     class="
@@ -223,296 +159,119 @@
   >
     {% content_for 'blocks' %}
 
-   {%- paginate blog.articles by 12 -%}
-  <span ref="viewMorePrevious"></span>
-  <div ref="grid" class="blog-posts-container" data-last-page="{{ paginate.pages }}">
+    {%- paginate blog.articles by 12 -%}
+      <span ref="viewMorePrevious"></span>
+      <div ref="grid" class="blog-posts-container" data-last-page="{{ paginate.pages }}">
 
-    {%- comment -%} Pass 1: pinned posts {%- endcomment -%}
-    {% for article in blog.articles %}
-      {% if article.metafields.custom.pinned == true %}
-        <div class="blog-post-item" ref="cards[]" data-page="{{ paginate.current_page }}">
-          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
-        </div>
-      {% endif %}
-    {% endfor %}
+        {%- comment -%} Pass 1: pinned posts {%- endcomment -%}
+        {% for article in blog.articles %}
+          {% if article.metafields.custom.pinned == true %}
+            <div class="blog-post-item" ref="cards[]" data-page="{{ paginate.current_page }}">
+              {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+            </div>
+          {% endif %}
+        {% endfor %}
 
-    {%- comment -%} Pass 2: the rest {%- endcomment -%}
-    {% for article in blog.articles %}
-      {% unless article.metafields.custom.pinned == true %}
-        <div class="blog-post-item" ref="cards[]" data-page="{{ paginate.current_page }}">
-          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
-        </div>
-      {% endunless %}
-    {% endfor %}
+        {%- comment -%} Pass 2: the rest {%- endcomment -%}
+        {% for article in blog.articles %}
+          {% unless article.metafields.custom.pinned == true %}
+            <div class="blog-post-item" ref="cards[]" data-page="{{ paginate.current_page }}">
+              {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+            </div>
+          {% endunless %}
+        {% endfor %}
 
-  </div>
-  <span ref="viewMoreNext"></span>
-{%- endpaginate -%}
+      </div>
+      <span ref="viewMoreNext"></span>
+    {%- endpaginate -%}
   </div>
 </blog-posts-list>
 
-<script>
-(() => {
-  const root = document.querySelector('.nb-tagsearch[data-blog-url]');
-  if (!root) return;
-
-  const input   = root.querySelector('.nb-tagsearch__input');
-  const clear   = root.querySelector('.nb-tagsearch__clear');
-  const list    = root.querySelector('.nb-tagsearch__list');
-  const blogUrl = root.dataset.blogUrl || '/blogs/news';
-  const allTags = (() => { try { return JSON.parse(root.dataset.tags || '[]'); } catch(e){ return []; } })();
-
-  const MAX_SUGGESTIONS = 8;
-
-  const norm = s => (s||'').toString().trim();
-  const handle = s => norm(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-
-  function score(tag, q){
-    const t = norm(tag).toLowerCase();
-    const qq = norm(q).toLowerCase();
-    if (!qq) return 0;
-    if (t === qq) return 100;
-    if (t.startsWith(qq)) return 80;
-    if (t.includes(qq)) return 50;
-    return 0;
-  }
-
-  function highlight(tag, q){
-    const t = tag.toString();
-    const i = t.toLowerCase().indexOf(q.toLowerCase());
-    if (i < 0) return t;
-    return t.slice(0,i) + '<em>' + t.slice(i, i+q.length) + '</em>' + t.slice(i+q.length);
-  }
-
-  function render(items, q){
-    list.innerHTML = '';
-    items.slice(0, MAX_SUGGESTIONS).forEach((tag, idx) => {
-      const li = document.createElement('li');
-      li.className = 'nb-tagsearch__item';
-      li.role = 'option';
-      li.innerHTML = `<span class="nb-tagsearch__badge" aria-hidden="true"></span><span>${highlight(tag, q)}</span>`;
-      li.addEventListener('mousedown', (ev) => {
-        ev.preventDefault();
-        location.href = blogUrl + '/tagged/' + handle(tag);
-      });
-      list.appendChild(li);
-      if (idx === 0) li.setAttribute('aria-selected','true');
-    });
-    const has = items.length > 0;
-    list.hidden = !has;
-    input.setAttribute('aria-expanded', String(has));
-  }
-
-  function onInput(){
-    const q = norm(input.value);
-    clear.hidden = q === '';
-    if (q === '') { list.hidden = true; input.setAttribute('aria-expanded','false'); return; }
-
-    const results = allTags
-      .map(t => ({ t, s: score(t, q) }))
-      .filter(x => x.s > 0)
-      .sort((a,b) => b.s - a.s || a.t.localeCompare(b.t))
-      .map(x => x.t);
-
-    render(results, q);
-  }
-
-  function onKey(e){
-    if (e.key === 'Escape'){ input.value = ''; clear.hidden = true; list.hidden = true; input.setAttribute('aria-expanded','false'); return; }
-    if (e.key === 'Enter'){
-      e.preventDefault();
-      const q = norm(input.value);
-      if (!q) return;
-      const exact = allTags.find(t => norm(t).toLowerCase() === q.toLowerCase());
-      if (exact){ location.href = blogUrl + '/tagged/' + handle(exact); return; }
-      // Fallback: site search for articles
-      location.href = '/search?q=' + encodeURIComponent(q) + '&type=article';
-    }
-  }
-
-  function clearSearch(){
-    input.value = '';
-    clear.hidden = true;
-    list.hidden = true;
-    input.focus();
-    input.setAttribute('aria-expanded','false');
-  }
-
-  input.addEventListener('input', onInput);
-  input.addEventListener('keydown', onKey);
-  clear.addEventListener('click', clearSearch);
-
-  // hide suggestions when blurring (allow click)
-  input.addEventListener('blur', () => setTimeout(() => { list.hidden = true; input.setAttribute('aria-expanded','false'); }, 120));
-})();
-</script>
-
 {% stylesheet %}
-/* --- Topic search --- */
-.nb-tagsearch{margin:8px 0 18px}
-.nb-tagsearch__label{position:absolute;left:-9999px}
-.nb-tagsearch__field{position:relative;max-width:min(680px,100%)}
-.nb-tagsearch__input{
-  width:100%;padding:.8rem 2.5rem .8rem 1rem;border:1px solid #e8ecef;
-  border-radius:12px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.04);
-  font:inherit
+/* ===== Blog hero ===== */
+.nb-blog-hero{ background:var(--nb-sage,#EAF4F3); padding:clamp(14px,3vw,28px) 0; }
+.nb-blog-hero__inner{
+  max-width:min(1160px,94vw); margin-inline:auto;
+  display:grid; grid-template-columns:1.25fr .75fr; gap:24px; align-items:center;
 }
-.nb-tagsearch__input:focus{outline:none;border-color:#d9e6e4;box-shadow:0 8px 22px rgba(0,0,0,.06)}
-.nb-tagsearch__clear{
-  position:absolute;right:.4rem;top:50%;transform:translateY(-50%);
-  width:32px;height:32px;border:0;background:#f4f7f6;border-radius:999px;
-  font-size:18px;line-height:1;cursor:pointer;color:#54636a
+.nb-blog-hero__media{ border-radius:18px; overflow:hidden; box-shadow:0 14px 32px rgba(0,0,0,.08); }
+.nb-blog-hero__img{ display:block; width:100%; height:auto; }
+.nb-blog-hero.has-no-media .nb-blog-hero__inner{ grid-template-columns:1fr; text-align:center; }
+.nb-blog-hero.has-no-media .nb-blog-hero__copy{ display:grid; place-items:center; }
+.nb-blog-hero__title{ margin:0 0 .4rem; }
+.nb-blog-hero__dek{ max-width:60ch; }
+
+/* ===== Tag bar + search ===== */
+.nb-tagbar{ display:flex; flex-direction:column; align-items:center; gap:10px; margin:8px 0 18px; }
+.nb-tagbar__list{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:min(1100px,94vw); }
+.nb-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:.45rem .8rem; border:1px solid #e8ecef; border-radius:999px; background:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.04); text-decoration:none; color:inherit;
 }
-.nb-tagsearch__list{
-  position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:2;
-  background:#fff;border:1px solid #e8ecef;border-radius:12px;
-  box-shadow:0 12px 30px rgba(0,0,0,.08);padding:6px;max-height:48vh;overflow:auto
+.nb-chip.is-active{ border-color:var(--nb-chocolate,#C86B2A); box-shadow:0 6px 16px rgba(0,0,0,.06); }
+
+.nb-tagbar__search{ width:min(760px,94vw); position:relative; }
+.nb-tagbar__search input{
+  width:100%; border:1px solid #e8ecef; border-radius:999px; padding:.7rem 1rem;
+  box-shadow:0 6px 16px rgba(0,0,0,.04);
 }
-.nb-tagsearch__item{
-  display:flex;gap:8px;align-items:center;padding:.55rem .7rem;border-radius:10px;cursor:pointer
+.nb-tagbar__results{ list-style:none; margin:8px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+
+/* a11y helper */
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+/* ===== Existing posts grid (unchanged) ===== */
+.blog-posts {
+  --page-content-width: var(--narrow-page-width);
+  --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
+  --columns-gap: 36px;
+  --rows-gap: 36px;
 }
-.nb-tagsearch__item:hover,.nb-tagsearch__item[aria-selected="true"]{background:#f7faf9}
-.nb-tagsearch__item em{font-style:normal;background:#fff1e7;padding:0 2px;border-radius:4px}
-.nb-tagsearch__badge{
-  flex:0 0 auto;width:8px;height:8px;border-radius:999px;background:#C86B2A;
-  box-shadow:0 0 0 6px rgba(200,107,42,.12)
+.blog-posts-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  width: 100%;
+  column-gap: var(--columns-gap);
+  row-gap: var(--rows-gap);
 }
-
-/* Tag bar (unchanged) – keep scroller & fades */
-.nb-tagbar{position:relative;margin:8px 0 18px}
-.nb-tagbar__list{display:flex;gap:10px;overflow:auto;padding:6px 8px 8px;scrollbar-width:none}
-.nb-tagbar__list::-webkit-scrollbar{display:none}
-.nb-tagbar::before,.nb-tagbar::after{content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none}
-.nb-tagbar::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0))}
-.nb-tagbar::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0))}
-
-/**
-   * Blog posts page layout
-   */
-  .blog-posts {
-    --page-content-width: var(--narrow-page-width);
-    --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
-    --columns-gap: 36px;
-    --rows-gap: 36px;
-  }
-
-  .blog-posts-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1rem;
-    width: 100%;
-    column-gap: var(--columns-gap);
-    row-gap: var(--rows-gap);
-  }
-
-  /**
-   * Apart from the first and second rows in the grid, all remaining blog posts
-   * are arranged in a three-column layout:
-   * +------------+------------+-------------+
-   * |            |            |             |
-   * |  (span 2)  |  (span 2)  |  (span 2)   |
-   * |            |            |             |
-   * +------------+------------+-------------+
-   */
-  .blog-post-item {
-    --blog-post-card-scale: 0.6;
-
-    grid-column: span 2;
-
-    @media screen and (max-width: 749px) {
-      --blog-post-card-scale: 0.5;
-
-      grid-column: span 6;
-    }
-  }
-
-  /**
-   * The second row of blog posts has two columns:
-   * +-------------------+-------------------+
-   * |                   |                   |
-   * |  (column span 3)  |  (column span 3)  |
-   * |                   |                   |
-   * +-------------------+-------------------+
-   */
+.blog-post-item {
+  --blog-post-card-scale: 0.6;
+  grid-column: span 2;
+}
+@media screen and (max-width: 749px) {
+  .blog-post-item { --blog-post-card-scale: 0.5; grid-column: span 6; }
+}
+.blog-post-item:nth-child(2),
+.blog-post-item:nth-child(3) {
+  --blog-post-card-scale: 0.8; grid-column: span 3;
+}
+@media screen and (max-width: 749px) {
   .blog-post-item:nth-child(2),
-  .blog-post-item:nth-child(3) {
-    --blog-post-card-scale: 0.8;
-
-    grid-column: span 3;
-
-    @media screen and (max-width: 749px) {
-      --blog-post-card-scale: 0.5;
-
-      grid-column: span 6;
-    }
-  }
-
-  /**
-   * The first row of blog posts has only one column:
-   * +---------------------------------------+
-   * |                                       |
-   * |           (1 column span 6)           |
-   * |                                       |
-   * +---------------------------------------+
-   */
-  .blog-post-item:first-child {
-    --blog-post-card-scale: 1;
-
-    grid-column: span 6;
-  }
-
-  /**
-   * When there's no image, the blog post item has a border.
-   */
-  .blog-post-item {
-    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20));
-    padding: 0 1rem 1rem;
-  }
-
-  .blog-post-item:has(.blog-post-card__image-container) {
-    border: none;
-    padding: 0;
-  }
+  .blog-post-item:nth-child(3) { --blog-post-card-scale: 0.5; grid-column: span 6; }
+}
+.blog-post-item:first-child { --blog-post-card-scale: 1; grid-column: span 6; }
+.blog-post-item { border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20)); padding: 0 1rem 1rem; }
+.blog-post-item:has(.blog-post-card__image-container) { border: none; padding: 0; }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:names.blog_posts",
   "blocks": [
-    {
-      "type": "@theme"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "icon"
-    },
-    {
-      "type": "image"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "video"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "spacer"
-    },
-    {
-      "type": "_divider"
-    }
+    { "type": "@theme" },
+    { "type": "@app" },
+    { "type": "text" },
+    { "type": "icon" },
+    { "type": "image" },
+    { "type": "button" },
+    { "type": "video" },
+    { "type": "group" },
+    { "type": "spacer" },
+    { "type": "_divider" }
   ],
-  "disabled_on": {
-    "groups": ["header"]
-  },
+  "disabled_on": { "groups": ["header"] },
   "settings": [
     {
       "type": "color_scheme",
@@ -520,28 +279,19 @@
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
     },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
+    { "type": "header", "content": "t:content.padding" },
     {
       "type": "range",
       "id": "padding-block-start",
       "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 100, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding-block-end",
       "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 100, "step": 1, "unit": "px",
       "default": 0
     }
   ]
