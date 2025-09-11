@@ -1,147 +1,92 @@
-{% comment %}
-Testimonials slider
-- Source: Manual blocks OR Metaobject nb_testimonial
-- Filter by tags (CSV). Default "*" to satisfy validator; we strip it to blank in Liquid.
-{% endcomment %}
-<section class="nb-tslider">
+{% comment %} Homepage / inline slider of testimonials {% endcomment %}
+<section class="nb-tslider tone-pebble">
   {%- liquid
-    assign source = section.settings.source | default: 'blocks'
-    assign limit  = section.settings.limit  | default: 12
-
-    assign filter_raw = section.settings.filter_tags | default: '*'
-    assign filter_raw = filter_raw | replace: '*', ''
-    assign filter_csv = filter_raw | downcase | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ','
-    assign filter     = filter_csv | split: ','
-
-    assign count = 0
+    assign limit = section.settings.limit | default: 6
+    assign heading = section.settings.heading | default: 'Our Testimonial'
+    assign view_all = section.settings.view_all_link | default: '/pages/testimonial'
   -%}
 
-  {% if section.settings.heading != blank %}
-    <h2 class="nb-tslider__title">{{ section.settings.heading }}</h2>
-  {% endif %}
+  {%- if heading != blank -%}
+  <header class="nb-tslider__head">
+    <h2 class="nb-h3">{{ heading }}</h2>
+  </header>
+  {%- endif -%}
 
-  <div class="nb-tslider__track" data-track>
-    <div class="nb-tslider__row" data-row>
-      {%- if source == 'metaobject' -%}
-        {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-        {%- if mo and mo.values and mo.values.size > 0 -%}
-          {%- for m in mo.values -%}
-            {%- if count >= limit -%}{%- break -%}{%- endif -%}
-            {%- assign q = m.quote    | default: '' -%}
-            {%- assign n = m.name     | default: '' -%}
-            {%- assign tt = m.title   | default: '' -%}
-            {%- assign loc = m.location | default: '' -%}
-            {%- assign av = m.avatar  -%}
-            {%- assign tg = m.tags | join: ',' | default: '' | downcase -%}
+  <div class="nb-tslider__rail" data-rail>
+    <button class="nb-tslider__nav is-prev" type="button" aria-label="Previous" data-prev>&larr;</button>
 
-            {%- assign show = true -%}
-            {%- if filter_csv != '' -%}
-              {%- assign show = false -%}
-              {%- for f in filter -%}
-                {%- assign ff = f | strip -%}
-                {%- if ff != '' and tg contains ff -%}{%- assign show = true -%}{%- break -%}{%- endif -%}
-              {%- endfor -%}
-            {%- endif -%}
-
-            {%- if show and q != '' and n != '' -%}
-              {%- assign count = count | plus: 1 -%}
-              <article class="nb-tcard-wrap nb-tslider__cell">
-                {%- render 'nb-testimonial-card',
-                  t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
-              </article>
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endif -%}
-      {%- else -%}
-        {%- for block in section.blocks -%}
-          {%- if count >= limit -%}{%- break -%}{%- endif -%}
-          {%- assign q = block.settings.quote    | default: '' -%}
-          {%- assign n = block.settings.name     | default: '' -%}
-          {%- assign tt = block.settings.title   | default: '' -%}
-          {%- assign loc = block.settings.location | default: '' -%}
-          {%- assign av = block.settings.avatar  -%}
-          {%- assign tg = block.settings.tags    | default: '' | downcase -%}
-
-          {%- assign show = true -%}
-          {%- if filter_csv != '' -%}
-            {%- assign show = false -%}
-            {%- for f in filter -%}
-              {%- assign ff = f | strip -%}
-              {%- if ff != '' and tg contains ff -%}{%- assign show = true -%}{%- break -%}{%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
-
-          {%- if show and q != '' and n != '' -%}
-            {%- assign count = count | plus: 1 -%}
-            <article class="nb-tcard-wrap nb-tslider__cell">
-              {%- render 'nb-testimonial-card',
-                t: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } -%}
-            </article>
-          {%- endif -%}
+    <div class="nb-tslider__track" data-track>
+      {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+      {%- if mo and mo.values and mo.values.size > 0 -%}
+        {%- for m in mo.values limit: limit -%}
+          {%- assign q   = m.quote    | default: '' -%}
+          {%- assign n   = m.name     | default: '' -%}
+          {%- assign tt  = m.title    | default: '' -%}
+          {%- assign loc = m.location | default: '' -%}
+          {%- assign av  = m.avatar -%}
+          <div class="nb-tslide">
+            {% render 'nb-testimonial-card', card: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av } %}
+          </div>
         {%- endfor -%}
       {%- endif -%}
     </div>
-    <button class="nb-tslider__nav nb-tslider__nav--prev" type="button" aria-label="Previous">‹</button>
-    <button class="nb-tslider__nav nb-tslider__nav--next" type="button" aria-label="Next">›</button>
+
+    <button class="nb-tslider__nav is-next" type="button" aria-label="Next" data-next>&rarr;</button>
   </div>
+
+  {%- if view_all != blank -%}
+  <div class="nb-tslider__cta">
+    <a class="nb-cta nb-cta--md" href="{{ view_all }}">View all</a>
+  </div>
+  {%- endif -%}
 </section>
 
-<style>
-.nb-tslider{--gap:14px;--pad:8px;--ac:#C86B2A;margin:0;padding:8px 0}
-.nb-tslider__title{margin:0 0 8px;text-align:center}
-.nb-tslider__track{position:relative;max-width:1100px;margin:0 auto;padding:0 34px}
-.nb-tslider__row{display:flex;gap:var(--gap);overflow:auto;scroll-snap-type:x mandatory;padding:var(--pad) 4px;scrollbar-width:none}
-.nb-tslider__row::-webkit-scrollbar{display:none}
-.nb-tslider__cell{flex:0 0 340px;scroll-snap-align:start}
-@media(max-width:640px){.nb-tslider__cell{flex-basis:84vw}}
-.nb-tslider__nav{
-  position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:999px;
-  border:1px solid #e8ecef;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.08);cursor:pointer
-}
-.nb-tslider__nav--prev{left:0}
-.nb-tslider__nav--next{right:0}
-</style>
+{% javascript %}
+(() => {
+  const root = document.currentScript.closest('.nb-tslider');
+  if (!root) return;
+  const track = root.querySelector('[data-track]');
+  const prev  = root.querySelector('[data-prev]');
+  const next  = root.querySelector('[data-next]');
+  if (!track || !prev || !next) return;
 
-<script>
-(function(){
-  const wrap = document.currentScript.previousElementSibling;
-  const row  = wrap.querySelector('[data-row]');
-  const prev = wrap.querySelector('.nb-tslider__nav--prev');
-  const next = wrap.querySelector('.nb-tslider__nav--next');
-  if(!row) return;
-  const step = () => row.querySelector('.nb-tslider__cell')?.getBoundingClientRect().width || 320;
-  prev?.addEventListener('click', () => row.scrollBy({left: -step()-14, behavior:'smooth'}));
-  next?.addEventListener('click', () => row.scrollBy({left:  step()+14, behavior:'smooth'}));
+  const step = () => Math.max(track.clientWidth * 0.85, 320);
+  prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior:'smooth'}));
+  next.addEventListener('click', () => track.scrollBy({ left:  step(), behavior:'smooth'}));
 })();
-</script>
+{% endjavascript %}
+
+{% stylesheet %}
+.nb-tslider{ --t-accent: var(--nb-chocolate); --t-gap: 14px; }
+.nb-tslider__head{ text-align:center; margin-bottom:10px; }
+.nb-tslider__rail{ position:relative; }
+.nb-tslider__track{
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(320px, 1fr);
+  gap: var(--t-gap);
+  overflow:auto; scroll-snap-type:x mandatory; padding: 6px 4px 8px;
+  scrollbar-width:none;
+}
+.nb-tslider__track::-webkit-scrollbar{ display:none; }
+.nb-tslide{ scroll-snap-align:start; }
+.nb-tslider__nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border-radius:999px; border:1px solid rgba(0,0,0,.1);
+  background:#fff; box-shadow:0 8px 18px rgba(0,0,0,.06); cursor:pointer;
+}
+.nb-tslider__nav.is-prev{ left:-6px; }
+.nb-tslider__nav.is-next{ right:-6px; }
+.nb-tslider__cta{ text-align:center; margin-top:14px; }
+{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Testimonials (slider)",
+  "name": "Testimonials slider",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
-    { "type": "select", "id": "source", "label": "Source", "default": "blocks",
-      "options": [
-        { "value": "blocks", "label": "Manual (blocks in this section)" },
-        { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
-      ]
-    },
-    { "type": "text", "id": "filter_tags", "label": "Filter by tags (CSV, supports dynamic source)", "default": "*" },
-    { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 24, "step": 1, "default": 9 }
-  ],
-  "blocks": [
-    {
-      "type": "item",
-      "name": "Testimonial",
-      "settings": [
-        { "type": "textarea", "id": "quote", "label": "Quote", "default": "This work helped me get clear, make braver choices, and feel more alive in daily life." },
-        { "type": "text", "id": "name", "label": "Name", "default": "Client name" },
-        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "Entrepreneur" },
-        { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
-        { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
-        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "coaching" }
-      ]
-    }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our clients say" },
+    { "type": "range", "id": "limit", "label": "Max items", "min": 3, "max": 24, "step": 1, "default": 9 },
+    { "type": "url", "id": "view_all_link", "label": "View all link", "default": "/pages/testimonial" }
   ],
   "presets": [{ "name": "Testimonials (slider)" }]
 }
