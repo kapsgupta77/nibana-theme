@@ -74,31 +74,116 @@
 {% endif %}
 
 {% if b_show_tags and blog.all_tags.size > 0 %}
+
+  {%- comment -%}
+    Featured tags: enter a CSV in Metafields → Blogs → Featured tag
+    e.g. "Leadership, Emotional Intelligence, Relationship Coach"
+    We’ll normalize it and fall back to the first 12 tags if empty.
+  {%- endcomment -%}
+  {% liquid
+    assign feat_raw = blog.metafields.custom.featured_tag | default: ''
+    assign feat_csv = feat_raw | replace: ';', ',' | replace: ', ', ',' | strip
+    assign featured = feat_csv | split: ','
+    if featured.size == 1 and featured.first == ''
+      assign featured = '' | split: ','
+    endif
+
+    assign tag_pool = featured
+    if tag_pool.size == 0
+      assign tag_pool = blog.all_tags | slice: 0, 12
+    endif
+
+    assign is_all = false
+    if current_tags == blank
+      assign is_all = true
+    endif
+  %}
+
   <nav class="nb-tagbar" aria-label="Topics">
     <ul class="nb-tagbar__list">
-      {# All chip #}
       <li>
-        <a class="nb-tagbar__chip{% if current_tags == blank %} is-active{% endif %}"
-           href="{{ blog.url }}">
-          All
-        </a>
+        <a class="nb-tagbar__chip{% if is_all %} is-active{% endif %}" href="{{ blog.url }}">All</a>
       </li>
 
-      {# Curated chips #}
-      {% for tag in tag_list %}
-        {% assign is_current = false %}
-        {% if current_tags and current_tags contains tag %}
-          {% assign is_current = true %}
-        {% endif %}
+      {%- for tag in tag_pool -%}
+        {% liquid
+          assign is_current = false
+          if current_tags and current_tags contains tag
+            assign is_current = true
+          endif
+        %}
         <li>
           <a class="nb-tagbar__chip{% if is_current %} is-active{% endif %}"
              href="{{ blog.url }}/tagged/{{ tag | handle }}">
             {{ tag }}
           </a>
         </li>
-      {% endfor %}
+      {%- endfor -%}
     </ul>
+
+    {#-- Tag search (client-side) --#}
+    <form class="nb-tagbar__search" id="nb-tag-search-{{ section.id }}" action="{{ blog.url }}">
+      <input
+        id="nb-tag-search-input-{{ section.id }}"
+        class="nb-tagbar__search-input"
+        type="search"
+        placeholder="Search topics…"
+        list="nb-tags-{{ section.id }}"
+        autocomplete="off"
+        enterkeyhint="go"
+      >
+      <datalist id="nb-tags-{{ section.id }}">
+        {%- for tag in blog.all_tags -%}
+          <option value="{{ tag }}"></option>
+        {%- endfor -%}
+      </datalist>
+      <button class="nb-tagbar__search-btn" type="submit" aria-label="Search topics">↵</button>
+    </form>
   </nav>
+
+  <script>
+    (function(){
+      var form  = document.getElementById('nb-tag-search-{{ section.id }}');
+      if (!form) return;
+      var input = document.getElementById('nb-tag-search-input-{{ section.id }}');
+
+      form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        var v = (input.value || '').trim();
+        if (!v) { window.location.href = '{{ blog.url }}'; return; }
+        var h = v.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+        window.location.href = '{{ blog.url }}/tagged/' + h;
+      });
+    })();
+  </script>
+
+  <style>
+    /* minimal styling for the tag bar & search to match your chip style */
+    .nb-tagbar{ margin: 8px 0 16px; }
+    .nb-tagbar__list{
+      display:flex; flex-wrap:wrap; gap:10px; list-style:none; margin:0 0 10px; padding:0;
+    }
+    .nb-tagbar__chip{
+      display:inline-block; padding:.5rem .75rem; border-radius:999px;
+      background:#fff; border:1px solid rgba(0,0,0,.08);
+      box-shadow:0 4px 12px rgba(0,0,0,.05); text-decoration:none; color:inherit;
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .nb-tagbar__chip:hover{ transform: translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.08); }
+    .nb-tagbar__chip.is-active{
+      background: var(--nb-sage,#EAF4F3); border-color: rgba(0,0,0,.06); font-weight:600;
+    }
+    .nb-tagbar__search{ display:flex; gap:8px; align-items:center; }
+    .nb-tagbar__search-input{
+      flex:1 1 auto; min-width: 220px;
+      padding:.6rem .8rem; border-radius:999px; border:1px solid rgba(0,0,0,.12);
+      outline:none;
+    }
+    .nb-tagbar__search-btn{
+      padding:.55rem .9rem; border-radius:999px; border:1px solid rgba(0,0,0,.08);
+      background:#fff; cursor:pointer;
+    }
+  </style>
 {% endif %}
 
 {% if blog.all_tags.size > 0 %}
