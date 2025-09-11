@@ -176,16 +176,26 @@
     </section>
 
 <nav class="nb-article-nav" aria-label="Article pagination">
-  {% if article.previous %}
+  {% assign has_prev = article.previous %}
+  {% assign has_next = article.next %}
+
+  {% if has_prev %}
     <a class="nb-article-nav__prev" href="{{ article.previous.url }}">
       ← {{ article.previous.title }}
     </a>
   {% endif %}
-  {% if article.next %}
+
+  {% if has_next %}
     <a class="nb-article-nav__next" href="{{ article.next.url }}">
       {{ article.next.title }} →
     </a>
   {% endif %}
+
+  {% unless has_prev or has_next %}
+    <a class="nb-article-nav__prev nb-article-nav__single" href="{{ blog.url }}">
+      ← Back to {{ blog.title }}
+    </a>
+  {% endunless %}
 </nav>
 
     {% if blog.comments_enabled? %}
@@ -400,6 +410,67 @@
 .nb-article-nav a:hover{ box-shadow:0 12px 24px rgba(0,0,0,.08); }
 .nb-article-nav__prev{ text-align:left; }
 .nb-article-nav__next{ text-align:right; }
+
+/* --- Calm the footer area (tags + share + author + related) --- */
+
+/* rhythm */
+.nb-article-tags{ 
+  max-width: var(--normal-content-width);
+  margin: 18px auto 8px;
+  padding-top: 10px;
+  border-top: 1px solid #eef3f2;
+}
+
+/* chips: lighter */
+.nb-chip{
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  border-color: #eef3f2;
+  padding: .45rem .7rem;
+  font-size: .95rem;
+}
+
+/* share row: lighter buttons + reduced spacing */
+.nb-share{
+  max-width: var(--normal-content-width);
+  margin: 6px auto 16px;
+  gap: 8px 10px;
+}
+.nb-share__btn{
+  padding: .45rem .7rem;
+  border-radius: 10px;
+  border-color: #eef3f2;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  font-size: .95rem;
+}
+
+/* author box: lighter */
+.nb-author{
+  box-shadow: 0 6px 16px rgba(0,0,0,.05);
+  border-color: #eef3f2;
+  margin: 22px auto 6px;
+}
+
+/* related: breathe a bit, lighter cards */
+.nb-related{ margin: 22px auto 8px; }
+.nb-related__card{
+  box-shadow: 0 6px 16px rgba(0,0,0,.05);
+  border-color: #eef3f2;
+}
+.nb-related__title{ margin: 8px 0 4px; font-weight: 760; }
+
+/* prev/next: make compact and ensure single state looks intentional */
+.nb-article-nav{
+  margin: 20px auto 6px;
+}
+.nb-article-nav a{
+  box-shadow: 0 6px 16px rgba(0,0,0,.05);
+  border-color: #eef3f2;
+  padding: 10px 12px;
+}
+.nb-article-nav__single{
+  text-align: center;
+  flex: 1 1 100%;
+}
 
 {% endstylesheet %}
 
