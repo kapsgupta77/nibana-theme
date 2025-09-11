@@ -1,36 +1,27 @@
 {% comment %}
-Testimonials — page grid with filter chips
+Testimonials — page grid with optional filter chips
 Source: Manual blocks (default) or Metaobject `nb_testimonial`
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
   {%- liquid
-    assign source = section.settings.source | default: 'blocks'
-    assign limit  = section.settings.limit  | default: 12
+    assign source    = section.settings.source   | default: 'blocks'
+    assign limit     = section.settings.limit    | default: 12
+    assign heading   = section.settings.heading  | default: 'What our clients say'
+    assign sub_raw   = section.settings.subheading | default: '-'
+    assign show_chips = section.settings.show_filter | default: true
 
-    assign has_any   = false
+    assign sub = sub_raw | strip
+    assign has_any = false
     assign tag_bucket = ''
-
-    assign heading = section.settings.heading | default: 'What our clients say'
-    assign sub_raw = section.settings.subheading | default: '-'
-    assign sub     = sub_raw | strip
   -%}
 
-  {%- assign show_sub = false -%}
-{%- if sub != '-' and sub != '' -%}
-  {%- assign show_sub = true -%}
-{%- endif -%}
-
-{%- if heading != blank or show_sub -%}
-<header class="nb-testimonials__head">
-  {%- if heading != blank -%}
-    <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
+  {%- if heading != blank or sub != '-' and sub != '' -%}
+  <header class="nb-testimonials__head">
+    {%- if heading != blank -%}<h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>{%- endif -%}
+    {%- if sub != '-' and sub != '' -%}<p class="nb-testimonials__dek">{{ sub }}</p>{%- endif -%}
+  </header>
   {%- endif -%}
-  {%- if show_sub -%}
-    <p class="nb-testimonials__dek">{{ sub }}</p>
-  {%- endif -%}
-</header>
-{%- endif -%}
 
   {%- capture render_cards -%}
   <div class="nb-tgrid" data-grid>
@@ -44,11 +35,10 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
           {%- assign loc = m.location | default: '' -%}
           {%- assign av  = m.avatar -%}
           {%- assign tg  = m.tags | join: ',' | default: '' -%}
-          {%- if q != '' or n != '' -%}{% assign has_any = true %}{% endif -%}
+          {%- if q != '' or n != '' -%}{% assign has_any = true %}{%- endif -%}
           {%- assign tags_norm = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
-          {%- assign tag_bucket = tag_bucket | append: ',' | append: tags_norm -%}
           {% render 'nb-testimonial-card',
-  quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}
+              quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}
         {%- endfor -%}
       {%- endif -%}
     {%- else -%}
@@ -58,17 +48,26 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
         {%- assign tt  = block.settings.title    | default: '' -%}
         {%- assign loc = block.settings.location | default: '' -%}
         {%- assign av  = block.settings.avatar -%}
-        {%- assign tg  = block.settings.tags | default: '' -%}
-        {%- if q != '' or n != '' -%}{% assign has_any = true %}{% endif -%}
+        {%- assign tg  = block.settings.tags     | default: '' -%}
+        {%- if q != '' or n != '' -%}{% assign has_any = true %}{%- endif -%}
         {%- assign tags_norm = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
-        {%- assign tag_bucket = tag_bucket | append: ',' | append: tags_norm -%}
         {% render 'nb-testimonial-card',
-  quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}      {%- endfor -%}
+            quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}
+      {%- endfor -%}
     {%- endif -%}
   </div>
   {%- endcapture -%}
 
-  {%- assign tags_all = tag_bucket | split: ',' | uniq | sort -%}
+  {%- comment -%} Chip list (optional) {%- endcomment -%}
+  {%- assign tag_bucket = '' -%}
+  {%- capture tag_collect -%}
+    {%- for b in section.blocks -%}
+      {%- if b.settings.tags != blank -%}
+        {{- b.settings.tags | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -}}, 
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- assign tags_all = tag_collect | split: ',' | uniq | sort -%}
   {%- assign tags_clean = '' -%}
   {%- for t in tags_all -%}
     {%- assign tt = t | strip -%}
@@ -76,7 +75,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   {%- endfor -%}
   {%- assign tags_list = tags_clean | split: '||' -%}
 
-  {%- if section.settings.show_filter and tags_list.size > 0 -%}
+  {%- if show_chips and tags_list.size > 0 -%}
   <nav class="nb-tchips" aria-label="Filter testimonials by tag" data-root="{{ section.id }}">
     <ul class="nb-tchips__list" data-chips>
       <li><button type="button" class="nb-chip is-active" data-filter="*">All</button></li>
@@ -88,55 +87,68 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   {%- endif -%}
 
   {{ render_cards }}
-
 </section>
 
 {% javascript %}
 (() => {
-  const root   = document.currentScript.closest('.nb-testimonials');
+  const root  = document.currentScript.closest('.nb-testimonials');
   if (!root) return;
-  const grid   = root.querySelector('[data-grid]');
-  const chips  = root.querySelectorAll('[data-chips] .nb-chip');
-  if (!grid || chips.length === 0) return;
 
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('is-active'));
-      chip.classList.add('is-active');
-      const f = chip.getAttribute('data-filter');
-      grid.querySelectorAll('.nb-tcard').forEach(card => {
-        if (f === '*' ) { card.hidden = false; return; }
-        const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-        card.hidden = ds.indexOf(f) === -1;
+  // Filter chips
+  const grid  = root.querySelector('[data-grid]');
+  const chips = root.querySelectorAll('[data-chips] .nb-chip');
+  if (grid && chips.length){
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        const f = chip.getAttribute('data-filter');
+        grid.querySelectorAll('.nb-tcard').forEach(card => {
+          if (f === '*'){ card.hidden = false; return; }
+          const ds = (card.getAttribute('data-tags') || '').toLowerCase();
+          card.hidden = ds.indexOf(f) === -1;
+        });
       });
+    });
+  }
+
+  // Read more / less
+  root.querySelectorAll('.nb-tcard').forEach(card => {
+    const quote = card.querySelector('[data-q]');
+    const btn   = card.querySelector('[data-more]');
+    if (!quote || !btn) return;
+
+    const needsMore = quote.scrollHeight > quote.offsetHeight + 4;
+    if (needsMore) btn.hidden = false;
+
+    btn.addEventListener('click', () => {
+      card.classList.toggle('is-open');
+      btn.textContent = card.classList.contains('is-open') ? 'Show less' : 'Read full';
     });
   });
 })();
 {% endjavascript %}
 
 {% stylesheet %}
-.nb-testimonials{ --t-accent: var(--nb-chocolate); --t-gap: clamp(14px,2.4vw,22px); --t-lines: 9; }
-.nb-testimonials__head{ margin: 0 0 clamp(8px,1.8vw,16px); text-align:left; }
+.nb-testimonials{ --t-accent: var(--nb-chocolate); --t-gap: clamp(14px,2.4vw,22px); }
+.nb-testimonials__head{ margin:0 0 clamp(8px,1.8vw,16px); text-align:left; }
 .nb-testimonials__title{ margin:0 0 6px; }
 .nb-testimonials__dek{ margin:0; color:#516068; }
 
+/* chips */
 .nb-tchips{ position:relative; margin:8px 0 16px; }
-.nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none; }
+.nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none;}
 .nb-tchips__list::-webkit-scrollbar{ display:none; }
 .nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
-.nb-tchips::before{ left:0; background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
-.nb-tchips::after{ right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
+.nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
+.nb-tchips::after{  right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
 .nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); }
 .nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
 
-.nb-tgrid{
-  display:grid;
-  gap: var(--t-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(320px,100%), 1fr));
-  align-items: stretch;
-}
+/* grid */
+.nb-tgrid{ display:grid; gap:var(--t-gap); grid-template-columns:repeat(auto-fit, minmax(min(320px,100%),1fr)); align-items:stretch; }
 
-/* Card */
+/* card */
 .nb-tcard{
   position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
   box-shadow:0 10px 22px rgba(0,0,0,.06); padding:16px 16px 14px 18px;
@@ -145,13 +157,19 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
 .nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px;
   background:linear-gradient(180deg, var(--t-accent), color-mix(in oklab, var(--t-accent), #000 14%)); }
-.nb-tcard__quote{ margin:0 0 12px; display:-webkit-box; -webkit-line-clamp: var(--t-lines); -webkit-box-orient: vertical; overflow:hidden; }
+.nb-tcard__quote{ margin:0 0 12px; display:-webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow:hidden; }
+.nb-tcard.is-open .nb-tcard__quote{ display:block; -webkit-line-clamp:unset; }
 .nb-tcard__meta{ display:flex; gap:10px; align-items:flex-start; }
 .nb-tcard__avatar{ flex:0 0 auto; width:36px; height:36px; border-radius:50%; overflow:hidden; background:#f3f5f4; }
 .nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
 .nb-tcard__who{ line-height:1.25; }
 .nb-tcard__name{ font-weight:700; }
 .nb-tcard__title,.nb-tcard__loc{ color:#55656c; font-size:.92em; }
+.nb-tcard__more{
+  margin-top:6px; background:#fff; border:1px solid #e9eeed; border-radius:999px; padding:.4rem .7rem;
+  font-size:.9rem; cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.04);
+}
+.nb-tcard__more:hover{ box-shadow:0 10px 18px rgba(0,0,0,.06); }
 {% endstylesheet %}
 
 {% schema %}
@@ -189,7 +207,3 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
-
-
-
-
