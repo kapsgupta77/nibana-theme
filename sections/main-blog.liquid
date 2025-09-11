@@ -7,6 +7,56 @@
 ></script>
 
 <blog-posts-list section-id="{{ section.id }}">
+{%- liquid
+  assign b_hero_title = blog.metafields.custom.hero_title | default: ''
+  assign b_hero_dek   = blog.metafields.custom.hero_dek   | default: ''
+  assign b_hero_tone  = blog.metafields.custom.hero_tone  | default: 'pebble'
+  assign b_hero_img   = blog.metafields.custom.hero_image
+  assign b_cta_label  = blog.metafields.custom.cta_label  | default: ''
+  assign b_cta_link   = blog.metafields.custom.cta_link   | default: ''
+  assign b_show_tags  = blog.metafields.custom.show_tags  | default: false
+-%}
+
+{% if b_hero_title != '' or b_hero_img %}
+  <section class="nb-blog-hero tone-{{ b_hero_tone }}">
+    <div class="nb-blog-hero__inner">
+      {% if b_hero_img %}
+        <figure class="nb-blog-hero__media">
+          {{ b_hero_img
+            | image_url: width: 1400
+            | image_tag: alt: b_hero_title, class: 'nb-blog-hero__img', sizes: "100vw", widths: "600,900,1200,1400" }}
+        </figure>
+      {% endif %}
+      <div class="nb-blog-hero__copy">
+        {% if b_hero_title != '' %}
+          <h1 class="nb-h2 nb-blog-hero__title">{{ b_hero_title }}</h1>
+        {% endif %}
+        {% if b_hero_dek != '' %}
+          <p class="nb-blog-hero__dek">{{ b_hero_dek }}</p>
+        {% endif %}
+        {% if b_cta_label != '' and b_cta_link != '' %}
+          <a class="nb-cta nb-cta--md" href="{{ b_cta_link }}">{{ b_cta_label }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% if b_show_tags and blog.all_tags.size > 0 %}
+  <nav class="nb-tagbar" aria-label="Topics">
+    <ul class="nb-tagbar__list">
+      {% for tag in blog.all_tags %}
+        {% assign is_current = current_tags contains tag %}
+        <li>
+          <a class="nb-tagbar__chip{% if is_current %} is-active{% endif %}"
+             href="{{ blog.url | append: '/tagged/' | append: tag | handleize }}">
+            {{ tag }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}
   <div class="section-background color-{{ section.settings.color_scheme }}"></div>
   <div
     class="
@@ -20,25 +70,31 @@
   >
     {% content_for 'blocks' %}
 
-    {%- paginate blog.articles by 12 -%}
-      <span ref="viewMorePrevious"></span>
-      <div
-        ref="grid"
-        class="blog-posts-container"
-        data-last-page="{{ paginate.pages }}"
-      >
-        {% for article in blog.articles %}
-          <div
-            class="blog-post-item"
-            ref="cards[]"
-            data-page="{{ paginate.current_page }}"
-          >
-            {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
-          </div>
-        {% endfor %}
-      </div>
-      <span ref="viewMoreNext"></span>
-    {%- endpaginate -%}
+   {%- paginate blog.articles by 12 -%}
+  <span ref="viewMorePrevious"></span>
+  <div ref="grid" class="blog-posts-container" data-last-page="{{ paginate.pages }}">
+
+    {%- comment -%} Pass 1: pinned posts {%- endcomment -%}
+    {% for article in blog.articles %}
+      {% if article.metafields.custom.pinned == true %}
+        <div class="blog-post-item" ref="cards[]" data-page="{{ paginate.current_page }}">
+          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    {%- comment -%} Pass 2: the rest {%- endcomment -%}
+    {% for article in blog.articles %}
+      {% unless article.metafields.custom.pinned == true %}
+        <div class="blog-post-item" ref="cards[]" data-page="{{ paginate.current_page }}">
+          {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
+        </div>
+      {% endunless %}
+    {% endfor %}
+
+  </div>
+  <span ref="viewMoreNext"></span>
+{%- endpaginate -%}
   </div>
 </blog-posts-list>
 
