@@ -49,9 +49,7 @@
   - Falls back to the first 12 blog tags if nothing is curated
 {%- endcomment -%}
 {% assign _ft_src   = blog.metafields.custom.featured_tag | default: '' %}
-{%- comment -%} If it's a list: `join` returns a CSV; if it's a string, it returns the string. {%- endcomment -%}
 {% assign _ft_csv   = _ft_src | join: ',' %}
-{%- comment -%} Normalise separators -> pipes so we can split reliably. {%- endcomment -%}
 {% assign _ft_piped = _ft_csv
   | replace: ';', ','
   | replace: ' ,', ','
@@ -78,7 +76,7 @@
 {% if b_show_tags and blog.all_tags.size > 0 %}
   <nav class="nb-tagbar" aria-label="Topics">
     <ul class="nb-tagbar__list">
-      {%- comment -%} “All” chip {%- endcomment -%}
+      {# All chip #}
       <li>
         <a class="nb-tagbar__chip{% if current_tags == blank %} is-active{% endif %}"
            href="{{ blog.url }}">
@@ -86,9 +84,12 @@
         </a>
       </li>
 
-      {%- comment -%} Curated chips only {%- endcomment -%}
+      {# Curated chips #}
       {% for tag in tag_list %}
-        {% assign is_current = current_tags and current_tags contains tag %}
+        {% assign is_current = false %}
+        {% if current_tags and current_tags contains tag %}
+          {% assign is_current = true %}
+        {% endif %}
         <li>
           <a class="nb-tagbar__chip{% if is_current %} is-active{% endif %}"
              href="{{ blog.url }}/tagged/{{ tag | handle }}">
