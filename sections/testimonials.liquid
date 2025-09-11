@@ -5,61 +5,58 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
 <section class="nb-testimonials tone-pebble">
   {%- liquid
-    assign source    = section.settings.source   | default: 'blocks'
-    assign limit     = section.settings.limit    | default: 12
-    assign heading   = section.settings.heading  | default: 'What our clients say'
-    assign sub_raw   = section.settings.subheading | default: '-'
-    assign show_chips = section.settings.show_filter | default: true
+    assign source      = section.settings.source      | default: 'blocks'
+    assign limit       = section.settings.limit       | default: 12
+    assign heading     = section.settings.heading     | default: 'What our clients say'
+    assign sub_raw     = section.settings.subheading  | default: '-'
+    assign show_chips  = section.settings.show_filter | default: true
 
     assign sub = sub_raw | strip
-    assign has_any = false
-    assign tag_bucket = ''
   -%}
 
   {%- if heading != blank or sub != '-' and sub != '' -%}
-  <header class="nb-testimonials__head">
-    {%- if heading != blank -%}<h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>{%- endif -%}
-    {%- if sub != '-' and sub != '' -%}<p class="nb-testimonials__dek">{{ sub }}</p>{%- endif -%}
-  </header>
+    <header class="nb-testimonials__head">
+      {%- if heading != blank -%}
+        <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
+      {%- endif -%}
+      {%- if sub != '-' and sub != '' -%}
+        <p class="nb-testimonials__dek">{{ sub }}</p>
+      {%- endif -%}
+    </header>
   {%- endif -%}
 
   {%- capture render_cards -%}
-  <div class="nb-tgrid" data-grid>
-    {%- if source == 'metaobject' -%}
-      {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-      {%- if mo and mo.values and mo.values.size > 0 -%}
-        {%- for m in mo.values limit: limit -%}
-          {%- assign q   = m.quote    | default: '' -%}
-          {%- assign n   = m.name     | default: '' -%}
-          {%- assign tt  = m.title    | default: '' -%}
-          {%- assign loc = m.location | default: '' -%}
-          {%- assign av  = m.avatar -%}
-          {%- assign tg  = m.tags | join: ',' | default: '' -%}
-          {%- if q != '' or n != '' -%}{% assign has_any = true %}{%- endif -%}
-          {%- assign tags_norm = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
+    <div class="nb-tgrid" data-grid>
+      {%- if source == 'metaobject' -%}
+        {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+        {%- if mo and mo.values and mo.values.size > 0 -%}
+          {%- for m in mo.values limit: limit -%}
+            {%- assign q   = m.quote    | default: '' -%}
+            {%- assign n   = m.name     | default: '' -%}
+            {%- assign tt  = m.title    | default: '' -%}
+            {%- assign loc = m.location | default: '' -%}
+            {%- assign av  = m.avatar -%}
+            {%- assign tg  = m.tags | join: ',' | default: '' -%}
+            {% render 'nb-testimonial-card',
+              quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- else -%}
+        {%- for block in section.blocks limit: limit -%}
+          {%- assign q   = block.settings.quote    | default: '' -%}
+          {%- assign n   = block.settings.name     | default: '' -%}
+          {%- assign tt  = block.settings.title    | default: '' -%}
+          {%- assign loc = block.settings.location | default: '' -%}
+          {%- assign av  = block.settings.avatar -%}
+          {%- assign tg  = block.settings.tags     | default: '' -%}
           {% render 'nb-testimonial-card',
-              quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}
+            quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
         {%- endfor -%}
       {%- endif -%}
-    {%- else -%}
-      {%- for block in section.blocks limit: limit -%}
-        {%- assign q   = block.settings.quote    | default: '' -%}
-        {%- assign n   = block.settings.name     | default: '' -%}
-        {%- assign tt  = block.settings.title    | default: '' -%}
-        {%- assign loc = block.settings.location | default: '' -%}
-        {%- assign av  = block.settings.avatar -%}
-        {%- assign tg  = block.settings.tags     | default: '' -%}
-        {%- if q != '' or n != '' -%}{% assign has_any = true %}{%- endif -%}
-        {%- assign tags_norm = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
-        {% render 'nb-testimonial-card',
-            quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}
-      {%- endfor -%}
-    {%- endif -%}
-  </div>
+    </div>
   {%- endcapture -%}
 
-  {%- comment -%} Chip list (optional) {%- endcomment -%}
-  {%- assign tag_bucket = '' -%}
+  {%- comment -%} Collect chips from manual blocks (clean + sort). {%- endcomment -%}
   {%- capture tag_collect -%}
     {%- for b in section.blocks -%}
       {%- if b.settings.tags != blank -%}
@@ -76,14 +73,14 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   {%- assign tags_list = tags_clean | split: '||' -%}
 
   {%- if show_chips and tags_list.size > 0 -%}
-  <nav class="nb-tchips" aria-label="Filter testimonials by tag" data-root="{{ section.id }}">
-    <ul class="nb-tchips__list" data-chips>
-      <li><button type="button" class="nb-chip is-active" data-filter="*">All</button></li>
-      {%- for t in tags_list -%}
-        <li><button type="button" class="nb-chip" data-filter="{{ t | handleize }}">{{ t }}</button></li>
-      {%- endfor -%}
-    </ul>
-  </nav>
+    <nav class="nb-tchips" aria-label="Filter testimonials by tag" data-root="{{ section.id }}">
+      <ul class="nb-tchips__list" data-chips>
+        <li><button type="button" class="nb-chip is-active" data-filter="*">All</button></li>
+        {%- for t in tags_list -%}
+          <li><button type="button" class="nb-chip" data-filter="{{ t | handleize }}">{{ t }}</button></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
   {%- endif -%}
 
   {{ render_cards }}
