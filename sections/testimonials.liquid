@@ -2,7 +2,7 @@
   Nibana — Testimonials Section (blocks-based)
   - Tone controls soft tray background
   - Scroll-snap carousel, no JS required
-  - Passes Shopify schema validation (no blank defaults)
+  - Schema passes Shopify validation (no default on URL)
 {% endcomment %}
 
 <section class="nb-testimonials tone-{{ section.settings.tone }}">
@@ -162,8 +162,7 @@
     {
       "type": "url",
       "id": "button_link",
-      "label": "CTA link",
-      "default": "/pages/contact"
+      "label": "CTA link"
     }
   ],
   "blocks": [
