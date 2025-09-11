@@ -45,11 +45,20 @@
 {% if b_show_tags and blog.all_tags.size > 0 %}
   <nav class="nb-tagbar" aria-label="Topics">
     <ul class="nb-tagbar__list">
+      {%- comment -%} “All” chip {%- endcomment -%}
+      <li>
+        <a class="nb-tagbar__chip{% if current_tags == blank %} is-active{% endif %}"
+           href="{{ blog.url }}">
+          All
+        </a>
+      </li>
+
+      {%- comment -%} Tag chips {%- endcomment -%}
       {% for tag in blog.all_tags %}
-        {% assign is_current = current_tags contains tag %}
         <li>
-          <a class="nb-tagbar__chip{% if is_current %} is-active{% endif %}"
-             href="{{ blog.url | append: '/tagged/' | append: tag | handleize }}">
+          <a
+            class="nb-tagbar__chip{% if current_tags and current_tags contains tag %} is-active{% endif %}"
+            href="{{ blog.url }}/tagged/{{ tag | handle }}">
             {{ tag }}
           </a>
         </li>
