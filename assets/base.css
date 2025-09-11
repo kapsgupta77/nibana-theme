@@ -5293,3 +5293,46 @@ body.nb-typography{
   padding:14px 22px;
   font-size:clamp(16px,1.05vw,18px);
 }
+
+/* === NB — BLOG & ARTICLE polish === */
+
+/* Article (single) */
+.nb-article-hero { margin: 12px 0 14px; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0,0,0,.08);
+}
+.nb-article-hero__img { display:block; width:100%; height:auto; }
+.nb-article-dek { font-size: clamp(18px, 1.9vw, 20px); line-height: 1.6;
+  color: var(--nb-muted,#324247); margin: 6px 0 14px;
+}
+.nb-article-cta { display:flex; justify-content:center; margin: 18px 0 8px; }
+
+/* Blog index hero */
+.nb-blog-hero { --tone-bg:#fbf7f5; --tone-ring:rgba(34,50,56,.06);
+  background: var(--tone-bg); border-radius: 22px; padding: clamp(16px,3vw,28px);
+  box-shadow: 0 10px 26px rgba(0,0,0,.06); margin: 8px 0 16px; position:relative; overflow:hidden;
+}
+.nb-blog-hero::before{content:"";position:absolute;inset:-12% -6% auto -6%;
+  height:56%;background:radial-gradient(120% 80% at 85% -10%, var(--tone-ring), transparent 55%);
+  pointer-events:none
+}
+.nb-blog-hero.tone-sage   { --tone-bg: var(--nb-sage,#EAF4F3); }
+.nb-blog-hero.tone-pebble { --tone-bg: #fbf7f5; }
+.nb-blog-hero.tone-ink    { --tone-bg: #f6f9f8; }
+.nb-blog-hero.tone-teal   { --tone-bg: #edf7f6; }
+
+.nb-blog-hero__inner{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center}
+@media (max-width: 900px){ .nb-blog-hero__inner{ grid-template-columns:1fr; } }
+.nb-blog-hero__media{margin:0}
+.nb-blog-hero__img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 10px 22px rgba(0,0,0,.06)}
+.nb-blog-hero__title{margin:0 0 6px}
+.nb-blog-hero__dek{color:var(--nb-muted,#324247);margin:0 0 12px}
+
+/* Tag chips (optional) */
+.nb-tagbar{ margin: 6px 0 16px; }
+.nb-tagbar__list{ display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none; }
+.nb-tagbar__chip{ display:inline-flex; align-items:center; gap:8px; padding:.5rem .8rem;
+  background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:999px;
+  box-shadow:0 6px 16px rgba(0,0,0,.05); text-decoration:none; color:var(--nb-muted,#324247);
+  font-weight:600;
+}
+.nb-tagbar__chip.is-active{ border-color: var(--nb-chocolate,#C86B2A); color:#000; }
