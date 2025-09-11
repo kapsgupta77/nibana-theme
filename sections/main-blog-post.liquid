@@ -15,13 +15,42 @@
       {% render 'spacing-style', settings: section.settings %}
     "
   >
+{%- liquid
+  assign nb_dek       = article.metafields.custom.dek | default: ''
+  assign nb_cover     = article.metafields.custom.cover_image
+  assign nb_cta_label = article.metafields.custom.cta_label | default: ''
+  assign nb_cta_link  = article.metafields.custom.cta_link  | default: ''
+-%}
     <header>
       {%- content_for 'block', id: 'blog-post-title', type: 'text' %}
       {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' %}
     </header>
 
-    {%- content_for 'block', id: 'blog-post-image', type: 'image' %}
+{% if nb_dek != blank %}
+  <p class="nb-article-dek">{{ nb_dek }}</p>
+{% endif %}
+
+    {% if nb_cover %}
+  <figure class="nb-article-hero">
+    {{ nb_cover
+      | image_url: width: 1600
+      | image_tag:
+        alt: article.title,
+        sizes: "(max-width: 749px) 100vw, 1200px",
+        widths: "600,900,1200,1600",
+        class: "nb-article-hero__img"
+    }}
+  </figure>
+{% else %}
+  {%- content_for 'block', id: 'blog-post-image', type: 'image' %}
+{% endif %}
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' %}
+
+{% if nb_cta_label != blank and nb_cta_link != blank %}
+  <div class="nb-article-cta">
+    <a class="nb-cta nb-cta--md" href="{{ nb_cta_link }}">{{ nb_cta_label }}</a>
+  </div>
+{% endif %}
 
     {% if blog.comments_enabled? %}
       <div class="blog-post-comments-container">
