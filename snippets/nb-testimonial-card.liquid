@@ -1,43 +1,49 @@
 {%- liquid
-  assign card = c | default: card | default: {}
-  assign quote    = card.quote  | default: card.q   | to_s | strip
-  assign name     = card.name   | to_s | strip
-  assign title    = card.title  | to_s | strip
+  # Prefer the passed-in object "c", otherwise fall back to a parent var named "card"
+  assign card = c | default: card
+
+  # Safe field reads with fallbacks
+  assign quote    = ''
+  if card.quote
+    assign quote = card.quote | to_s | strip
+  elsif card.q
+    assign quote = card.q | to_s | strip
+  endif
+
+  assign name     = card.name     | to_s | strip
+  assign title    = card.title    | to_s | strip
   assign location = card.location | to_s | strip
   assign avatar   = card.avatar
-  assign tags     = card.tags   | default: '' | to_s
 -%}
 
-<article class="nb-tcard-wrap" data-tags="{{ tags | escape }}">
-  <div class="nb-tcard">
-    <div class="nb-tcard__bar" aria-hidden="true"></div>
+<div class="nb-tcard">
+  <div class="nb-tcard__bar" aria-hidden="true"></div>
 
-    {%- if quote != '' -%}
-      <blockquote class="nb-tcard__quote">“{{ quote }}”</blockquote>
-    {%- endif -%}
+  {%- if quote != '' -%}
+    <blockquote class="nb-tcard__quote">“{{ quote }}”</blockquote>
+  {%- endif -%}
 
-    <footer class="nb-tcard__meta">
-      <div class="nb-tcard__person">
-        {%- if avatar -%}
-          {{ avatar
-            | image_url: width: 96
-            | image_tag: class: 'nb-tcard__avatar', alt: name | escape, loading: 'lazy', decoding: 'async' }}
-        {%- else -%}
-          <span class="nb-tcard__avatar nb-tcard__avatar--placeholder" aria-hidden="true"></span>
-        {%- endif -%}
-        <div class="nb-tcard__id">
-          {%- if name != '' -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
-          {%- if title != '' -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
-          {%- if location != '' -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
-        </div>
+  <footer class="nb-tcard__meta">
+    <div class="nb-tcard__person">
+      {%- if avatar -%}
+        {{ avatar
+          | image_url: width: 96
+          | image_tag: class: 'nb-tcard__avatar', alt: name, loading: 'lazy', decoding: 'async' }}
+      {%- else -%}
+        <span class="nb-tcard__avatar nb-tcard__avatar--placeholder" aria-hidden="true"></span>
+      {%- endif -%}
+      <div class="nb-tcard__id">
+        {%- if name     != '' -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+        {%- if title    != '' -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
+        {%- if location != '' -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
       </div>
-    </footer>
-  </div>
-</article>
+    </div>
+  </footer>
+</div>
 
 <style>
-/* minimal styles (keeps your current look) */
-.nb-tcard{background:#fff;border:1px solid #e8ecef;border-radius:14px;box-shadow:0 8px 18px rgba(0,0,0,.05);padding:16px 16px 14px 16px;position:relative}
+/* (Tiny card styles; feel free to keep your existing CSS instead) */
+.nb-tcard{background:#fff;border:1px solid #e8ecef;border-radius:14px;box-shadow:0 8px 18px rgba(0,0,0,.05);padding:16px 16px 14px;position:relative}
 .nb-tcard__bar{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:14px 0 0 14px;background:linear-gradient(180deg,#C86B2A,#8a4a17)}
 .nb-tcard__quote{margin:0 0 14px}
 .nb-tcard__meta{margin-top:8px}
