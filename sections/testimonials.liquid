@@ -29,9 +29,9 @@ Testimonials – page grid with filter chips
         {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
         {%- if mo and mo.values and mo.values.size > 0 -%}
           {%- for m in mo.values limit: limit -%}
-            {%- assign q = m.quote    | default: '' -%}
-            {%- assign n = m.name     | default: '' -%}
-            {%- assign tt = m.title   | default: '' -%}
+            {%- assign q = m.quote      | default: '' -%}
+            {%- assign n = m.name       | default: '' -%}
+            {%- assign tt = m.title     | default: '' -%}
             {%- assign loc = m.location | default: '' -%}
             {%- assign av = m.avatar -%}
             {%- assign tg = m.tags | join: ',' | default: '' -%}
@@ -49,12 +49,12 @@ Testimonials – page grid with filter chips
         {%- endif -%}
       {%- else -%}
         {%- for block in section.blocks limit: limit -%}
-          {%- assign q = block.settings.quote    | default: '' -%}
-          {%- assign n = block.settings.name     | default: '' -%}
-          {%- assign tt = block.settings.title   | default: '' -%}
+          {%- assign q = block.settings.quote      | default: '' -%}
+          {%- assign n = block.settings.name       | default: '' -%}
+          {%- assign tt = block.settings.title     | default: '' -%}
           {%- assign loc = block.settings.location | default: '' -%}
-          {%- assign av = block.settings.avatar  -%}
-          {%- assign tg = block.settings.tags    | default: '' -%}
+          {%- assign av = block.settings.avatar -%}
+          {%- assign tg = block.settings.tags      | default: '' -%}
           {%- if q != '' and n != '' -%}
             {%- assign has_any = true -%}
             {%- assign tags_norm  = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
@@ -80,12 +80,14 @@ Testimonials – page grid with filter chips
       {%- for t in arr -%}
         {%- assign tt = t | strip -%}
         {%- if tt != '' -%}
-          {%- unless uniq contains '||' | append: tt | append: '||' -%}
-            {%- assign uniq = uniq | append: '||' | append: tt | append: '||' -%}
+          {%- assign needle = '||' | append: tt | append: '||' -%}
+          {%- unless uniq contains needle -%}
+            {%- assign uniq = uniq | append: needle -%}
           {%- endunless -%}
         {%- endif -%}
       {%- endfor -%}
-      {%- assign chips = uniq | replace: '||||', '||' | split: '||' -%}
+      {%- assign chips_str = uniq | remove_first: '||' -%}
+      {%- assign chips = chips_str | split: '||' -%}
     {%- endif -%}
 
     <nav class="nb-testimonials__filter" aria-label="Filter testimonials" data-filter>
