@@ -67,6 +67,46 @@
             "title": "Patrik P / Business Owner",
             "location": "London, UK"
           }
+        },
+        "testimonial_6ACp9K": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Kapil is like a mirror, he acts as a tool for you to get to really see yourself. I think the process of working with Kapil is going to be a reflection of the person he is working with. If someone wants to understand something about themselves, Kapil can help to realise things that are so routed in themselves that they became totally unaware of.",
+            "title": "Santiago Ruge / Management Consultant",
+            "location": "Bogota, Columbia"
+          }
+        },
+        "testimonial_FMr6nz": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Kapil has a way of speaking to our desires that bypasses one’s vigilance center so that what we truly want can come out freely. He can see the rightness in the places where we often miss or deny it. There’s a gentle firmness in his teaching and a soft steadiness in his presence. I never felt his words being intrusive but they can always touch a place deep inside.",
+            "title": "J / Teacher",
+            "location": "London, UK"
+          }
+        },
+        "testimonial_tFFwpG": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "As a coach, Kapil is exceptional. Attention to detail, really listen to what i say and help me discover what it is underneath my problem to highlight the answer i was looking for with grace, fun, straight to the point. Very powerful. If you talk to him, be clear of doing your side of the work and the results will be worthy.",
+            "title": "Haris Abols / Associate Credit Partner, Santander UK Corporate & Commercial",
+            "location": "London, UK"
+          }
+        },
+        "testimonial_LANY7i": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Kapil is a wonderful teacher. He’s got a playful, penetrative presence in the front of them room. His ability lies in the fact that he’s comfortable discussing the taboo, sex and the shadow, which gives permission to everyone else to explore these topics too. His fierce love for teaching a path of awakening and personal responsibility shines through everything he says. And he always keeps the tone engaging and fun, so that his teachings can be easily absorbed. I highly recommend attending his classes and workshops, as they’ve changed my life",
+            "title": "Caoilfhionn / Digital Marketing Executive & Women’s Coach",
+            "location": "London, UK"
+          }
+        },
+        "testimonial_r6TMaE": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Confused, hurt, drowning in fear, victim, and super masculine, energetically is how I would describe myself at this time. He listened, comprehended, and provided the exact specific tools that were required for my situation. It felt like a magnifying mirror held close, showing me what I could do to be better, and instead I sat on fears and complained about the reasons why I couldn’t be and what all stopped me. Having worked over six months with Kapil, I can wholeheartedly say that I now have a lot of education, in various areas of life coaching, to be the best version of myself, especially be connected to my true feminine. He is always available for a chat and works a lot on himself to lead by example. Highly recommended!",
+            "title": "Pallavi / Business Owner",
+            "location": "London, UK"
+          }
         }
       },
       "block_order": [
@@ -76,7 +116,12 @@
         "testimonial_DHQMYw",
         "testimonial_nnrBdg",
         "testimonial_UcyDLa",
-        "testimonial_D9Pgik"
+        "testimonial_D9Pgik",
+        "testimonial_6ACp9K",
+        "testimonial_FMr6nz",
+        "testimonial_tFFwpG",
+        "testimonial_LANY7i",
+        "testimonial_r6TMaE"
       ],
       "name": "Testimonials",
       "settings": {
