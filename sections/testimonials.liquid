@@ -47,7 +47,8 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
           {%- if q != '' or n != '' -%}{% assign has_any = true %}{% endif -%}
           {%- assign tags_norm = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
           {%- assign tag_bucket = tag_bucket | append: ',' | append: tags_norm -%}
-          {% render 'nb-testimonial-card', card: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av, 'tags': tags_norm } %}
+          {% render 'nb-testimonial-card',
+  quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}
         {%- endfor -%}
       {%- endif -%}
     {%- else -%}
@@ -61,8 +62,8 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
         {%- if q != '' or n != '' -%}{% assign has_any = true %}{% endif -%}
         {%- assign tags_norm = tg | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
         {%- assign tag_bucket = tag_bucket | append: ',' | append: tags_norm -%}
-        {% render 'nb-testimonial-card', card: { 'quote': q, 'name': n, 'title': tt, 'location': loc, 'avatar': av, 'tags': tags_norm } %}
-      {%- endfor -%}
+        {% render 'nb-testimonial-card',
+  quote: q, name: n, title: tt, location: loc, avatar: av, tags: tags_norm %}      {%- endfor -%}
     {%- endif -%}
   </div>
   {%- endcapture -%}
@@ -188,6 +189,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
 
 
