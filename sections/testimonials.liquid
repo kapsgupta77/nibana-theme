@@ -111,14 +111,14 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     });
   }
 
-  // Read more / less
+  // Read more / less + fade
   root.querySelectorAll('.nb-tcard').forEach(card => {
     const quote = card.querySelector('[data-q]');
     const btn   = card.querySelector('[data-more]');
     if (!quote || !btn) return;
 
     const needsMore = quote.scrollHeight > quote.offsetHeight + 4;
-    if (needsMore) btn.hidden = false;
+    if (needsMore) { btn.hidden = false; card.classList.add('has-more'); }
 
     btn.addEventListener('click', () => {
       card.classList.toggle('is-open');
@@ -129,20 +129,21 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 {% endjavascript %}
 
 {% stylesheet %}
-/* Container width to match site content */
+/* Container width matches site rhythm */
 .nb-testimonials__container{
   max-width: min(1160px, 94vw);
   margin-inline: auto;
-  padding-inline: clamp(12px, 3vw, 20px);
+  padding-inline: clamp(12px, 3vw, 22px);
 }
 
-.nb-testimonials{ --t-accent: var(--nb-chocolate); --t-gap: clamp(14px,2.4vw,22px); }
-.nb-testimonials__head{ margin:0 0 clamp(8px,1.8vw,16px); text-align:left; }
+/* Head */
+.nb-testimonials{ --t-accent: var(--nb-chocolate); --t-gap: clamp(16px,2.6vw,24px); }
+.nb-testimonials__head{ margin:0 0 clamp(10px,2vw,18px); text-align:left; }
 .nb-testimonials__title{ margin:0 0 6px; }
-.nb-testimonials__dek{ margin:0; color:#516068; }
+.nb-testimonials__dek{ margin:0; color:#54636a; }
 
-/* chips */
-.nb-tchips{ position:relative; margin:8px 0 16px; }
+/* Chips */
+.nb-tchips{ position:relative; margin:8px 0 18px; }
 .nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none;}
 .nb-tchips__list::-webkit-scrollbar{ display:none; }
 .nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
@@ -151,36 +152,89 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); }
 .nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
 
-/* grid — ~3 columns at 1160px, fluid down to 1 */
+/* Grid — three columns at wide, fluid downwards */
 .nb-tgrid{
   display:grid;
   gap: var(--t-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(340px,100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(360px,100%), 1fr));
   align-items: stretch;
 }
 
-/* card */
+/* Card */
 .nb-tcard{
-  position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06); padding:16px 16px 14px 18px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+  border:1px solid #e8ecef;
+  border-radius:20px;
+  box-shadow:0 12px 24px rgba(0,0,0,.06);
+  padding: clamp(16px,1.8vw,22px) clamp(16px,1.8vw,22px) clamp(14px,1.6vw,20px) clamp(18px,2.2vw,24px);
   transition:transform .18s ease, box-shadow .18s ease;
 }
-.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
-.nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px;
-  background:linear-gradient(180deg, var(--t-accent), color-mix(in oklab, var(--t-accent), #000 14%)); }
-.nb-tcard__quote{ margin:0 0 12px; display:-webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow:hidden; }
-.nb-tcard.is-open .nb-tcard__quote{ display:block; -webkit-line-clamp:unset; }
-.nb-tcard__meta{ display:flex; gap:10px; align-items:flex-start; }
-.nb-tcard__avatar{ flex:0 0 auto; width:36px; height:36px; border-radius:50%; overflow:hidden; background:#f3f5f4; }
-.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
-.nb-tcard__who{ line-height:1.25; }
-.nb-tcard__name{ font-weight:700; }
-.nb-tcard__title,.nb-tcard__loc{ color:#55656c; font-size:.92em; }
-.nb-tcard__more{
-  margin-top:6px; background:#fff; border:1px solid #e9eeed; border-radius:999px; padding:.4rem .7rem;
-  font-size:.9rem; cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.04);
+.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 16px 30px rgba(0,0,0,.08); }
+
+.nb-tcard__accent{
+  position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:20px 0 0 20px;
+  background:linear-gradient(180deg, var(--t-accent), color-mix(in oklab, var(--t-accent), #000 14%));
 }
-.nb-tcard__more:hover{ box-shadow:0 10px 18px rgba(0,0,0,.06); }
+
+/* Quote area: airy, clamped by default */
+.nb-tcard__quote{
+  position:relative;
+  margin:0 0 14px;
+  line-height:1.55;
+  font-size: 0.98rem;
+  color:#2a2f33;
+  display:-webkit-box;
+  -webkit-line-clamp: 9;           /* clamp */
+  -webkit-box-orient: vertical;
+  overflow:hidden;
+}
+.nb-tcard__quote p{ margin:0; }
+
+/* Soft fade only when card.has-more and not expanded */
+.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:46px;
+  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 70%);
+  pointer-events:none;
+}
+
+/* Meta pinned to bottom, consistent area */
+.nb-tcard__meta{
+  margin-top:auto;
+  display:grid;
+  grid-template-columns: auto 1fr;
+  column-gap:12px;
+  align-items:center;
+  min-height:64px;                 /* keeps name/title/location area consistent */
+}
+.nb-tcard__avatar{ width:44px; height:44px; border-radius:50%; overflow:hidden; background:#eef2f1; }
+.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.nb-tcard__who{ line-height:1.25; }
+.nb-tcard__name{ font-weight:760; }
+.nb-tcard__title,.nb-tcard__loc{ color:#5b6870; font-size:.92em; }
+
+/* Read more button */
+.nb-tcard__more{
+  align-self:flex-start;
+  margin-top:10px;
+  background:#fff;
+  border:1px solid #e9eeed;
+  border-radius:999px;
+  padding:.46rem .78rem;
+  font-size:.9rem;
+  cursor:pointer;
+  box-shadow:0 8px 16px rgba(0,0,0,.04);
+}
+.nb-tcard__more:hover{ box-shadow:0 12px 20px rgba(0,0,0,.06); }
+
+/* Expanded state removes clamp */
+.nb-tcard.is-open .nb-tcard__quote{
+  display:block; -webkit-line-clamp:unset; overflow:visible;
+}
+.nb-tcard.is-open .nb-tcard__quote::after{ display:none; }
 {% endstylesheet %}
 
 {% schema %}
@@ -218,3 +272,4 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
