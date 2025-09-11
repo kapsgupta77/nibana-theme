@@ -43,13 +43,40 @@
             "title": "Christopher Thomas",
             "location": "New York City, USA"
           }
+        },
+        "testimonial_nnrBdg": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Kapil is a great speaker. Highly engaging, witty and eloquent. Most importantly Kapil really knows his stuff: he has a deep understanding of human beings and the challenges they face in modern life. I really gained more insight into my relationships with women. I would highly recommend Kapil as a coach.",
+            "title": "JB / Finance Entrepreneur",
+            "location": "London, UK"
+          }
+        },
+        "testimonial_UcyDLa": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "This work helped me get clear, make braver choices, and feel more alive in daily life.",
+            "title": "Client name",
+            "location": "London, UK"
+          }
+        },
+        "testimonial_D9Pgik": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "This work helped me get clear, make braver choices, and feel more alive in daily life.",
+            "title": "Client name",
+            "location": "London, UK"
+          }
         }
       },
       "block_order": [
         "testimonial_4NViUy",
         "testimonial_itpiiA",
         "testimonial_YwHc4e",
-        "testimonial_DHQMYw"
+        "testimonial_DHQMYw",
+        "testimonial_nnrBdg",
+        "testimonial_UcyDLa",
+        "testimonial_D9Pgik"
       ],
       "name": "Testimonials",
       "settings": {
