@@ -51,8 +51,8 @@
                     {%- endif -%}
                     <div class="nb-t-person">
                       {%- if n   != blank -%}<div class="nb-t-name">{{ n }}</div>{%- endif -%}
-                      {%- if tt  != blank -%}<div class="nb-t-role">{{ tt }}</div>{%- endif -%}
-                      {%- if loc != blank -%}<div class="nb-t-loc">{{ loc }}</div>{%- endif -%}
+                      {%- if tt  != blank and tt != '-' -%}<div class="nb-t-role">{{ tt }}</div>{%- endif -%}
+                      {%- if loc != blank and loc != '-' -%}<div class="nb-t-loc">{{ loc }}</div>{%- endif -%}
                     </div>
                   </footer>
                 </article>
@@ -67,6 +67,7 @@
             {%- assign loc = block.settings.location | default: '' -%}
             {%- assign av  = block.settings.avatar -%}
             {%- assign tg  = block.settings.tags     | default: '' -%}
+            {%- if tg == '-' -%}{%- assign tg = '' -%}{%- endif -%}
 
             {%- if q != '' -%}
               {%- assign has_any = true -%}
@@ -83,8 +84,8 @@
                   {%- endif -%}
                   <div class="nb-t-person">
                     {%- if n   != blank -%}<div class="nb-t-name">{{ n }}</div>{%- endif -%}
-                    {%- if tt  != blank -%}<div class="nb-t-role">{{ tt }}</div>{%- endif -%}
-                    {%- if loc != blank -%}<div class="nb-t-loc">{{ loc }}</div>{%- endif -%}
+                    {%- if tt  != blank and tt != '-' -%}<div class="nb-t-role">{{ tt }}</div>{%- endif -%}
+                    {%- if loc != blank and loc != '-' -%}<div class="nb-t-loc">{{ loc }}</div>{%- endif -%}
                   </div>
                 </footer>
               </article>
@@ -195,7 +196,7 @@
   "class": "section-wrapper",
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
-    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "" },
     {
       "type": "select",
       "id": "source",
@@ -229,10 +230,10 @@
       "settings": [
         { "type": "textarea", "id": "quote", "label": "Quote", "default": "This work helped me get clear, make braver choices, and feel more alive in daily life." },
         { "type": "text", "id": "name", "label": "Client name", "default": "Client name" },
-        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "" },
-        { "type": "text", "id": "location", "label": "Location", "default": "" },
+        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "-" },
+        { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
         { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
-        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "" }
+        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "-" }
       ]
     }
   ],
