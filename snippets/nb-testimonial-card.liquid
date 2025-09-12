@@ -1,6 +1,6 @@
 {%- comment -%}
-Renders a single testimonial card.
-Params expected: quote, name, title, location, avatar, tags
+Renders one testimonial card.
+Params: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
 {%- assign _tags = tags | default: '' | strip -%}
@@ -9,20 +9,15 @@ Params expected: quote, name, title, location, avatar, tags
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  {%- comment -%}
-  Details/summary gives us a native expand/collapse for “Read full”
-  We visually place summary below the quote with CSS (flex order).
-  {%- endcomment -%}
-  <details class="nb-tcard__details" data-details>
-    <summary class="nb-tcard__more" aria-expanded="false">
-      <span class="nb-tcard__more-text">Read full</span>
-    </summary>
+  <!-- Quote (click or button toggles full text) -->
+  <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
+    {{ quote | strip | newline_to_br }}
+  </div>
 
-    <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
-      {{ quote | strip | newline_to_br }}
-    </div>
-  </details>
+  <!-- Read full button; JS will unhide only if needed -->
+  <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 
+  <!-- Meta pinned to the bottom for consistent layout -->
   <div class="nb-tcard__meta">
     {%- if avatar -%}
       <figure class="nb-tcard__avatar">
@@ -31,7 +26,6 @@ Params expected: quote, name, title, location, avatar, tags
           | image_tag: class: 'nb-tcard__avatar-img', alt: name | default: 'Client', loading: 'lazy', sizes: '96px', widths: '96,128' }}
       </figure>
     {%- endif -%}
-
     <div class="nb-tcard__who">
       {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
       {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
