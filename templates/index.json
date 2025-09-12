@@ -2022,9 +2022,12 @@
         "heading": "Testimonials",
         "subheading": "What our client's say",
         "source": "blocks",
-        "limit": 6,
+        "limit": 8,
         "show_filter": false,
         "carousel": true,
+        "per_view": 3,
+        "cta_label": "View all",
+        "cta_link": "/pages/testimonial",
         "color_scheme": "scheme-3",
         "padding-block-start": 0,
         "padding-block-end": 0
