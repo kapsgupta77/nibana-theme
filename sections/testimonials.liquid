@@ -108,44 +108,52 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     });
   }
 
-  // Hide the summary if the quote doesn't actually overflow
-  function isTruncated(q) {
+  // Measure whether the quote overflows (with line-clamp applied)
+  function needsMore(q){
     const clone = q.cloneNode(true);
     clone.style.cssText = `
       position:absolute; visibility:hidden; pointer-events:none;
       display:block; -webkit-line-clamp:unset; overflow:visible; height:auto;
       width:${q.clientWidth}px;`;
     q.parentNode.appendChild(clone);
-    const needs = clone.scrollHeight > q.clientHeight + 2;
+    const full = clone.scrollHeight;
     clone.remove();
-    return needs;
+    return full > q.clientHeight + 2;
+  }
+
+  function evaluate(card){
+    const q   = card.querySelector('[data-q]');
+    const btn = card.querySelector('[data-more]');
+    if (!q || !btn) return;
+    const over = needsMore(q);
+    card.classList.toggle('has-more', over);
+    btn.hidden = !over;
+    if (!over) { card.classList.remove('is-open'); btn.textContent = 'Read full'; }
+  }
+
+  function toggle(card){
+    const btn = card.querySelector('[data-more]');
+    const open = card.classList.toggle('is-open');
+    if (btn) btn.textContent = open ? 'Show less' : 'Read full';
   }
 
   (sec.querySelectorAll('.nb-tcard') || []).forEach(card => {
-    const details = card.querySelector('[data-details]');
-    const q       = card.querySelector('[data-q]');
-    const label   = card.querySelector('.nb-tcard__more-text');
+    const q   = card.querySelector('[data-q]');
+    const btn = card.querySelector('[data-more]');
 
-    if (!details || !q) return;
+    if (q){
+      q.addEventListener('click', () => toggle(card));
+      q.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(card); }
+      });
+    }
+    if (btn) btn.addEventListener('click', () => toggle(card));
 
-    // evaluate on load & resize
-    const evalNow = () => {
-      const show = isTruncated(q);
-      details.hidden = !show;
-      if (label) label.textContent = 'Read full';
-      details.setAttribute('aria-hidden', show ? 'false' : 'true');
-    };
-
-    details.addEventListener('toggle', () => {
-      const open = details.hasAttribute('open');
-      if (label) label.textContent = open ? 'Show less' : 'Read full';
-      details.querySelector('.nb-tcard__more').setAttribute('aria-expanded', String(open));
-    });
-
-    const ro = new ResizeObserver(evalNow);
-    ro.observe(card);
-    window.addEventListener('load', evalNow);
-    setTimeout(evalNow, 200);
+    const ro = new ResizeObserver(() => evaluate(card));
+    if (q) ro.observe(q);
+    evaluate(card);
+    setTimeout(() => evaluate(card), 200);
+    window.addEventListener('load', () => evaluate(card));
   });
 })();
 {% endjavascript %}
@@ -156,7 +164,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-testimonials__head{margin:0 0 clamp(8px,1.8vw,16px);}
 .nb-testimonials__dek{color:#516068;margin:0}
 
-/* Chips: single-row scroller */
+/* Chips: single-row scroller (no wrapping) */
 .nb-tchips{position:relative;margin:8px 0 16px}
 .nb-tchips__list{display:flex;gap:10px;overflow:auto;padding:6px 8px 8px;list-style:none;margin:0;scrollbar-width:none;flex-wrap:nowrap}
 .nb-tchips__list::-webkit-scrollbar{display:none}
@@ -184,19 +192,21 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-tcard__accent{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:18px 0 0 18px;background:linear-gradient(180deg,var(--nb-chocolate),color-mix(in oklab,var(--nb-chocolate),#000 14%))}
 .nb-tcard__qmark{position:absolute;left:12px;top:8px;opacity:.14;font-size:30px;line-height:1}
 
-/* Expandable area */
-.nb-tcard__details{display:flex;flex-direction:column;margin:6px 0 0;position:relative}
-.nb-tcard__more{order:2;align-self:flex-start;margin:12px 0 0;
-  background:#fff;border:1px solid #e9eeed;border-radius:999px;padding:.55rem .9rem;font-size:.94rem;cursor:pointer;
-  box-shadow:0 10px 20px rgba(0,0,0,.06)}
-.nb-tcard__more:hover{box-shadow:0 14px 26px rgba(0,0,0,.08)}
-.nb-tcard__quote{order:1;margin:0 0 10px;font-size:1.05rem;line-height:1.68;letter-spacing:.005em;color:#24292d;
-  display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+/* Quote (clamped by default) */
+.nb-tcard__quote{
+  margin:0 0 10px;font-size:1.05rem;line-height:1.68;letter-spacing:.005em;color:#24292d;
+  display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer
+}
 .nb-tcard__quote p{margin:0 0 .4rem}
-.nb-tcard__details:not([open]) .nb-tcard__quote::after{
+
+/* Fade only when truncated */
+.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
   content:"";position:absolute;left:22px;right:22px;bottom:92px;height:56px;
-  background:linear-gradient(180deg,rgba(255,255,255,0),#fff 70%);pointer-events:none}
-.nb-tcard__details[open] .nb-tcard__quote{-webkit-line-clamp:unset;overflow:visible}
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff 70%);pointer-events:none
+}
+
+/* Expanded state */
+.nb-tcard.is-open .nb-tcard__quote{-webkit-line-clamp:unset;overflow:visible}
 
 /* Meta pinned to bottom */
 .nb-tcard__meta{
@@ -209,8 +219,13 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-tcard__title{color:var(--nb-teal,#0C8A7B);font-weight:600;margin-top:2px}
 .nb-tcard__loc{color:#6b777f;font-size:.95rem;margin-top:2px}
 
-/* Hide details entirely when there is nothing to expand (set via JS) */
-.nb-tcard [data-details][hidden]{display:none}
+/* “Read full” button (hidden unless has-more) */
+.nb-tcard__more{
+  align-self:flex-start;margin:10px 0 6px;background:#fff;border:1px solid #e9eeed;border-radius:999px;
+  padding:.55rem .9rem;font-size:.94rem;cursor:pointer;box-shadow:0 10px 20px rgba(0,0,0,.06)
+}
+.nb-tcard__more:hover{box-shadow:0 14px 26px rgba(0,0,0,.08)}
+.nb-tcard:not(.has-more) .nb-tcard__more{display:none}
 {% endstylesheet %}
 
 {% schema %}
