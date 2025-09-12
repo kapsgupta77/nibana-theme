@@ -17,7 +17,7 @@
 <section id="nb-ts-{{ section.id }}" class="nb-tcarousel tone-pebble">
   <div class="nb-shell">
     <header class="section-header">
-      <h2 class="section-header__title">{{ heading }}</h2>
+       <h2 class="nb-h2 section-header__title">{{ heading }}</h2>
       {%- if sub != blank and sub != '-' -%}
         <p class="section-header__subheading">{{ sub }}</p>
       {%- endif -%}
@@ -73,10 +73,24 @@
 {% stylesheet %}
   /* Layout + spacing */
   #nb-ts-{{ section.id }}{ --nib-h2-mb: 10px; }
-  .nb-tcarousel .section-header{ text-align:center; margin:0 0 12px; }
-  .nb-tcarousel .section-header__title{ margin:0 0 var(--nib-h2-mb) !important; }
-  .nb-tcarousel .section-header__subheading{ margin:0; opacity:.85; }
-
+ /* Header — match FAQ tone/scale and remove extra top padding */
+#nb-ts-{{ section.id }} .section-header{
+  margin-top: 0;
+  padding-top: 0;
+  text-align: left;
+  margin-bottom: clamp(10px, 1.6vw, 18px);
+}
+#nb-ts-{{ section.id }} .section-header__title{
+  margin: 0 0 var(--nib-h2-mb) !important;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  font-size: clamp(28px, 2.4vw, 36px); /* same visual scale as FAQ */
+}
+#nb-ts-{{ section.id }} .section-header__subheading{
+  margin: 0;
+  font-size: clamp(14px, 1vw, 16px);
+  color: rgba(0,0,0,.68);
+}
   .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
   .nb-tcarousel__track{
     display:grid;
