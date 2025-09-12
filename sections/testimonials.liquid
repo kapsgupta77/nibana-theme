@@ -143,60 +143,61 @@ Cards use the same design as the Testimonials page.
   const isCarousel = {{ section.settings.carousel | json }};
   if (!isCarousel) return;
 
-  const viewport = sec.querySelector('.nb-tcarousel__viewport');
-  const hGrid    = sec.querySelector('.nb-tcarousel__track [data-grid]');
+  // The grid itself is the scrollable element in slider mode
+  const scrollEl = sec.querySelector('.nb-tcarousel__track [data-grid]');
   const nav      = sec.querySelector('[data-nav]');
   const dotsBox  = sec.querySelector('[data-dots]');
   const prevBtn  = sec.querySelector('[data-dir="-1"]');
   const nextBtn  = sec.querySelector('[data-dir="1"]');
 
-  if (!viewport || !hGrid || !nav || !prevBtn || !nextBtn) return;
+  if (!scrollEl || !nav || !prevBtn || !nextBtn) return;
 
-  // number of pages ≈ how many viewport widths can scroll
-  const pagesCount = () => Math.max(1, Math.ceil(hGrid.scrollWidth / viewport.clientWidth));
-  let pages = pagesCount();
+  const vw = () => scrollEl.clientWidth;
+  const pages = () => Math.max(1, Math.ceil(scrollEl.scrollWidth / vw()));
+  let pageCount = pages();
   let active = 0;
 
-  function buildDots() {
+  function buildDots(){
+    if (!dotsBox) return;
     dotsBox.innerHTML = '';
-    for (let i = 0; i < pages; i++) {
+    for (let i = 0; i < pageCount; i++){
       const dot = document.createElement('i');
       if (i === active) dot.classList.add('is-active');
       dot.addEventListener('click', () => {
-        viewport.scrollTo({ left: i * viewport.clientWidth, behavior: 'smooth' });
+        scrollEl.scrollTo({ left: i * vw(), behavior: 'smooth' });
       });
       dotsBox.appendChild(dot);
     }
   }
 
-  function update() {
-    active = Math.round(viewport.scrollLeft / viewport.clientWidth);
-    dotsBox.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
-    nav.hidden = pages <= 1;
+  function update(){
+    active = Math.round(scrollEl.scrollLeft / vw());
+    const dots = dotsBox?.querySelectorAll('i') || [];
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+    nav.hidden = pageCount <= 1;
     prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pages - 1;
+    nextBtn.disabled = active >= pageCount - 1;
   }
 
   // Arrows
   prevBtn.addEventListener('click', () => {
-    viewport.scrollBy({ left: -viewport.clientWidth, behavior: 'smooth' });
+    scrollEl.scrollBy({ left: -vw(), behavior: 'smooth' });
   });
   nextBtn.addEventListener('click', () => {
-    viewport.scrollBy({ left:  viewport.clientWidth, behavior: 'smooth' });
+    scrollEl.scrollBy({ left:  vw(), behavior: 'smooth' });
   });
 
-  // Recalculate on resize
+  // Recalculate on resize / init
   const ro = new ResizeObserver(() => {
-    const p = pagesCount();
-    if (p !== pages) { pages = p; buildDots(); }
+    const p = pages();
+    if (p !== pageCount){ pageCount = p; buildDots(); }
     update();
   });
-  ro.observe(viewport);
+  ro.observe(scrollEl);
 
-  // Init
   buildDots();
   update();
-  viewport.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  scrollEl.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 })();
 {% endjavascript %}
 
@@ -349,6 +350,32 @@ Cards use the same design as the Testimonials page.
 #shopify-section-{{ section.id }} .nb-tcarousel__nav { margin-top: 12px; }
 #shopify-section-{{ section.id }} .nb-tcarousel__cta { margin-top: 16px; }
 
+/* ----- CTA: make it Nibana teal (not chocolate) ----- */
+#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta{
+  background: var(--nb_teal, #0C8A7B) !important;
+  color:#fff !important;
+  border-color: transparent !important;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
+  background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
+}
+
+/* ----- Heading/subheading: match FAQ look & align ----- */
+#shopify-section-{{ section.id }} .nb-testimonials__head{ 
+  text-align:center; 
+  margin-bottom: clamp(12px, 2vw, 18px);
+}
+#shopify-section-{{ section.id }} .nb-testimonials__title{
+  /* uses your nb-h2 typography; we just ensure color/centering */
+  color: var(--nb-ink, #1F2C2A);
+  margin-left:auto; margin-right:auto;
+}
+#shopify-section-{{ section.id }} .nb-testimonials__dek{
+  margin-left:auto; margin-right:auto;
+  color:#55656c;
+  max-width: 46ch;
+}
+
 {% endstylesheet %}
 
 {% schema %}
@@ -396,5 +423,6 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
