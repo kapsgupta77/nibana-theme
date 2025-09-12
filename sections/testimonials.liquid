@@ -90,10 +90,10 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
 {% javascript %}
 (() => {
-  const root  = document.currentScript.closest('.nb-testimonials');
+  const root = document.currentScript.closest('.nb-testimonials');
   if (!root) return;
 
-  // Filter chips
+  // --- Filter chips
   const grid  = root.querySelector('[data-grid]');
   const chips = root.querySelectorAll('[data-chips] .nb-chip');
   if (grid && chips.length){
@@ -111,25 +111,50 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     });
   }
 
-  // Read more / less + fade
+  // --- Read more / less
+  function evaluate(card){
+    const q   = card.querySelector('[data-q]');
+    const btn = card.querySelector('[data-more]');
+    if (!q || !btn) return;
+
+    // if content overflows the clamped area, show button
+    const overflows = q.scrollHeight > q.offsetHeight + 2;
+    card.classList.toggle('has-more', overflows);
+    btn.hidden = !overflows;
+  }
+
+  function toggle(card){
+    const btn = card.querySelector('[data-more]');
+    if (!btn) return;
+    const open = card.classList.toggle('is-open');
+    btn.textContent = open ? 'Show less' : 'Read full';
+    btn.setAttribute('aria-expanded', String(open));
+  }
+
+  // attach handlers & measure
   root.querySelectorAll('.nb-tcard').forEach(card => {
-    const quote = card.querySelector('[data-q]');
-    const btn   = card.querySelector('[data-more]');
-    if (!quote || !btn) return;
+    const q   = card.querySelector('[data-q]');
+    const btn = card.querySelector('[data-more]');
 
-    const needsMore = quote.scrollHeight > quote.offsetHeight + 4;
-    if (needsMore) { btn.hidden = false; card.classList.add('has-more'); }
+    // click/tap the quote area or the button to expand
+    if (q){
+      q.addEventListener('click', () => toggle(card));
+      q.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(card); }});
+    }
+    if (btn) btn.addEventListener('click', () => toggle(card));
 
-    btn.addEventListener('click', () => {
-      card.classList.toggle('is-open');
-      btn.textContent = card.classList.contains('is-open') ? 'Show less' : 'Read full';
-    });
+    // initial measure, then re-measure on resize & after fonts/images settle
+    const ro = new ResizeObserver(() => evaluate(card));
+    ro.observe(q || card);
+    evaluate(card);
+    setTimeout(() => evaluate(card), 200);   // fonts
+    window.addEventListener('load', () => evaluate(card));
   });
 })();
 {% endjavascript %}
 
 {% stylesheet %}
-/* Container width matches site rhythm */
+/* Container alignment with site rhythm */
 .nb-testimonials__container{
   max-width: min(1160px, 94vw);
   margin-inline: auto;
@@ -144,7 +169,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
 /* Chips */
 .nb-tchips{ position:relative; margin:8px 0 18px; }
-.nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none;}
+.nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none; }
 .nb-tchips__list::-webkit-scrollbar{ display:none; }
 .nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
 .nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
@@ -152,7 +177,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); }
 .nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
 
-/* Grid — three columns at wide, fluid downwards */
+/* Grid */
 .nb-tgrid{
   display:grid;
   gap: var(--t-gap);
@@ -162,12 +187,8 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
 /* Card */
 .nb-tcard{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  background:#fff;
-  border:1px solid #e8ecef;
-  border-radius:20px;
+  position:relative; display:flex; flex-direction:column;
+  background:#fff; border:1px solid #e8ecef; border-radius:20px;
   box-shadow:0 12px 24px rgba(0,0,0,.06);
   padding: clamp(16px,1.8vw,22px) clamp(16px,1.8vw,22px) clamp(14px,1.6vw,20px) clamp(18px,2.2vw,24px);
   transition:transform .18s ease, box-shadow .18s ease;
@@ -179,35 +200,37 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   background:linear-gradient(180deg, var(--t-accent), color-mix(in oklab, var(--t-accent), #000 14%));
 }
 
-/* Quote area: airy, clamped by default */
+/* Decorative quote mark */
+.nb-tcard__qmark{
+  display:none;
+  position:absolute; inset:auto auto 100% -2px; transform:translateY(28px);
+  font-size:64px; line-height:1; color:#ede7e2; font-family: serif;
+}
+@media (min-width: 740px){
+  .nb-tcard__qmark{ display:inline-block; }
+}
+
+/* Quote area */
 .nb-tcard__quote{
   position:relative;
-  margin:0 0 14px;
-  line-height:1.55;
-  font-size: 0.98rem;
-  color:#2a2f33;
-  display:-webkit-box;
-  -webkit-line-clamp: 9;           /* clamp */
-  -webkit-box-orient: vertical;
-  overflow:hidden;
+  margin:0 0 16px;
+  line-height:1.55; font-size:0.98rem; color:#2a2f33;
+  display:-webkit-box; -webkit-line-clamp: 9; -webkit-box-orient: vertical; overflow:hidden;
+  cursor:pointer;
 }
 .nb-tcard__quote p{ margin:0; }
 
-/* Soft fade only when card.has-more and not expanded */
+/* Fade only when truncated */
 .nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
   content:""; position:absolute; left:0; right:0; bottom:0; height:46px;
   background:linear-gradient(180deg, rgba(255,255,255,0), #fff 70%);
   pointer-events:none;
 }
 
-/* Meta pinned to bottom, consistent area */
+/* Meta pinned to bottom (consistent zone) */
 .nb-tcard__meta{
-  margin-top:auto;
-  display:grid;
-  grid-template-columns: auto 1fr;
-  column-gap:12px;
-  align-items:center;
-  min-height:64px;                 /* keeps name/title/location area consistent */
+  margin-top:auto; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center;
+  min-height:64px;
 }
 .nb-tcard__avatar{ width:44px; height:44px; border-radius:50%; overflow:hidden; background:#eef2f1; }
 .nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -218,19 +241,15 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
 /* Read more button */
 .nb-tcard__more{
-  align-self:flex-start;
-  margin-top:10px;
-  background:#fff;
-  border:1px solid #e9eeed;
-  border-radius:999px;
-  padding:.46rem .78rem;
-  font-size:.9rem;
-  cursor:pointer;
+  align-self:flex-start; margin-top:10px;
+  background:#fff; border:1px solid #e9eeed; border-radius:999px;
+  padding:.46rem .78rem; font-size:.9rem; cursor:pointer;
   box-shadow:0 8px 16px rgba(0,0,0,.04);
 }
 .nb-tcard__more:hover{ box-shadow:0 12px 20px rgba(0,0,0,.06); }
+.nb-tcard:not(.has-more) .nb-tcard__more{ display:none; }
 
-/* Expanded state removes clamp */
+/* Expanded state */
 .nb-tcard.is-open .nb-tcard__quote{
   display:block; -webkit-line-clamp:unset; overflow:visible;
 }
@@ -272,4 +291,5 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
