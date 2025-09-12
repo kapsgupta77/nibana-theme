@@ -183,6 +183,42 @@ Shows overflow in-card with a scrollbar (no modal).
 .nb-tcard__name{ font-weight:800; letter-spacing:.1px; color:#182126; margin-bottom:2px; }
 .nb-tcard__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
 .nb-tcard__loc{ color:#6b7b86; font-size:.95rem; margin-top:1px; }
+
+/* ===== Testimonials header polish ===== */
+
+/* Add breathing room from the nav and match site gutters */
+.nb-testimonials__container{
+  /* top padding for air */
+  padding-top: clamp(28px, 4.2vw, 56px);
+}
+
+/* Tighter internal spacing, but still relaxed */
+.nb-testimonials__head{
+  margin: 0 0 clamp(14px, 2.2vw, 22px);
+}
+
+/* Keep the big, beautiful H1 but limit line length for elegance */
+.nb-testimonials__title{
+  max-width: 26ch;                  /* ~26 characters per line = calm */
+  letter-spacing: -0.005em;         /* tiny optical tightening */
+}
+
+/* Optional: a very light divider under the heading */
+.nb-testimonials__head::after{
+  content:"";
+  display:block;
+  height:1px;
+  background:#eef2f3;
+  margin-top: clamp(10px, 1.6vw, 14px);
+  border-radius: 1px;
+}
+
+/* Subheading tone if you decide to use it */
+.nb-testimonials__dek{
+  color:#55656c;
+  max-width: 46ch;
+}
+
 {% endstylesheet %}
 
 {% schema %}
@@ -220,3 +256,4 @@ Shows overflow in-card with a scrollbar (no modal).
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
