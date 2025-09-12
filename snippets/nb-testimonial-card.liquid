@@ -3,7 +3,7 @@ Renders a single testimonial card.
 Expects params: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
-{%- assign _tags = (tags | default: '-') | strip -%}
+{%- assign _tags = (tags | default: "-") | strip -%}
 
 <article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
   <span aria-hidden="true" class="nb-tcard__accent"></span>
