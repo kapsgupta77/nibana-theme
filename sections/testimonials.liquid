@@ -175,11 +175,20 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-chip.is-active{background:#f6faf9;border-color:rgba(0,0,0,.06);font-weight:600}
 
 /* Grid */
+/* Grid: 3 cards desktop, 2 on tablet, 1 on mobile */
 .nb-tgrid{
   display:grid;
-  gap: clamp(14px,2.2vw,22px);
-  grid-template-columns: repeat(auto-fit, minmax(min(340px,100%), 1fr));
+  gap: clamp(14px, 2.2vw, 22px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
+}
+
+@media (max-width: 1100px){
+  .nb-tgrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 680px){
+  .nb-tgrid{ grid-template-columns: 1fr; }
 }
 
 /* Card */
@@ -263,3 +272,4 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
