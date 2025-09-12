@@ -1,38 +1,35 @@
-{%- comment -%}
-  Renders a single testimonial card.
-  Expects params: quote, name, title, location, avatar, tags
-{%- endcomment -%}
+{% comment %}
+Renders a single testimonial card.
+Params expected: quote, name, title, location, avatar, tags
+{% endcomment %}
 
 {%- assign _tags = tags | default: '' | strip -%}
 
 <article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
-  <span aria-hidden="true" class="nb-tcard__accent"></span>
+  <span class="nb-tcard__accent" aria-hidden="true"></span>
+  <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  <!-- decorative open-quote (revealed via CSS ≥ 740px) -->
-  <span aria-hidden="true" class="nb-tcard__qmark">“</span>
-
-  <!-- Quote (click or button toggles full text) -->
-  <div class="nb-tcard__quote" tabindex="0" role="button" aria-label="Read full testimonial">
+  {%- comment -%} Quote (click or button toggles full text) {%- endcomment -%}
+  <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
     {{ quote | strip | newline_to_br }}
   </div>
 
   <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 
-  <!-- Meta pinned to the bottom for consistent layout -->
+  {%- comment -%} Fixed meta area for consistent alignment {%- endcomment -%}
   <div class="nb-tcard__meta">
     {%- if avatar != blank -%}
       <figure class="nb-tcard__avatar">
         {{ avatar
           | image_url: width: 96
           | image_tag:
-              class: 'nb-tcard__avatar-img',
-              alt: name,
-              loading: 'lazy',
-              sizes: '96px',
-              widths: '96,144' }}
+            class: 'nb-tcard__avatar-img',
+            alt: name,
+            loading: 'lazy',
+            sizes: '96px',
+            widths: '48,64,96,128' }}
       </figure>
     {%- endif -%}
-
     <div class="nb-tcard__who">
       {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
       {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
