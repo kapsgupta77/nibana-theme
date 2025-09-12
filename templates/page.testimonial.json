@@ -12,6 +12,36 @@
     "testimonials_PJc9ah": {
       "type": "testimonials",
       "blocks": {
+        "testimonial_UcyDLa": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "What does one do after the big goal is achieved? What does one do when money, fame, or even impact/contribution no longer cut it out for you? I turned to Kapil for coaching.\n\nThrough a dozen sessions, I got to understand myself and the world out there more. His sessions gave me relief from the immediate, resolved what was in my head and heart, and more importantly, gave me tools and perspectives to go deeper and go beyond the immediate resolutions.\n\nThe sessions have made me unfuckwithable, and have given me a mature worldview on relationships.\n\nI gained deep, lasting clarity on my business and the purpose it can serve for me and the world.\n\nAlso, I might not have had the wonderful, magical relationship with my “current fiance and soon-to-be wife” had Kapil not entered my life!",
+            "name": "Tanuj Kalia",
+            "title": "CEO, Lawctopus",
+            "location": "India",
+            "tags": "Relationship, Transformational Life Coaching"
+          }
+        },
+        "testimonial_DHQMYw": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I’ve had the honour of working with Kapil for the last few months and each and every session has always left me with an “aha” moment. His insightfulness, guidance and compassion has truly been a blessing. I never thought that I would need a “coach” when Kapil was recommended to me yet now I have a better understanding of my fears, more clarity around my desires, and certainty about the life that I want to live. For that, I’m truly grateful. I would highly recommend Kapil",
+            "name": "Christopher Thomas",
+            "title": "Global Membership Manager, Club Quarter Hotels",
+            "location": "New York City, USA",
+            "tags": "Relationship, Men's Coaching, Transformational Life Coaching"
+          }
+        },
+        "testimonial_jp7EHq": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I reached out to Kapil as I was looking for some help with my career change. After one call, we got to the centre of my fear and my motivation behind leaving my job. But even more powerfully, Kapil helped me put into motion the bold action needed to make the leap. I left my job a few months later and haven’t looked back!",
+            "name": "David Chambers",
+            "title": "Men's Dating & Relationship Coach /  Founder of The Authentic Man podcast",
+            "location": "London, UK",
+            "tags": "Men's Coaching, Career, Transformational Life Coaching"
+          }
+        },
         "testimonial_4NViUy": {
           "type": "testimonial",
           "settings": {
@@ -32,6 +62,16 @@
             "tags": "Leadership, Transformational Life Coaching"
           }
         },
+        "testimonial_gdw6fG": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "As Kapil wrapped up the session, I was shocked to realize that the discomfort I’d expected never set in. It had been the closest thing I’d experienced to a real-life men’s group on Clubhouse. That had been the key difference between Gupta’s group and the rooms I’d visited before: how the experience felt. Gupta was raw and honest in a way I hadn’t encountered on Clubhouse; he conveyed his value as a coach simply by being himself",
+            "name": "Jason Rogers",
+            "title": "Olympic Medalist & Contributing Writer for Mens Health & New York Times",
+            "location": "Los Angeles, USA",
+            "tags": "Men's Coaching"
+          }
+        },
         "testimonial_YwHc4e": {
           "type": "testimonial",
           "settings": {
@@ -42,16 +82,6 @@
             "tags": "Relationship"
           }
         },
-        "testimonial_DHQMYw": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "I’ve had the honour of working with Kapil for the last few months and each and every session has always left me with an “aha” moment. His insightfulness, guidance and compassion has truly been a blessing. I never thought that I would need a “coach” when Kapil was recommended to me yet now I have a better understanding of my fears, more clarity around my desires, and certainty about the life that I want to live. For that, I’m truly grateful. I would highly recommend Kapil",
-            "name": "Christopher Thomas",
-            "title": "Global Membership Manager, Club Quarter Hotels",
-            "location": "New York City, USA",
-            "tags": "Relationship, Men's Coaching, Transformational Life Coaching"
-          }
-        },
         "testimonial_nnrBdg": {
           "type": "testimonial",
           "settings": {
@@ -60,16 +90,6 @@
             "title": "Finance Entrepreneur",
             "location": "London, UK",
             "tags": "Men's Coaching, Transformational Life Coaching"
-          }
-        },
-        "testimonial_UcyDLa": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "What does one do after the big goal is achieved? What does one do when money, fame, or even impact/contribution no longer cut it out for you? I turned to Kapil for coaching.\n\nThrough a dozen sessions, I got to understand myself and the world out there more. His sessions gave me relief from the immediate, resolved what was in my head and heart, and more importantly, gave me tools and perspectives to go deeper and go beyond the immediate resolutions.\n\nThe sessions have made me unfuckwithable, and have given me a mature worldview on relationships.\n\nI gained deep, lasting clarity on my business and the purpose it can serve for me and the world.\n\nAlso, I might not have had the wonderful, magical relationship with my “current fiance and soon-to-be wife” had Kapil not entered my life!",
-            "name": "Tanuj Kalia",
-            "title": "CEO, Lawctopus",
-            "location": "India",
-            "tags": "Relationship, Transformational Life Coaching"
           }
         },
         "testimonial_D9Pgik": {
@@ -141,44 +161,24 @@
             "location": "London, UK",
             "tags": "Relationship, Women"
           }
-        },
-        "testimonial_jp7EHq": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "I reached out to Kapil as I was looking for some help with my career change. After one call, we got to the centre of my fear and my motivation behind leaving my job. But even more powerfully, Kapil helped me put into motion the bold action needed to make the leap. I left my job a few months later and haven’t looked back!",
-            "name": "David Chambers",
-            "title": "Relationship Coach & Founder of Authentic Man podcast",
-            "location": "London, UK",
-            "tags": "Men's Coaching, Career, Transformational Life Coaching"
-          }
-        },
-        "testimonial_gdw6fG": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "As Kapil wrapped up the session, I was shocked to realize that the discomfort I’d expected never set in. It had been the closest thing I’d experienced to a real-life men’s group on Clubhouse. That had been the key difference between Gupta’s group and the rooms I’d visited before: how the experience felt. Gupta was raw and honest in a way I hadn’t encountered on Clubhouse; he conveyed his value as a coach simply by being himself",
-            "name": "Jason Rogers",
-            "title": "Olympic Medalist & Contributing Writer for Mens Health & New York Times",
-            "location": "Los Angeles, USA",
-            "tags": "Men's Coaching"
-          }
         }
       },
       "block_order": [
+        "testimonial_UcyDLa",
+        "testimonial_DHQMYw",
+        "testimonial_jp7EHq",
         "testimonial_4NViUy",
         "testimonial_itpiiA",
+        "testimonial_gdw6fG",
         "testimonial_YwHc4e",
-        "testimonial_DHQMYw",
         "testimonial_nnrBdg",
-        "testimonial_UcyDLa",
         "testimonial_D9Pgik",
         "testimonial_6ACp9K",
         "testimonial_FMr6nz",
         "testimonial_tFFwpG",
         "testimonial_LANY7i",
         "testimonial_r6TMaE",
-        "testimonial_D6jLx8",
-        "testimonial_jp7EHq",
-        "testimonial_gdw6fG"
+        "testimonial_D6jLx8"
       ],
       "name": "Testimonials",
       "settings": {
