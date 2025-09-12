@@ -157,7 +157,7 @@
           "settings": {
             "quote": "As Kapil wrapped up the session, I was shocked to realize that the discomfort I’d expected never set in. It had been the closest thing I’d experienced to a real-life men’s group on Clubhouse. That had been the key difference between Gupta’s group and the rooms I’d visited before: how the experience felt. Gupta was raw and honest in a way I hadn’t encountered on Clubhouse; he conveyed his value as a coach simply by being himself",
             "name": "Jason Rogers",
-            "title": "Olympic Medalist & Contributing Writer for MensHealth & New York Times",
+            "title": "Olympic Medalist & Contributing Writer for Mens Health & New York Times",
             "location": "Los Angeles, USA",
             "tags": "Men's Coaching"
           }
@@ -186,7 +186,7 @@
         "subheading": "-",
         "source": "blocks",
         "limit": 24,
-        "show_filter": true,
+        "show_filter": false,
         "color_scheme": "",
         "padding-block-start": 0,
         "padding-block-end": 0
