@@ -131,6 +131,36 @@
             "location": "London, UK",
             "tags": "Relationship, Transformational Life Coaching, Women"
           }
+        },
+        "testimonial_D6jLx8": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "If you are stuck in a rut, whether you’re single, in a relationship, lack confidence or direction, or just want more from life – Kapil is the answer!",
+            "name": "Ariane Cole",
+            "title": "Accountant & Business Coach",
+            "location": "London, UK",
+            "tags": "Relationship, Women"
+          }
+        },
+        "testimonial_jp7EHq": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I reached out to Kapil as I was looking for some help with my career change. After one call, we got to the centre of my fear and my motivation behind leaving my job. But even more powerfully, Kapil helped me put into motion the bold action needed to make the leap. I left my job a few months later and haven’t looked back!",
+            "name": "David Chambers",
+            "title": "Relationship Coach & Founder of Authentic Man podcast",
+            "location": "London, UK",
+            "tags": "Men's Coaching, Career, Transformational Life Coaching"
+          }
+        },
+        "testimonial_gdw6fG": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "As Kapil wrapped up the session, I was shocked to realize that the discomfort I’d expected never set in. It had been the closest thing I’d experienced to a real-life men’s group on Clubhouse. That had been the key difference between Gupta’s group and the rooms I’d visited before: how the experience felt. Gupta was raw and honest in a way I hadn’t encountered on Clubhouse; he conveyed his value as a coach simply by being himself",
+            "name": "Jason Rogers",
+            "title": "Olympic Medalist & Contributing Writer for MensHealth & New York Times",
+            "location": "Los Angeles, USA",
+            "tags": "Men's Coaching"
+          }
         }
       },
       "block_order": [
@@ -145,7 +175,10 @@
         "testimonial_FMr6nz",
         "testimonial_tFFwpG",
         "testimonial_LANY7i",
-        "testimonial_r6TMaE"
+        "testimonial_r6TMaE",
+        "testimonial_D6jLx8",
+        "testimonial_jp7EHq",
+        "testimonial_gdw6fG"
       ],
       "name": "Testimonials",
       "settings": {
