@@ -1,6 +1,6 @@
 {%- comment -%}
 Renders a single testimonial card.
-Expected params: quote, name, title, location, avatar, tags
+Params expected: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
 {%- assign _tags = tags | default: '' | strip -%}
@@ -9,11 +9,19 @@ Expected params: quote, name, title, location, avatar, tags
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
-    {{ quote | strip | newline_to_br }}
-  </div>
+  {%- comment -%}
+  Details/summary gives us a native expand/collapse for “Read full”
+  We visually place summary below the quote with CSS (flex order).
+  {%- endcomment -%}
+  <details class="nb-tcard__details" data-details>
+    <summary class="nb-tcard__more" aria-expanded="false">
+      <span class="nb-tcard__more-text">Read full</span>
+    </summary>
 
-  <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
+    <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
+      {{ quote | strip | newline_to_br }}
+    </div>
+  </details>
 
   <div class="nb-tcard__meta">
     {%- if avatar -%}
