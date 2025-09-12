@@ -13,10 +13,10 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
     assign tag_bucket = ''
 
- assign show_sub = false
-  if sub != '-' and sub != ''
-    assign show_sub = true
-  endif
+    assign show_sub = false
+    if sub != '-' and sub != ''
+      assign show_sub = true
+    endif
   -%}
 
   <div class="nb-shell nb-testimonials__container">
@@ -25,7 +25,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
         {%- if heading != blank -%}
           <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
         {%- endif -%}
-      {%- if show_sub -%}
+        {%- if show_sub -%}
           <p class="nb-testimonials__dek">{{ sub }}</p>
         {%- endif -%}
       </header>
@@ -120,13 +120,13 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
           card.hidden = ds.indexOf(f) === -1;
         });
       });
-    });
   }
 
   // ---- “Read full” (detect + modal)
-  const modal = sec.querySelector('#nb-tmodal-{{ section.id }}');
+  const modal  = sec.querySelector('#nb-tmodal-{{ section.id }}');
   const mQuote = modal.querySelector('.nb-tmodal__quote');
   const mWho   = modal.querySelector('.nb-tmodal__who');
+
   function openModal(htmlQuote, htmlWho){
     mQuote.innerHTML = htmlQuote;
     mWho.innerHTML   = htmlWho;
@@ -286,4 +286,3 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
-
