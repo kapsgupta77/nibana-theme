@@ -1,27 +1,26 @@
 {% comment %}
-Testimonials — page grid with filter chips
+Testimonials — page grid with chips + modal “Read full”
 Source: Manual blocks (default) or Metaobject `nb_testimonial`
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
-  <div class="nb-shell nb-testimonials__container">
-    {%- liquid
-      assign source  = section.settings.source  | default: 'blocks'
-      assign limit   = section.settings.limit   | default: 12
-      assign heading = section.settings.heading | default: 'What our clients say'
-      assign sub     = section.settings.subheading | default: '-'
-      assign show_sub = false
-      if sub and sub != '-' and sub != ''
-        assign show_sub = true
-      endif
-    -%}
+  {%- liquid
+    assign source = section.settings.source | default: 'blocks'
+    assign limit  = section.settings.limit  | default: 12
 
-    {%- if heading != blank or show_sub -%}
+    assign heading = section.settings.heading   | default: 'What our clients say'
+    assign sub     = section.settings.subheading | default: '-'
+
+    assign tag_bucket = ''
+  -%}
+
+  <div class="nb-shell nb-testimonials__container">
+    {%- if heading != blank or (sub != '-' and sub != '') -%}
       <header class="nb-testimonials__head">
         {%- if heading != blank -%}
           <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
         {%- endif -%}
-        {%- if show_sub -%}
+        {%- if sub != '-' and sub != '' -%}
           <p class="nb-testimonials__dek">{{ sub }}</p>
         {%- endif -%}
       </header>
@@ -29,7 +28,6 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
     {%- capture render_cards -%}
       <div class="nb-tgrid" data-grid>
-        {%- assign tag_bucket = '' -%}
         {%- if source == 'metaobject' -%}
           {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
           {%- if mo and mo.values and mo.values.size > 0 -%}
@@ -59,15 +57,15 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
       </div>
     {%- endcapture -%}
 
-    {%- assign tags_all = tag_bucket | split: ',' | uniq | sort -%}
-    {%- assign tags_clean = '' -%}
-    {%- for t in tags_all -%}
+    {%- comment -%} Build a clean, unique tag list for chips {%- endcomment -%}
+    {%- assign __raw = tag_bucket | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
+    {%- assign __all = __raw | split: ',' -%}
+    {%- assign __pipe = '' -%}
+    {%- for t in __all -%}
       {%- assign tt = t | strip -%}
-      {%- if tt != '' and tt != '-' -%}
-        {%- assign tags_clean = tags_clean | append: tt | append: '||' -%}
-      {%- endif -%}
+      {%- if tt != '' -%}{% assign __pipe = __pipe | append: tt | append: '||' %}{%- endif -%}
     {%- endfor -%}
-    {%- assign tags_list = tags_clean | split: '||' -%}
+    {%- assign tags_list = __pipe | split: '||' | uniq | sort -%}
 
     {%- if section.settings.show_filter and tags_list.size > 0 -%}
       <nav class="nb-tchips" aria-label="Filter testimonials by tag" data-root="{{ section.id }}">
@@ -81,24 +79,18 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     {%- endif -%}
 
     {{ render_cards }}
+  </div>
 
-<!-- Testimonial modal (one per section) -->
-<div id="nbTModal-{{ section.id }}" class="nb-tmodal" hidden aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="nb-tmodal__backdrop" data-close></div>
-  <div class="nb-tmodal__dialog" role="document">
-    <button type="button" class="nb-tmodal__close" aria-label="Close" data-close>&times;</button>
-
-    <div class="nb-tmodal__body">
-      <span class="nb-tmodal__qmark" aria-hidden="true">“</span>
-      <div class="nb-tmodal__quote" data-modal-quote></div>
-
-      <div class="nb-tmodal__meta" data-modal-meta>
-        <!-- Will be populated from the card -->
+  {%- comment -%} Modal host (hidden by default) {%- endcomment -%}
+  <div class="nb-tmodal" id="nb-tmodal-{{ section.id }}" hidden>
+    <div class="nb-tmodal__backdrop" data-close></div>
+    <div class="nb-tmodal__dialog" role="dialog" aria-modal="true" aria-labelledby="nb-tmodal-title-{{ section.id }}">
+      <button class="nb-tmodal__close" type="button" aria-label="Close" data-close>&times;</button>
+      <div class="nb-tmodal__body">
+        <div class="nb-tmodal__quote" id="nb-tmodal-title-{{ section.id }}"></div>
+        <div class="nb-tmodal__who"></div>
       </div>
     </div>
-  </div>
-</div>
-
   </div>
 </section>
 
@@ -107,12 +99,8 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   const sec  = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  const grid   = sec.querySelector('[data-grid]');
-  const chips  = sec.querySelectorAll('[data-chips] .nb-chip');
-  const modal  = sec.querySelector('#nbTModal-{{ section.id }}');
-  const mQuote = modal ? modal.querySelector('[data-modal-quote]') : null;
-  const mMeta  = modal ? modal.querySelector('[data-modal-meta]')  : null;
-  const mClose = modal ? modal.querySelector('.nb-tmodal__close')  : null;
+  const grid  = sec.querySelector('[data-grid]');
+  const chips = sec.querySelectorAll('[data-chips] .nb-chip');
 
   // ---- Filter chips
   if (grid && chips.length) {
@@ -130,13 +118,28 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     });
   }
 
-  // ---- Determine if quote overflows (with clamp applied)
+  // ---- “Read full” (detect + modal)
+  const modal = sec.querySelector('#nb-tmodal-{{ section.id }}');
+  const mQuote = modal.querySelector('.nb-tmodal__quote');
+  const mWho   = modal.querySelector('.nb-tmodal__who');
+  function openModal(htmlQuote, htmlWho){
+    mQuote.innerHTML = htmlQuote;
+    mWho.innerHTML   = htmlWho;
+    modal.hidden = false;
+    document.documentElement.classList.add('nb-modal-open');
+  }
+  function closeModal(){
+    modal.hidden = true;
+    document.documentElement.classList.remove('nb-modal-open');
+  }
+  modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
+  document.addEventListener('keydown', e => { if (!modal.hidden && e.key === 'Escape') closeModal(); });
+
   function needsMore(q){
     const clone = q.cloneNode(true);
     clone.style.cssText = `
-      position:absolute; visibility:hidden; pointer-events:none;
-      display:block; -webkit-line-clamp:unset; overflow:visible; height:auto;
-      width:${q.clientWidth}px;`;
+      position:absolute; visibility:hidden; pointer-events:none; inset:auto auto auto auto;
+      width:${q.clientWidth}px; display:block; -webkit-line-clamp:unset; overflow:visible; height:auto;`;
     q.parentNode.appendChild(clone);
     const full = clone.scrollHeight;
     clone.remove();
@@ -147,258 +150,100 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     const q   = card.querySelector('[data-q]');
     const btn = card.querySelector('[data-more]');
     if (!q || !btn) return;
-    const overflows = needsMore(q);
-    card.classList.toggle('has-more', overflows);
-    btn.hidden = !overflows;
-    if (!overflows) btn.textContent = 'Read full';
+    const overflow = needsMore(q);
+    btn.hidden = !overflow;
   }
 
-  // ---- Modal controls
-  function openModal(fromCard){
-    if (!modal || !mQuote || !mMeta) return;
-    const q      = fromCard.querySelector('[data-q]');
-    const quote  = q ? q.cloneNode(true) : null;
-    if (quote){
-      quote.style.webkitLineClamp = 'unset';
-      quote.style.overflow = 'visible';
-      mQuote.innerHTML = quote.innerHTML;                 // full text
-    }
-    const meta = fromCard.querySelector('.nb-tcard__meta');
-    mMeta.innerHTML = meta ? meta.innerHTML : '';
-
-    modal.hidden = false;
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    if (mClose) mClose.focus();
-  }
-  function closeModal(){
-    if (!modal) return;
-    modal.hidden = true;
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  if (modal){
-    modal.addEventListener('click', (e) => {
-      if (e.target.matches('[data-close]')) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (!modal.hidden && e.key === 'Escape') closeModal();
-    });
-  }
-
-  // ---- Card bindings
-  (sec.querySelectorAll('.nb-tcard') || []).forEach(card => {
+  sec.querySelectorAll('.nb-tcard').forEach(card => {
     const q   = card.querySelector('[data-q]');
     const btn = card.querySelector('[data-more]');
-
-    // Evaluate on load & resize
-    const ro = new ResizeObserver(() => evaluate(card));
-    if (q) ro.observe(q);
-    evaluate(card);
-    setTimeout(() => evaluate(card), 180);
-    window.addEventListener('load', () => evaluate(card));
-
-    // Open modal if quote actually overflows
-    function maybeOpen(){
-      if (card.classList.contains('has-more')) openModal(card);
-    }
-    if (btn) btn.addEventListener('click', maybeOpen);
-    if (q) {
-      q.addEventListener('click', maybeOpen);
+    if (btn && q) {
+      btn.addEventListener('click', () => {
+        const who = card.querySelector('.nb-tcard__who')?.innerHTML || '';
+        openModal(q.innerHTML, who);
+      });
       q.addEventListener('keydown', (e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && card.classList.contains('has-more')) {
-          e.preventDefault(); maybeOpen();
-        }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
       });
     }
+    const ro = new ResizeObserver(() => evaluate(card));
+    ro.observe(q || card);
+    evaluate(card);
+    setTimeout(() => evaluate(card), 150);
+    window.addEventListener('load', () => evaluate(card));
   });
 })();
 {% endjavascript %}
 
 {% stylesheet %}
-/* ---------- Container & chips ---------- */
-.nb-testimonials__container{
-  max-width: var(--page-width, min(1120px, 92vw));
-  margin-inline: auto;
-  padding-inline: clamp(16px, 4vw, 28px);
-}
+/* Container + header */
+.nb-testimonials__container{max-width:var(--page-width,1200px);margin-inline:auto;padding-inline:clamp(14px,3vw,28px)}
+.nb-testimonials__head{margin:0 0 clamp(8px,1.6vw,16px)}
+.nb-testimonials__title{margin:0 0 6px}
+.nb-testimonials__dek{margin:0;color:#516068}
 
-.nb-tchips{ position:relative; margin:8px 0 16px; }
-.nb-tchips__list{
-  display:flex; gap:10px; overflow:auto; padding:6px 8px 8px;
-  list-style:none; margin:0; scrollbar-width:none;
-}
-.nb-tchips__list::-webkit-scrollbar{ display:none; }
-.nb-tchips::before,.nb-tchips::after{
-  content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none;
-}
-.nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
-.nb-tchips::after{  right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
-.nb-chip{
-  display:inline-block; padding:.5rem .75rem; border-radius:999px;
-  background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05);
-}
-.nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
+/* Chips */
+.nb-tchips{position:relative;margin:8px 0 16px}
+.nb-tchips__list{display:flex;gap:10px;overflow:auto;padding:6px 8px 8px;list-style:none;margin:0;scrollbar-width:none}
+.nb-tchips__list::-webkit-scrollbar{display:none}
+.nb-chip{display:inline-block;padding:.5rem .75rem;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.nb-chip.is-active{background:#f6faf9;border-color:rgba(0,0,0,.06);font-weight:600}
 
-/* ---------- Grid (3-up on desktop) ---------- */
-.nb-tgrid{
-  display:grid;
-  gap: clamp(16px, 2.6vw, 24px);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
-}
-@media (max-width: 980px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px){ .nb-tgrid{ grid-template-columns: 1fr; } }
+/* 3-up grid (2 on tablet, 1 on mobile) */
+.nb-tgrid{display:grid;gap:24px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1024px){.nb-tgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.nb-tgrid{grid-template-columns:repeat(1,minmax(0,1fr))}}
 
-/* ---------- Card shell ---------- */
+/* Card */
 .nb-tcard{
-  position:relative;
-  display:flex;                 /* <-- enables pin-to-bottom meta */
-  flex-direction:column;
-  background:#fff;
-  border:1px solid #e8ecef;
-  border-radius:18px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06);
-  /* inner “margins” for the content */
-  padding: 24px 26px 18px 26px; /* top | sides | bottom */
-  font-family: inherit;         /* use global theme fonts */
+  position:relative;background:#fff;border:1px solid #e8ecef;border-radius:16px;
+  box-shadow:0 10px 22px rgba(0,0,0,.06);padding:18px 18px 14px 22px;
 }
-.nb-tcard:hover{ transform:translateY(-1px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
-
-/* Accent bar */
-.nb-tcard__accent{
-  position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px;
-  border-radius:18px 0 0 18px;
-  background:linear-gradient(180deg, var(--nb-chocolate,#C86B2A),
-                                   color-mix(in oklab, var(--nb-chocolate,#C86B2A), #000 14%));
-}
-
-/* Decorative open quote */
-.nb-tcard__qmark{
-  position:absolute; left:14px; top:10px; width:22px; height:22px;
-  color:rgba(0,0,0,.10);
-}
-.nb-tcard__qmark::before{ content:"“"; font: inherit; font-size:32px; line-height:1; }
-@media (max-width:740px){ .nb-tcard__qmark{ display:none; } }
-
-/* ---------- Quote body ---------- */
+.nb-tcard__accent{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:16px 0 0 16px;background:linear-gradient(180deg,#C86B2A,#9a4f1f)}
+.nb-tcard__qmark{position:absolute;left:22px;top:10px;width:18px;height:18px;opacity:.12;background:conic-gradient(from 90deg,#000 0 100%);mask:radial-gradient(circle at 70% 0,transparent 10px,#000 11px)}
+/* Quote */
 .nb-tcard__quote{
-  position:relative;
-  margin: 0 0 14px 0;
-  padding-top: 6px;
-  font-family: inherit;
-  font-size: .98rem;             /* slightly smaller for airiness */
-  line-height: 1.62;
-  letter-spacing: .005em;
-  color:#24292d;
-
-  /* clamp for equal heights */
-  display:-webkit-box;
-  -webkit-line-clamp:9;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
+  margin:6px 6px 16px 6px;
+  font-size:1.02rem;line-height:1.62;letter-spacing:.005em;color:#24292d;
+  display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden;
+  cursor:pointer;
 }
-@media (max-width: 680px){
-  .nb-tcard__quote{ font-size:1rem; line-height:1.65; }
-}
-.nb-tcard__quote p{ margin:0 0 .85rem; }
-.nb-tcard__quote p:last-child{ margin-bottom:0; }
+.nb-tcard__quote p{margin:0}
+/* Fade only when truncated */
+.nb-tcard .nb-tcard__quote:after{
+  content:"";position:absolute;left:0;right:0;bottom:84px;height:56px;
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff 70%);pointer-events:none;display:none}
+.nb-tcard [data-more]:not([hidden]) ~ .nb-tcard__quote:after{display:block}
 
-/* Fade only when truncated (sits inside the quote area) */
-.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
-  content:"";
-  position:absolute; left:0; right:0; bottom:0; height:56px;
-  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 75%);
-  pointer-events:none;
-}
-
-/* ---------- “Read full” button (only when needed) ---------- */
-.nb-tcard__more{
-  align-self:flex-start;
-  margin: 2px 0 12px;
-  background:#fff; border:1px solid #e9eeee; border-radius:999px;
-  padding:.55rem .9rem; font-size:.94rem; cursor:pointer;
-  box-shadow:0 10px 20px rgba(0,0,0,.06);
-}
-.nb-tcard:not(.has-more) .nb-tcard__more{ display:none; }
-
-/* ---------- Fixed meta area at bottom ---------- */
+/* Meta pinned to bottom */
 .nb-tcard__meta{
-  margin-top:auto;               /* <-- pins this block to the bottom */
-  display:grid;
-  grid-template-columns:auto 1fr;
-  column-gap:12px;
-  align-items:flex-start;
-  min-height:96px;               /* consistent card bottoms */
-  padding-top:12px;
-  border-top:1px solid #eef2f1;
-}
+  margin-top:auto;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;
+  min-height:84px;padding-top:10px;border-top:1px solid #eef2f1}
+.nb-tcard__avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;background:#f1f4f3}
+.nb-tcard__avatar-img{width:100%;height:100%;object-fit:cover;display:block}
+.nb-tcard__name{font-weight:800;letter-spacing:.1px;color:#182126;margin-bottom:2px}
+.nb-tcard__title{color:var(--nb-teal,#0C8A7B);font-weight:600;margin-top:2px}
+.nb-tcard__loc{color:#6b7780;font-size:.95rem;margin-top:1px}
 
-.nb-tcard__avatar{ width:56px; height:56px; border-radius:50%; overflow:hidden; background:#f0f3f2; }
-.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* Read full button (shown only if truncated) */
+.nb-tcard__more{
+  display:inline-block;margin:10px 0 0 auto;background:#fff;border:1px solid #e9eeed;border-radius:999px;
+  padding:.45rem .9rem;font-size:.92rem;cursor:pointer;box-shadow:0 10px 20px rgba(0,0,0,.06)}
+.nb-tcard__more:hover{box-shadow:0 14px 24px rgba(0,0,0,.08)}
+.nb-tcard__more[hidden]{display:none}
 
-.nb-tcard__who{ line-height:1.25; font-family: inherit; }
-.nb-tcard__name{ font-weight:700; letter-spacing:.01em; color:#182126; margin-bottom:2px; }
-.nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
-.nb-tcard__loc{ color:#6b777f; font-size:.95rem; margin-top:2px; }
-
-/* ---------- Expanded state ---------- */
-.nb-tcard.is-open .nb-tcard__quote{ -webkit-line-clamp:unset; overflow:visible; }
-.nb-tcard.is-open .nb-tcard__quote::after{ display:none; }
-
-/* ===== Modal for full testimonial ===== */
-.nb-tmodal[hidden]{ display:none; }
-.nb-tmodal{
-  position:fixed; inset:0; z-index:60;
-  display:grid; place-items:center;
-}
-.nb-tmodal__backdrop{
-  position:absolute; inset:0; background:rgba(10,20,20,.46);
-  backdrop-filter:saturate(140%) blur(4px);
-}
+/* Modal */
+.nb-modal-open{overflow:hidden}
+.nb-tmodal[hidden]{display:none}
+.nb-tmodal{position:fixed;inset:0;z-index:60}
+.nb-tmodal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.28)}
 .nb-tmodal__dialog{
-  position:relative; z-index:1;
-  width:min(820px, 92vw);
-  max-height:min(86vh, 900px);
-  border-radius:18px;
-  background:#fff;
-  box-shadow:0 30px 80px rgba(0,0,0,.28);
-  overflow:hidden; display:flex; flex-direction:column;
-}
-.nb-tmodal__close{
-  position:absolute; right:8px; top:8px;
-  width:36px; height:36px; border-radius:999px; border:0;
-  background:#fff; box-shadow:0 8px 18px rgba(0,0,0,.12);
-  font-size:22px; line-height:1; cursor:pointer;
-}
-.nb-tmodal__body{
-  padding: clamp(20px, 3.6vw, 28px);
-  overflow:auto;
-}
-.nb-tmodal__qmark{
-  display:inline-block; font-size:36px; line-height:1; color:rgba(0,0,0,.18);
-  margin: 0 0 10px 0;
-}
-.nb-tmodal__quote{
-  font-family: inherit;
-  font-size: 1.05rem;
-  line-height: 1.72;
-  letter-spacing: .005em;
-  color:#22292f;
-}
-.nb-tmodal__quote p{ margin:0 0 1rem; }
-.nb-tmodal__quote p:last-child{ margin-bottom:0; }
-
-.nb-tmodal__meta{
-  margin-top:18px; padding-top:14px; border-top:1px solid #eef2f1;
-  display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:flex-start;
-}
-.nb-tmodal__meta .nb-tcard__avatar{ width:64px; height:64px; }
-.nb-tmodal__meta .nb-tcard__name{ font-weight:700; letter-spacing:.01em; }
-.nb-tmodal__meta .nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
-.nb-tmodal__meta .nb-tcard__loc{ color:#6b777f; font-size:.95rem; margin-top:2px; }
-
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(720px,92vw);max-height:84vh;overflow:auto;background:#fff;border-radius:16px;
+  box-shadow:0 24px 60px rgba(0,0,0,.22);padding:22px}
+.nb-tmodal__close{position:absolute;right:10px;top:8px;width:34px;height:34px;border:0;border-radius:999px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.12);cursor:pointer}
+.nb-tmodal__quote{font-size:1.06rem;line-height:1.7;margin:8px 2px 16px}
+.nb-tmodal__who{border-top:1px solid #eef2f1;padding-top:10px}
 {% endstylesheet %}
 
 {% schema %}
@@ -436,7 +281,3 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
-
-
-
-
