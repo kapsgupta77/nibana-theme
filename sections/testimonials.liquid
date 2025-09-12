@@ -1,12 +1,13 @@
 {% comment %}
-Testimonials — page grid with filter chips and modal reader
+Testimonials — page grid with filter chips
 Source: manual blocks (default) or metaobject `nb_testimonial`
+Shows overflow in-card with a scrollbar (no modal).
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
   {%- liquid
-    assign heading = section.settings.heading | default: 'What our clients say'
-    assign sub = section.settings.subheading | default: '-'
+    assign heading  = section.settings.heading    | default: 'What our clients say'
+    assign sub      = section.settings.subheading | default: '-'
     assign show_sub = false
     if sub != '-' and sub != ''
       assign show_sub = true
@@ -87,117 +88,32 @@ Source: manual blocks (default) or metaobject `nb_testimonial`
     {%- endif -%}
 
     {{ render_cards }}
-<div class="nb-modal" id="nb-testimonial-modal" hidden>
-  <div class="nb-modal__overlay" data-close></div>
-  <div class="nb-modal__dialog" role="dialog" aria-modal="true" aria-label="Testimonial">
-    <button class="nb-modal__close" type="button" aria-label="Close" data-close>&times;</button>
-    <div class="nb-modal__content">
-      <div class="nb-modal__quote" data-modal-quote></div>
-      <div class="nb-modal__who">
-        <div class="nb-modal__name"  data-modal-name></div>
-        <div class="nb-modal__title" data-modal-title></div>
-        <div class="nb-modal__loc"   data-modal-loc></div>
-      </div>
-    </div>
-  </div>
-</div>
   </div>
 </section>
 
 {% javascript %}
 (() => {
-  const sec = document.getElementById('shopify-section-{{ section.id }}');
+  // Scope to THIS section
+  const sec  = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  const modal = sec.querySelector('#nb-testimonial-modal');
-  const qOut  = modal?.querySelector('[data-modal-quote]');
-  const nOut  = modal?.querySelector('[data-modal-name]');
-  const tOut  = modal?.querySelector('[data-modal-title]');
-  const lOut  = modal?.querySelector('[data-modal-loc]');
-
-  // ---------- Filter chips (unchanged) ----------
+  // Filter chips
   const grid  = sec.querySelector('[data-grid]');
   const chips = sec.querySelectorAll('[data-chips] .nb-chip');
-  if (grid && chips.length){
+  if (grid && chips.length) {
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
         chips.forEach(c => c.classList.remove('is-active'));
         chip.classList.add('is-active');
         const f = chip.getAttribute('data-filter');
         grid.querySelectorAll('.nb-tcard').forEach(card => {
-          if (f === '*'){ card.hidden = false; return; }
+          if (f === '*') { card.hidden = false; return; }
           const ds = (card.getAttribute('data-tags') || '').toLowerCase();
           card.hidden = ds.indexOf(f) === -1;
         });
       });
     });
   }
-
-  // ---------- Decide if "Read full" is needed ----------
-  function needsMore(q){
-    const clone = q.cloneNode(true);
-    clone.style.cssText = `
-      position:absolute; visibility:hidden; pointer-events:none;
-      display:block; -webkit-line-clamp:unset; overflow:visible; height:auto;
-      width:${q.clientWidth}px;`;
-    q.parentNode.appendChild(clone);
-    const more = clone.scrollHeight > q.clientHeight + 2;
-    clone.remove();
-    return more;
-  }
-
-  function evaluate(card){
-    const q   = card.querySelector('[data-q]');
-    const btn = card.querySelector('[data-more]');
-    if (!q || !btn) return;
-    const more = needsMore(q);
-    card.classList.toggle('has-more', more);
-    btn.hidden = !more;
-  }
-
-  // ---------- Modal open / close ----------
-  function openModal(card){
-    if (!modal) return;
-    const quoteEl = card.querySelector('[data-q]');
-    const nameEl  = card.querySelector('.nb-tcard__name');
-    const titleEl = card.querySelector('.nb-tcard__title');
-    const locEl   = card.querySelector('.nb-tcard__loc');
-
-    qOut.innerHTML = quoteEl ? quoteEl.innerHTML : '';
-    nOut.textContent = nameEl ? nameEl.textContent : '';
-    tOut.textContent = titleEl ? titleEl.textContent : '';
-    lOut.textContent = locEl ? locEl.textContent : '';
-
-    modal.hidden = false;
-    document.documentElement.classList.add('nb-modal-open');
-  }
-  function closeModal(){
-    if (!modal) return;
-    modal.hidden = true;
-    document.documentElement.classList.remove('nb-modal-open');
-  }
-
-  modal?.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-  // ---------- Wire up each card ----------
-  sec.querySelectorAll('.nb-tcard').forEach(card => {
-    const q   = card.querySelector('[data-q]');
-    const btn = card.querySelector('[data-more]');
-    if (q){
-      q.addEventListener('click', () => openModal(card));
-      q.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card); }
-      });
-    }
-    if (btn) btn.addEventListener('click', () => openModal(card));
-
-    const ro = new ResizeObserver(() => evaluate(card));
-    if (q) ro.observe(q);
-    window.addEventListener('load', () => evaluate(card));
-    setTimeout(() => evaluate(card), 150);
-    evaluate(card);
-  });
 })();
 {% endjavascript %}
 
@@ -221,39 +137,42 @@ Source: manual blocks (default) or metaobject `nb_testimonial`
 .nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
 
 /* 3 / 2 / 1 columns grid */
-.nb-tgrid{ display:grid; gap: clamp(14px, 2.2vw, 24px); align-items: stretch; }
+.nb-tgrid{ display:grid; gap: clamp(16px, 2.2vw, 26px); align-items: stretch; }
 @media (min-width: 960px){ .nb-tgrid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (min-width: 720px) and (max-width: 959.98px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 719.98px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
 /* Card */
 .nb-tcard{
+  --t-quote-lines: 10; /* number of visible lines before scroll */
   position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
   box-shadow:0 10px 22px rgba(0,0,0,.06);
-  padding: clamp(16px, 2.2vw, 22px) clamp(16px, 2.2vw, 24px) clamp(14px, 2vw, 18px) clamp(18px, 2.4vw, 26px);
+  padding: clamp(18px, 2.2vw, 24px) clamp(18px, 2.4vw, 28px) clamp(14px, 2vw, 18px) clamp(20px, 2.6vw, 30px);
   transition:transform .18s ease, box-shadow .18s ease;
-display:flex;
-  flex-direction:column;
+  display:flex; flex-direction:column;
 }
 .nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
 .nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px; background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
-.nb-tcard__qmark{ position:absolute; left:12px; top:12px; color:#e3e7e6; font-size:22px; line-height:1; }
+.nb-tcard__qmark{ position:absolute; left:14px; top:10px; color:#e3e7e6; font-size:22px; line-height:1; }
 
-/* Quote */
+/* Quote: scroll when overflow, not clamped */
 .nb-tcard__quote{
-  margin: 0 4px 12px 4px;
+  margin: 0 2px 12px 2px;
   font: inherit;
-  font-size: 1rem;
+  font-size: 0.98rem;
   line-height: 1.66;
   color: #24292d;
-  display: -webkit-box;
-  -webkit-line-clamp: 9;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  max-height: calc(var(--t-quote-lines) * 1.66em);
+  overflow: auto;
 }
 .nb-tcard__quote p{ margin:0; }
 
-/* Fixed meta area */
+/* (Optional) subtle scrollbar */
+.nb-tcard__quote::-webkit-scrollbar{ width:8px; }
+.nb-tcard__quote::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.12); border-radius:8px; }
+.nb-tcard__quote{ scrollbar-width:thin; scrollbar-color: rgba(0,0,0,.18) transparent; }
+
+/* Fixed meta area pinned to bottom */
 .nb-tcard__meta{
   margin-top:auto; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center;
   min-height:88px; padding-top:12px; border-top:1px solid #eef2f3;
@@ -264,77 +183,6 @@ display:flex;
 .nb-tcard__name{ font-weight:800; letter-spacing:.1px; color:#182126; margin-bottom:2px; }
 .nb-tcard__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
 .nb-tcard__loc{ color:#6b7b86; font-size:.95rem; margin-top:1px; }
-
-/* Read full button (only visible when needed) */
-.nb-tcard__more{
-  margin-top: 8px;
-  background:#fff; border:1px solid #e9eeee; border-radius:999px;
-  padding:.5rem 1rem; font-size:.94rem; cursor:pointer;
-  box-shadow:0 10px 22px rgba(0,0,0,.06);
-}
-.nb-tcard:not(.has-more) .nb-tcard__more{ display:none; }
-
-/* Modal */
-.nb-no-scroll{ overflow:hidden; }
-.nb-tmodal{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; padding:20px; z-index:60; }
-.nb-tmodal.is-open{ display:flex; }
-.nb-tmodal__panel{
-  background:#fff; border-radius:18px; border:1px solid #e8ecef;
-  width:min(720px, 92vw); max-height:88vh; overflow:auto; position:relative;
-  padding: clamp(18px, 2.2vw, 26px) clamp(18px, 2.4vw, 28px);
-  box-shadow:0 22px 50px rgba(0,0,0,.16);
-}
-.nb-tmodal__close{
-  position:absolute; right:10px; top:8px; width:36px; height:36px; border-radius:999px;
-  background:#f4f7f6; border:1px solid #e6eceb; cursor:pointer; font-size:20px; line-height:1;
-}
-.nb-tmodal__qmark{ color:#e3e7e6; font-size:22px; line-height:1; }
-.nb-tmodal__quote{ margin: 6px 0 14px; line-height:1.66; }
-.nb-tmodal__who .nb-tmodal__name{ font-weight:800; }
-.nb-tmodal__who .nb-tmodal__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
-.nb-tmodal__who .nb-tmodal__loc{ color:#6b7b86; margin-top:1px; }
-
-/* Card structure (ensures name/title/location are bottom-aligned) */
-.nb-tcard{ display:flex; flex-direction:column; }
-.nb-tcard__quote{
-  margin: 0 4px 14px 4px;
-  font-size: 1rem;
-  line-height: 1.66;
-  color:#24292d;
-  display:-webkit-box; -webkit-line-clamp:9; -webkit-box-orient:vertical; overflow:hidden;
-}
-.nb-tcard__meta{ margin-top:auto; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:flex-start; padding-top:12px; border-top:1px solid #eef2f1; }
-.nb-tcard__name{ font-weight:800; letter-spacing:.1px; color:#182126; margin-bottom:2px; }
-.nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
-.nb-tcard__loc{ color:#6b777f; font-size:.95rem; margin-top:2px; }
-.nb-tcard__more{
-  align-self:flex-start; margin-top:10px; background:#fff; border:1px solid #e9eeed; border-radius:999px;
-  padding:.55rem .9rem; font-size:.94rem; cursor:pointer; box-shadow:0 10px 20px rgba(0,0,0,.06);
-}
-.nb-tcard:not(.has-more) .nb-tcard__more{ display:none; }
-
-/* Decorative open-quote */
-.nb-tcard__qmark{ position:absolute; left:12px; top:8px; font-size:28px; line-height:1; color:#e6e9e9; }
-@media (max-width: 739px){ .nb-tcard__qmark{ display:none; } }
-
-/* Modal */
-.nb-modal{ position:fixed; inset:0; z-index:60; display:grid; place-items:center; }
-.nb-modal[hidden]{ display:none; }
-.nb-modal__overlay{ position:absolute; inset:0; background:rgba(0,0,0,.38); }
-.nb-modal__dialog{
-  position:relative; width:min(760px, calc(100vw - 32px)); max-height:min(88vh, 900px);
-  background:#fff; border-radius:18px; box-shadow:0 30px 60px rgba(0,0,0,.25);
-  overflow:auto; padding:22px 22px 18px;
-}
-.nb-modal__close{ position:absolute; top:8px; right:10px; width:36px; height:36px; border-radius:999px; border:1px solid #e9eeed; background:#fff; cursor:pointer; }
-.nb-modal__quote{ font-size:1.05rem; line-height:1.72; color:#24292d; margin-bottom:14px; }
-.nb-modal__who .nb-modal__name{ font-weight:800; color:#182126; }
-.nb-modal__who .nb-modal__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
-.nb-modal__who .nb-modal__loc{ color:#6b777f; margin-top:2px; }
-
-/* Lock the page when modal is open */
-.nb-modal-open{ overflow:hidden; }
-
 {% endstylesheet %}
 
 {% schema %}
@@ -372,5 +220,3 @@ display:flex;
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
-
-
