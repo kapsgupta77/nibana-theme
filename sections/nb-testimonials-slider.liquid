@@ -25,7 +25,10 @@ Renders each item via snippet 'nb-testimonial-card'
 <section id="nb-ts-{{ section.id }}" class="nb-tcarousel color-{{ section.settings.color_scheme }}">
   <div class="nb-shell">
     <div class="nb-tcarousel__head">
-      <h2 class="nb-h2 nb-section-title">{{ heading }}</h2>
+      <h2 class="section-header__title">{{ section.settings.heading }}</h2>
+{% if section.settings.subheading != blank %}
+  <p class="section-header__subheading">{{ section.settings.subheading }}</p>
+{% endif %}
       <div class="nb-tcarousel__nav">
         <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-prev>
           &lsaquo;
@@ -135,8 +138,17 @@ Renders each item via snippet 'nb-testimonial-card'
   .nb-tcarousel__track{ grid-auto-columns: minmax(360px, 1fr); }
 }
 
-/* tighten the top of the section */
-.nb-tcarousel__head { margin: 0 0 8px; }
+/* tighten the top of the slider section */
+.nb-tcarousel__head { 
+  padding-top: 0;
+  margin: 0 0 var(--nib-h2-mb);
+}
+
+/* remove any stray top spacing the subheading might add */
+.nb-tcarousel__head .section-header__subheading {
+  margin: 0 0 12px;
+  color: #516068;
+}
 
 /* remove default heading margins inside this section */
 .nb-tcarousel .nb-section-title { margin: 0; line-height: 1.1; }
