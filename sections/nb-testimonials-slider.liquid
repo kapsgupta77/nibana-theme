@@ -1,243 +1,200 @@
-{% comment %}
-NB – Testimonials Slider (compact carousel)
-- Source: Blocks (default) or Metaobject 'nb_testimonial'
-- Optional tag filter (CSV); matches if any tag intersects
-- Uses the existing 'nb-testimonial-card' snippet for visual consistency
-{% endcomment %}
+{%- comment -%}
+Testimonials slider — horizontal carousel
+Source: Manual blocks (default) or Metaobject `nb_testimonial`
+Filters: section.settings.filter_tags (CSV; case-insensitive). If "-" or empty, no filtering.
+Renders each item via snippet 'nb-testimonial-card'
+{%- endcomment -%}
 
-<section class="nb-tcarousel color-{{ section.settings.color_scheme }}">
-  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+{%- liquid
+  assign heading   = section.settings.heading | default: 'What clients say'
+  assign source    = section.settings.source  | default: 'blocks'
+  assign limit     = section.settings.limit   | default: 6
+  assign cta_label = section.settings.cta_label | default: 'View all'
+  assign cta_link  = section.settings.cta_link  | default: '/'
 
-  <div class="section nb-tcarousel__inner spacing-style size-style"
-       style="{% render 'spacing-style', settings: section.settings %}">
-    <header class="nb-tcarousel__head">
-      {% if section.settings.heading != blank %}
-        <h2 class="nb-h3 nb-tcarousel__title">{{ section.settings.heading }}</h2>
-      {% endif %}
+  assign filter_raw = section.settings.filter_tags | default: '-' 
+  assign filter_csv = filter_raw | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' 
+  assign filters    = filter_csv | split: ','
+
+  assign use_filter = false
+  if filters.size > 0 and filters.first != '-' and filters.first != ''
+    assign use_filter = true
+  endif
+-%}
+
+<section id="nb-ts-{{ section.id }}" class="nb-tcarousel color-{{ section.settings.color_scheme }}">
+  <div class="nb-shell">
+    <div class="nb-tcarousel__head">
+      <h2 class="nb-h3 nb-section-title">{{ heading }}</h2>
       <div class="nb-tcarousel__nav">
-        {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
-          <a class="nb-cta nb-cta--sm" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>
-        {% endif %}
-        <button class="nb-tcarousel__btn nb-tcarousel__btn--prev" type="button" aria-label="Previous" hidden>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-prev>
+          &lsaquo;
         </button>
-        <button class="nb-tcarousel__btn nb-tcarousel__btn--next" type="button" aria-label="Next" hidden>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-next>
+          &rsaquo;
         </button>
+        {%- if cta_label != blank and cta_link != blank -%}
+          <a class="nb-link-pill" href="{{ cta_link }}">{{ cta_label }}</a>
+        {%- endif -%}
       </div>
-    </header>
+    </div>
 
-    {% comment %} Build filter list (lowercased) {% endcomment %}
-    {% assign f_raw = section.settings.filter_tags | default: '' %}
-    {% assign f_csv = f_raw | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' | downcase %}
-    {% assign filters = f_csv | split: ',' %}
-    {% assign use_filter = false %}
-    {% if filters.size > 0 %}
-      {% assign first = filters | first | strip %}
-      {% if first != '' %}{% assign use_filter = true %}{% endif %}
-    {% endif %}
+    <div class="nb-tcarousel__track" data-track>
+      {%- if source == 'metaobject' -%}
+        {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+        {%- if mo and mo.values and mo.values.size > 0 -%}
+          {%- assign shown = 0 -%}
+          {%- for m in mo.values -%}
+            {%- if shown >= limit -%}{%- break -%}{%- endif -%}
+            {%- assign q   = m.quote    | default: '' -%}
+            {%- assign n   = m.name     | default: '' -%}
+            {%- assign tt  = m.title    | default: '' -%}
+            {%- assign loc = m.location | default: '' -%}
+            {%- assign av  = m.avatar -%}
+            {%- assign tg  = m.tags | join: ',' | default: '' -%}
 
-    {% capture slides %}
-      {% assign rendered = 0 %}
-      {% assign max_items = section.settings.limit | default: 6 %}
+            {%- assign include = true -%}
+            {%- if use_filter -%}
+              {%- assign include = false -%}
+              {%- assign tg_norm = tg | downcase -%}
+              {%- for f in filters -%}
+                {%- assign ff = f | strip | downcase -%}
+                {%- if ff != '' and tg_norm contains ff -%}
+                  {%- assign include = true -%}{%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
 
-      {% if section.settings.source == 'metaobject' %}
-        {% assign mo = shop.metaobjects['nb_testimonial'] %}
-        {% if mo and mo.values and mo.values.size > 0 %}
-          {% for m in mo.values %}
-            {% if rendered >= max_items %}{% break %}{% endif %}
+            {%- if include -%}
+              <div class="nb-tcarousel__slide">
+                {% render 'nb-testimonial-card',
+                  quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+              </div>
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- else -%}
+        {%- assign shown = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if shown >= limit -%}{%- break -%}{%- endif -%}
+          {%- assign q   = block.settings.quote    | default: '' -%}
+          {%- assign n   = block.settings.name     | default: '' -%}
+          {%- assign tt  = block.settings.title    | default: '' -%}
+          {%- assign loc = block.settings.location | default: '' -%}
+          {%- assign av  = block.settings.avatar -%}
+          {%- assign tg  = block.settings.tags     | default: '' -%}
 
-            {% assign q = m.quote | default: '' %}
-            {% assign n = m.name  | default: '' %}
-            {% assign tt = m.title | default: '' %}
-            {% assign loc = m.location | default: '' %}
-            {% assign av = m.avatar %}
-            {% assign tg = m.tags | join: ',' | default: '' %}
+          {%- assign include = true -%}
+          {%- if use_filter -%}
+            {%- assign include = false -%}
+            {%- assign tg_norm = tg | downcase -%}
+            {%- for f in filters -%}
+              {%- assign ff = f | strip | downcase -%}
+              {%- if ff != '' and tg_norm contains ff -%}
+                {%- assign include = true -%}{%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
 
-            {% assign btags = tg | downcase %}
-            {% assign show = true %}
-            {% if use_filter %}
-              {% assign show = false %}
-              {% for f in filters %}
-                {% assign ff = f | strip %}
-                {% if ff != '' and btags contains ff %}{% assign show = true %}{% break %}{% endif %}
-              {% endfor %}
-            {% endif %}
-
-            {% if show %}
-              {% if q != '' or n != '' %}
-                <li class="nb-tcarousel__slide" role="listitem">
-                  {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-                </li>
-                {% assign rendered = rendered | plus: 1 %}
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-
-      {% else %}
-        {% for block in section.blocks %}
-          {% if rendered >= max_items %}{% break %}{% endif %}
-
-          {% assign q   = block.settings.quote    | default: '' %}
-          {% assign n   = block.settings.name     | default: '' %}
-          {% assign tt  = block.settings.title    | default: '' %}
-          {% assign loc = block.settings.location | default: '' %}
-          {% assign av  = block.settings.avatar %}
-          {% assign tg  = block.settings.tags     | default: '' %}
-
-          {% assign btags = tg | downcase %}
-          {% assign show = true %}
-          {% if use_filter %}
-            {% assign show = false %}
-            {% for f in filters %}
-              {% assign ff = f | strip %}
-              {% if ff != '' and btags contains ff %}{% assign show = true %}{% break %}{% endif %}
-            {% endfor %}
-          {% endif %}
-
-          {% if show %}
-            {% if q != '' or n != '' %}
-              <li class="nb-tcarousel__slide" role="listitem">
-                {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-              </li>
-              {% assign rendered = rendered | plus: 1 %}
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endcapture %}
-
-    <div class="nb-tcarousel__viewport" data-viewport>
-      <ul class="nb-tcarousel__track" role="list" data-track>
-        {{ slides }}
-      </ul>
-      <div class="nb-tcarousel__fade nb-tcarousel__fade--left" aria-hidden="true"></div>
-      <div class="nb-tcarousel__fade nb-tcarousel__fade--right" aria-hidden="true"></div>
+          {%- if include -%}
+            <div class="nb-tcarousel__slide" {{ block.shopify_attributes }}>
+              {% render 'nb-testimonial-card',
+                quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+            </div>
+            {%- assign shown = shown | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
   </div>
 </section>
 
-{% javascript %}
-(() => {
-  const sec  = document.currentScript.closest('.nb-tcarousel');
-  if (!sec) return;
-
-  const viewport = sec.querySelector('[data-viewport]');
-  const track    = sec.querySelector('[data-track]');
-  const prevBtn  = sec.querySelector('.nb-tcarousel__btn--prev');
-  const nextBtn  = sec.querySelector('.nb-tcarousel__btn--next');
-
-  if (!viewport || !track) return;
-
-  const checkOverflow = () => {
-    const overflow = track.scrollWidth > viewport.clientWidth + 8;
-    prevBtn.hidden = !overflow;
-    nextBtn.hidden = !overflow;
-    if (overflow) updateButtons();
-  };
-
-  const updateButtons = () => {
-    const l = track.scrollLeft;
-    const max = track.scrollWidth - track.clientWidth - 2;
-    prevBtn.disabled = l <= 2;
-    nextBtn.disabled = l >= max;
-  };
-
-  const slideWidth = () => {
-    const first = track.querySelector('.nb-tcarousel__slide');
-    return first ? first.getBoundingClientRect().width : 340;
-  };
-
-  const scrollBySlide = (dir) => {
-    track.scrollBy({ left: dir * (slideWidth() + 16), behavior: 'smooth' });
-  };
-
-  prevBtn && prevBtn.addEventListener('click', () => scrollBySlide(-1));
-  nextBtn && nextBtn.addEventListener('click', () => scrollBySlide(1));
-  track.addEventListener('scroll', updateButtons);
-
-  checkOverflow();
-  window.addEventListener('resize', checkOverflow);
-  window.addEventListener('load', checkOverflow);
-})();
-{% endjavascript %}
-
 {% stylesheet %}
-/* ------------ Slider wrapper & head ------------ */
-.nb-tcarousel__inner{ --t-gap: clamp(14px,2.4vw,22px); }
+.nb-tcarousel{ --t-gap: clamp(14px,2.0vw,20px); }
+.nb-tcarousel .nb-shell{ max-width: var(--page-width, 1200px); margin: 0 auto; padding: 0 var(--page-margin, 20px); }
 .nb-tcarousel__head{
-  display:flex; align-items:flex-end; justify-content:space-between;
-  gap:12px; margin-bottom: clamp(10px,1.8vw,16px);
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px;
 }
-.nb-tcarousel__title{ margin:0; }
-
-/* CTA + arrows */
-.nb-tcarousel__nav{ display:flex; align-items:center; gap:8px; }
+.nb-tcarousel__nav{ display:flex; gap:8px; align-items:center; margin-left:auto; }
 .nb-tcarousel__btn{
-  width:36px; height:36px; border-radius:999px; border:1px solid #e9eef0;
-  background:#fff; cursor:pointer; display:inline-grid; place-items:center;
-  box-shadow:0 6px 14px rgba(0,0,0,.06);
+  width:36px; height:36px; border-radius:999px; border:1px solid #e9ecef;
+  background:#fff; cursor:pointer; box-shadow:0 8px 18px rgba(0,0,0,.06);
 }
-.nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
-.nb-tcarousel__btn:hover{ box-shadow:0 10px 20px rgba(0,0,0,.08); }
+.nb-tcarousel__btn[disabled]{ opacity:.35; cursor:default; }
+.nb-link-pill{ padding:.5rem .8rem; border-radius:999px; border:1px solid #e9ecef; background:#fff; text-decoration:none; }
 
-/* ------------ Viewport & track ------------ */
-.nb-tcarousel__viewport{ position:relative; }
 .nb-tcarousel__track{
-  display:grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(280px, 1fr);
-  gap:16px;
-  overflow-x:auto;
-  padding:6px 4px 8px;
-  scroll-snap-type: x mandatory;
+  display:grid; grid-auto-flow:column; grid-auto-columns:minmax(min(320px, 86vw), 1fr);
+  gap:var(--t-gap); overflow:auto; scroll-snap-type:x mandatory; padding:6px 2px 10px;
   scrollbar-width:none;
 }
 .nb-tcarousel__track::-webkit-scrollbar{ display:none; }
-
-.nb-tcarousel__slide{
-  scroll-snap-align: start;
-  min-width: clamp(300px, 32vw, 380px);
-}
-
-/* Edge fades */
-.nb-tcarousel__fade{
-  position:absolute; top:0; bottom:0; width:36px; pointer-events:none;
-}
-.nb-tcarousel__fade--left{ left:0; background:linear-gradient(90deg, var(--color-background, #fff), rgba(255,255,255,0)); }
-.nb-tcarousel__fade--right{ right:0; background:linear-gradient(270deg, var(--color-background, #fff), rgba(255,255,255,0)); }
-
-/* ------------ Compact quote for slider ------------ */
-.nb-tcarousel .nb-tcard__quote{
-  display:-webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6;
-  overflow:hidden;
+.nb-tcarousel__slide{ scroll-snap-align:start; }
+@media (min-width: 900px){
+  .nb-tcarousel__track{ grid-auto-columns: minmax(360px, 1fr); }
 }
 {% endstylesheet %}
+
+{% javascript %}
+(() => {
+  const sec   = document.getElementById('nb-ts-{{ section.id }}');
+  if (!sec) return;
+  const track = sec.querySelector('[data-track]');
+  const prev  = sec.querySelector('[data-prev]');
+  const next  = sec.querySelector('[data-next]');
+
+  if (!track || !prev || !next) return;
+
+  const gap = () => {
+    const cs = getComputedStyle(track);
+    const g  = parseFloat(cs.columnGap || cs.gap || '0');
+    return isNaN(g) ? 0 : g;
+  };
+
+  function stepWidth(){
+    const slide = track.querySelector('.nb-tcarousel__slide');
+    return slide ? slide.getBoundingClientRect().width + gap() : track.clientWidth;
+  }
+
+  function update(){
+    const canScroll = track.scrollWidth > track.clientWidth + 4;
+    prev.style.display = next.style.display = canScroll ? '' : 'none';
+    prev.disabled = track.scrollLeft <= 0;
+    next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+  }
+
+  function go(dir){
+    track.scrollBy({ left: dir * stepWidth(), behavior: 'smooth' });
+  }
+
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go( 1));
+  track.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  requestAnimationFrame(update);
+})();
+{% endjavascript %}
 
 {% schema %}
 {
   "name": "Testimonials slider",
   "class": "section-wrapper",
   "settings": [
-    { "type": "text",  "id": "heading",     "label": "Heading",        "default": "What clients say" },
+    { "type": "text",  "id": "heading",     "label": "Heading", "default": "What clients say" },
     { "type": "text",  "id": "filter_tags", "label": "Filter by tags (CSV)", "default": "-" },
-    { "type": "select","id": "source",      "label": "Source", "default": "blocks",
+    { "type": "select","id": "source", "label": "Source", "default": "blocks",
       "options": [
         { "value": "blocks", "label": "Manual (blocks)" },
         { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
       ]
     },
     { "type": "range", "id": "limit", "label": "Max testimonials", "min": 1, "max": 24, "step": 1, "default": 6 },
-    { "type": "text",  "id": "cta_label",   "label": "CTA label",     "default": "View all" },
-    { "type": "url",   "id": "cta_link",    "label": "CTA link",      "default": "/" },
+    { "type": "text",  "id": "cta_label", "label": "CTA label", "default": "View all" },
+    { "type": "url",   "id": "cta_link",  "label": "CTA link",  "default": "/" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "header", "content": "Padding" },
-    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding-block-start", "label": "Top",    "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
     { "type": "range", "id": "padding-block-end",   "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
   ],
   "blocks": [
