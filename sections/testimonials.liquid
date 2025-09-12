@@ -81,6 +81,24 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     {%- endif -%}
 
     {{ render_cards }}
+
+<!-- Testimonial modal (one per section) -->
+<div id="nbTModal-{{ section.id }}" class="nb-tmodal" hidden aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="nb-tmodal__backdrop" data-close></div>
+  <div class="nb-tmodal__dialog" role="document">
+    <button type="button" class="nb-tmodal__close" aria-label="Close" data-close>&times;</button>
+
+    <div class="nb-tmodal__body">
+      <span class="nb-tmodal__qmark" aria-hidden="true">“</span>
+      <div class="nb-tmodal__quote" data-modal-quote></div>
+
+      <div class="nb-tmodal__meta" data-modal-meta>
+        <!-- Will be populated from the card -->
+      </div>
+    </div>
+  </div>
+</div>
+
   </div>
 </section>
 
@@ -89,10 +107,14 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   const sec  = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  const grid  = sec.querySelector('[data-grid]');
-  const chips = sec.querySelectorAll('[data-chips] .nb-chip');
+  const grid   = sec.querySelector('[data-grid]');
+  const chips  = sec.querySelectorAll('[data-chips] .nb-chip');
+  const modal  = sec.querySelector('#nbTModal-{{ section.id }}');
+  const mQuote = modal ? modal.querySelector('[data-modal-quote]') : null;
+  const mMeta  = modal ? modal.querySelector('[data-modal-meta]')  : null;
+  const mClose = modal ? modal.querySelector('.nb-tmodal__close')  : null;
 
-  // Filter chips
+  // ---- Filter chips
   if (grid && chips.length) {
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -108,7 +130,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     });
   }
 
-  // Measure whether the quote overflows (with line-clamp applied)
+  // ---- Determine if quote overflows (with clamp applied)
   function needsMore(q){
     const clone = q.cloneNode(true);
     clone.style.cssText = `
@@ -125,35 +147,71 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     const q   = card.querySelector('[data-q]');
     const btn = card.querySelector('[data-more]');
     if (!q || !btn) return;
-    const over = needsMore(q);
-    card.classList.toggle('has-more', over);
-    btn.hidden = !over;
-    if (!over) { card.classList.remove('is-open'); btn.textContent = 'Read full'; }
+    const overflows = needsMore(q);
+    card.classList.toggle('has-more', overflows);
+    btn.hidden = !overflows;
+    if (!overflows) btn.textContent = 'Read full';
   }
 
-  function toggle(card){
-    const btn = card.querySelector('[data-more]');
-    const open = card.classList.toggle('is-open');
-    if (btn) btn.textContent = open ? 'Show less' : 'Read full';
+  // ---- Modal controls
+  function openModal(fromCard){
+    if (!modal || !mQuote || !mMeta) return;
+    const q      = fromCard.querySelector('[data-q]');
+    const quote  = q ? q.cloneNode(true) : null;
+    if (quote){
+      quote.style.webkitLineClamp = 'unset';
+      quote.style.overflow = 'visible';
+      mQuote.innerHTML = quote.innerHTML;                 // full text
+    }
+    const meta = fromCard.querySelector('.nb-tcard__meta');
+    mMeta.innerHTML = meta ? meta.innerHTML : '';
+
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (mClose) mClose.focus();
+  }
+  function closeModal(){
+    if (!modal) return;
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
   }
 
+  if (modal){
+    modal.addEventListener('click', (e) => {
+      if (e.target.matches('[data-close]')) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!modal.hidden && e.key === 'Escape') closeModal();
+    });
+  }
+
+  // ---- Card bindings
   (sec.querySelectorAll('.nb-tcard') || []).forEach(card => {
     const q   = card.querySelector('[data-q]');
     const btn = card.querySelector('[data-more]');
 
-    if (q){
-      q.addEventListener('click', () => toggle(card));
-      q.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(card); }
-      });
-    }
-    if (btn) btn.addEventListener('click', () => toggle(card));
-
+    // Evaluate on load & resize
     const ro = new ResizeObserver(() => evaluate(card));
     if (q) ro.observe(q);
     evaluate(card);
-    setTimeout(() => evaluate(card), 200);
+    setTimeout(() => evaluate(card), 180);
     window.addEventListener('load', () => evaluate(card));
+
+    // Open modal if quote actually overflows
+    function maybeOpen(){
+      if (card.classList.contains('has-more')) openModal(card);
+    }
+    if (btn) btn.addEventListener('click', maybeOpen);
+    if (q) {
+      q.addEventListener('click', maybeOpen);
+      q.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && card.classList.contains('has-more')) {
+          e.preventDefault(); maybeOpen();
+        }
+      });
+    }
   });
 })();
 {% endjavascript %}
@@ -288,6 +346,59 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 /* ---------- Expanded state ---------- */
 .nb-tcard.is-open .nb-tcard__quote{ -webkit-line-clamp:unset; overflow:visible; }
 .nb-tcard.is-open .nb-tcard__quote::after{ display:none; }
+
+/* ===== Modal for full testimonial ===== */
+.nb-tmodal[hidden]{ display:none; }
+.nb-tmodal{
+  position:fixed; inset:0; z-index:60;
+  display:grid; place-items:center;
+}
+.nb-tmodal__backdrop{
+  position:absolute; inset:0; background:rgba(10,20,20,.46);
+  backdrop-filter:saturate(140%) blur(4px);
+}
+.nb-tmodal__dialog{
+  position:relative; z-index:1;
+  width:min(820px, 92vw);
+  max-height:min(86vh, 900px);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.28);
+  overflow:hidden; display:flex; flex-direction:column;
+}
+.nb-tmodal__close{
+  position:absolute; right:8px; top:8px;
+  width:36px; height:36px; border-radius:999px; border:0;
+  background:#fff; box-shadow:0 8px 18px rgba(0,0,0,.12);
+  font-size:22px; line-height:1; cursor:pointer;
+}
+.nb-tmodal__body{
+  padding: clamp(20px, 3.6vw, 28px);
+  overflow:auto;
+}
+.nb-tmodal__qmark{
+  display:inline-block; font-size:36px; line-height:1; color:rgba(0,0,0,.18);
+  margin: 0 0 10px 0;
+}
+.nb-tmodal__quote{
+  font-family: inherit;
+  font-size: 1.05rem;
+  line-height: 1.72;
+  letter-spacing: .005em;
+  color:#22292f;
+}
+.nb-tmodal__quote p{ margin:0 0 1rem; }
+.nb-tmodal__quote p:last-child{ margin-bottom:0; }
+
+.nb-tmodal__meta{
+  margin-top:18px; padding-top:14px; border-top:1px solid #eef2f1;
+  display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:flex-start;
+}
+.nb-tmodal__meta .nb-tcard__avatar{ width:64px; height:64px; }
+.nb-tmodal__meta .nb-tcard__name{ font-weight:700; letter-spacing:.01em; }
+.nb-tmodal__meta .nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
+.nb-tmodal__meta .nb-tcard__loc{ color:#6b777f; font-size:.95rem; margin-top:2px; }
+
 {% endstylesheet %}
 
 {% schema %}
@@ -325,6 +436,7 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
 
 
