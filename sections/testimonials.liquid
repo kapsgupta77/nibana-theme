@@ -31,40 +31,54 @@ Shows overflow in-card with a scrollbar (no modal).
       </header>
     {%- endif -%}
 
-    {%- capture render_cards -%}
-      <div class="nb-tgrid" data-grid>
-        {%- if source == 'metaobject' -%}
-          {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-          {%- if mo and mo.values and mo.values.size > 0 -%}
-            {%- for m in mo.values limit: limit -%}
-              {%- liquid
-                assign q   = m.quote     | default: ''
-                assign n   = m.name      | default: ''
-                assign tt  = m.title     | default: ''
-                assign loc = m.location  | default: ''
-                assign av  = m.avatar
-                assign tg  = m.tags | join: ',' | default: ''
-                assign tag_bucket = tag_bucket | append: ',' | append: tg
-              -%}
-              {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-            {%- endfor -%}
-          {%- endif -%}
-        {%- else -%}
-          {%- for block in section.blocks limit: limit -%}
-            {%- liquid
-              assign q   = block.settings.quote    | default: ''
-              assign n   = block.settings.name     | default: ''
-              assign tt  = block.settings.title    | default: ''
-              assign loc = block.settings.location | default: ''
-              assign av  = block.settings.avatar
-              assign tg  = block.settings.tags     | default: ''
-              assign tag_bucket = tag_bucket | append: ',' | append: tg
-            -%}
-            {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-          {%- endfor -%}
-        {%- endif -%}
+   {%- capture cards_only -%}
+  {%- if source == 'metaobject' -%}
+    {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+    {%- if mo and mo.values and mo.values.size > 0 -%}
+      {%- for m in mo.values limit: limit -%}
+        {%- assign q   = m.quote    | default: '' -%}
+        {%- assign n   = m.name     | default: '' -%}
+        {%- assign tt  = m.title    | default: '' -%}
+        {%- assign loc = m.location | default: '' -%}
+        {%- assign av  = m.avatar -%}
+        {%- assign tg  = m.tags | join: ',' | default: '' -%}
+        {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- for block in section.blocks limit: limit -%}
+      {%- assign q   = block.settings.quote    | default: '' -%}
+      {%- assign n   = block.settings.name     | default: '' -%}
+      {%- assign tt  = block.settings.title    | default: '' -%}
+      {%- assign loc = block.settings.location | default: '' -%}
+      {%- assign av  = block.settings.avatar -%}
+      {%- assign tg  = block.settings.tags     | default: '' -%}
+      {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture render_cards -%}
+  {%- if section.settings.carousel -%}
+    <div class="nb-tcarousel__viewport" data-viewport>
+      <div class="nb-tcarousel__track" data-track>
+        <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
       </div>
-    {%- endcapture -%}
+    </div>
+    <div class="nb-tcarousel__nav" data-nav hidden>
+      <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
+      <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
+      <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
+    </div>
+    {%- if section.settings.cta_link != blank -%}
+      <div class="nb-tcarousel__cta">
+        <a class="nb-cta nb-cta--md" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>
+      </div>
+    {%- endif -%}
+  {%- else -%}
+    <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
+  {%- endif -%}
+{%- endcapture -%}
 
     {%- comment -%} Build unique, cleaned tag list for chips {%- endcomment -%}
     {%- assign tags_tmp = tag_bucket | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' | split: ',' -%}
@@ -94,10 +108,12 @@ Shows overflow in-card with a scrollbar (no modal).
 {% javascript %}
 (() => {
   // Scope to THIS section
-  const sec  = document.getElementById('shopify-section-{{ section.id }}');
+  const sec = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  // Filter chips
+  /* -------------------------------
+   * CHIP FILTERS (always available)
+   * ------------------------------- */
   const grid  = sec.querySelector('[data-grid]');
   const chips = sec.querySelectorAll('[data-chips] .nb-chip');
   if (grid && chips.length) {
@@ -107,16 +123,74 @@ Shows overflow in-card with a scrollbar (no modal).
         chip.classList.add('is-active');
         const f = chip.getAttribute('data-filter');
         grid.querySelectorAll('.nb-tcard').forEach(card => {
-          if (f === '*') { card.hidden = false; return; }
           const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-          card.hidden = ds.indexOf(f) === -1;
+          card.hidden = (f !== '*') && ds.indexOf(f) === -1;
         });
       });
     });
   }
+
+  /* ---------------------------------
+   * SLIDER (only if setting is ON)
+   * --------------------------------- */
+  const isCarousel = {{ section.settings.carousel | json }};
+  if (!isCarousel) return;
+
+  const viewport = sec.querySelector('.nb-tcarousel__viewport');
+  const hGrid    = sec.querySelector('.nb-tcarousel__track [data-grid]');
+  const nav      = sec.querySelector('[data-nav]');
+  const dotsBox  = sec.querySelector('[data-dots]');
+  const prevBtn  = sec.querySelector('[data-dir="-1"]');
+  const nextBtn  = sec.querySelector('[data-dir="1"]');
+
+  if (!viewport || !hGrid || !nav || !prevBtn || !nextBtn) return;
+
+  const getPages = () => Math.max(1, Math.ceil(hGrid.scrollWidth / viewport.clientWidth));
+  let pages = getPages();
+  let active = 0;
+
+  function buildDots() {
+    dotsBox.innerHTML = '';
+    for (let i = 0; i < pages; i++) {
+      const dot = document.createElement('i');
+      if (i === active) dot.classList.add('is-active');
+      dot.addEventListener('click', () => {
+        viewport.scrollTo({ left: i * viewport.clientWidth, behavior: 'smooth' });
+      });
+      dotsBox.appendChild(dot);
+    }
+  }
+
+  function update() {
+    active = Math.round(viewport.scrollLeft / viewport.clientWidth);
+    dotsBox.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
+    nav.hidden = pages <= 1;
+    prevBtn.disabled = active <= 0;
+    nextBtn.disabled = active >= pages - 1;
+  }
+
+  // Arrows
+  prevBtn.addEventListener('click', () => {
+    viewport.scrollBy({ left: -viewport.clientWidth, behavior: 'smooth' });
+  });
+  nextBtn.addEventListener('click', () => {
+    viewport.scrollBy({ left:  viewport.clientWidth, behavior: 'smooth' });
+  });
+
+  // Recalculate on resize
+  const ro = new ResizeObserver(() => {
+    const p = getPages();
+    if (p !== pages) { pages = p; buildDots(); }
+    update();
+  });
+  ro.observe(viewport);
+
+  // Init
+  buildDots();
+  update();
+  viewport.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 })();
 {% endjavascript %}
-
 {% stylesheet %}
 /* Container width aligns with the rest of the site */
 .nb-testimonials__container{ max-width: var(--narrow-page-width, 1120px); margin: 0 auto; padding: 0 20px; }
@@ -219,6 +293,65 @@ Shows overflow in-card with a scrollbar (no modal).
   max-width: 46ch;
 }
 
+/* ===== Slider mode (scoped to this section) ===== */
+#shopify-section-{{ section.id }} .nb-tcarousel__viewport{
+  position:relative; overflow:hidden;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__track{
+  display:block;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
+  /* Horizontal cards */
+  display:grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(320px, 1fr);
+  gap: 18px;
+  scroll-snap-type: x mandatory;
+  overflow-x:auto;
+  padding: 4px 4px 8px;
+  scrollbar-width: none;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
+#shopify-section-{{ section.id }} .nb-tcard{ scroll-snap-align: start; }
+
+/* 1–3 per view depending on width */
+@media (min-width: 740px){
+  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
+    grid-auto-columns: minmax(48%, 1fr);
+  }
+}
+@media (min-width: 1024px){
+  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
+    /* 3 per view on desktop */
+    grid-auto-columns: minmax(calc(100% / {{ section.settings.per_view }}), 1fr);
+  }
+}
+
+/* Nav + dots */
+#shopify-section-{{ section.id }} .nb-tcarousel__nav{
+  display:flex; align-items:center; justify-content:center;
+  gap:14px; margin:12px 0 0;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__btn{
+  width:42px; height:42px; border-radius:999px;
+  border:1px solid rgba(0,0,0,.08); background:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.08);
+  font-size:22px; line-height:1; cursor:pointer;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
+#shopify-section-{{ section.id }} .nb-tcarousel__dots{ display:flex; gap:8px; }
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
+  width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+#shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
+
+/* Tighten header spacing to match FAQ look */
+#shopify-section-{{ section.id }} .nb-testimonials__head{
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 {% endstylesheet %}
 
 {% schema %}
@@ -250,10 +383,16 @@ Shows overflow in-card with a scrollbar (no modal).
         { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
         { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
         { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "-" }
+{ "type": "header", "content": "Slider options" },
+{ "type": "checkbox", "id": "carousel", "label": "Show as slider (horizontal scroll)", "default": false },
+{ "type": "range", "id": "per_view", "label": "Cards per view", "min": 1, "max": 3, "step": 1, "default": 3 },
+{ "type": "text", "id": "cta_label", "label": "CTA label", "default": "View all" },
+{ "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/testimonial" }
       ]
     }
   ],
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
