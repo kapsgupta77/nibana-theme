@@ -2024,6 +2024,7 @@
         "source": "blocks",
         "limit": 6,
         "show_filter": false,
+        "carousel": true,
         "color_scheme": "scheme-3",
         "padding-block-start": 0,
         "padding-block-end": 0
