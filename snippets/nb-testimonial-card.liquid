@@ -31,8 +31,8 @@ Params expected: quote, name, title, location, avatar, tags
       </figure>
     {%- endif -%}
     <div class="nb-tcard__who">
-      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
-      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
+      {%- if name     != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+      {%- if title    != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
       {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
     </div>
   </div>
