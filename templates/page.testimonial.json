@@ -42,6 +42,16 @@
             "tags": "Men's Coaching, Career, Transformational Life Coaching"
           }
         },
+        "testimonial_jHDjMM": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Kapil gave me the tools and frameworks that helped me recognise my self-limiting beliefs and patterns. His advice and encouragement has been invaluable in my personal growth.",
+            "name": "Bhavesh Dhaka",
+            "title": "Consultant and Entrepreneur",
+            "location": "Hong Kong",
+            "tags": "Relationship, Men's Coaching, Transformational Life Coaching"
+          }
+        },
         "testimonial_4NViUy": {
           "type": "testimonial",
           "settings": {
@@ -167,6 +177,7 @@
         "testimonial_UcyDLa",
         "testimonial_DHQMYw",
         "testimonial_jp7EHq",
+        "testimonial_jHDjMM",
         "testimonial_4NViUy",
         "testimonial_itpiiA",
         "testimonial_gdw6fG",
