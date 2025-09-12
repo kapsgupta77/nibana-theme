@@ -9,20 +9,24 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
     assign limit      = section.settings.limit     | default: 12
     assign show_chips = section.settings.show_filter | default: true
 
-    assign heading = section.settings.heading    | default: 'What our clients say'
-    assign sub_raw = section.settings.subheading | default: '-'
-    assign sub     = sub_raw | strip
+   assign heading  = section.settings.heading    | default: 'What our clients say'
+assign sub_raw  = section.settings.subheading | default: '-'
+assign sub      = sub_raw | strip
+assign show_sub = false
+if sub != '-' and sub != ''
+  assign show_sub = true
+endif
 
     assign tag_collect = ''
   -%}
 
   <div class="nb-shell nb-testimonials__container">
-    {%- if heading != blank or (sub != '-' and sub != '') -%}
+   {% if heading != blank or show_sub %}
       <header class="nb-testimonials__head">
         {%- if heading != blank -%}
           <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
         {%- endif -%}
-        {%- if sub != '-' and sub != '' -%}
+        {% if show_sub %}
           <p class="nb-testimonials__dek">{{ sub }}</p>
         {%- endif -%}
       </header>
@@ -178,10 +182,10 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-tchips{ position:relative; margin:8px 0 18px; }
 .nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none; }
 .nb-tchips__list::-webkit-scrollbar{ display:none; }
-.nb-tchips::before,nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
+.nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
 .nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
 .nb-tchips::after{  right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
-.nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,08); box-shadow:0 4px 12px rgba(0,0,0,05); }
+.nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); }
 .nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,06); font-weight:600; }
 
 /* Grid */
@@ -292,3 +296,4 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
