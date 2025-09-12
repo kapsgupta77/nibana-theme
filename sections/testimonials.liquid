@@ -3,30 +3,25 @@ Testimonials — page grid with filter chips
 Source: Manual blocks (default) or Metaobject `nb_testimonial`
 {% endcomment %}
 
-<section class="nb-testimonials tone-pebble" id="nb-testimonials-{{ section.id }}">
-  {%- liquid
-    assign source     = section.settings.source    | default: 'blocks'
-    assign limit      = section.settings.limit     | default: 12
-    assign show_chips = section.settings.show_filter | default: true
-
-   assign heading  = section.settings.heading    | default: 'What our clients say'
-assign sub_raw  = section.settings.subheading | default: '-'
-assign sub      = sub_raw | strip
-assign show_sub = false
-if sub != '-' and sub != ''
-  assign show_sub = true
-endif
-
-    assign tag_collect = ''
-  -%}
-
+<section class="nb-testimonials tone-pebble">
   <div class="nb-shell nb-testimonials__container">
-   {% if heading != blank or show_sub %}
+    {%- liquid
+      assign source  = section.settings.source  | default: 'blocks'
+      assign limit   = section.settings.limit   | default: 12
+      assign heading = section.settings.heading | default: 'What our clients say'
+      assign sub     = section.settings.subheading | default: '-'
+      assign show_sub = false
+      if sub and sub != '-' and sub != ''
+        assign show_sub = true
+      endif
+    -%}
+
+    {%- if heading != blank or show_sub -%}
       <header class="nb-testimonials__head">
         {%- if heading != blank -%}
           <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
         {%- endif -%}
-        {% if show_sub %}
+        {%- if show_sub -%}
           <p class="nb-testimonials__dek">{{ sub }}</p>
         {%- endif -%}
       </header>
@@ -34,6 +29,7 @@ endif
 
     {%- capture render_cards -%}
       <div class="nb-tgrid" data-grid>
+        {%- assign tag_bucket = '' -%}
         {%- if source == 'metaobject' -%}
           {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
           {%- if mo and mo.values and mo.values.size > 0 -%}
@@ -44,7 +40,7 @@ endif
               {%- assign loc = m.location | default: '' -%}
               {%- assign av  = m.avatar -%}
               {%- assign tg  = m.tags | join: ',' | default: '' -%}
-              {%- assign tag_collect = tag_collect | append: ',' | append: tg -%}
+              {%- assign tag_bucket = tag_bucket | append: ',' | append: tg -%}
               {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
             {%- endfor -%}
           {%- endif -%}
@@ -56,22 +52,24 @@ endif
             {%- assign loc = block.settings.location | default: '' -%}
             {%- assign av  = block.settings.avatar -%}
             {%- assign tg  = block.settings.tags     | default: '' -%}
-            {%- assign tag_collect = tag_collect | append: ',' | append: tg -%}
+            {%- assign tag_bucket = tag_bucket | append: ',' | append: tg -%}
             {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
           {%- endfor -%}
         {%- endif -%}
       </div>
     {%- endcapture -%}
 
-    {%- assign tags_all   = tag_collect | split: ',' | uniq | sort -%}
+    {%- assign tags_all = tag_bucket | split: ',' | uniq | sort -%}
     {%- assign tags_clean = '' -%}
     {%- for t in tags_all -%}
       {%- assign tt = t | strip -%}
-      {%- if tt != '' -%}{% assign tags_clean = tags_clean | append: tt | append: '||' %}{%- endif -%}
+      {%- if tt != '' and tt != '-' -%}
+        {%- assign tags_clean = tags_clean | append: tt | append: '||' -%}
+      {%- endif -%}
     {%- endfor -%}
     {%- assign tags_list = tags_clean | split: '||' -%}
 
-    {%- if show_chips and tags_list.size > 0 -%}
+    {%- if section.settings.show_filter and tags_list.size > 0 -%}
       <nav class="nb-tchips" aria-label="Filter testimonials by tag" data-root="{{ section.id }}">
         <ul class="nb-tchips__list" data-chips>
           <li><button type="button" class="nb-chip is-active" data-filter="*">All</button></li>
@@ -88,14 +86,14 @@ endif
 
 {% javascript %}
 (() => {
-  // Scope to this section only
-  const sec = document.getElementById('shopify-section-{{ section.id }}');
+  // Scope to THIS section
+  const sec  = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
   const grid  = sec.querySelector('[data-grid]');
   const chips = sec.querySelectorAll('[data-chips] .nb-chip');
 
-  // ----- Filter chips
+  // ---- Filter chips (single-row scroller)
   if (grid && chips.length) {
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -111,21 +109,22 @@ endif
     });
   }
 
-  // ----- Robust "Read full" detection (coping with -webkit-line-clamp)
-  function needsMore(q){
-    // clone unclamped for natural height measurement
-    const clone = q.cloneNode(true);
-    clone.style.cssText =
-      'position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:-9999px;' +
-      'display:block;-webkit-line-clamp:unset;overflow:visible;height:auto;width:' + q.clientWidth + 'px;';
-    document.body.appendChild(clone);
+  // ---- Robust "Read full" detection
+  function needsMore(quoteEl){
+    // measure unclamped height using a clone
+    const clone = quoteEl.cloneNode(true);
+    clone.style.cssText = `
+      position:absolute; visibility:hidden; pointer-events:none;
+      display:block; -webkit-line-clamp:unset; overflow:visible; height:auto;
+      width:${quoteEl.clientWidth}px;`;
+    quoteEl.parentNode.appendChild(clone);
     const full = clone.scrollHeight;
     clone.remove();
-    return full > q.clientHeight + 2;
+    return full > quoteEl.clientHeight + 2;
   }
 
   function evaluate(card){
-    const q   = card.querySelector('.nb-tcard__quote, [data-q]');
+    const q   = card.querySelector('[data-q]');
     const btn = card.querySelector('[data-more]');
     if (!q || !btn) return;
 
@@ -139,140 +138,102 @@ endif
   }
 
   function toggle(card){
-    const btn  = card.querySelector('[data-more]');
-    const open = !card.classList.contains('is-open');
-    card.classList.toggle('is-open', open);
+    const btn = card.querySelector('[data-more]');
+    const open = card.classList.toggle('is-open');
     if (btn){
       btn.textContent = open ? 'Show less' : 'Read full';
       btn.setAttribute('aria-expanded', String(open));
     }
   }
 
-  const cards = Array.from(sec.querySelectorAll('.nb-tcard'));
-  cards.forEach(card => {
-    const q   = card.querySelector('.nb-tcard__quote, [data-q]');
+  (sec.querySelectorAll('.nb-tcard') || []).forEach(card => {
+    const q   = card.querySelector('[data-q]');
     const btn = card.querySelector('[data-more]');
 
     if (q){
       q.addEventListener('click', () => toggle(card));
-      q.addEventListener('keydown', e => {
+      q.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(card); }
       });
     }
     if (btn) btn.addEventListener('click', () => toggle(card));
 
-    evaluate(card);
+    const ro = new ResizeObserver(() => evaluate(card));
+    ro.observe(card);
+    window.addEventListener('load', () => evaluate(card));
+    setTimeout(() => evaluate(card), 200);
   });
-
-  // Re-evaluate on resize/font load/page load
-  let t;
-  window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => cards.forEach(evaluate), 120); });
-  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => cards.forEach(evaluate)); }
-  window.addEventListener('load', () => cards.forEach(evaluate));
 })();
 {% endjavascript %}
 
 {% stylesheet %}
-/* Container aligned to site rhythm */
-.nb-testimonials__container{
-  max-width: min(1160px, 94vw);
-  margin-inline: auto;
-  padding-inline: clamp(12px, 3vw, 22px);
-}
+/* Container */
+.nb-testimonials__container{max-width:var(--page-content-width);margin:0 auto;}
+.nb-testimonials__head{margin:0 0 clamp(8px,1.8vw,16px);}
+.nb-testimonials__dek{color:#516068;margin:0}
 
-/* Head */
-.nb-testimonials{ --t-accent: var(--nb-chocolate); --t-gap: clamp(16px,2.6vw,24px); }
-.nb-testimonials__head{ margin:0 0 clamp(10px,2vw,18px); text-align:left; }
-.nb-testimonials__title{ margin:0 0 6px; }
-.nb-testimonials__dek{ margin:0; color:#54636a; }
-
-/* Chips */
-.nb-tchips{ position:relative; margin:8px 0 18px; }
-.nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none; }
-.nb-tchips__list::-webkit-scrollbar{ display:none; }
-.nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
-.nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
-.nb-tchips::after{  right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
-.nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); }
-.nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,06); font-weight:600; }
+/* Chips: single-row scroller (no wrap) */
+.nb-tchips{position:relative;margin:8px 0 16px}
+.nb-tchips__list{display:flex;gap:10px;overflow:auto;padding:6px 8px 8px;list-style:none;margin:0;scrollbar-width:none;flex-wrap:nowrap}
+.nb-tchips__list::-webkit-scrollbar{display:none}
+.nb-tchips::before,.nb-tchips::after{content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none}
+.nb-tchips::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0))}
+.nb-tchips::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0))}
+.nb-chip{display:inline-block;padding:.5rem .75rem;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.nb-chip.is-active{background:#f6faf9;border-color:rgba(0,0,0,.06);font-weight:600}
 
 /* Grid */
 .nb-tgrid{
   display:grid;
-  gap: var(--t-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(360px,100%), 1fr));
+  gap: clamp(14px,2.2vw,22px);
+  grid-template-columns: repeat(auto-fit, minmax(min(340px,100%), 1fr));
   align-items: stretch;
 }
 
-/* Card */
+/* Card shell */
 .nb-tcard{
-  position:relative; display:flex; flex-direction:column;
-  background:#fff; border:1px solid #e8ecef; border-radius:22px;
-  box-shadow:0 14px 28px rgba(0,0,0,.08);
-  padding: clamp(18px,2vw,26px) clamp(18px,2vw,26px) clamp(18px,2vw,24px) clamp(22px,2.4vw,30px);
-  transition:transform .18s ease, box-shadow .18s ease;
+  position:relative;background:#fff;border:1px solid #e8ecef;border-radius:18px;
+  box-shadow:0 10px 22px rgba(0,0,0,.06);padding:18px 18px 14px 20px;
+  display:flex;flex-direction:column;min-height:260px;transition:transform .18s ease, box-shadow .18s ease
 }
-.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 18px 36px rgba(0,0,0,.10); }
+.nb-tcard:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(0,0,0,.08)}
+.nb-tcard__accent{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:18px 0 0 18px;background:linear-gradient(180deg,var(--nb-chocolate),color-mix(in oklab,var(--nb-chocolate),#000 14%))}
+.nb-tcard__qmark{position:absolute;left:10px;top:6px;opacity:.14;font-size:30px;line-height:1}
 
-.nb-tcard__accent{
-  position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:22px 0 0 22px;
-  background:linear-gradient(180deg, var(--t-accent), color-mix(in oklab, var(--t-accent), #000 14%));
-}
-
-/* Decorative quote (subtle, large screens) */
-.nb-tcard__qmark{
-  display:none; position:absolute; inset:-10px auto auto 8px;
-  font-family: serif; font-size:64px; line-height:1; color:#e9ecef;
-}
-@media (min-width: 740px){ .nb-tcard__qmark{ display:block; } }
-
-/* Card spacing + accent + decorative quote */
-.nb-tcard{ position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06); padding:18px 18px 16px 20px;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
-.nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px;
-  background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
-.nb-tcard__qmark{ position:absolute; left:10px; top:6px; font-size:28px; line-height:1; color:#c86b2a; opacity:.22; display:none; }
-@media (min-width: 740px){ .nb-tcard__qmark{ display:block; } }
-
-/* Clamp + fade for long quotes; removed when card is open */
+/* Quote */
 .nb-tcard__quote{
-  --lines: 7;
-  margin: 0 0 14px;
-  display: -webkit-box;
-  -webkit-line-clamp: var(--lines);
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  position: relative;
+  margin:6px 0 12px;font-size:1.05rem;line-height:1.65;letter-spacing:.005em;color:#24292d;
+  display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer
 }
-.nb-tcard__quote::after{
-  content:""; position:absolute; left:0; right:0; bottom:0; height:3.2em;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
-  pointer-events:none;
+.nb-tcard__quote p{margin:0 0 .35rem}
+.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
+  content:"";position:absolute;left:0;right:0;bottom:84px;height:56px;
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff 70%);pointer-events:none
 }
-.nb-tcard.is-open .nb-tcard__quote{ display:block; }
-.nb-tcard.is-open .nb-tcard__quote::after{ display:none; }
 
-/* “Read full / Show less” chip */
-.nb-tcard__more{
-  display:inline-block; padding:.45rem .75rem; border-radius:999px; border:1px solid #e8ecef;
-  background:#fff; font-size:.92rem; cursor:pointer; color:#1f2d36;
-}
-.nb-tcard__more:hover{ box-shadow:0 6px 14px rgba(0,0,0,.06); }
-
-/* Meta area pinned to bottom so cards stay even height */
+/* Meta pinned to bottom */
 .nb-tcard__meta{
-  margin-top:12px; padding-top:12px; border-top:1px solid #e9ecef;
-  display:flex; gap:12px; align-items:center;
+  margin-top:auto;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:flex-start;
+  min-height:92px;padding-top:12px;border-top:1px solid #eef2f4
 }
-.nb-tcard__avatar{ flex:0 0 auto; width:40px; height:40px; border-radius:50%; overflow:hidden; background:#f3f5f4; }
-.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
-.nb-tcard__who{ line-height:1.25; }
-.nb-tcard__name{ font-weight:700; color:#253139; }
-.nb-tcard__title{ color:#0b6b64; font-weight:600; margin-top:2px; }
-.nb-tcard__loc{ color:#6c7b82; }
+.nb-tcard__avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;background:#f1f3f2}
+.nb-tcard__avatar-img{width:100%;height:100%;object-fit:cover;display:block}
+.nb-tcard__name{font-weight:800;letter-spacing:.01em;color:#182126;margin-bottom:2px}
+.nb-tcard__title{color:var(--nb-teal,#0C8A7B);font-weight:600;margin-top:2px}
+.nb-tcard__loc{color:#6b777f;font-size:.95rem;margin-top:2px}
+
+/* Read full button */
+.nb-tcard__more{
+  align-self:flex-start;margin:10px 0 0;
+  background:#fff;border:1px solid #e9eeed;border-radius:999px;padding:.55rem .9rem;font-size:.94rem;cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,.06)
+}
+.nb-tcard:not(.has-more) .nb-tcard__more{display:none}
+.nb-tcard__more:hover{box-shadow:0 14px 26px rgba(0,0,0,.08)}
+
+/* Expanded */
+.nb-tcard.is-open .nb-tcard__quote{display:block;-webkit-line-clamp:unset;overflow:visible}
+.nb-tcard.is-open .nb-tcard__quote::after{display:none}
 {% endstylesheet %}
 
 {% schema %}
@@ -298,17 +259,15 @@ endif
       "type": "testimonial",
       "name": "Testimonial",
       "settings": [
-        { "type": "textarea",      "id": "quote",    "label": "Quote",              "default": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”" },
-        { "type": "text",          "id": "name",     "label": "Name",               "default": "Client name" },
-        { "type": "text",          "id": "title",    "label": "Title / descriptor", "default": "Founder" },
-        { "type": "text",          "id": "location", "label": "Location",           "default": "London, UK" },
-        { "type": "image_picker",  "id": "avatar",   "label": "Avatar (optional)" },
-        { "type": "text",          "id": "tags",     "label": "Tags (comma separated)", "default": "-" }
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Client name" },
+        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "Founder" },
+        { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
+        { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
+        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "-" }
       ]
     }
   ],
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
-
-
