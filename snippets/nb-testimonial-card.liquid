@@ -9,26 +9,21 @@ Params expected: quote, name, title, location, avatar, tags
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  {#-- Quote: clicking opens modal --#}
-  <div class="nb-tcard__quote"
-       tabindex="0"
-       role="button"
-       aria-label="Read full testimonial"
-       data-q>
+  <div class="nb-tcard__quote" aria-label="Testimonial quote" data-q>
     {{ quote | strip | newline_to_br }}
   </div>
-
-  <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 
   <div class="nb-tcard__meta">
     {% if avatar %}
       <figure class="nb-tcard__avatar">
-        {{ avatar | image_url: width: 96
-                 | image_tag: class: 'nb-tcard__avatar-img',
-                              alt: name,
-                              loading: 'lazy',
-                              sizes: '96px',
-                              widths: '48,64,96' }}
+        {{ avatar
+          | image_url: width: 96
+          | image_tag:
+              class: 'nb-tcard__avatar-img',
+              alt: name,
+              loading: 'lazy',
+              sizes: '96px',
+              widths: '48,64,96' }}
       </figure>
     {% endif %}
     <div class="nb-tcard__who">
