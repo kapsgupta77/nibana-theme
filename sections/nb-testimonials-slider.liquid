@@ -192,6 +192,52 @@
   color: rgba(0,0,0,.68) !important;
 }
 
+/* Center + brand heading (strongly scoped to this section) */
+#shopify-section-{{ section.id }} .section-header{
+  text-align: center !important;
+  margin: 0 0 clamp(8px, 1.4vw, 16px) !important;
+}
+#shopify-section-{{ section.id }} .section-header__title{
+  color: var(--nb-teal, #0C8A7B) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 0 10px !important;
+}
+#shopify-section-{{ section.id }} .section-header__subheading{
+  margin: 0 !important;
+  color: rgba(0,0,0,.66) !important;
+}
+
+/* Nav row: arrows left/right, dots centered beneath the cards */
+#shopify-section-{{ section.id }} .nb-tcarousel__nav{
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 0;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__btn{
+  width: 42px; height: 42px; border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.08); background: #fff;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity: .4; cursor: not-allowed; }
+
+#shopify-section-{{ section.id }} .nb-tcarousel__dots{
+  display: flex; justify-content: center; gap: 8px;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
+  width: 7px; height: 7px; border-radius: 999px; background: #cfd6d2;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+
+/* Improve scroll feel */
+#shopify-section-{{ section.id }} .nb-tcarousel__track{
+  scroll-behavior: smooth;
+}
+
+
 {% endstylesheet %}
 
 {% javascript %}
@@ -207,55 +253,60 @@
   const prevBtn  = sec.querySelector('[data-dir="-1"]');
   const nextBtn  = sec.querySelector('[data-dir="1"]');
 
-  if (!slides.length) return;
+  if (!slides.length || !viewport || !track || !nav) return;
 
-  // Build dots based on "pages" (viewport widths)
-  function pages(){
-    const vw = viewport.clientWidth;
-    // group by viewport width
-    let totalWidth = slides.reduce((w, el) => w + el.clientWidth + parseFloat(getComputedStyle(track).columnGap || 0), 0);
-    return Math.max(1, Math.ceil(totalWidth / vw));
-  }
+  // Robust page detection: compare total scrollable width vs viewport
+  const pages = () => Math.max(1, Math.ceil(track.scrollWidth / viewport.clientWidth));
 
   let pageCount = pages();
   let active = 0;
 
   function buildDots(){
+    if (!dotsBox) return;
     dotsBox.innerHTML = '';
-    for (let i=0;i<pageCount;i++){
+    for (let i = 0; i < pageCount; i++) {
       const dot = document.createElement('i');
-      if (i===active) dot.classList.add('is-active');
+      if (i === active) dot.classList.add('is-active');
       dotsBox.appendChild(dot);
       dot.addEventListener('click', () => {
-        viewport.scrollTo({ left: i * viewport.clientWidth, behavior:'smooth' });
+        viewport.scrollTo({ left: i * viewport.clientWidth, behavior: 'smooth' });
       });
     }
   }
 
   function update(){
-    // active page from scroll position
     active = Math.round(viewport.scrollLeft / viewport.clientWidth);
-    dotsBox.querySelectorAll('i').forEach((d, i) =>
-      d.classList.toggle('is-active', i===active)
-    );
-    // hide nav if not needed
-    nav.hidden = pageCount <= 1;
-    prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pageCount - 1;
+
+    // show nav only when there is horizontal overflow
+    const hasOverflow = track.scrollWidth > viewport.clientWidth + 2;
+    nav.hidden = !hasOverflow;
+
+    if (dotsBox){
+      dotsBox.querySelectorAll('i').forEach((d, i) => {
+        d.classList.toggle('is-active', i === active);
+      });
+    }
+    if (prevBtn && nextBtn){
+      prevBtn.disabled = active <= 0;
+      nextBtn.disabled = active >= pageCount - 1;
+    }
   }
 
-  // Nav
-  prevBtn.addEventListener('click', () => {
-    viewport.scrollBy({ left: -viewport.clientWidth, behavior:'smooth' });
+  // Buttons
+  prevBtn?.addEventListener('click', () => {
+    viewport.scrollBy({ left: -viewport.clientWidth, behavior: 'smooth' });
   });
-  nextBtn.addEventListener('click', () => {
-    viewport.scrollBy({ left: viewport.clientWidth, behavior:'smooth' });
+  nextBtn?.addEventListener('click', () => {
+    viewport.scrollBy({ left: viewport.clientWidth, behavior: 'smooth' });
   });
 
-  // Recalc on resize
+  // Recalculate on resize
   const ro = new ResizeObserver(() => {
     const p = pages();
-    if (p !== pageCount){ pageCount = p; buildDots(); }
+    if (p !== pageCount) {
+      pageCount = p;
+      buildDots();
+    }
     update();
   });
   ro.observe(viewport);
@@ -264,7 +315,7 @@
   pageCount = pages();
   buildDots();
   update();
-  viewport.addEventListener('scroll', () => { requestAnimationFrame(update); }, { passive:true });
+  viewport.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 })();
 {% endjavascript %}
 
