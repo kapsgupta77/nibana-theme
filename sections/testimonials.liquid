@@ -361,12 +361,19 @@ Shows overflow in-card with a scrollbar (no modal).
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
     { "type": "text", "id": "subheading", "label": "Subheading", "default": "-" },
-    { "type": "select", "id": "source", "label": "Source", "options": [
-      { "value": "blocks", "label": "Manual (blocks)" },
-      { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
-    ], "default": "blocks" },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Source",
+      "options": [
+        { "value": "blocks", "label": "Manual (blocks)" },
+        { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
+      ],
+      "default": "blocks"
+    },
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 60, "step": 1, "default": 12 },
     { "type": "checkbox", "id": "show_filter", "label": "Show filter chips", "default": true },
+    { "type": "checkbox", "id": "carousel", "label": "Show as slider (3-up desktop, 1-up mobile)", "default": false },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "header", "content": "Padding" },
     { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
@@ -382,17 +389,15 @@ Shows overflow in-card with a scrollbar (no modal).
         { "type": "text", "id": "title", "label": "Title / descriptor", "default": "Founder" },
         { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
         { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
-        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "-" }
-{ "type": "header", "content": "Slider options" },
-{ "type": "checkbox", "id": "carousel", "label": "Show as slider (horizontal scroll)", "default": false },
-{ "type": "range", "id": "per_view", "label": "Cards per view", "min": 1, "max": 3, "step": 1, "default": 3 },
-{ "type": "text", "id": "cta_label", "label": "CTA label", "default": "View all" },
-{ "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/testimonial" }
+        { "type": "text", "id": "tags", "label": "Tags (optional)", "default": "-" }
       ]
     }
   ],
-  "presets": [{ "name": "Testimonials (grid)" }]
+  "presets": [
+    { "name": "Testimonials (grid)" }
+  ]
 }
 {% endschema %}
+
 
 
