@@ -324,6 +324,31 @@ Cards use the same design as the Testimonials page.
 #shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
 #shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
 
+/* --- Flatten theme panels inside this section --- */
+#shopify-section-{{ section.id }} .nb-testimonials__container > * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;      /* removes the extra “gutter” space */
+  border: 0 !important;
+}
+
+/* Make sure the carousel wrappers themselves don’t re-add panels */
+#shopify-section-{{ section.id }} .nb-tcarousel__viewport,
+#shopify-section-{{ section.id }} .nb-tcarousel__track,
+#shopify-section-{{ section.id }} .nb-tcarousel__nav,
+#shopify-section-{{ section.id }} .nb-tcarousel__cta {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+/* Keep only the intentional spacing we define elsewhere */
+#shopify-section-{{ section.id }} .nb-testimonials__head { margin-bottom: clamp(12px,2vw,18px); }
+#shopify-section-{{ section.id }} .nb-tcarousel__nav { margin-top: 12px; }
+#shopify-section-{{ section.id }} .nb-tcarousel__cta { margin-top: 16px; }
+
 {% endstylesheet %}
 
 {% schema %}
@@ -371,4 +396,5 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
