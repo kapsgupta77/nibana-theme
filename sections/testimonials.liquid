@@ -171,13 +171,20 @@ Source: manual blocks (default) or metaobject `nb_testimonial`
     const btn = card.querySelector('[data-more]');
     if (!q || !btn) return;
 
-    const evalBtn = () => { btn.hidden = !needsMore(q); };
-    const ro = new ResizeObserver(evalBtn);
-    ro.observe(q);
-    window.addEventListener('load', evalBtn);
-    setTimeout(evalBtn, 150);
-    evalBtn();
+    const evaluate = () => {
+      const show = needsMore(q);
+      card.classList.toggle('has-more', show);  // <-- add class for CSS
+      btn.hidden = !show;                       // <-- keep hidden attr too
+    };
 
+    // re-evaluate on size changes + when loaded
+    const ro = new ResizeObserver(evaluate);
+    ro.observe(q);
+    window.addEventListener('load', evaluate);
+    setTimeout(evaluate, 150);
+    evaluate();
+
+    // open modal
     q.addEventListener('click', () => openModal(card));
     q.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card); }
@@ -218,6 +225,8 @@ Source: manual blocks (default) or metaobject `nb_testimonial`
   box-shadow:0 10px 22px rgba(0,0,0,.06);
   padding: clamp(16px, 2.2vw, 22px) clamp(16px, 2.2vw, 24px) clamp(14px, 2vw, 18px) clamp(18px, 2.4vw, 26px);
   transition:transform .18s ease, box-shadow .18s ease;
+display:flex;
+  flex-direction:column;
 }
 .nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
 .nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px; background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
@@ -227,8 +236,8 @@ Source: manual blocks (default) or metaobject `nb_testimonial`
 .nb-tcard__quote{
   margin: 0 4px 12px 4px;
   font: inherit;
-  font-size: 1.02rem;
-  line-height: 1.62;
+  font-size: 1rem;
+  line-height: 1.66;
   color: #24292d;
   display: -webkit-box;
   -webkit-line-clamp: 9;
@@ -314,3 +323,4 @@ Source: manual blocks (default) or metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
