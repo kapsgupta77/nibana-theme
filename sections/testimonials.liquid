@@ -88,8 +88,8 @@ endif
 
 {% javascript %}
 (() => {
-  // Scope to THIS section (works in editor + storefront)
-  const sec  = document.getElementById('shopify-section-{{ section.id }}');
+  // Scope to this section only
+  const sec = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
   const grid  = sec.querySelector('[data-grid]');
@@ -111,56 +111,64 @@ endif
     });
   }
 
-  // ----- Robust "Read full" detection (works with -webkit-line-clamp)
+  // ----- Robust "Read full" detection (coping with -webkit-line-clamp)
   function needsMore(q){
-    // clone the quote without the clamp to measure natural height
+    // clone unclamped for natural height measurement
     const clone = q.cloneNode(true);
-    clone.style.cssText = `
-      position:absolute; visibility:hidden; pointer-events:none;
-      display:block; -webkit-line-clamp:unset; overflow:visible; height:auto;
-      width:${q.clientWidth}px;`;
-    q.parentNode.appendChild(clone);
+    clone.style.cssText =
+      'position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:-9999px;' +
+      'display:block;-webkit-line-clamp:unset;overflow:visible;height:auto;width:' + q.clientWidth + 'px;';
+    document.body.appendChild(clone);
     const full = clone.scrollHeight;
     clone.remove();
     return full > q.clientHeight + 2;
   }
 
   function evaluate(card){
-    const q   = card.querySelector('[data-q]');
+    const q   = card.querySelector('.nb-tcard__quote, [data-q]');
     const btn = card.querySelector('[data-more]');
     if (!q || !btn) return;
+
+    // collapse before measuring
+    card.classList.remove('is-open');
     const overflows = needsMore(q);
     card.classList.toggle('has-more', overflows);
     btn.hidden = !overflows;
+    btn.textContent = 'Read full';
+    btn.setAttribute('aria-expanded', 'false');
   }
 
   function toggle(card){
-    const btn = card.querySelector('[data-more]');
-    if (!btn) return;
-    const open = card.classList.toggle('is-open');
-    btn.textContent = open ? 'Show less' : 'Read full';
-    btn.setAttribute('aria-expanded', String(open));
+    const btn  = card.querySelector('[data-more]');
+    const open = !card.classList.contains('is-open');
+    card.classList.toggle('is-open', open);
+    if (btn){
+      btn.textContent = open ? 'Show less' : 'Read full';
+      btn.setAttribute('aria-expanded', String(open));
+    }
   }
 
-  sec.querySelectorAll('.nb-tcard').forEach(card => {
-    const q   = card.querySelector('[data-q]');
+  const cards = Array.from(sec.querySelectorAll('.nb-tcard'));
+  cards.forEach(card => {
+    const q   = card.querySelector('.nb-tcard__quote, [data-q]');
     const btn = card.querySelector('[data-more]');
 
     if (q){
       q.addEventListener('click', () => toggle(card));
-      q.addEventListener('keydown', (e) => {
+      q.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(card); }
       });
     }
     if (btn) btn.addEventListener('click', () => toggle(card));
 
-    // Re-evaluate on size changes
-    const ro = new ResizeObserver(() => evaluate(card));
-    ro.observe(q || card);
     evaluate(card);
-    setTimeout(() => evaluate(card), 200);
-    window.addEventListener('load', () => evaluate(card));
   });
+
+  // Re-evaluate on resize/font load/page load
+  let t;
+  window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => cards.forEach(evaluate), 120); });
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => cards.forEach(evaluate)); }
+  window.addEventListener('load', () => cards.forEach(evaluate));
 })();
 {% endjavascript %}
 
@@ -218,47 +226,53 @@ endif
 }
 @media (min-width: 740px){ .nb-tcard__qmark{ display:block; } }
 
-/* Quote */
-.nb-tcard__quote{
-  margin:0 0 14px;
-  font-size:1.025rem; line-height:1.65; letter-spacing:.005em; color:#24292d;
-  display:-webkit-box; -webkit-line-clamp:9; -webkit-box-orient:vertical; overflow:hidden;
-  cursor:pointer;
+/* Card spacing + accent + decorative quote */
+.nb-tcard{ position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
+  box-shadow:0 10px 22px rgba(0,0,0,.06); padding:18px 18px 16px 20px;
+  transition:transform .18s ease, box-shadow .18s ease;
 }
-.nb-tcard__quote p{ margin:0; }
+.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
+.nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px;
+  background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
+.nb-tcard__qmark{ position:absolute; left:10px; top:6px; font-size:28px; line-height:1; color:#c86b2a; opacity:.22; display:none; }
+@media (min-width: 740px){ .nb-tcard__qmark{ display:block; } }
 
-/* Fade only when truncated */
-.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
-  content:""; position:absolute; left:0; right:0; bottom:0; height:56px;
-  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 70%);
+/* Clamp + fade for long quotes; removed when card is open */
+.nb-tcard__quote{
+  --lines: 7;
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+}
+.nb-tcard__quote::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:3.2em;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
   pointer-events:none;
 }
-
-/* Fixed meta area */
-.nb-tcard__meta{
-  margin-top:auto; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center;
-  min-height:84px; padding-top:10px; border-top:1px solid #eef2f1;
-}
-.nb-tcard__avatar{ width:52px; height:52px; border-radius:50%; overflow:hidden; background:#eff3f2; }
-.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-.nb-tcard__name{ font-weight:800; letter-spacing:.1px; color:#182126; margin-bottom:2px; }
-.nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; } /* Nibana teal */
-.nb-tcard__loc{ color:#6b7780; font-size:.95rem; margin-top:1px; }
-
-/* Read full button */
-.nb-tcard__more{
-  align-self:flex-start; margin-top:10px;
-  background:#fff; border:1px solid #e9eeed; border-radius:999px;
-  padding:.55rem .9rem; font-size:.94rem; cursor:pointer;
-  box-shadow:0 10px 20px rgba(0,0,0,.06);
-}
-.nb-tcard__more:hover{ box-shadow:0 14px 26px rgba(0,0,0,.08); }
-.nb-tcard:not(.has-more) .nb-tcard__more{ display:none; }
-
-/* Expanded state */
-.nb-tcard.is-open .nb-tcard__quote{ display:block; -webkit-line-clamp:unset; overflow:visible; }
+.nb-tcard.is-open .nb-tcard__quote{ display:block; }
 .nb-tcard.is-open .nb-tcard__quote::after{ display:none; }
+
+/* “Read full / Show less” chip */
+.nb-tcard__more{
+  display:inline-block; padding:.45rem .75rem; border-radius:999px; border:1px solid #e8ecef;
+  background:#fff; font-size:.92rem; cursor:pointer; color:#1f2d36;
+}
+.nb-tcard__more:hover{ box-shadow:0 6px 14px rgba(0,0,0,.06); }
+
+/* Meta area pinned to bottom so cards stay even height */
+.nb-tcard__meta{
+  margin-top:12px; padding-top:12px; border-top:1px solid #e9ecef;
+  display:flex; gap:12px; align-items:center;
+}
+.nb-tcard__avatar{ flex:0 0 auto; width:40px; height:40px; border-radius:50%; overflow:hidden; background:#f3f5f4; }
+.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
+.nb-tcard__who{ line-height:1.25; }
+.nb-tcard__name{ font-weight:700; color:#253139; }
+.nb-tcard__title{ color:#0b6b64; font-weight:600; margin-top:2px; }
+.nb-tcard__loc{ color:#6c7b82; }
 {% endstylesheet %}
 
 {% schema %}
@@ -296,4 +310,5 @@ endif
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
