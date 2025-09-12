@@ -130,6 +130,41 @@
 
   /* Trim extra top padding when used inside a padded panel */
   .shopify-section:has(#nb-ts-{{ section.id }}) > :not(style):not(script){ padding-top:0 !important; }
+
+/* =========================
+   Header & top spacing overrides (scoped)
+   ========================= */
+
+/* 1) Remove the extra top padding from the section wrapper/panel */
+.section-wrapper.nb-testimonials-slider-wrap { padding-top: 0 !important; }
+.shopify-section:has(#nb-ts-{{ section.id }}) { padding-top: 0 !important; }
+
+/* If your theme wraps content inside a shell/container, zero that too */
+#nb-ts-{{ section.id }} .nb-shell { padding-top: 0 !important; }
+
+/* 2) Make the slider heading match FAQ heading scale/spacing */
+#nb-ts-{{ section.id }} .section-header {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  text-align: left;
+  margin-bottom: clamp(10px, 1.6vw, 18px) !important;
+}
+
+/* Title line-height/size to mirror the FAQ look */
+#nb-ts-{{ section.id }} .section-header__title {
+  line-height: 1.12 !important;
+  letter-spacing: -0.01em !important;
+  font-size: clamp(28px, 2.4vw, 36px) !important; /* visually matches FAQ */
+  margin: 0 0 var(--nib-h2-mb, 12px) !important;
+}
+
+/* Subheading style under the title */
+#nb-ts-{{ section.id }} .section-header__subheading {
+  margin: 0 !important;
+  font-size: clamp(14px, 1vw, 16px) !important;
+  color: rgba(0,0,0,.68) !important;
+}
+
 {% endstylesheet %}
 
 {% javascript %}
