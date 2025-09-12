@@ -1,31 +1,42 @@
-{%- comment -%}
-Renders one testimonial card.
-Params: quote, name, title, location, avatar, tags
-{%- endcomment -%}
+{% comment %}
+Renders a single testimonial card.
+Expects: quote, name, title, location, avatar, tags
+{% endcomment %}
 
-{%- assign _tags = tags | default: '' | strip -%}
+{%- assign _raw_tags = tags | default: '' | strip -%}
+{%- assign _tag_tokens = '' -%}
+{%- for t in _raw_tags | split: ',' -%}
+  {%- assign tt = t | strip | handleize -%}
+  {%- if tt != '' -%}{%- assign _tag_tokens = _tag_tokens | append: tt | append: ' ' -%}{%- endif -%}
+{%- endfor -%}
 
-<article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
+<article class="nb-tcard" data-tags="{{ _tag_tokens | strip }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
-  <span class="nb-tcard__qmark" aria-hidden="true">“</span>
+  <span class="nb-tcard__qmark"  aria-hidden="true"></span>
 
-  <!-- Quote (click or button toggles full text) -->
+  {%- comment -%} Quote (JS measures overflow to decide if button shows) {%- endcomment -%}
   <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
     {{ quote | strip | newline_to_br }}
   </div>
 
-  <!-- Read full button; JS will unhide only if needed -->
   <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 
-  <!-- Meta pinned to the bottom for consistent layout -->
+  {%- comment -%} Meta pinned to bottom for consistent card height {%- endcomment -%}
   <div class="nb-tcard__meta">
-    {%- if avatar -%}
-      <figure class="nb-tcard__avatar">
+    {%- assign has_avatar = avatar != blank -%}
+    <figure class="nb-tcard__avatar" {% unless has_avatar %}data-empty="true"{% endunless %}>
+      {%- if has_avatar -%}
         {{ avatar
           | image_url: width: 96
-          | image_tag: class: 'nb-tcard__avatar-img', alt: name | default: 'Client', loading: 'lazy', sizes: '96px', widths: '96,128' }}
-      </figure>
-    {%- endif -%}
+          | image_tag:
+            class: 'nb-tcard__avatar-img',
+            alt: name,
+            loading: 'lazy',
+            sizes: '96px',
+            widths: '48,64,96,128' }}
+      {%- endif -%}
+    </figure>
+
     <div class="nb-tcard__who">
       {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
       {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
