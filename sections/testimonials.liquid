@@ -270,44 +270,60 @@ Cards use the same design as the Testimonials page.
 .nb-testimonials__dek{ color:#55656c; max-width: 46ch; }
 
 /* ===== Slider mode (scoped to this section) ===== */
-#shopify-section-{{ section.id }} .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
-#shopify-section-{{ section.id }} .nb-tcarousel__track{ display:block; }
+#shopify-section-{{ section.id }} .nb-tcarousel__viewport{
+  position:relative; overflow:hidden;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__track{
+  display:block;
+}
 #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-  display:grid;
+  /* IMPORTANT: fully reset the grid layout from normal grid mode */
+  width: 100%;
+  display: grid;
+  grid-template-columns: none !important;  /* cancel repeat(3, …) from grid mode */
   grid-auto-flow: column;
-  grid-auto-columns: minmax(320px, 1fr);
+  grid-auto-columns: minmax(88%, 1fr);      /* mobile: big comfortable cards */
   gap: 18px;
+
   scroll-snap-type: x mandatory;
-  overflow-x:auto;
+  overflow-x: auto;
   padding: 4px 4px 8px;
   scrollbar-width: none;
 }
 #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
 #shopify-section-{{ section.id }} .nb-tcard{ scroll-snap-align: start; }
 
-/* 1–3 per view depending on width */
+/* 2-up on tablets */
 @media (min-width: 740px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{ grid-auto-columns: minmax(48%, 1fr); }
+  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
+    grid-auto-columns: minmax(48%, 1fr);
+  }
 }
+/* N-up (1–3) on desktop based on the editor setting */
 @media (min-width: 1024px){
   #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-    grid-auto-columns: minmax(calc(100% / {{ per_view }}), 1fr);
+    grid-auto-columns: minmax(calc(100% / {{ section.settings.per_view | default: 3 }}), 1fr);
   }
 }
 
-/* Nav + dots */
+/* Nav + dots (unchanged) */
 #shopify-section-{{ section.id }} .nb-tcarousel__nav{
   display:flex; align-items:center; justify-content:center; gap:14px; margin:12px 0 0;
 }
 #shopify-section-{{ section.id }} .nb-tcarousel__btn{
-  width:42px; height:42px; border-radius:999px; border:1px solid rgba(0,0,0,.08); background:#fff;
-  box-shadow:0 8px 18px rgba(0,0,0,.08); font-size:22px; line-height:1; cursor:pointer;
+  width:42px; height:42px; border-radius:999px;
+  border:1px solid rgba(0,0,0,.08); background:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.08);
+  font-size:22px; line-height:1; cursor:pointer;
 }
 #shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
 #shopify-section-{{ section.id }} .nb-tcarousel__dots{ display:flex; gap:8px; }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots i{ width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block; }
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
+  width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block;
+}
 #shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
 #shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
+
 {% endstylesheet %}
 
 {% schema %}
@@ -355,3 +371,4 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
