@@ -193,40 +193,71 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 
 /* Card */
 .nb-tcard{
-  position:relative;background:#fff;border:1px solid #e8ecef;border-radius:18px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06);padding:20px 20px 16px 22px;
-  display:flex;flex-direction:column;min-height:260px;transition:transform .18s ease, box-shadow .18s ease
+  position:relative;
+  background:#fff;
+  border:1px solid #e8ecef;
+  border-radius:18px;
+  box-shadow:0 10px 22px rgba(0,0,0,.06);
+  padding:18px 20px 16px 22px; /* a bit more breathing room */
+  transition:transform .18s ease, box-shadow .18s ease;
+  font-family: inherit;        /* <- use global theme font */
 }
 .nb-tcard:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(0,0,0,.08)}
 .nb-tcard__accent{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:18px 0 0 18px;background:linear-gradient(180deg,var(--nb-chocolate),color-mix(in oklab,var(--nb-chocolate),#000 14%))}
 .nb-tcard__qmark{position:absolute;left:12px;top:8px;opacity:.14;font-size:30px;line-height:1}
 
-/* Quote (clamped by default) */
+/* Quote */
 .nb-tcard__quote{
-  margin:0 0 10px;font-size:1.05rem;line-height:1.68;letter-spacing:.005em;color:#24292d;
-  display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer
+  margin:0;
+  font-family: inherit;        /* <- use global theme font */
+  font-size:.98rem;            /* slightly smaller on desktop */
+  line-height:1.6;
+  letter-spacing:.005em;
+  color:#24292d;
+  display:-webkit-box;
+  -webkit-line-clamp:9;        /* your clamp */
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
-.nb-tcard__quote p{margin:0 0 .4rem}
 
-/* Fade only when truncated */
-.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
-  content:"";position:absolute;left:22px;right:22px;bottom:92px;height:56px;
-  background:linear-gradient(180deg,rgba(255,255,255,0),#fff 70%);pointer-events:none
+@media (max-width: 680px){
+  .nb-tcard__quote{ font-size:1rem; line-height:1.65; }
+}
+
+/* Give paragraphs some air */
+.nb-tcard__quote p{ margin:0 0 .8rem; }
+.nb-tcard__quote p:last-child{ margin-bottom:0; }
+
+/* Fade only when truncated (unchanged logic) */
+.nb-tcard.has-more:not(.is-open) .nb-tcard__quote:after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:0; height:56px;
+  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 70%);
+  pointer-events:none;
 }
 
 /* Expanded state */
 .nb-tcard.is-open .nb-tcard__quote{-webkit-line-clamp:unset;overflow:visible}
 
-/* Meta pinned to bottom */
+/* Fixed meta area */
 .nb-tcard__meta{
-  margin-top:auto;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:flex-start;
-  min-height:92px;padding-top:12px;border-top:1px solid #eef2f4
+  margin-top:auto;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:12px;
+  align-items:flex-start;
+  min-height:96px;             /* locks bottom area so cards line up */
+  padding-top:10px;
+  border-top:1px solid #eef2f1;
 }
-.nb-tcard__avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;background:#f1f3f2}
-.nb-tcard__avatar-img{width:100%;height:100%;object-fit:cover;display:block}
-.nb-tcard__name{font-weight:800;letter-spacing:.01em;color:#182126;margin-bottom:2px}
-.nb-tcard__title{color:var(--nb-teal,#0C8A7B);font-weight:600;margin-top:2px}
-.nb-tcard__loc{color:#6b777f;font-size:.95rem;margin-top:2px}
+
+.nb-tcard__avatar{ width:52px; height:52px; border-radius:50%; overflow:hidden; background:#f1f3f2; }
+.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.nb-tcard__who{ line-height:1.25; font-family: inherit; }
+.nb-tcard__name{ font-weight:700; letter-spacing:.01em; color:#182126; margin-bottom:2px; }
+.nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
+.nb-tcard__loc{ color:#6b777f; font-size:.95rem; margin-top:2px; }
 
 /* “Read full” button (hidden unless has-more) */
 .nb-tcard__more{
@@ -272,4 +303,5 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
