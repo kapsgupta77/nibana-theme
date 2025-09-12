@@ -2022,7 +2022,7 @@
         "heading": "Testimonials",
         "subheading": "What our client's say",
         "source": "blocks",
-        "limit": 3,
+        "limit": 6,
         "show_filter": false,
         "color_scheme": "scheme-3",
         "padding-block-start": 0,
