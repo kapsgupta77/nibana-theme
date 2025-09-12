@@ -112,6 +112,16 @@
             "tags": "Relationship, Men's Coaching"
           }
         },
+        "testimonial_FhtCY4": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I had big jump in my consciousness development when I attended Kapil men's  coaching circles. Really grateful for encouraging me to go out and be myself",
+            "name": "Marcin",
+            "title": "Business Owner",
+            "location": "London, UK",
+            "tags": "Men's Coaching, Relationships, Transformational Life Coaching"
+          }
+        },
         "testimonial_6ACp9K": {
           "type": "testimonial",
           "settings": {
@@ -184,6 +194,7 @@
         "testimonial_YwHc4e",
         "testimonial_nnrBdg",
         "testimonial_D9Pgik",
+        "testimonial_FhtCY4",
         "testimonial_6ACp9K",
         "testimonial_FMr6nz",
         "testimonial_tFFwpG",
