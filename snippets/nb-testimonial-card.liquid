@@ -1,30 +1,13 @@
-{% comment %}
-Renders a single testimonial card.
-Expects: quote, name, title, location, avatar, tags
-{% endcomment %}
+{%- assign _tags = tags | default: '' | strip -%}
 
-{%- assign _raw = tags | default: '' | strip -%}
-{%- assign _tokens = _raw | split: ',' -%}
-{%- assign _tag_tokens = '' -%}
-{%- for _t in _tokens -%}
-  {%- assign tt = _t | strip | handleize -%}
-  {%- if tt != '' -%}
-    {%- assign _tag_tokens = _tag_tokens | append: tt | append: ' ' -%}
-  {%- endif -%}
-{%- endfor -%}
-
-<article class="nb-tcard" data-tags="{{ _tag_tokens | strip }}">
+<article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
-  <span class="nb-tcard__qmark"  aria-hidden="true"></span>
+  <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  {%- comment -%} Quote (JS detects overflow & shows “Read full”) {%- endcomment -%}
-  <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
+  <div class="nb-tcard__quote">
     {{ quote | strip | newline_to_br }}
   </div>
 
-  <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
-
-  {%- comment -%} Meta pinned to the bottom for consistent card height {%- endcomment -%}
   <div class="nb-tcard__meta">
     {%- if avatar != blank -%}
       <figure class="nb-tcard__avatar">
@@ -35,7 +18,7 @@ Expects: quote, name, title, location, avatar, tags
             alt: name,
             loading: 'lazy',
             sizes: '96px',
-            widths: '48,64,96,128' }}
+            widths: '96,192' }}
       </figure>
     {%- endif -%}
 
