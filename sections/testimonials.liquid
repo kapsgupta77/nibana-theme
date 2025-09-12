@@ -159,99 +159,125 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 {% endjavascript %}
 
 {% stylesheet %}
-/* Container & header */
-.nb-testimonials__container{max-width:var(--page-content-width);margin:0 auto;}
-.nb-testimonials__head{margin:0 0 clamp(8px,1.8vw,16px);}
-.nb-testimonials__dek{color:#516068;margin:0}
+/* ---------- Container & chips ---------- */
+.nb-testimonials__container{
+  max-width: var(--page-width, min(1120px, 92vw));
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 28px);
+}
 
-/* Chips: single-row scroller (no wrapping) */
-.nb-tchips{position:relative;margin:8px 0 16px}
-.nb-tchips__list{display:flex;gap:10px;overflow:auto;padding:6px 8px 8px;list-style:none;margin:0;scrollbar-width:none;flex-wrap:nowrap}
-.nb-tchips__list::-webkit-scrollbar{display:none}
-.nb-tchips::before,.nb-tchips::after{content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none}
-.nb-tchips::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0))}
-.nb-tchips::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0))}
-.nb-chip{display:inline-block;padding:.5rem .75rem;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 12px rgba(0,0,0,.05)}
-.nb-chip.is-active{background:#f6faf9;border-color:rgba(0,0,0,.06);font-weight:600}
+.nb-tchips{ position:relative; margin:8px 0 16px; }
+.nb-tchips__list{
+  display:flex; gap:10px; overflow:auto; padding:6px 8px 8px;
+  list-style:none; margin:0; scrollbar-width:none;
+}
+.nb-tchips__list::-webkit-scrollbar{ display:none; }
+.nb-tchips::before,.nb-tchips::after{
+  content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none;
+}
+.nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
+.nb-tchips::after{  right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
+.nb-chip{
+  display:inline-block; padding:.5rem .75rem; border-radius:999px;
+  background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+.nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
 
-/* Grid */
-/* Grid: 3 cards desktop, 2 on tablet, 1 on mobile */
+/* ---------- Grid (3-up on desktop) ---------- */
 .nb-tgrid{
   display:grid;
-  gap: clamp(14px, 2.2vw, 22px);
+  gap: clamp(16px, 2.6vw, 24px);
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
 }
+@media (max-width: 980px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
-@media (max-width: 1100px){
-  .nb-tgrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 680px){
-  .nb-tgrid{ grid-template-columns: 1fr; }
-}
-
-/* Card */
+/* ---------- Card shell ---------- */
 .nb-tcard{
   position:relative;
+  display:flex;                 /* <-- enables pin-to-bottom meta */
+  flex-direction:column;
   background:#fff;
   border:1px solid #e8ecef;
   border-radius:18px;
   box-shadow:0 10px 22px rgba(0,0,0,.06);
-  padding:18px 20px 16px 22px; /* a bit more breathing room */
-  transition:transform .18s ease, box-shadow .18s ease;
-  font-family: inherit;        /* <- use global theme font */
+  /* inner “margins” for the content */
+  padding: 24px 26px 18px 26px; /* top | sides | bottom */
+  font-family: inherit;         /* use global theme fonts */
 }
-.nb-tcard:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(0,0,0,.08)}
-.nb-tcard__accent{position:absolute;left:-1px;top:-1px;bottom:-1px;width:6px;border-radius:18px 0 0 18px;background:linear-gradient(180deg,var(--nb-chocolate),color-mix(in oklab,var(--nb-chocolate),#000 14%))}
-.nb-tcard__qmark{position:absolute;left:12px;top:8px;opacity:.14;font-size:30px;line-height:1}
+.nb-tcard:hover{ transform:translateY(-1px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
 
-/* Quote */
+/* Accent bar */
+.nb-tcard__accent{
+  position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px;
+  border-radius:18px 0 0 18px;
+  background:linear-gradient(180deg, var(--nb-chocolate,#C86B2A),
+                                   color-mix(in oklab, var(--nb-chocolate,#C86B2A), #000 14%));
+}
+
+/* Decorative open quote */
+.nb-tcard__qmark{
+  position:absolute; left:14px; top:10px; width:22px; height:22px;
+  color:rgba(0,0,0,.10);
+}
+.nb-tcard__qmark::before{ content:"“"; font: inherit; font-size:32px; line-height:1; }
+@media (max-width:740px){ .nb-tcard__qmark{ display:none; } }
+
+/* ---------- Quote body ---------- */
 .nb-tcard__quote{
-  margin:0;
-  font-family: inherit;        /* <- use global theme font */
-  font-size:.98rem;            /* slightly smaller on desktop */
-  line-height:1.6;
-  letter-spacing:.005em;
+  position:relative;
+  margin: 0 0 14px 0;
+  padding-top: 6px;
+  font-family: inherit;
+  font-size: .98rem;             /* slightly smaller for airiness */
+  line-height: 1.62;
+  letter-spacing: .005em;
   color:#24292d;
+
+  /* clamp for equal heights */
   display:-webkit-box;
-  -webkit-line-clamp:9;        /* your clamp */
+  -webkit-line-clamp:9;
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
-
 @media (max-width: 680px){
   .nb-tcard__quote{ font-size:1rem; line-height:1.65; }
 }
-
-/* Give paragraphs some air */
-.nb-tcard__quote p{ margin:0 0 .8rem; }
+.nb-tcard__quote p{ margin:0 0 .85rem; }
 .nb-tcard__quote p:last-child{ margin-bottom:0; }
 
-/* Fade only when truncated (unchanged logic) */
-.nb-tcard.has-more:not(.is-open) .nb-tcard__quote:after{
+/* Fade only when truncated (sits inside the quote area) */
+.nb-tcard.has-more:not(.is-open) .nb-tcard__quote::after{
   content:"";
   position:absolute; left:0; right:0; bottom:0; height:56px;
-  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 70%);
+  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 75%);
   pointer-events:none;
 }
 
-/* Expanded state */
-.nb-tcard.is-open .nb-tcard__quote{-webkit-line-clamp:unset;overflow:visible}
+/* ---------- “Read full” button (only when needed) ---------- */
+.nb-tcard__more{
+  align-self:flex-start;
+  margin: 2px 0 12px;
+  background:#fff; border:1px solid #e9eeee; border-radius:999px;
+  padding:.55rem .9rem; font-size:.94rem; cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,.06);
+}
+.nb-tcard:not(.has-more) .nb-tcard__more{ display:none; }
 
-/* Fixed meta area */
+/* ---------- Fixed meta area at bottom ---------- */
 .nb-tcard__meta{
-  margin-top:auto;
+  margin-top:auto;               /* <-- pins this block to the bottom */
   display:grid;
   grid-template-columns:auto 1fr;
   column-gap:12px;
   align-items:flex-start;
-  min-height:96px;             /* locks bottom area so cards line up */
-  padding-top:10px;
+  min-height:96px;               /* consistent card bottoms */
+  padding-top:12px;
   border-top:1px solid #eef2f1;
 }
 
-.nb-tcard__avatar{ width:52px; height:52px; border-radius:50%; overflow:hidden; background:#f1f3f2; }
+.nb-tcard__avatar{ width:56px; height:56px; border-radius:50%; overflow:hidden; background:#f0f3f2; }
 .nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
 
 .nb-tcard__who{ line-height:1.25; font-family: inherit; }
@@ -259,13 +285,9 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
 .nb-tcard__title{ color: var(--nb-teal, #0C8A7B); font-weight:600; margin-top:2px; }
 .nb-tcard__loc{ color:#6b777f; font-size:.95rem; margin-top:2px; }
 
-/* “Read full” button (hidden unless has-more) */
-.nb-tcard__more{
-  align-self:flex-start;margin:10px 0 6px;background:#fff;border:1px solid #e9eeed;border-radius:999px;
-  padding:.55rem .9rem;font-size:.94rem;cursor:pointer;box-shadow:0 10px 20px rgba(0,0,0,.06)
-}
-.nb-tcard__more:hover{box-shadow:0 14px 26px rgba(0,0,0,.08)}
-.nb-tcard:not(.has-more) .nb-tcard__more{display:none}
+/* ---------- Expanded state ---------- */
+.nb-tcard.is-open .nb-tcard__quote{ -webkit-line-clamp:unset; overflow:visible; }
+.nb-tcard.is-open .nb-tcard__quote::after{ display:none; }
 {% endstylesheet %}
 
 {% schema %}
@@ -303,5 +325,6 @@ Source: Manual blocks (default) or Metaobject `nb_testimonial`
   "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
+
 
 
