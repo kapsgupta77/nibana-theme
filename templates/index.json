@@ -1936,32 +1936,6 @@
     },
     "nb_testimonials_slider_UfNDfY": {
       "type": "nb-testimonials-slider",
-      "blocks": {
-        "testimonial_CVGCyG": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”",
-            "name": "Client name",
-            "title": "Founder",
-            "location": "London, UK",
-            "tags": "-"
-          }
-        },
-        "testimonial_8BEwjg": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”",
-            "name": "Client name",
-            "title": "Founder",
-            "location": "London, UK",
-            "tags": "-"
-          }
-        }
-      },
-      "block_order": [
-        "testimonial_CVGCyG",
-        "testimonial_8BEwjg"
-      ],
       "name": "Testimonials slider",
       "settings": {
         "heading": "Testimonials",
