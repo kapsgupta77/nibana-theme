@@ -3,29 +3,31 @@ Renders a single testimonial card.
 Expects: quote, name, title, location, avatar, tags
 {% endcomment %}
 
-{%- assign _raw_tags = tags | default: '' | strip -%}
+{%- assign _raw = tags | default: '' | strip -%}
+{%- assign _tokens = _raw | split: ',' -%}
 {%- assign _tag_tokens = '' -%}
-{%- for t in _raw_tags | split: ',' -%}
-  {%- assign tt = t | strip | handleize -%}
-  {%- if tt != '' -%}{%- assign _tag_tokens = _tag_tokens | append: tt | append: ' ' -%}{%- endif -%}
+{%- for _t in _tokens -%}
+  {%- assign tt = _t | strip | handleize -%}
+  {%- if tt != '' -%}
+    {%- assign _tag_tokens = _tag_tokens | append: tt | append: ' ' -%}
+  {%- endif -%}
 {%- endfor -%}
 
 <article class="nb-tcard" data-tags="{{ _tag_tokens | strip }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark"  aria-hidden="true"></span>
 
-  {%- comment -%} Quote (JS measures overflow to decide if button shows) {%- endcomment -%}
+  {%- comment -%} Quote (JS detects overflow & shows “Read full”) {%- endcomment -%}
   <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
     {{ quote | strip | newline_to_br }}
   </div>
 
   <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 
-  {%- comment -%} Meta pinned to bottom for consistent card height {%- endcomment -%}
+  {%- comment -%} Meta pinned to the bottom for consistent card height {%- endcomment -%}
   <div class="nb-tcard__meta">
-    {%- assign has_avatar = avatar != blank -%}
-    <figure class="nb-tcard__avatar" {% unless has_avatar %}data-empty="true"{% endunless %}>
-      {%- if has_avatar -%}
+    {%- if avatar != blank -%}
+      <figure class="nb-tcard__avatar">
         {{ avatar
           | image_url: width: 96
           | image_tag:
@@ -34,12 +36,12 @@ Expects: quote, name, title, location, avatar, tags
             loading: 'lazy',
             sizes: '96px',
             widths: '48,64,96,128' }}
-      {%- endif -%}
-    </figure>
+      </figure>
+    {%- endif -%}
 
     <div class="nb-tcard__who">
-      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
-      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
+      {%- if name     != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+      {%- if title    != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
       {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
     </div>
   </div>
