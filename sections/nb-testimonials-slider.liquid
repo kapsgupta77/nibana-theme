@@ -50,6 +50,7 @@ NB – Testimonials Slider (compact carousel)
         {% if mo and mo.values and mo.values.size > 0 %}
           {% for m in mo.values %}
             {% if rendered >= max_items %}{% break %}{% endif %}
+
             {% assign q = m.quote | default: '' %}
             {% assign n = m.name  | default: '' %}
             {% assign tt = m.title | default: '' %}
@@ -67,11 +68,13 @@ NB – Testimonials Slider (compact carousel)
               {% endfor %}
             {% endif %}
 
-            {% if show and (q != '' or n != '') %}
-              <li class="nb-tcarousel__slide" role="listitem">
-                {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-              </li>
-              {% assign rendered = rendered | plus: 1 %}
+            {% if show %}
+              {% if q != '' or n != '' %}
+                <li class="nb-tcarousel__slide" role="listitem">
+                  {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+                </li>
+                {% assign rendered = rendered | plus: 1 %}
+              {% endif %}
             {% endif %}
           {% endfor %}
         {% endif %}
@@ -79,6 +82,7 @@ NB – Testimonials Slider (compact carousel)
       {% else %}
         {% for block in section.blocks %}
           {% if rendered >= max_items %}{% break %}{% endif %}
+
           {% assign q   = block.settings.quote    | default: '' %}
           {% assign n   = block.settings.name     | default: '' %}
           {% assign tt  = block.settings.title    | default: '' %}
@@ -96,11 +100,13 @@ NB – Testimonials Slider (compact carousel)
             {% endfor %}
           {% endif %}
 
-          {% if show and (q != '' or n != '') %}
-            <li class="nb-tcarousel__slide" role="listitem">
-              {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-            </li>
-            {% assign rendered = rendered | plus: 1 %}
+          {% if show %}
+            {% if q != '' or n != '' %}
+              <li class="nb-tcarousel__slide" role="listitem">
+                {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+              </li>
+              {% assign rendered = rendered | plus: 1 %}
+            {% endif %}
           {% endif %}
         {% endfor %}
       {% endif %}
@@ -128,7 +134,6 @@ NB – Testimonials Slider (compact carousel)
 
   if (!viewport || !track) return;
 
-  // Show buttons only if scrollable
   const checkOverflow = () => {
     const overflow = track.scrollWidth > viewport.clientWidth + 8;
     prevBtn.hidden = !overflow;
@@ -156,7 +161,6 @@ NB – Testimonials Slider (compact carousel)
   nextBtn && nextBtn.addEventListener('click', () => scrollBySlide(1));
   track.addEventListener('scroll', updateButtons);
 
-  // Init
   checkOverflow();
   window.addEventListener('resize', checkOverflow);
   window.addEventListener('load', checkOverflow);
@@ -198,7 +202,7 @@ NB – Testimonials Slider (compact carousel)
 
 .nb-tcarousel__slide{
   scroll-snap-align: start;
-  min-width: clamp(300px, 32vw, 380px); /* 3-up on desktop, 2 on tablet, 1 on mobile */
+  min-width: clamp(300px, 32vw, 380px);
 }
 
 /* Edge fades */
@@ -209,7 +213,6 @@ NB – Testimonials Slider (compact carousel)
 .nb-tcarousel__fade--right{ right:0; background:linear-gradient(270deg, var(--color-background, #fff), rgba(255,255,255,0)); }
 
 /* ------------ Compact quote for slider ------------ */
-/* In the slider we clamp the quote so slides don't grow awkwardly */
 .nb-tcarousel .nb-tcard__quote{
   display:-webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6;
   overflow:hidden;
