@@ -1,6 +1,6 @@
 {%- comment -%}
 Renders a single testimonial card.
-Expects params: quote, name, title, location, avatar, tags
+Expected params: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
 {%- assign _tags = tags | default: '' | strip -%}
@@ -9,26 +9,24 @@ Expects params: quote, name, title, location, avatar, tags
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  <!-- Quote (click or button toggles full text) -->
-  <div class="nb-tcard__quote" tabindex="0" role="button" aria-label="Read full testimonial">
+  <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
     {{ quote | strip | newline_to_br }}
   </div>
 
   <button type="button" class="nb-tcard__more" data-more hidden>Read full</button>
 
-  <!-- Meta pinned to the bottom for consistent layout -->
   <div class="nb-tcard__meta">
-    {%- if avatar != blank -%}
+    {%- if avatar -%}
       <figure class="nb-tcard__avatar">
         {{ avatar
           | image_url: width: 96
-          | image_tag: class: 'nb-tcard__avatar-img', alt: name, loading: 'lazy', sizes: '96px', widths: '96,144,192' }}
+          | image_tag: class: 'nb-tcard__avatar-img', alt: name | default: 'Client', loading: 'lazy', sizes: '96px', widths: '96,128' }}
       </figure>
     {%- endif -%}
 
     <div class="nb-tcard__who">
-      {%- if name     != blank -%}<div class="nb-tcard__name">{{   name }}</div>{%- endif -%}
-      {%- if title    != blank -%}<div class="nb-tcard__title">{{  title }}</div>{%- endif -%}
+      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
       {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
     </div>
   </div>
