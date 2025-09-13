@@ -1333,6 +1333,21 @@
   </script>
 {%- endif -%}
 
+{%- comment -%} JSON-LD: Service (coaching page) {%- endcomment -%}
+{%- if service and service.title -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "{{ request.origin }}{{ request.path }}#service",
+  "name": {{ (service.hero_heading | default: service.title) | json }},
+  "description": {{ (service.hero_subheading | default: service.method_title | default: shop.name) | json }},
+  "url": {{ request.origin | append: request.path | json }},
+  "provider": { "@id": "{{ request.origin }}/#org" }
+}
+</script>
+{%- endif -%}
+
     <script>
       (function(){
         var root = document.getElementById('nb-faq-{{ section.id }}-svc');
@@ -1359,3 +1374,4 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
