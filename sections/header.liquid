@@ -158,43 +158,6 @@ capture actions
   endif
 %}
 
-<!-- NIBANA — Organization JSON-LD -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": {{ shop.name | json }},
-  {% if settings.logo %}
-  "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
-  {% endif %}
-  "url": {{ request.origin | json }}
-  {% assign sameAs = '' | split: ',' %}
-  {% if settings.social_instagram %}{% assign sameAs = sameAs | push: settings.social_instagram %}{% endif %}
-  {% if settings.social_twitter %}{% assign sameAs = sameAs | push: settings.social_twitter %}{% endif %}
-  {% if settings.social_facebook %}{% assign sameAs = sameAs | push: settings.social_facebook %}{% endif %}
-  {% if settings.social_linkedin %}{% assign sameAs = sameAs | push: settings.social_linkedin %}{% endif %}
-  {% if sameAs.size > 0 %},
-  "sameAs": {{ sameAs | json }}
-  {% endif %}
-}
-</script>
-
-<!-- NIBANA — WebSite JSON-LD (SearchAction) -->
-{% capture nb_search_target %}{{ request.origin }}/search?q={search_term_string}{% endcapture %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "url": {{ request.origin | json }},
-  "name": {{ shop.name | json }},
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {{ nb_search_target | json }},
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-
 <header-component
   id="header-component"
   class="{{ class }}"
@@ -619,6 +582,76 @@ capture actions
       margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
     }
   }
+
+/* === Nibana Header polish =============================== */
+:root{
+  --nb-deep:#0F5B59;            /* brand deep teal */
+  --nb-chocolate:#C86B2A;       /* brand warm accent */
+}
+
+/* 1) Compact, consistent row spacing + subtle divider */
+.header .header__row{
+  /* keep the theme’s spacing system intact, just trim a little */
+  padding-block: clamp(8px, 1.4vw, 14px);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-border), #000 5%);
+}
+
+/* 2) Sticky translucency + soft shadow when engaged */
+@supports (backdrop-filter: blur(2px)){
+  .header[sticky][data-sticky-state='active'],
+  .header:not([transparent]){
+    background: color-mix(in oklab, var(--color-background), #fff 12%);
+    backdrop-filter: saturate(160%) blur(8px);
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  }
+}
+
+/* 3) Primary CTA (right side) — brand-forward, squared-pill */
+.header .nb-cta{
+  --_bg: var(--nb-chocolate);
+  --_fg: #fff;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding: 10px 16px;
+  background: var(--_bg);
+  color: var(--_fg);
+  border: 2px solid var(--_bg);
+  border-radius: 12px;               /* squared-pill */
+  font-weight: 750;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 0 8px 22px rgba(0,0,0,.08);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.header .nb-cta:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(0,0,0,.10);
+}
+
+/* 4) Menu link rhythm + legibility */
+.header .menu-list__link{
+  padding-block: .55rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+/* Optional: when a popover/submenu is open, keep header opaque for contrast */
+.header[transparent]:is(:hover, [data-sticky-state='active']),
+.header[transparent]:has(.header-menu[aria-expanded='true']){
+  --header-logo-display: unset;
+  --header-logo-inverse-display: unset;
+  --header-bg-color: unset;
+}
+
+/* 5) Tiny polish for the columns wrapper (reduce side “floatiness”) */
+.header .header__columns.spacing-style{
+  gap: clamp(8px, 2.2vw, 20px);
+}
+/* === /Nibana Header polish ============================== */
+
 
 {% endstylesheet %}
 
