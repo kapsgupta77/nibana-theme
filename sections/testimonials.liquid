@@ -1,9 +1,9 @@
 {% comment %}
-Testimonials — grid/slider, supports:
-- Manual blocks
-- Metaobject list (nb_testimonial) via section setting
-
-If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
+Testimonials — grid or slider, metaobject or blocks
+- If a metaobject list is provided (settings.mo_list), it is used.
+- Otherwise, falls back to all nb_testimonial metaobjects.
+- Otherwise, falls back to section blocks.
+Relies on snippet: nb-testimonial-card (rich text safe).
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
@@ -19,11 +19,8 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
     assign limit      = section.settings.limit          | default: 12
 
     assign carousel   = section.settings.carousel       | default: false
-    assign per_view   = section.settings.per_view       | default: 3
     assign cta_label  = section.settings.cta_label      | default: 'View all'
     assign cta_link   = section.settings.cta_link       | default: '/pages/testimonial'
-
-    assign tag_bucket = ''
   -%}
 
   <div id="nb-testimonials-{{ section.id }}" class="nb-shell nb-testimonials__container">
@@ -38,28 +35,24 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
       </header>
     {%- endif -%}
 
-    {%- comment -%} ---------- Build cards once ---------- {%- endcomment -%}
+    {%- comment -%} Build cards once {%- endcomment -%}
     {%- capture cards_only -%}
-      {%- assign mo_used = false -%}
-      {%- assign mo_count = 0 -%}
-
       {%- if source == 'metaobject' -%}
-        {%- comment -%}
-          IMPORTANT: some themes can't `size` a metaobject_list directly.
-          We just iterate; if the loop runs at least once, we mark mo_used = true.
-        {%- endcomment -%}
-        {%- for entry in section.settings.mo_list -%}
-          {%- if forloop.index0 < limit -%}
-            {%- assign mo_used = true -%}
-            {%- assign mo_count = mo_count | plus: 1 -%}
+        {%- assign entries = section.settings.mo_list -%}
+        {%- if entries == blank or entries.size == 0 -%}
+          {%- assign entries = shop.metaobjects.nb_testimonial.values -%}
+        {%- endif -%}
 
-            {%- assign q   = entry.quote -%}      {# rich text OK in the card #}
-            {%- assign n   = entry.name | default: '' -%}
-            {%- assign tt  = entry.title | default: '' -%}
-            {%- assign loc = entry.location | default: '' -%}
-            {%- assign av  = entry.avatar -%}
-            {%- assign tg  = entry.tags | join: ',' | default: '' -%}
-
+        {%- if entries and entries.size > 0 -%}
+          {%- for m in entries limit: limit -%}
+            {%- liquid
+              assign q   = m.quote
+              assign n   = m.name     | default: ''
+              assign tt  = m.title    | default: ''
+              assign loc = m.location | default: ''
+              assign av  = m.avatar
+              assign tg  = m.tags | join: ',' | default: ''
+            -%}
             {% render 'nb-testimonial-card',
               quote: q,
               name: n,
@@ -67,12 +60,9 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
               location: loc,
               avatar: av,
               tags: tg %}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
-
-      {%- unless mo_used -%}
-        {%- comment -%} Fall back to manual blocks {%- endcomment -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- else -%}
         {%- for block in section.blocks limit: limit -%}
           {%- assign q   = block.settings.quote    | default: '' -%}
           {%- assign n   = block.settings.name     | default: '' -%}
@@ -82,116 +72,87 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
           {%- assign tg  = block.settings.tags     | default: '' -%}
           {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
         {%- endfor -%}
-      {%- endunless -%}
-    {%- endcapture -%}
-
-
-    {%- comment -%} ---------- Render grid or slider ---------- {%- endcomment -%}
-    {%- capture render_cards -%}
-      {%- if carousel -%}
-        <div class="nb-tcarousel__viewport" data-viewport>
-          <div class="nb-tcarousel__track" data-track>
-            <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
-          </div>
-        </div>
-        <div class="nb-tcarousel__nav" data-nav hidden>
-          <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
-          <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
-          <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
-        </div>
-        {%- if cta_link != blank -%}
-          <div class="nb-tcarousel__cta">
-            <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
-          </div>
-        {%- endif -%}
-      {%- else -%}
-        <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
       {%- endif -%}
     {%- endcapture -%}
 
-    {{ render_cards }}
+    {%- comment -%} Render grid or slider {%- endcomment -%}
+    {%- if carousel -%}
+      <div class="nb-tcarousel__viewport" data-viewport>
+        <div class="nb-tcarousel__track" data-track>
+          <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
+        </div>
+      </div>
+      <div class="nb-tcarousel__nav" data-nav hidden>
+        <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
+        <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
+        <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
+      </div>
+      {%- if cta_link != blank -%}
+        <div class="nb-tcarousel__cta">
+          <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
+    {%- endif -%}
+
   </div>
 </section>
 
 {% javascript %}
 (() => {
-  const sec = document.getElementById('shopify-section-{{ section.id }}');
+  const sec = document.getElementById('nb-testimonials-{{ section.id }}');
   if (!sec) return;
 
-  /* -------- Chips (only if you turn them on elsewhere) -------- */
-  const grid  = sec.querySelector('[data-grid]');
-  const chips = sec.querySelectorAll('[data-chips] .nb-chip');
-  if (grid && chips.length) {
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
-        chip.classList.add('is-active');
-        const f = chip.getAttribute('data-filter');
-        grid.querySelectorAll('.nb-tcard').forEach(card => {
-          const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-          card.hidden = (f !== '*') && ds.indexOf(f) === -1;
-        });
-      });
-    });
-  }
-
-  /* ---------------- Slider wiring ---------------- */
+  // Only wire slider if enabled
   const isCarousel = {{ section.settings.carousel | json }};
   if (!isCarousel) return;
 
-  const nav     = sec.querySelector('[data-nav]');
-  const dotsBox = sec.querySelector('[data-dots]');
-  const prevBtn = sec.querySelector('[data-dir="-1"]');
-  const nextBtn = sec.querySelector('[data-dir="1"]');
+  const scroller  = sec.querySelector('.nb-tcarousel__track [data-grid]'); // real scroller
+  const nav       = sec.querySelector('[data-nav]');
+  const dotsBox   = sec.querySelector('[data-dots]');
+  const prevBtn   = sec.querySelector('[data-dir="-1"]');
+  const nextBtn   = sec.querySelector('[data-dir="1"]');
 
-  // The real scroller is the grid inside the track
-  const scroller = sec.querySelector('.nb-tcarousel__track [data-grid]');
   if (!scroller || !nav || !prevBtn || !nextBtn) return;
 
-  const vw        = () => scroller.clientWidth;
-  const pageCount = () => Math.max(1, Math.ceil(scroller.scrollWidth / vw()));
-  let pages = pageCount();
+  const vw = () => scroller.clientWidth;
+  const pages = () => Math.max(1, Math.ceil(scroller.scrollWidth / vw()));
+  let pageCount = pages();
   let active = 0;
 
   function buildDots(){
     if (!dotsBox) return;
     dotsBox.innerHTML = '';
-    for (let i = 0; i < pages; i++){
+    for (let i=0;i<pageCount;i++){
       const dot = document.createElement('i');
-      if (i === active) dot.classList.add('is-active');
-      dot.addEventListener('click', () => {
-        scroller.scrollTo({ left: i * vw(), behavior: 'smooth' });
-      });
+      if (i===active) dot.classList.add('is-active');
+      dot.addEventListener('click', () => scroller.scrollTo({ left: i * vw(), behavior: 'smooth' }));
       dotsBox.appendChild(dot);
     }
   }
 
   function update(){
     active = Math.round(scroller.scrollLeft / vw());
-    dotsBox?.querySelectorAll('i')?.forEach((d, i) => d.classList.toggle('is-active', i === active));
-    // hide nav if not needed
-    nav.hidden = pages <= 1 || scroller.scrollWidth <= scroller.clientWidth + 2;
+    dotsBox?.querySelectorAll('i').forEach((d,i) => d.classList.toggle('is-active', i===active));
+    nav.hidden = pageCount <= 1;
     prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pages - 1;
+    nextBtn.disabled = active >= pageCount - 1;
   }
 
-  prevBtn.addEventListener('click', () => {
-    scroller.scrollBy({ left: -vw(), behavior: 'smooth' });
-  });
-  nextBtn.addEventListener('click', () => {
-    scroller.scrollBy({ left:  vw(), behavior: 'smooth' });
-  });
+  prevBtn.addEventListener('click', () => scroller.scrollBy({ left: -vw(), behavior: 'smooth' }));
+  nextBtn.addEventListener('click', () => scroller.scrollBy({ left:  vw(), behavior: 'smooth' }));
 
   const ro = new ResizeObserver(() => {
-    const p = pageCount();
-    if (p !== pages){ pages = p; buildDots(); }
+    const p = pages();
+    if (p !== pageCount){ pageCount = p; buildDots(); }
     update();
   });
   ro.observe(scroller);
 
   buildDots();
   update();
-  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive:true });
 })();
 {% endjavascript %}
 
@@ -201,118 +162,73 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 
 /* Header */
 .nb-testimonials__head{ margin: 0 0 clamp(10px, 2vw, 18px); text-align:center; }
-.nb-testimonials__title{ margin:0 0 6px; color: var(--nb-ink, #1F2C2A); }
-.nb-testimonials__dek{ margin:0 auto; color:#55656c; max-width:46ch; }
+.nb-testimonials__title{ margin:0 0 6px; }
+.nb-testimonials__dek{ margin:0; color:#54636a; }
 
-/* Grid layout (non-slider) */
+/* Grid mode (3/2/1) */
 .nb-tgrid{ display:grid; gap: clamp(16px, 2.2vw, 26px); align-items: stretch; }
 @media (min-width: 960px){ .nb-tgrid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (min-width: 720px) and (max-width: 959.98px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 719.98px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
-/* Card (same as page) */
-.nb-tcard{
-  --t-quote-lines: 10;
-  position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06);
-  padding: clamp(18px, 2.2vw, 24px) clamp(18px, 2.4vw, 28px) clamp(14px, 2vw, 18px) clamp(20px, 2.6vw, 30px);
-  transition:transform .18s ease, box-shadow .18s ease;
-  display:flex; flex-direction:column;
-}
-.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
-.nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px; background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
-.nb-tcard__qmark{ position:absolute; left:14px; top:10px; color:#e3e7e6; font-size:22px; line-height:1; }
+/* Slider layout overrides */
+#nb-testimonials-{{ section.id }} .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
+#nb-testimonials-{{ section.id }} .nb-tcarousel__track{ display:block; }
 
-/* Quote: scroll when overflow */
-.nb-tcard__quote{
-  margin: 0 2px 12px 2px;
-  font: inherit;
-  font-size: 0.98rem;
-  line-height: 1.66;
-  color: #24292d;
-  max-height: calc(var(--t-quote-lines) * 1.66em);
-  overflow: auto;
-}
-.nb-tcard__quote p{ margin:0; }
-.nb-tcard__quote::-webkit-scrollbar{ width:8px; }
-.nb-tcard__quote::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.12); border-radius:8px; }
-.nb-tcard__quote{ scrollbar-width:thin; scrollbar-color: rgba(0,0,0,.18) transparent; }
-
-/* Fixed meta area pinned to bottom */
-.nb-tcard__meta{
-  margin-top:auto; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center;
-  min-height:88px; padding-top:12px; border-top:1px solid #eef2f3;
-}
-.nb-tcard__avatar{ width:52px; height:52px; border-radius:50%; overflow:hidden; background:#f3f5f4; display:none; }
-.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
-.nb-tcard__who{ line-height:1.28; }
-.nb-tcard__name{ font-weight:800; letter-spacing:.1px; color:#182126; margin-bottom:2px; }
-.nb-tcard__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
-.nb-tcard__loc{ color:#6b7b86; font-size:.95rem; margin-top:1px; }
-
-/* ----- Slider mode styles ----- */
-#shopify-section-{{ section.id }} .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
-#shopify-section-{{ section.id }} .nb-tcarousel__track{ display:block; }
-#shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
+/* Force horizontal card flow when slider is ON */
+#nb-testimonials-{{ section.id }} .nb-tcarousel__track [data-grid]{
   width:100%;
   display:grid;
-  grid-template-columns:none !important;
-  grid-auto-flow:column;
-  grid-auto-columns:minmax(88%, 1fr);
+  grid-template-columns: none !important;  /* cancel normal grid columns */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(88%, 1fr);     /* mobile */
   gap:18px;
-  scroll-snap-type:x mandatory;
+  scroll-snap-type: x mandatory;
   overflow-x:auto;
-  padding:4px 4px 8px;
-  scrollbar-width:none;
+  padding: 4px 4px 8px;
+  scrollbar-width: none;
 }
-#shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
-#shopify-section-{{ section.id }} .nb-tcard{ scroll-snap-align:start; }
+#nb-testimonials-{{ section.id }} .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
+#nb-testimonials-{{ section.id }} .nb-tcard{ scroll-snap-align:start; }
 
+/* 2-up on tablets */
 @media (min-width: 740px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(48%, 1fr); }
+  #nb-testimonials-{{ section.id }} .nb-tcarousel__track [data-grid]{ grid-auto-columns: minmax(48%, 1fr); }
 }
+/* N-up on desktop from control */
 @media (min-width: 1024px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-    grid-auto-columns:minmax(calc(100% / {{ section.settings.per_view | default: 3 }}), 1fr);
+  #nb-testimonials-{{ section.id }} .nb-tcarousel__track [data-grid]{
+    grid-auto-columns: minmax(calc(100% / {{ section.settings.per_view | default: 3 }}), 1fr);
   }
 }
 
 /* Nav + dots */
-#shopify-section-{{ section.id }} .nb-tcarousel__nav{
+#nb-testimonials-{{ section.id }} .nb-tcarousel__nav{
   display:flex; align-items:center; justify-content:center; gap:14px; margin:12px 0 0;
 }
-#shopify-section-{{ section.id }} .nb-tcarousel__btn{
+#nb-testimonials-{{ section.id }} .nb-tcarousel__btn{
   width:42px; height:42px; border-radius:999px;
   border:1px solid rgba(0,0,0,.08); background:#fff;
   box-shadow:0 8px 18px rgba(0,0,0,.08);
   font-size:22px; line-height:1; cursor:pointer;
 }
-#shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots{ display:flex; gap:8px; }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
+#nb-testimonials-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
+#nb-testimonials-{{ section.id }} .nb-tcarousel__dots{ display:flex; gap:8px; }
+#nb-testimonials-{{ section.id }} .nb-tcarousel__dots i{
   width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block;
 }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+#nb-testimonials-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
 
-/* Teal CTA */
-#shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
-#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta{
+/* CTA in teal */
+#nb-testimonials-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
+#nb-testimonials-{{ section.id }} .nb-tcarousel__cta .nb-cta{
   background: var(--nb_teal, #0C8A7B) !important;
   color:#fff !important;
   border-color: transparent !important;
 }
-#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
+#nb-testimonials-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
   background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
 }
-
-/* Flatten theme panels inside this section */
-#shopify-section-{{ section.id }} .nb-testimonials__container > * {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  padding: 0 !important;
-}
-
 {% endstylesheet %}
 
 {% schema %}
@@ -325,25 +241,17 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 
     { "type": "select", "id": "source", "label": "Source", "options": [
       { "value": "blocks", "label": "Manual (blocks)" },
-      { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
-    ], "default": "blocks" },
+      { "value": "metaobject", "label": "Metaobject: NB Testimonial" }
+    ], "default": "metaobject" },
 
-    { "type": "metaobject_list", "id": "mo_list", "label": "Testimonials (metaobject list)", "metaobject_type": "nb_testimonial" },
+    { "type": "metaobject_list", "id": "mo_list", "label": "Testimonials (metaobject list)", "metaobject_type": "nb_testimonial", "limit": 50 },
 
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 60, "step": 1, "default": 12 },
-    { "type": "checkbox", "id": "show_filter", "label": "Show filter chips", "default": false },
-
-    { "type": "header", "content": "Slider options" },
-    { "type": "checkbox", "id": "carousel", "label": "Show as slider (horizontal scroll)", "default": false },
+    { "type": "checkbox", "id": "carousel", "label": "Show as slider (horizontal scroll)", "default": true },
     { "type": "range", "id": "per_view", "label": "Cards per view (desktop)", "min": 1, "max": 3, "step": 1, "default": 3 },
     { "type": "text", "id": "cta_label", "label": "CTA label", "default": "View all" },
     { "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/testimonial" },
-
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-
-    { "type": "header", "content": "Padding" },
-    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
-    { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
   ],
   "blocks": [
     {
@@ -362,4 +270,3 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
-
