@@ -117,8 +117,8 @@ Cards use the same design as the Testimonials page.
   const sec = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  /* -------- Chips (unchanged) -------- */
-  const grid  = sec.querySelector('[data-grid]');
+  /* ---------- chip filters (unchanged) ---------- */
+  const grid = sec.querySelector('[data-grid]');
   const chips = sec.querySelectorAll('[data-chips] .nb-chip');
   if (grid && chips.length) {
     chips.forEach(chip => {
@@ -134,72 +134,54 @@ Cards use the same design as the Testimonials page.
     });
   }
 
-  /* -------- Slider wiring -------- */
-  const isCarousel = {{ section.settings.carousel | json }};
-  if (!isCarousel) return;
+  /* ---------- slider wiring ---------- */
+  const useCarousel = {{ section.settings.carousel | json }};
+  if (!useCarousel) return;
 
+  // The element that REALLY scrolls is the grid inside the track:
+  const scroller = sec.querySelector('.nb-tcarousel__track [data-grid]') || sec.querySelector('[data-grid]');
   const nav     = sec.querySelector('[data-nav]');
   const dotsBox = sec.querySelector('[data-dots]');
   const prevBtn = sec.querySelector('[data-dir="-1"]');
   const nextBtn = sec.querySelector('[data-dir="1"]');
-
-  // Find the real scroller robustly (the element whose scrollWidth > clientWidth)
-  function findScroller(root){
-    const candidates = root.querySelectorAll('[data-grid], .nb-tcarousel__track, .nb-tcarousel__viewport');
-    for (const el of candidates){
-      const cs = getComputedStyle(el);
-      const overX = cs.overflowX;
-      if ((el.scrollWidth - el.clientWidth) > 2 || overX === 'auto' || overX === 'scroll') return el;
-    }
-    return null;
-  }
-  const scroller = findScroller(sec);
   if (!scroller || !nav || !prevBtn || !nextBtn) return;
 
-  const vw        = () => scroller.clientWidth;
-  const pageCount = () => Math.max(1, Math.ceil(scroller.scrollWidth / vw()));
-  let pages = pageCount();
+  // helper values
+  const vw   = () => scroller.clientWidth;
+  const pages = () => Math.max(1, Math.ceil(scroller.scrollWidth / vw()));
+  let pageCount = pages();
   let active = 0;
 
   function buildDots(){
     if (!dotsBox) return;
     dotsBox.innerHTML = '';
-    for (let i = 0; i < pages; i++){
+    for (let i = 0; i < pageCount; i++){
       const dot = document.createElement('i');
       if (i === active) dot.classList.add('is-active');
-      dot.addEventListener('click', () => {
-        scroller.scrollTo({ left: i * vw(), behavior: 'smooth' });
-      });
+      dot.addEventListener('click', () => scroller.scrollTo({ left: i * vw(), behavior: 'smooth' }));
       dotsBox.appendChild(dot);
     }
   }
 
   function update(){
+    // nothing to slide? hide nav
+    pageCount = pages();
+    nav.hidden = pageCount <= 1;
+
     active = Math.round(scroller.scrollLeft / vw());
-    const dots = dotsBox?.querySelectorAll('i') || [];
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
-    nav.hidden = pages <= 1;
+    dotsBox?.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
     prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pages - 1;
+    nextBtn.disabled = active >= pageCount - 1;
   }
 
-  prevBtn.addEventListener('click', () => {
-    scroller.scrollBy({ left: -vw(), behavior: 'smooth' });
-  });
-  nextBtn.addEventListener('click', () => {
-    scroller.scrollBy({ left:  vw(), behavior: 'smooth' });
-  });
+  prevBtn.addEventListener('click', () => scroller.scrollBy({ left: -vw(), behavior: 'smooth' }));
+  nextBtn.addEventListener('click', () => scroller.scrollBy({ left:  vw(), behavior: 'smooth' }));
 
-  const ro = new ResizeObserver(() => {
-    const p = pageCount();
-    if (p !== pages){ pages = p; buildDots(); }
-    update();
-  });
-  ro.observe(scroller);
+  new ResizeObserver(update).observe(scroller);
+  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive:true });
 
   buildDots();
   update();
-  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 })();
 {% endjavascript %}
 
@@ -425,6 +407,7 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
 
