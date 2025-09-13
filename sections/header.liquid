@@ -586,6 +586,24 @@ capture actions
     }
   }
 
+/* === NB: Desktop mega overlay (no pointer events → no flicker) === */
+@media (min-width: 990px){
+  #MainContent::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    /* subtle, not a heavy blackout */
+    background: rgba(17, 24, 24, .24);
+    opacity: 0;
+    transition: opacity .16s ease;
+    /* <<< critical: don't intercept the cursor */
+    pointer-events: none;
+    z-index: var(--z-header-overlay, 20);
+  }
+  /* toggled by JS (see header-menu.js) */
+  html.nb-mega-open #MainContent::before{ opacity: 1; }
+}
+
 /* === Nibana Header polish =============================== */
 :root{
   --nb-deep:#0F5B59;            /* brand deep teal */
@@ -725,6 +743,28 @@ body.nb-menu-open .nb-menu-scrim{ opacity: 1; visibility: visible; }
   background: currentColor; opacity: .65;
 }
 /* === /Nibana — Menu tray + scrim + affordances =============== */
+
+/* === NB: Mega panel sizing & tidying (desktop) === */
+@media (min-width: 990px){
+  /* the popover/menu container – selector matches Dawn’s header markup */
+  .header [data-header-nav-popover],
+  .header [popover],
+  .header .header__inline-menu .mega-menu__content{
+    max-height: calc(100vh - var(--header-height) - 24px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* typography & spacing polish */
+  .header .list-menu > li > a{
+    padding: 14px 12px;
+    font-weight: 600;
+    letter-spacing: .005em;
+  }
+  .header .mega-menu__content{ padding: 22px 24px; }
+  .header .mega-menu__content li{ margin-bottom: 6px; }
+}
 
 {% endstylesheet %}
 
