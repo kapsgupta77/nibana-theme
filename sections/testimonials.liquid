@@ -331,9 +331,33 @@ Testimonials — grid/slider
       ]
     }
   ],
-  "presets": [{ "name": "Testimonials (grid/slider)" }]
+  "presets": [
+  {
+    "name": "Testimonials (Grid)",
+    "category": "Testimonials",
+    "settings": {
+      "source": "metaobject",
+      "carousel": false,
+      "per_view": 3,
+      "cta_label": "View all",
+      "cta_link": "/pages/testimonial"
+    }
+  },
+  {
+    "name": "Testimonials (Slider)",
+    "category": "Testimonials",
+    "settings": {
+      "source": "metaobject",
+      "carousel": true,
+      "per_view": 3,
+      "cta_label": "View all",
+      "cta_link": "/pages/testimonial"
+    }
+  }
+]
 }
 {% endschema %}
+
 
 
 
