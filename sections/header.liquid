@@ -240,9 +240,6 @@ capture actions
   {% endif %}
 </header-component>
 
-<!-- NB: page scrim behind open menus -->
-<div id="nb-menu-scrim" class="nb-menu-scrim" hidden></div>
-
 <script
   src="{{ 'header.js' | asset_url }}"
   type="module"
@@ -674,18 +671,6 @@ capture actions
 /* === /Nibana Header polish ============================== */
 
 /* === Nibana — Menu tray + scrim + affordances ================== */
-
-/* 2.1 Scrim (full-page) */
-.nb-menu-scrim{
-  position: fixed;
-  inset: 0;
-  background: rgba(16,20,19,.35);
-  backdrop-filter: saturate(140%) blur(3px);
-  opacity: 0; visibility: hidden;
-  transition: opacity .18s ease, visibility .18s ease;
-  z-index: var(--layer-overlay);
-}
-body.nb-menu-open .nb-menu-scrim{ opacity: 1; visibility: visible; }
 
 /* 2.2 Mega-menu tray styles (card-like) */
 .header-menu .mega-menu{
