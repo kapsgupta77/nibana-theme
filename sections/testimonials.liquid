@@ -34,13 +34,6 @@ Cards use the same design as the Testimonials page.
           <p class="nb-testimonials__dek">{{ sub }}</p>
         {%- endif -%}
       </header>
-
-{% assign entries = shop.metaobjects.nb_testimonial.values %}
-<!-- nb_testimonial quick count: {{ entries.size }} -->
-<ul style="display:none">
-  {% for e in entries %}<li>{{ e.name }} — {{ e.title }}</li>{% endfor %}
-</ul>
-
     {%- endif -%}
 
     {%- comment -%} Build cards once {%- endcomment -%}
@@ -444,6 +437,7 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
 
