@@ -583,62 +583,67 @@ body:has(> #header-group > header-component) {
     }
   }
 
-/* === PATCH — dim page content only (keep header + submenu crisp) === */
+/* === NB PATCH — keep submenu crisp, dim page only, remove dark mega bar === */
 @media (min-width: 990px){
-  /* 1) The dimmer (below header) */
+  /* 1) Dimmer lives under the header */
   #MainContent::before{
     content:"";
     position: fixed;
     top: var(--header-height, 64px);
     left: 0; right: 0; bottom: 0;
-    /* lighter, no blur */
-    background: rgba(17, 24, 24, .16);
+    background: rgba(17,24,24,.16);  /* no blur */
     opacity: 0;
     transition: opacity .16s ease;
-    pointer-events: none;          /* never intercept cursor */
-    z-index: 30;                   /* sits under header/popover */
+    pointer-events: none;            /* never capture cursor */
+    z-index: 30;                     /* sits below header & submenu */
   }
   html.nb-mega-open #MainContent::before{ opacity: 1; }
 
-  /* 2) Lift your custom header element above the scrim */
+  /* 2) Lift header + submenu above the dimmer */
   #header-group,
   #shopify-section-header,
   header-component,
   header-component .header{
     position: relative;
-    z-index: 100;                  /* above 30 */
+    z-index: 100;
   }
-
-  /* 3) Ensure the Services popover + content are always on top */
   header-component .header__inline-menu,
-  header-component .mega-menu__content,
+  header-component .header__submenu,
   header-component .mega-menu,
+  header-component .mega-menu__content,
   [data-header-nav-popover]{
     position: relative;
-    z-index: 120;                  /* above header */
+    z-index: 120;
   }
 
-  /* 4) Nuke any theme backdrops/panels (we provide our own white card) */
-  /* Popover API / parts */
-  [data-header-nav-popover],
-  [data-header-nav-popover] .popover,
-  [data-header-nav-popover]::part(overlay),
-  [data-header-nav-popover]::part(content){
+  /* 3) Nuke any popover/overlay blur or backdrop the theme injects */
+  html.nb-mega-open [data-header-nav-popover]::backdrop,
+  html.nb-mega-open [popover]::backdrop,
+  html.nb-mega-open dialog[popover]::backdrop,
+  html.nb-mega-open [data-header-nav-popover]::part(overlay),
+  html.nb-mega-open [data-header-nav-popover]::part(backdrop),
+  html.nb-mega-open header-component .popover,
+  html.nb-mega-open header-component .popover__overlay{
     background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
   }
-  [data-header-nav-popover]::backdrop{ background: transparent !important; }
 
-  /* Dawn wide dark mega container */
-  header-component .header__inline-menu{ background: transparent !important; }
-  header-component .mega-menu__content{
+  /* 4) Remove the dark mega strap behind the white card (and any pseudo-els) */
+  html.nb-mega-open header-component .header__submenu,
+  html.nb-mega-open header-component .header__submenu::before,
+  html.nb-mega-open header-component .header__inline-menu::after,
+  html.nb-mega-open header-component .mega-menu,
+  html.nb-mega-open header-component .mega-menu::before,
+  html.nb-mega-open header-component .mega-menu__content,
+  html.nb-mega-open header-component .mega-menu__content::before{
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
   }
 }
-/* === /PATCH ======================================================== */
+/* === /PATCH =============================================================== */
 
 /* === Nav link polish + services list hover === */
 .header [data-nav="top"] a:hover,
