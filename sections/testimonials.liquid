@@ -39,21 +39,30 @@ Cards use the same design as the Testimonials page.
     {%- comment -%} Build cards once {%- endcomment -%}
 {%- capture cards_only -%}
   {%- if source == 'metaobject' -%}
-    {%- assign list = shop.metaobjects['nb_testimonial'].values -%}
-    {%- if list and list.size > 0 -%}
-      {%- for m in list limit: limit -%}
-        {%- assign q   = m.quote    | default: '' -%}
-        {%- assign n   = m.name     | default: '' -%}
-        {%- assign tt  = m.title    | default: '' -%}
-        {%- assign loc = m.location | default: '' -%}
-        {%- assign av  = m.avatar -%}
-        {%- assign tg  = m.tags | join: ',' | default: '' -%}
-
-        {% render 'nb-testimonial-card',
-          quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-      {%- endfor -%}
-    {%- endif -%}
+  {%- assign entries = shop.metaobjects.nb_testimonial.values -%}
+  {%- if entries and entries.size > 0 -%}
+    {%- for m in entries limit: limit -%}
+      {%- liquid
+        # NB: m.quote is a Rich text field; flatten it to plain text so the card can render it
+        assign q  = m.quote | metafield_text | default: ''
+        assign n  = m.name  | default: ''
+        assign tt = m.title | default: ''
+        assign loc = m.location | default: ''
+        assign av  = m.avatar
+        assign tg  = m.tags | join: ',' | default: ''
+      -%}
+      {% render 'nb-testimonial-card',
+        quote: q,
+        name: n,
+        title: tt,
+        location: loc,
+        avatar: av,
+        tags: tg %}
+    {%- endfor -%}
   {%- else -%}
+    <!-- nb_testimonial: 0 entries found -->
+  {%- endif -%}
+{%- else -%}
     {%- for block in section.blocks limit: limit -%}
       {%- assign q   = block.settings.quote    | default: '' -%}
       {%- assign n   = block.settings.name     | default: '' -%}
@@ -431,6 +440,7 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
 
