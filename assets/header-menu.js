@@ -195,7 +195,7 @@ if (!customElements.get('header-menu')) {
 function findMenuItem(element) {
   if (!(element instanceof Element)) return null;
 
-  if (element?.matches('[slot="more"')) {
+  if (element?.matches('[slot="more"]')) {
     // Select the first overflowing menu item when hovering over the "More" item
     return findMenuItem(element.parentElement?.querySelector('[slot="overflow"]'));
   }
