@@ -886,6 +886,40 @@ body:has(> #header-group > header-component) {
   box-shadow:0 18px 46px rgba(0,0,0,.14);
 }
 
+/* === NB: Kill the full-width mega band; keep only the white card === */
+
+/* 1) Submenu wrappers that span the whole width */
+header-menu .menu__list__submenu,
+header-menu .menu__list__submenu-inner,
+header-menu [ref="submenu[]"]{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* Some themes add a “tint” with pseudo-elements */
+header-menu .menu__list__submenu::before,
+header-menu .menu__list__submenu::after,
+header-menu .menu__list__submenu-inner::before,
+header-menu .menu__list__submenu-inner::after{
+  display: none !important;
+  content: none !important;
+}
+
+/* 2) If the overflow-list shadow DOM paints a background, force it off */
+header-menu .overflow-menu::part(overflow){
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  backdrop-filter: none !important;
+}
+
+/* 3) Make sure the white “card” still looks crisp (your existing styles create it).
+      This just guards against scheme classes leaking into it. */
+header-menu .nb-services-flyout{
+  background: #fff !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
