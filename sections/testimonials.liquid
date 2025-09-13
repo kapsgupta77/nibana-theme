@@ -53,7 +53,7 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
             {%- assign mo_used = true -%}
             {%- assign mo_count = mo_count | plus: 1 -%}
 
-            {%- assign q   = entry.quote -%}      {# rich text OK in the card #}
+            {%- assign q   = entry.quote -%}  
             {%- assign n   = entry.name | default: '' -%}
             {%- assign tt  = entry.title | default: '' -%}
             {%- assign loc = entry.location | default: '' -%}
@@ -362,3 +362,4 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
