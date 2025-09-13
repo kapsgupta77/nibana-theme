@@ -718,6 +718,17 @@ capture actions
   opacity: 1;
 }
 
+/* Hide carets for items that don't own a submenu */
+.header .menu-list__link:not([aria-expanded])::after { 
+  content: none !important; 
+}
+
+/* Theme outputs a real .icon-caret node for all items — kill it unless the link is a real panel parent */
+.header .menu-list__link:not(.has-panel) .icon-caret,
+.header .menu-list__link:not(.has-panel) svg.icon-caret {
+  display: none !important;
+}
+
 /* 2.4 Active page underline (subtle, thicker) */
 .menu-list__item[aria-current] > .menu-list__link{ position: relative; }
 .menu-list__item[aria-current] > .menu-list__link::before{
