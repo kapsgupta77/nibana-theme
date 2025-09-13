@@ -673,7 +673,6 @@ body:has(> #header-group > header-component) {
 }
 /* === /Nibana Header polish ============================== */
 
-/* === Nibana — Menu tray + scrim + affordances ================== */
 
 /* === Nibana — Menu tray + scrim + affordances ================== */
 
@@ -851,6 +850,34 @@ body:has(> #header-group > header-component) {
 }
 
 /* Keep the Services card itself white; do NOT set .mega-menu transparent. */
+.header-menu .mega-menu{
+  background:#fff;
+  color:#223238;
+  border:1px solid color-mix(in oklab, var(--color-border), #000 6%);
+  border-radius:14px;
+  box-shadow:0 18px 46px rgba(0,0,0,.14);
+}
+
+/* === NB: Remove the dark full-width "strap" behind the Services card ==== */
+@media (min-width: 990px){
+  /* the strap/wrapper layer */
+  .header__submenu,
+  .header__submenu::before,
+  .header__submenu::after,
+  .mega-menu__content,
+  .header__submenu .header__submenu-content {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* if any rule tries to inject a background inline */
+  .header__submenu[style*="background"] { background: transparent !important; }
+}
+
+/* Keep the Services card itself white (do not touch this) */
 .header-menu .mega-menu{
   background:#fff;
   color:#223238;
