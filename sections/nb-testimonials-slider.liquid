@@ -1,0 +1,353 @@
+{% comment %}
+  Nibana — Testimonials Slider
+  - Uses nb-testimonial-card for each slide
+  - Manual blocks (default) or Metaobject `nb_testimonial`
+  - Arrows + dots appear only when overflow exists
+{% endcomment %}
+
+{%- liquid
+  assign source    = section.settings.source    | default: 'blocks'
+  assign limit     = section.settings.limit     | default: 9
+  assign heading   = section.settings.heading   | default: 'Testimonials'
+  assign sub       = section.settings.subheading| default: 'What our client’s say'
+  assign cta_label = section.settings.cta_label | default: 'View all'
+  assign cta_link  = section.settings.cta_link  | default: '/pages/testimonial'
+-%}
+
+<section id="nb-ts-{{ section.id }}" class="nb-tcarousel tone-pebble">
+  <div class="nb-shell">
+    <header class="section-header">
+       <h2 class="nb-h2 section-header__title">{{ heading }}</h2>
+      {%- if sub != blank and sub != '-' -%}
+        <p class="section-header__subheading">{{ sub }}</p>
+      {%- endif -%}
+    </header>
+
+    <div class="nb-tcarousel__viewport" data-viewport>
+      <div class="nb-tcarousel__track" data-track>
+        {%- if source == 'metaobject' -%}
+          {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+          {%- if mo and mo.values and mo.values.size > 0 -%}
+            {%- for m in mo.values limit: limit -%}
+              {%- assign q = m.quote | default: '' -%}
+              {%- assign n = m.name  | default: '' -%}
+              {%- assign tt = m.title | default: '' -%}
+              {%- assign loc = m.location | default: '' -%}
+              {%- assign av = m.avatar -%}
+              {%- assign tg = m.tags | join: ',' | default: '' -%}
+              <div class="nb-tcarousel__slide" data-slide>
+                {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- for block in section.blocks limit: limit -%}
+            {%- assign q = block.settings.quote | default: '' -%}
+            {%- assign n = block.settings.name  | default: '' -%}
+            {%- assign tt = block.settings.title | default: '' -%}
+            {%- assign loc = block.settings.location | default: '' -%}
+            {%- assign av = block.settings.avatar -%}
+            {%- assign tg = block.settings.tags | default: '' -%}
+            <div class="nb-tcarousel__slide" data-slide>
+              {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="nb-tcarousel__nav" data-nav hidden>
+      <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
+      <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
+      <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
+    </div>
+
+    {%- if cta_link != blank -%}
+    <div class="nb-tcarousel__cta">
+      <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
+    </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  /* Layout + spacing */
+  #nb-ts-{{ section.id }}{ --nib-h2-mb: 10px; }
+ /* Header — match FAQ tone/scale and remove extra top padding */
+#nb-ts-{{ section.id }} .section-header{
+  margin-top: 0;
+  padding-top: 0;
+  text-align: left;
+  margin-bottom: clamp(10px, 1.6vw, 18px);
+}
+#nb-ts-{{ section.id }} .section-header__title{
+  margin: 0 0 var(--nib-h2-mb) !important;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  font-size: clamp(28px, 2.4vw, 36px); /* same visual scale as FAQ */
+}
+#nb-ts-{{ section.id }} .section-header__subheading{
+  margin: 0;
+  font-size: clamp(14px, 1vw, 16px);
+  color: rgba(0,0,0,.68);
+}
+  .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
+  .nb-tcarousel__track{
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns: minmax(320px, 1fr);
+    gap: 18px;
+    scroll-snap-type: x mandatory;
+    overflow-x:auto;
+    padding: 4px 4px 8px;
+    scrollbar-width:none;
+  }
+  .nb-tcarousel__track::-webkit-scrollbar{ display:none; }
+  .nb-tcarousel__slide{ scroll-snap-align:start; }
+  /* 3-up desktop, 1-up phones, 2-up tablets */
+  @media (min-width: 740px){ .nb-tcarousel__track{ grid-auto-columns:minmax(32%, 1fr); } }
+  @media (min-width: 1024px){ .nb-tcarousel__track{ grid-auto-columns:minmax(31.5%, 1fr); } }
+
+  /* Nav + dots */
+  .nb-tcarousel__nav{
+    display:flex; align-items:center; justify-content:center;
+    gap:14px; margin:12px 0 0;
+  }
+  .nb-tcarousel__btn{
+    width:42px; height:42px; border-radius:999px;
+    border:1px solid rgba(0,0,0,.08); background:#fff;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+    font-size:22px; line-height:1; cursor:pointer;
+  }
+  .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
+  .nb-tcarousel__dots{ display:flex; gap:8px; }
+  .nb-tcarousel__dots i{
+    width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block;
+  }
+  .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+
+  .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
+
+  /* Trim extra top padding when used inside a padded panel */
+  .shopify-section:has(#nb-ts-{{ section.id }}) > :not(style):not(script){ padding-top:0 !important; }
+
+/* =========================
+   Header & top spacing overrides (scoped)
+   ========================= */
+
+/* 1) Remove the extra top padding from the section wrapper/panel */
+.section-wrapper.nb-testimonials-slider-wrap { padding-top: 0 !important; }
+.shopify-section:has(#nb-ts-{{ section.id }}) { padding-top: 0 !important; }
+
+/* If your theme wraps content inside a shell/container, zero that too */
+#nb-ts-{{ section.id }} .nb-shell { padding-top: 0 !important; }
+
+/* 2) Make the slider heading match FAQ heading scale/spacing */
+#nb-ts-{{ section.id }} .section-header {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  text-align: left;
+  margin-bottom: clamp(10px, 1.6vw, 18px) !important;
+}
+
+/* Title line-height/size to mirror the FAQ look */
+#nb-ts-{{ section.id }} .section-header__title {
+  line-height: 1.12 !important;
+  letter-spacing: -0.01em !important;
+  font-size: clamp(28px, 2.4vw, 36px) !important; /* visually matches FAQ */
+  margin: 0 0 var(--nib-h2-mb, 12px) !important;
+}
+
+/* Subheading style under the title */
+#nb-ts-{{ section.id }} .section-header__subheading {
+  margin: 0 !important;
+  font-size: clamp(14px, 1vw, 16px) !important;
+  color: rgba(0,0,0,.68) !important;
+}
+
+/* --- Hard-scoped wrapper overrides for this section only --- */
+#shopify-section-{{ section.id }},
+#shopify-section-{{ section.id }} > .section-wrapper,
+#shopify-section-{{ section.id }} [class*="section-wrapper"],
+#shopify-section-{{ section.id }} .tone-pebble,
+#shopify-section-{{ section.id }} .nb-shell {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Match FAQ heading scale/spacing */
+#shopify-section-{{ section.id }} .section-header {
+  margin: 0 0 clamp(10px, 1.6vw, 18px) !important;
+  text-align: left;
+}
+#shopify-section-{{ section.id }} .section-header__title {
+  font-size: clamp(28px, 2.4vw, 36px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 0 12px !important;
+}
+#shopify-section-{{ section.id }} .section-header__subheading {
+  margin: 0 !important;
+  font-size: clamp(14px, 1vw, 16px) !important;
+  color: rgba(0,0,0,.68) !important;
+}
+
+/* Center + brand heading (strongly scoped to this section) */
+#shopify-section-{{ section.id }} .section-header{
+  text-align: center !important;
+  margin: 0 0 clamp(8px, 1.4vw, 16px) !important;
+}
+#shopify-section-{{ section.id }} .section-header__title{
+  color: var(--nb-teal, #0C8A7B) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 0 10px !important;
+}
+#shopify-section-{{ section.id }} .section-header__subheading{
+  margin: 0 !important;
+  color: rgba(0,0,0,.66) !important;
+}
+
+/* Nav row: arrows left/right, dots centered beneath the cards */
+#shopify-section-{{ section.id }} .nb-tcarousel__nav{
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 0;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__btn{
+  width: 42px; height: 42px; border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.08); background: #fff;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity: .4; cursor: not-allowed; }
+
+#shopify-section-{{ section.id }} .nb-tcarousel__dots{
+  display: flex; justify-content: center; gap: 8px;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
+  width: 7px; height: 7px; border-radius: 999px; background: #cfd6d2;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+
+/* Improve scroll feel */
+#shopify-section-{{ section.id }} .nb-tcarousel__track{
+  scroll-behavior: smooth;
+}
+
+
+{% endstylesheet %}
+
+{% javascript %}
+(() => {
+  const sec   = document.getElementById('nb-ts-{{ section.id }}');
+  if (!sec) return;
+
+  const viewport = sec.querySelector('[data-viewport]');
+  const track    = sec.querySelector('[data-track]');
+  const slides   = Array.from(sec.querySelectorAll('[data-slide]'));
+  const nav      = sec.querySelector('[data-nav]');
+  const dotsBox  = sec.querySelector('[data-dots]');
+  const prevBtn  = sec.querySelector('[data-dir="-1"]');
+  const nextBtn  = sec.querySelector('[data-dir="1"]');
+
+  if (!slides.length || !viewport || !track || !nav) return;
+
+  // Robust page detection: compare total scrollable width vs viewport
+  const pages = () => Math.max(1, Math.ceil(track.scrollWidth / viewport.clientWidth));
+
+  let pageCount = pages();
+  let active = 0;
+
+  function buildDots(){
+    if (!dotsBox) return;
+    dotsBox.innerHTML = '';
+    for (let i = 0; i < pageCount; i++) {
+      const dot = document.createElement('i');
+      if (i === active) dot.classList.add('is-active');
+      dotsBox.appendChild(dot);
+      dot.addEventListener('click', () => {
+        viewport.scrollTo({ left: i * viewport.clientWidth, behavior: 'smooth' });
+      });
+    }
+  }
+
+  function update(){
+    active = Math.round(viewport.scrollLeft / viewport.clientWidth);
+
+    // show nav only when there is horizontal overflow
+    const hasOverflow = track.scrollWidth > viewport.clientWidth + 2;
+    nav.hidden = !hasOverflow;
+
+    if (dotsBox){
+      dotsBox.querySelectorAll('i').forEach((d, i) => {
+        d.classList.toggle('is-active', i === active);
+      });
+    }
+    if (prevBtn && nextBtn){
+      prevBtn.disabled = active <= 0;
+      nextBtn.disabled = active >= pageCount - 1;
+    }
+  }
+
+  // Buttons
+  prevBtn?.addEventListener('click', () => {
+    viewport.scrollBy({ left: -viewport.clientWidth, behavior: 'smooth' });
+  });
+  nextBtn?.addEventListener('click', () => {
+    viewport.scrollBy({ left: viewport.clientWidth, behavior: 'smooth' });
+  });
+
+  // Recalculate on resize
+  const ro = new ResizeObserver(() => {
+    const p = pages();
+    if (p !== pageCount) {
+      pageCount = p;
+      buildDots();
+    }
+    update();
+  });
+  ro.observe(viewport);
+
+  // Init
+  pageCount = pages();
+  buildDots();
+  update();
+  viewport.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Testimonials slider",
+  "class": "section-wrapper nb-testimonials-slider-wrap",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Testimonials" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "What our client’s say" },
+    { "type": "select", "id": "source", "label": "Source", "options": [
+      { "value": "blocks", "label": "Manual (blocks)" },
+      { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
+    ], "default": "blocks" },
+    { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 24, "step": 1, "default": 9 },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "View all" },
+    { "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/testimonial" }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Client name" },
+        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "Founder" },
+        { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
+        { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
+        { "type": "text", "id": "tags", "label": "Tags (optional)", "default": "-" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Testimonials slider" }]
+}
+{% endschema %}

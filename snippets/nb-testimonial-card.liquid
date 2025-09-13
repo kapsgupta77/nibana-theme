@@ -1,0 +1,49 @@
+{%- comment -%}
+Renders one testimonial card.
+Params expected: quote, name, title, location, avatar, tags
+
+Notes:
+- If `quote` is a metaobject rich_text (has `.value`), we render it with `metafield_tag`.
+- If `quote` is plain text (from blocks), we escape + keep line breaks.
+{%- endcomment -%}
+
+{%- assign _tags = tags | default: '' | strip -%}
+
+{%- capture __quote_html -%}
+  {%- if quote and quote.value -%}
+    {{ quote | metafield_tag }}
+  {%- else -%}
+    {{ quote | to_string | strip | escape | newline_to_br }}
+  {%- endif -%}
+{%- endcapture -%}
+
+<article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
+  <span class="nb-tcard__accent" aria-hidden="true"></span>
+  <span class="nb-tcard__qmark" aria-hidden="true">“</span>
+
+  {%- if __quote_html != blank -%}
+    <div class="nb-tcard__quote rte" aria-label="Testimonial quote" data-q>
+      {{ __quote_html }}
+    </div>
+  {%- endif -%}
+
+  <div class="nb-tcard__meta">
+    {%- if avatar != blank -%}
+      <figure class="nb-tcard__avatar">
+        {{ avatar
+          | image_url: width: 96
+          | image_tag:
+              class: 'nb-tcard__avatar-img',
+              alt: name | default: 'Testimonial avatar',
+              loading: 'lazy',
+              sizes: '96px',
+              widths: '48,64,96' }}
+      </figure>
+    {%- endif -%}
+    <div class="nb-tcard__who">
+      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
+      {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
+    </div>
+  </div>
+</article>
