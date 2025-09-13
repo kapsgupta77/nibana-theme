@@ -583,21 +583,43 @@ capture actions
     }
   }
 
-/* === Desktop mega overlay — dim the page content only (not the header) === */
+/* === Desktop mega overlay — dim page content only (keep header + submenu bright) === */
 @media (min-width: 990px){
+  /* 1) The dimmer */
   #MainContent::before{
     content:"";
     position: fixed;
-    top: var(--header-group-height, 64px); /* sits below the header */
+    top: var(--header-group-height, 64px); /* sit below the header */
     left: 0; right: 0; bottom: 0;
-    background: rgba(23,33,37,.46);
+
+    /* gentle dim + tiny blur so the hero softens */
+    background: rgba(17, 24, 24, .28);
     backdrop-filter: saturate(120%) blur(2px);
+
     opacity: 0;
     transition: opacity .16s ease;
-    pointer-events: none;               /* no flicker / no blocking */
-    z-index: 30;                        /* below header popovers */
+    pointer-events: none;              /* don't intercept cursor */
+    z-index: 20;                       /* BELOW header & submenu */
   }
   html.nb-mega-open #MainContent::before{ opacity: 1; }
+
+  /* 2) Ensure header + popovers stack ABOVE the dimmer */
+  #header-group,
+  #shopify-section-header,
+  header{ position: relative; z-index: 60; }
+
+  /* 3) Ensure the popover panel and its contents are above + transparent */
+  header [popover],
+  header .mega-menu{
+    position: relative;
+    z-index: 70;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+
+  /* 4) If you used the “narrow” card container, keep it above everything */
+  .nb-services-card{ position: relative; z-index: 80; }
 }
 
 /* === Make Shopify's mega container transparent (we use our own card) === */
