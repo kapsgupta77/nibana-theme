@@ -1,220 +1,264 @@
-{% comment %}
-Testimonials — page grid with optional filter chips
-Source: Manual blocks (default) or Metaobject `nb_testimonial`
-{% endcomment %}
+{% comment %} testimonials.liquid - Section file {% endcomment %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+<style>
+  /* ===== NIBANA — Testimonials ===== */
 
-<section class="nb-testimonials tone-pebble">
-  {%- liquid
-    assign source      = section.settings.source      | default: 'blocks'
-    assign limit       = section.settings.limit       | default: 12
-    assign heading     = section.settings.heading     | default: 'What our clients say'
-    assign sub_raw     = section.settings.subheading  | default: '-'
-    assign show_chips  = section.settings.show_filter | default: true
+  /* Panel: soft tint, rounded, shadow, consistent rhythm */
+  .testimonial-section{
+    --brand-teal: #0f5b62;
+    --tint: #e8f4f2;              /* matches Mission / Contact vibe */
+    --panel-radius: 20px;
 
-    assign sub = sub_raw | strip
-  -%}
-
-  <div class="nb-shell nb-testimonials__container">
-    {%- if heading != blank or sub != '-' and sub != '' -%}
-      <header class="nb-testimonials__head">
-        {%- if heading != blank -%}
-          <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
-        {%- endif -%}
-        {%- if sub != '-' and sub != '' -%}
-          <p class="nb-testimonials__dek">{{ sub }}</p>
-        {%- endif -%}
-      </header>
-    {%- endif -%}
-
-    {%- capture render_cards -%}
-      <div class="nb-tgrid" data-grid>
-        {%- if source == 'metaobject' -%}
-          {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-          {%- if mo and mo.values and mo.values.size > 0 -%}
-            {%- for m in mo.values limit: limit -%}
-              {%- assign q   = m.quote    | default: '' -%}
-              {%- assign n   = m.name     | default: '' -%}
-              {%- assign tt  = m.title    | default: '' -%}
-              {%- assign loc = m.location | default: '' -%}
-              {%- assign av  = m.avatar -%}
-              {%- assign tg  = m.tags | join: ',' | default: '' -%}
-              {% render 'nb-testimonial-card',
-                quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-            {%- endfor -%}
-          {%- endif -%}
-        {%- else -%}
-          {%- for block in section.blocks limit: limit -%}
-            {%- assign q   = block.settings.quote    | default: '' -%}
-            {%- assign n   = block.settings.name     | default: '' -%}
-            {%- assign tt  = block.settings.title    | default: '' -%}
-            {%- assign loc = block.settings.location | default: '' -%}
-            {%- assign av  = block.settings.avatar -%}
-            {%- assign tg  = block.settings.tags     | default: '' -%}
-            {% render 'nb-testimonial-card',
-              quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-          {%- endfor -%}
-        {%- endif -%}
-      </div>
-    {%- endcapture -%}
-
-    {%- comment -%} Collect chips from manual blocks (clean + sort). {%- endcomment -%}
-    {%- capture tag_collect -%}
-      {%- for b in section.blocks -%}
-        {%- if b.settings.tags != blank -%}
-          {{- b.settings.tags | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -}}, 
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endcapture -%}
-    {%- assign tags_all = tag_collect | split: ',' | uniq | sort -%}
-    {%- assign tags_clean = '' -%}
-    {%- for t in tags_all -%}
-      {%- assign tt = t | strip -%}
-      {%- if tt != '' -%}{% assign tags_clean = tags_clean | append: tt | append: '||' %}{%- endif -%}
-    {%- endfor -%}
-    {%- assign tags_list = tags_clean | split: '||' -%}
-
-    {%- if show_chips and tags_list.size > 0 -%}
-      <nav class="nb-tchips" aria-label="Filter testimonials by tag" data-root="{{ section.id }}">
-        <ul class="nb-tchips__list" data-chips>
-          <li><button type="button" class="nb-chip is-active" data-filter="*">All</button></li>
-          {%- for t in tags_list -%}
-            <li><button type="button" class="nb-chip" data-filter="{{ t | handleize }}">{{ t }}</button></li>
-          {%- endfor -%}
-        </ul>
-      </nav>
-    {%- endif -%}
-
-    {{ render_cards }}
-  </div>
-</section>
-
-{% javascript %}
-(() => {
-  const root  = document.currentScript.closest('.nb-testimonials');
-  if (!root) return;
-
-  // Filter chips
-  const grid  = root.querySelector('[data-grid]');
-  const chips = root.querySelectorAll('[data-chips] .nb-chip');
-  if (grid && chips.length){
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
-        chip.classList.add('is-active');
-        const f = chip.getAttribute('data-filter');
-        grid.querySelectorAll('.nb-tcard').forEach(card => {
-          if (f === '*'){ card.hidden = false; return; }
-          const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-          card.hidden = ds.indexOf(f) === -1;
-        });
-      });
-    });
+    position: relative;
+    overflow: visible;            /* allow arrows to sit slightly outside */
+    margin-block: clamp(28px, 3.2vw, 48px);
+    padding: clamp(28px, 3.2vw, 44px) clamp(16px, 3vw, 32px);
+    background: var(--tint);
+    border-radius: var(--panel-radius);
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
+    text-align: center;
   }
 
-  // Read more / less
-  root.querySelectorAll('.nb-tcard').forEach(card => {
-    const quote = card.querySelector('[data-q]');
-    const btn   = card.querySelector('[data-more]');
-    if (!quote || !btn) return;
+  /* Heading */
+  .testimonial-section h2{
+    color: var(--brand-teal);
+    font-weight: 800;
+    font-size: clamp(28px, 3.2vw, 44px);
+    line-height: 1.15;
+    margin: 0 0 22px 0;
+  }
 
-    const needsMore = quote.scrollHeight > quote.offsetHeight + 4;
-    if (needsMore) btn.hidden = false;
+ /* Swiper rail — add L/R gutters and keep slides clipped */
+.testimonial-swiper{
+  overflow: hidden;                                /* keep hidden slides hidden */
+  padding: 0 clamp(64px, 7vw, 36px) 24px;          /* <-- gutters + room for dots */
+  position: relative;                              /* anchors arrows */
+}
 
-    btn.addEventListener('click', () => {
-      card.classList.toggle('is-open');
-      btn.textContent = card.classList.contains('is-open') ? 'Show less' : 'Read full';
-    });
+/* Arrows sit inside those gutters (not overlapping cards) */
+.testimonial-section .swiper-button-prev{ left: clamp(16px, 2vw, 28px); }
+.testimonial-section .swiper-button-next{ right: clamp(16px, 2vw, 28px); }
+
+@media (max-width: 1024px){
+  .testimonial-section .swiper-button-prev{ left: 12px; }
+  .testimonial-section .swiper-button-next{ right: 12px; }
+}
+
+  /* Slides and cards */
+  .testimonial-card{
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    text-align: left;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  }
+
+  .testimonial-name{
+    font-weight: 700;
+    color: var(--brand-teal);
+  }
+
+  .testimonial-location{
+    font-size: 14px;
+    color: #4a4a4a;
+    margin-bottom: 6px;
+  }
+
+  .stars{
+    color: var(--brand-teal);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* Keep card heights visually consistent:
+     limit body height and allow scroll inside long quotes */
+  .testimonial-content{
+    font-size: 16px;
+    color: #2b2b2b;
+    line-height: 1.5;
+    max-height: 10.5rem;          /* tune if you want taller cards */
+    overflow-y: auto;
+  }
+
+  /* Pagination dots */
+  .testimonial-section .swiper-pagination{
+    position: relative;
+    bottom: auto;
+    margin-top: 4px;
+  }
+  .testimonial-section .swiper-pagination-bullet{
+    background: rgba(15,91,98,.35);
+    opacity: 1;
+    width: 8px; height: 8px;
+    margin: 0 3px !important;
+  }
+  .testimonial-section .swiper-pagination-bullet-active{
+    background: var(--brand-teal);
+  }
+
+  /* “View All” button */
+  .testimonial-button{
+    margin-top: 10px;             /* keeps the section tight with FAQ */
+  }
+  .testimonial-button a{
+    background: var(--brand-teal);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  }
+  .testimonial-button a:hover{
+    filter: brightness(1.04);
+  }
+  .testimonial-button a:focus-visible{
+    outline: 3px solid #10636c;
+    outline-offset: 3px;
+  }
+
+  /* Arrows — outside the card rail */
+  .testimonial-section .swiper-button-prev,
+  .testimonial-section .swiper-button-next{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    display: grid; place-items: center;
+    background: #fff;
+    color: var(--brand-teal);
+    box-shadow: 0 6px 20px rgba(0,0,0,.14);
+  }
+  .testimonial-section .swiper-button-prev{ left: -28px; }
+  .testimonial-section .swiper-button-next{ right: -28px; }
+
+  /* Replace default arrow glyphs with clean chevrons */
+  .testimonial-section .swiper-button-prev::after,
+  .testimonial-section .swiper-button-next::after{
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+  }
+  .testimonial-section .swiper-button-prev::after{ transform: rotate(135deg); }
+  .testimonial-section .swiper-button-next::after{ transform: rotate(-45deg); }
+
+  /* Tuck arrows slightly on tablets/smaller screens */
+  @media (max-width: 1024px){
+    .testimonial-section .swiper-button-prev{ left: -12px; }
+    .testimonial-section .swiper-button-next{ right: -12px; }
+  }
+  @media (max-width: 680px){
+    /* Optional: hide arrows on very small screens if they feel tight */
+    .testimonial-section .swiper-button-prev,
+    .testimonial-section .swiper-button-next{ display:none; }
+  }
+</style>
+
+
+
+<section class="testimonial-section">
+  <h2>{{ section.settings.heading }}</h2>
+
+ <div class="swiper testimonial-swiper">
+  <div class="swiper-wrapper">
+    {% for block in section.blocks %}
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <div>
+            <div class="testimonial-name">{{ block.settings.name }}</div>
+            <div class="testimonial-location">{{ block.settings.title }}, {{ block.settings.location }}</div>
+            <div class="stars">
+              {% for i in (1..5) %}<span>★</span>{% endfor %}
+            </div>
+            <div class="testimonial-content">{{ block.settings.testimonial }}</div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Dots -->
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- Arrows moved OUTSIDE the swiper so they aren’t clipped -->
+<div class="swiper-button-prev"></div>
+<div class="swiper-button-next"></div>
+
+
+  {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+    <div class="testimonial-button">
+      <a href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+    </div>
+  {% endif %}
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+  new Swiper(".testimonial-swiper", {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    pagination: {
+      el: ".testimonial-swiper .swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+  nextEl: ".testimonial-section .swiper-button-next",
+  prevEl: ".testimonial-section .swiper-button-prev",
+},
+    breakpoints: {
+      768:  { slidesPerView: 2 },
+      1024: { slidesPerView: 3 }
+    }
   });
-})();
-{% endjavascript %}
-
-{% stylesheet %}
-/* Container width to match site content */
-.nb-testimonials__container{
-  max-width: min(1160px, 94vw);
-  margin-inline: auto;
-  padding-inline: clamp(12px, 3vw, 20px);
-}
-
-.nb-testimonials{ --t-accent: var(--nb-chocolate); --t-gap: clamp(14px,2.4vw,22px); }
-.nb-testimonials__head{ margin:0 0 clamp(8px,1.8vw,16px); text-align:left; }
-.nb-testimonials__title{ margin:0 0 6px; }
-.nb-testimonials__dek{ margin:0; color:#516068; }
-
-/* chips */
-.nb-tchips{ position:relative; margin:8px 0 16px; }
-.nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; list-style:none; margin:0; scrollbar-width:none;}
-.nb-tchips__list::-webkit-scrollbar{ display:none; }
-.nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
-.nb-tchips::before{ left:0;  background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
-.nb-tchips::after{  right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
-.nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); }
-.nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
-
-/* grid — ~3 columns at 1160px, fluid down to 1 */
-.nb-tgrid{
-  display:grid;
-  gap: var(--t-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(340px,100%), 1fr));
-  align-items: stretch;
-}
-
-/* card */
-.nb-tcard{
-  position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06); padding:16px 16px 14px 18px;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.nb-tcard:hover{ transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
-.nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px;
-  background:linear-gradient(180deg, var(--t-accent), color-mix(in oklab, var(--t-accent), #000 14%)); }
-.nb-tcard__quote{ margin:0 0 12px; display:-webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow:hidden; }
-.nb-tcard.is-open .nb-tcard__quote{ display:block; -webkit-line-clamp:unset; }
-.nb-tcard__meta{ display:flex; gap:10px; align-items:flex-start; }
-.nb-tcard__avatar{ flex:0 0 auto; width:36px; height:36px; border-radius:50%; overflow:hidden; background:#f3f5f4; }
-.nb-tcard__avatar-img{ width:100%; height:100%; object-fit:cover; display:block; }
-.nb-tcard__who{ line-height:1.25; }
-.nb-tcard__name{ font-weight:700; }
-.nb-tcard__title,.nb-tcard__loc{ color:#55656c; font-size:.92em; }
-.nb-tcard__more{
-  margin-top:6px; background:#fff; border:1px solid #e9eeed; border-radius:999px; padding:.4rem .7rem;
-  font-size:.9rem; cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.04);
-}
-.nb-tcard__more:hover{ box-shadow:0 10px 18px rgba(0,0,0,.06); }
-{% endstylesheet %}
+</script>
 
 {% schema %}
 {
   "name": "Testimonials",
-  "class": "section-wrapper nb-testimonials-wrap",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
-    { "type": "text", "id": "subheading", "label": "Subheading", "default": "-" },
-    { "type": "select", "id": "source", "label": "Source", "options": [
-      { "value": "blocks", "label": "Manual (blocks)" },
-      { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
-    ], "default": "blocks" },
-    { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 60, "step": 1, "default": 12 },
-    { "type": "checkbox", "id": "show_filter", "label": "Show filter chips", "default": true },
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "header", "content": "Padding" },
-    { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
-    { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Our Testimonial"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "VIEW ALL"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
   ],
   "blocks": [
     {
       "type": "testimonial",
       "name": "Testimonial",
       "settings": [
-        { "type": "textarea", "id": "quote", "label": "Quote", "default": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”" },
-        { "type": "text", "id": "name", "label": "Name", "default": "Client name" },
-        { "type": "text", "id": "title", "label": "Title / descriptor", "default": "Founder" },
-        { "type": "text", "id": "location", "label": "Location", "default": "London, UK" },
-        { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
-        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "-" }
+        { "type": "text",     "id": "name",        "label": "Name",             "default": "John Doe" },
+        { "type": "text",     "id": "title",       "label": "Title / Position", "default": "CEO" },
+        { "type": "text",     "id": "location",    "label": "Location",         "default": "New York" },
+        { "type": "textarea", "id": "testimonial", "label": "Testimonial Text", "default": "This is a sample testimonial content that will scroll if it gets too long." }
       ]
     }
   ],
-  "presets": [{ "name": "Testimonials (grid)" }]
+  "max_blocks": 12,
+  "presets": [
+    { "name": "Testimonials", "category": "Custom" }
+  ]
 }
 {% endschema %}
