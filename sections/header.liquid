@@ -1025,6 +1025,60 @@ header-menu [data-header-nav-popover]::before{
   content: none !important;
 }
 
+/* === NB: Kill the full-width popover "strap" behind Services (scoped, wins cascade) === */
+@media (min-width: 990px){
+  /* 1) Dawn/Theme popover wrapper + any pseudo layers */
+  #shopify-section-{{ section.id }} header-component [data-header-nav-popover],
+  #shopify-section-{{ section.id }} header-component [data-header-nav-popover]::before,
+  #shopify-section-{{ section.id }} header-component [data-header-nav-popover]::after {
+    background: transparent !important;
+    --color-background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* 2) Your theme’s submenu wrappers (note the underscore class names) */
+  #shopify-section-{{ section.id }} header-component .menu_list__submenu,
+  #shopify-section-{{ section.id }} header-component .menu_list__submenu-inner,
+  #shopify-section-{{ section.id }} header-component .menu_list__submenu::before,
+  #shopify-section-{{ section.id }} header-component .menu_list__submenu::after,
+  #shopify-section-{{ section.id }} header-component .menu_list__submenu-inner::before,
+  #shopify-section-{{ section.id }} header-component .menu_list__submenu-inner::after {
+    background: transparent !important;
+    --color-background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* 3) Overflow-list (shadow DOM) – neutralize its painted parts */
+  #shopify-section-{{ section.id }} header-component overflow-list::part(overflow),
+  #shopify-section-{{ section.id }} header-component overflow-list::part(list),
+  #shopify-section-{{ section.id }} header-component .overflow-menu::part(overflow),
+  #shopify-section-{{ section.id }} header-component .overflow-menu::part(list) {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* 4) If a color-scheme class gets added to the popover, null its bg */
+  #shopify-section-{{ section.id }} header-component [data-header-nav-popover] [class*="color-scheme-"]{
+    --color-background: transparent !important;
+    background: transparent !important;
+  }
+}
+
+/* Keep the inner “card” white and elevated */
+#shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
+  background:#fff !important;
+  color:#223238 !important;
+  border:1px solid rgba(0,0,0,.06) !important;
+  border-radius:14px !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.14) !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
