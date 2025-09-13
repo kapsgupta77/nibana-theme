@@ -1,74 +1,87 @@
 {% comment %}
 Testimonials — grid or slider
 - Source: manual blocks OR metaobject "nb_testimonial"
-- Cards rendered by 'nb-testimonial-card'
-- Uses nb-hstrip__* classes for the slider
+- Cards are rendered via 'nb-testimonial-card' snippet (handles rich text)
 {% endcomment %}
 
 <section id="nb-ts-{{ section.id }}" class="nb-testimonials tone-pebble">
-  {%- liquid
+  {% liquid
     assign heading   = section.settings.heading    | default: 'Testimonials'
     assign sub       = section.settings.subheading | default: '-'
-    assign sub      = section.settings.subheading | default: '-'
-  assign show_sub = false
-  if sub != '-' and sub != ''
-    assign show_sub = true
-  endif
+
+    assign show_sub  = false
+    if sub != '-' and sub != ''
+      assign show_sub = true
+    endif
+
     assign source    = section.settings.source     | default: 'blocks'
     assign limit     = section.settings.limit      | default: 12
 
-    assign carousel  = section.settings.carousel   | default: true
+    assign carousel  = section.settings.carousel   | default: false
     assign per_view  = section.settings.per_view   | default: 3
 
     assign cta_label = section.settings.cta_label  | default: 'View all'
     assign cta_link  = section.settings.cta_link   | default: '/pages/testimonial'
-
-  -%}
+  %}
 
   <div class="nb-shell nb-testimonials__container">
-    {%- if heading != blank or show_sub -%}
+    {% if heading != blank or show_sub %}
       <header class="nb-testimonials__head">
-        {%- if heading != blank -%}
+        {% if heading != blank %}
           <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
-        {%- endif -%}
-        {%- if show_sub -%}
+        {% endif %}
+        {% if show_sub %}
           <p class="nb-testimonials__dek">{{ sub }}</p>
-        {%- endif -%}
+        {% endif %}
       </header>
-    {%- endif -%}
+    {% endif %}
 
-    {%- comment -%} Build the cards once {%- endcomment -%}
-    {%- capture cards_only -%}
-      {%- if source == 'metaobject' -%}
-        {%- assign entries = shop.metaobjects.nb_testimonial.values -%}
-        {%- if entries and entries.size > 0 -%}
-          {%- for m in entries limit: limit -%}
-            {%- liquid
-              assign q   = m.quote     /* rich text OK; handled in snippet */
-              assign n   = m.name      | default: ''
-              assign tt  = m.title     | default: ''
-              assign loc = m.location  | default: ''
+    {%- comment -%} Build the cards just once {%- endcomment -%}
+    {% capture cards_only %}
+      {% if source == 'metaobject' %}
+        {% assign mo = shop.metaobjects['nb_testimonial'] %}
+        {% if mo and mo.values and mo.values.size > 0 %}
+          {% for m in mo.values limit: limit %}
+            {% liquid
+              assign q   = m.quote
+              assign n   = m.name     | default: ''
+              assign tt  = m.title    | default: ''
+              assign loc = m.location | default: ''
               assign av  = m.avatar
               assign tg  = m.tags | join: ',' | default: ''
-            -%}
+            %}
             {% render 'nb-testimonial-card',
-              quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-          {%- endfor -%}
-        {%- endif -%}
-      {%- else -%}
-        {%- for block in section.blocks limit: limit -%}
+              quote: q,
+              name: n,
+              title: tt,
+              location: loc,
+              avatar: av,
+              tags: tg %}
+          {% endfor %}
+        {% endif %}
+      {% else %}
+        {% for block in section.blocks limit: limit %}
+          {% liquid
+            assign q   = block.settings.quote    | default: ''
+            assign n   = block.settings.name     | default: ''
+            assign tt  = block.settings.title    | default: ''
+            assign loc = block.settings.location | default: ''
+            assign av  = block.settings.avatar
+            assign tg  = block.settings.tags     | default: ''
+          %}
           {% render 'nb-testimonial-card',
-            quote: block.settings.quote | default: '',
-            name:  block.settings.name  | default: '',
-            title: block.settings.title | default: '',
-            location: block.settings.location | default: '',
-            avatar: block.settings.avatar,
-            tags:   block.settings.tags | default: '' %}
-        {%- endfor -%}
-      {%- endif -%}
-    {%- endcapture -%}
+            quote: q,
+            name: n,
+            title: tt,
+            location: loc,
+            avatar: av,
+            tags: tg %}
+        {% endfor %}
+      {% endif %}
+    {% endcapture %}
 
-    {%- if carousel -%}
+    {%- comment -%} Render grid or slider {%- endcomment -%}
+    {% if carousel %}
       <div class="nb-hstrip__viewport" data-viewport>
         <div class="nb-hstrip__strip" data-strip>
           {{ cards_only }}
@@ -81,16 +94,16 @@ Testimonials — grid or slider
         <button class="nb-hstrip__btn" type="button" aria-label="Next" data-next>›</button>
       </div>
 
-      {%- if cta_link != blank -%}
+      {% if cta_link != blank %}
         <div class="nb-hstrip__cta">
           <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
         </div>
-      {%- endif -%}
-    {%- else -%}
+      {% endif %}
+    {% else %}
       <div class="nb-tgrid" data-grid>
         {{ cards_only }}
       </div>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
@@ -99,11 +112,9 @@ Testimonials — grid or slider
   const sec = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  // Only do slider behavior if the slider is enabled
   const isCarousel = {{ section.settings.carousel | json }};
-  if (!isCarousel) return;
+  if (!isCarousel) return; // grid mode – nothing to wire up
 
-  // Your actual DOM (nb-hstrip + data-prev/next)
   const scroller = sec.querySelector('[data-strip]');
   const nav      = sec.querySelector('[data-nav]');
   const dotsBox  = sec.querySelector('[data-dots]');
@@ -116,41 +127,35 @@ Testimonials — grid or slider
   // Helpers
   const gapPx = () => {
     const cs = getComputedStyle(scroller);
-    const g  = parseFloat(cs.columnGap || cs.gap || 0);
-    return isNaN(g) ? 0 : g;
+    return parseFloat(cs.columnGap || cs.gap || 0) || 0;
   };
-
   const cardW = () => {
     const first = slides[0];
     if (!first) return scroller.clientWidth || 0;
     const rect = first.getBoundingClientRect();
     return rect.width + gapPx();
   };
-
   const perView = () => {
+    const w = scroller.clientWidth || 0;
     const step = cardW() || 1;
-    return Math.max(1, Math.round((scroller.clientWidth || step) / step));
+    return Math.max(1, Math.round(w / step));
   };
-
   const pageCount = () => {
-    const pv = perView();
-    return Math.max(1, Math.ceil(slides.length / pv));
+    const total = slides.length;
+    const pv    = perView();
+    return Math.max(1, Math.ceil(total / pv));
   };
 
-  // State
   let pages  = pageCount();
   let active = 0;
 
   function goTo(i){
     const x = i * perView() * cardW();
-    try { scroller.scrollTo({ left: x, behavior: 'smooth' }); }
-    catch { scroller.scrollLeft = x; }
+    scroller.scrollTo({ left: x, behavior: 'smooth' });
   }
-
   function goBy(dir){
     const x = dir * perView() * cardW();
-    try { scroller.scrollBy({ left: x, behavior: 'smooth' }); }
-    catch { scroller.scrollLeft += x; }
+    scroller.scrollBy({ left: x, behavior: 'smooth' });
   }
 
   function buildDots(){
@@ -167,18 +172,14 @@ Testimonials — grid or slider
   function update(){
     const step = perView() * cardW() || 1;
     active = Math.max(0, Math.min(pages - 1, Math.round(scroller.scrollLeft / step)));
-
     dotsBox?.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
-
-    const needsScroll = (scroller.scrollWidth - scroller.clientWidth) > 2;
-    nav.hidden        = !needsScroll || pages <= 1;
-    prevBtn.disabled  = active <= 0;
-    nextBtn.disabled  = active >= pages - 1;
+    nav.hidden       = pages <= 1;
+    prevBtn.disabled = active <= 0;
+    nextBtn.disabled = active >= pages - 1;
   }
 
-  prevBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goBy(-1); });
-  nextBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goBy( 1); });
-
+  prevBtn.addEventListener('click', (e) => { e.preventDefault(); goBy(-1); });
+  nextBtn.addEventListener('click', (e) => { e.preventDefault(); goBy( 1); });
   scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 
   const ro = new ResizeObserver(() => {
@@ -210,12 +211,12 @@ Testimonials — grid or slider
 @media (min-width: 720px) and (max-width: 959.98px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 719.98px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
-/* Horizontal strip for slider */
+/* Slider strip */
 .nb-hstrip__viewport{ position:relative; overflow:hidden; }
 .nb-hstrip__strip{
   display:grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(88%, 1fr); /* mobile */
+  grid-auto-columns: minmax(88%, 1fr); /* phone */
   gap: 18px;
   scroll-snap-type: x mandatory;
   overflow-x: auto;
@@ -225,7 +226,6 @@ Testimonials — grid or slider
 .nb-hstrip__strip::-webkit-scrollbar{ display:none; }
 .nb-hstrip__strip .nb-tcard{ scroll-snap-align:start; }
 
-/* Wider views show more cards */
 @media (min-width: 740px){
   .nb-hstrip__strip{ grid-auto-columns: minmax(48%, 1fr); }
 }
@@ -246,7 +246,7 @@ Testimonials — grid or slider
 .nb-hstrip__dots i{ width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block; }
 .nb-hstrip__dots i.is-active{ background:#0C8A7B; }
 
-/* CTA */
+/* CTA in teal */
 .nb-hstrip__cta{ display:flex; justify-content:center; margin:16px 0 0; }
 .nb-hstrip__cta .nb-cta{
   background: var(--nb_teal, #0C8A7B) !important;
