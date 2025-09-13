@@ -751,6 +751,16 @@ capture actions
   .header .mega-menu__content li{ margin-bottom: 6px; }
 }
 
+/* Force dark ink inside the white mega menu panel even when header is inverse */
+.header .header-menu .mega-menu { color: #223238; }
+.header .header-menu .mega-menu__link { color: #223238; }
+
+.header .header-menu .mega-menu__link:hover,
+.header .header-menu .mega-menu__link:focus-visible {
+  /* keep your soft hover */
+  background: color-mix(in oklab, #223238, #fff 92%);
+}
+
 {% endstylesheet %}
 
 {% schema %}

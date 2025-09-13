@@ -29,6 +29,11 @@ class HeaderMenu extends Component {
       signal: this.#abortController.signal,
     });
 
+    // Flag only real panel parents (adds .has-panel and aria-expanded="false")
+    // Run once now and again after DOM is ready to catch slotting.
+    this.#flagRealToggles();
+    onDocumentReady(this.#flagRealToggles);
+
     onDocumentReady(this.#preloadImages);
   }
 
@@ -93,18 +98,13 @@ class HeaderMenu extends Component {
     if (!(event.target instanceof Element)) return;
 
     let item = findMenuItem(event.target);
-
     if (!item || item == this.#state.activeItem) return;
 
     const isDefaultSlot = event.target.slot === '';
-
     this.dataset.overflowExpanded = (!isDefaultSlot).toString();
 
     const previouslyActiveItem = this.#state.activeItem;
-
-    if (previouslyActiveItem) {
-      previouslyActiveItem.ariaExpanded = 'false';
-    }
+    if (previouslyActiveItem) previouslyActiveItem.ariaExpanded = 'false';
 
     this.#state.activeItem = item;
     this.ariaExpanded = 'true';
@@ -181,6 +181,28 @@ class HeaderMenu extends Component {
     const images = this.querySelectorAll('img[loading="lazy"]');
     images?.forEach((image) => image.removeAttribute('loading'));
   };
+
+  /**
+   * Mark only the true mega-menu parents.
+   * - Adds .has-panel and aria-expanded="false" to items that own a submenu
+   * - Removes aria-expanded and .has-panel from items that don't
+   */
+  #flagRealToggles = () => {
+    /** @type {HTMLElement[]} */
+    const links = Array.from(this.querySelectorAll('[ref="menuitem"]'));
+
+    links.forEach((link) => {
+      const hasPanel = !!findSubmenu(link);
+
+      if (hasPanel) {
+        link.classList.add('has-panel');
+        if (!link.hasAttribute('aria-expanded')) link.setAttribute('aria-expanded', 'false');
+      } else {
+        link.classList.remove('has-panel');
+        link.removeAttribute('aria-expanded');
+      }
+    });
+  };
 }
 
 if (!customElements.get('header-menu')) {
@@ -213,15 +235,14 @@ function findSubmenu(element) {
   return submenu instanceof HTMLElement ? submenu : null;
 }
 
-/* === NB: Class toggle for desktop mega overlay === */
+/* === NB: Class toggle for desktop mega overlay (scrim) === */
 (function () {
   var desktopMQ = window.matchMedia('(min-width: 990px)');
   var header = document.querySelector('header');
   if (!header) return;
 
-  // Use event delegation from the header to catch enter/leave on popover menus
   var openClass = 'nb-mega-open';
-  var overCount = 0; // helps avoid quick flicker when moving between sub-elements
+  var overCount = 0; // avoid flicker crossing sub-elements
 
   function enable() {
     if (!desktopMQ.matches) return;
@@ -232,18 +253,29 @@ function findSubmenu(element) {
     document.documentElement.classList.remove(openClass);
   }
 
-  header.addEventListener('mouseenter', function (e) {
-    var el = e.target.closest('[data-header-nav-popover], .mega-menu, .header__inline-menu');
-    if (el) { overCount++; enable(); }
-  }, true);
+  header.addEventListener(
+    'mouseenter',
+    function (e) {
+      var el = e.target.closest('[data-header-nav-popover], .mega-menu, .header__inline-menu');
+      if (el) {
+        overCount++;
+        enable();
+      }
+    },
+    true
+  );
 
-  header.addEventListener('mouseleave', function (e) {
-    var el = e.target.closest('[data-header-nav-popover], .mega-menu, .header__inline-menu');
-    if (el) {
-      overCount = Math.max(0, overCount - 1);
-      if (overCount === 0) disable();
-    }
-  }, true);
+  header.addEventListener(
+    'mouseleave',
+    function (e) {
+      var el = e.target.closest('[data-header-nav-popover], .mega-menu, .header__inline-menu');
+      if (el) {
+        overCount = Math.max(0, overCount - 1);
+        if (overCount === 0) disable();
+      }
+    },
+    true
+  );
 
   // Close on Esc as a nicety
   document.addEventListener('keydown', function (e) {
