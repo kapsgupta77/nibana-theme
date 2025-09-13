@@ -111,6 +111,9 @@ Cards use the same design as the Testimonials page.
     {%- endif -%}
 
     {{ render_cards }}
+
+<!-- nb_testimonial count: {{ shop.metaobjects['nb_testimonial'].values.size }} -->
+{{ render_cards }}
   </div>
 </section>
 
@@ -427,6 +430,7 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
 
