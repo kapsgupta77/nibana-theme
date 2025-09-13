@@ -120,6 +120,25 @@
     position: absolute;
     inset: 0;
   }
+
+/* === Nibana Announcement bar polish ===================== */
+.announcement-bar{
+  --_pad-y: clamp(6px, 1.2vw, 10px);
+  padding-block: var(--_pad-y);
+  font-weight: 500;
+  border-block-end: 1px solid color-mix(in oklab, var(--color-border), #000 6%);
+}
+.announcement-bar__slides{
+  max-width: 760px; /* a touch wider for single-line items */
+}
+.announcement-bar__text{
+  line-height: 1.35;
+}
+.announcement-bar__slider .slideshow-control{
+  opacity: .9;
+}
+/* === /Nibana Announcement bar polish ==================== */
+
 {% endstylesheet %}
 
 {% schema %}
