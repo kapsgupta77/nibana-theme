@@ -19,7 +19,7 @@
 
 {%- liquid
   assign title       = section.settings.title | default: 'Frequently asked questions'
-  assign width       = section.settings.width | default: 'normal'  # narrow | normal | wide
+  assign width       = section.settings.width | default: 'normal'
   assign wrap_shell  = section.settings.wrap_shell
   assign single_open = section.settings.single_open
 
@@ -27,8 +27,9 @@
   assign col_teal    = section.settings.teal      | default: '#0F5B59'
   assign col_shell   = section.settings.shell_col | default: '#E5E8E1'
   assign col_answer  = section.settings.answer    | default: '#EAF4F3'
+endliquid -%}
 
-  # width class
+{%- liquid
   assign width_class = 'nb-shell'
   if width == 'narrow'
     assign width_class = 'nb-shell nb-shell--narrow'
@@ -67,12 +68,10 @@
 </section>
 
 <style>
-  /* ---- Layout widths (reuses your site’s .nb-shell pattern) ---- */
   .nb-shell{ max-width:min(1160px,94vw); margin-inline:auto; padding-inline:20px; }
   .nb-shell.nb-shell--narrow{ max-width:min(900px,92vw); }
   .nb-shell.nb-shell--wide{ max-width:min(1320px,96vw); }
 
-  /* ---- FAQ tray + colors ---- */
   .nb-faq-section{ color: var(--nb-faq-ink, #223238); }
   .nb-faq__wrap{ margin: 12px 0; }
   .nb-faq__wrap--tray{
@@ -82,7 +81,6 @@
     box-shadow: 0 10px 24px rgba(0,0,0,.06);
   }
 
-  /* ---- Title ---- */
   .nb-faq__title{
     margin: 0 0 clamp(10px, 2vw, 16px);
     text-align: center;
@@ -92,7 +90,6 @@
     font-size: clamp(22px, 2.8vw, 28px);
   }
 
-  /* ---- Items ---- */
   .nb-faq__list{ display: grid; gap: 18px; }
   .nb-faq__item{
     background: transparent;
@@ -153,7 +150,7 @@
 </script>
 {%- endif -%}
 
-{%- comment -%} ---------- JSON-LD (emits only when allowed and not on service pages) ---------- {%- endcomment -%}
+{%- comment -%} JSON-LD (emits only when allowed and not on service pages) {%- endcomment -%}
 {%- if section.settings.emit_jsonld and section.blocks.size > 0 and nb_is_service_page == false -%}
   {%- assign any = false -%}
   {%- for b in section.blocks -%}
