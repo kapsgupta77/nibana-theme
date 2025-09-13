@@ -119,57 +119,41 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 
 {% javascript %}
 (() => {
-  const sec = document.getElementById('shopify-section-{{ section.id }}');
-  if (!sec) return;
+  const root  = document.getElementById('shopify-section-{{ section.id }}');
+  if (!root) return;
 
-  /* ----- Filter chips (unchanged) ----- */
-  const grid  = sec.querySelector('[data-grid], [data-strip]');
-  const chips = sec.querySelectorAll('[data-chips] .nb-chip');
-  if (grid && chips.length) {
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
-        chip.classList.add('is-active');
-        const f = chip.getAttribute('data-filter');
-        grid.querySelectorAll('.nb-tcard').forEach(card => {
-          const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-          card.hidden = (f !== '*') && ds.indexOf(f) === -1;
-        });
-      });
-    });
+  const strip = root.querySelector('[data-strip]');   // the flex scroller
+  if (!strip) return;                                 // not in slider mode
+
+  const nav   = root.querySelector('[data-nav]');
+  const prev  = root.querySelector('[data-prev]');
+  const next  = root.querySelector('[data-next]');
+  if (!nav || !prev || !next) return;
+
+  function canScroll(){ return (strip.scrollWidth - strip.clientWidth) > 2; }
+  function page(){ return strip.clientWidth || 0; }
+
+  function go(dx){
+    // robust scroll with fallback (some browsers ignore smooth when mid-scroll)
+    try { strip.scrollBy({ left: dx, behavior: 'smooth' }); }
+    catch(e){ strip.scrollLeft += dx; }
+    requestAnimationFrame(update);
   }
 
-  /* ----- Slider wiring (flex scroller) ----- */
-  const strip  = sec.querySelector('[data-strip]');
-  if (!strip) return; // not in slider mode
-
-  const prev   = sec.querySelector('[data-prev]');
-  const next   = sec.querySelector('[data-next]');
-  const nav    = sec.querySelector('[data-nav]');
-  if (!prev || !next || !nav) return;
-
-  function updateNav(){
-    const overflow = strip.scrollWidth > strip.clientWidth + 2;
-    nav.hidden = !overflow;
-    // Optional: enable/disable based on scroll position
-    prev.disabled = strip.scrollLeft <= 0;
-    next.disabled = Math.ceil(strip.scrollLeft + strip.clientWidth) >= strip.scrollWidth;
+  function update(){
+    nav.hidden = !canScroll();
+    prev.disabled = strip.scrollLeft <= 1;
+    const atEnd = Math.ceil(strip.scrollLeft + strip.clientWidth) >= (strip.scrollWidth - 1);
+    next.disabled = atEnd;
   }
 
-  function pageWidth(){ return strip.clientWidth; }
+  prev.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); go(-page()); });
+  next.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); go( page()); });
 
-  prev.addEventListener('click', () => {
-    strip.scrollBy({ left: -pageWidth(), behavior: 'smooth' });
-  });
-  next.addEventListener('click', () => {
-    strip.scrollBy({ left:  pageWidth(), behavior: 'smooth' });
-  });
+  strip.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  new ResizeObserver(update).observe(strip);
 
-  strip.addEventListener('scroll', () => requestAnimationFrame(updateNav), { passive: true });
-
-  const ro = new ResizeObserver(updateNav);
-  ro.observe(strip);
-  updateNav();
+  update(); // initial
 })();
 {% endjavascript %}
 
@@ -313,3 +297,4 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
