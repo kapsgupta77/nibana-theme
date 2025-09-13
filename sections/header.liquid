@@ -585,53 +585,54 @@ capture actions
 
 /* === Desktop mega overlay — dim page content only (keep header + submenu bright) === */
 @media (min-width: 990px){
-  /* 1) The dimmer */
+  /* 1) The dimmer (below header) */
   #MainContent::before{
     content:"";
     position: fixed;
-    top: var(--header-group-height, 64px); /* sit below the header */
+    top: var(--header-group-height, 64px);
     left: 0; right: 0; bottom: 0;
-
-    /* gentle dim + tiny blur so the hero softens */
     background: rgba(17, 24, 24, .28);
     backdrop-filter: saturate(120%) blur(2px);
-
     opacity: 0;
     transition: opacity .16s ease;
-    pointer-events: none;              /* don't intercept cursor */
-    z-index: 20;                       /* BELOW header & submenu */
+    pointer-events: none;          /* don't intercept cursor */
+    z-index: 30;                   /* below header + popover */
   }
   html.nb-mega-open #MainContent::before{ opacity: 1; }
 
-  /* 2) Ensure header + popovers stack ABOVE the dimmer */
+  /* 2) Always keep header & any nav popovers above the dimmer */
   #header-group,
   #shopify-section-header,
-  header{ position: relative; z-index: 60; }
-
-  /* 3) Ensure the popover panel and its contents are above + transparent */
-  header [popover],
-  header .mega-menu{
+  header{
     position: relative;
-    z-index: 70;
+    z-index: 100;                  /* above 30 */
+  }
+
+  /* 3) The Services popover can live outside <header>;
+        lift it above the dimmer no matter where it is */
+  [data-header-nav-popover],
+  [data-header-nav-popover][popover],
+  [data-header-nav-popover] .popover{
+    position: relative;
+    z-index: 110;                  /* above header too */
+  }
+}
+
+/* === Make Shopify's nav popover/overlay transparent (we use our own white card) === */
+@media (min-width: 990px){
+  /* Kill any dark backdrops/panels Dawn adds to the popover */
+  [data-header-nav-popover],
+  [data-header-nav-popover] .popover,
+  [data-header-nav-popover]::part(overlay),
+  [data-header-nav-popover]::part(content){
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
   }
 
-  /* 4) If you used the “narrow” card container, keep it above everything */
-  .nb-services-card{ position: relative; z-index: 80; }
-}
-
-/* === Make Shopify's mega container transparent (we use our own card) === */
-@media (min-width: 990px){
-  #header-group .mega-menu,
-  #header-group [data-header-nav-popover],
-  #header-group [data-header-nav-popover] .popover,
-  #header-group [data-header-nav-popover]::part(overlay),
-  #header-group [data-header-nav-popover]::part(content){
+  /* If the Popover API uses a top-layer backdrop, clear it */
+  [data-header-nav-popover]::backdrop{
     background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
   }
 }
 
