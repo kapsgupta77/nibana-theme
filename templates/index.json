@@ -2052,18 +2052,6 @@
         "padding-block-end": 0
       }
     },
-    "nb_testimonials_slider_ND6DJU": {
-      "type": "nb-testimonials-slider",
-      "name": "Testimonials slider",
-      "settings": {
-        "heading": "Testimonials",
-        "subheading": "What our client’s say",
-        "source": "metaobject",
-        "limit": 9,
-        "cta_label": "View all",
-        "cta_link": "/pages/testimonial"
-      }
-    },
     "1754574377a3fa6bb7": {
       "type": "_blocks",
       "settings": {
@@ -2547,7 +2535,6 @@
     "1753979999d0c4759e",
     "slideshow_tcyyT7",
     "testimonials_jHRnEP",
-    "nb_testimonials_slider_ND6DJU",
     "1754574377a3fa6bb7",
     "section_4EQaYA",
     "our_blog_PTMUCw",
