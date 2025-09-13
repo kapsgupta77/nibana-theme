@@ -48,18 +48,20 @@ Runs only when template = page.book-call.
   {%- assign home_url = routes.root_url | absolute_url -%}
   {%- assign canon = canonical_url -%}
 
-  <!-- WebPage -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": "{{ canon }}#webpage",
-    "url": "{{ canon }}",
-    "name": {{ page_name | json }},
-    "description": {{ page_desc | json }},
-    "inLanguage": {{ page_lang | json }}
-  }
-  </script>
+ <!-- WebPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "{{ canon }}#webpage",
+  "url": "{{ canon }}",
+  "name": {{ page_name | json }},
+  "description": {{ page_desc | json }},
+  "inLanguage": {{ page_lang | json }},
+  "isPartOf": { "@id": "{{ request.origin }}/#website" },
+  "publisher": { "@id": "{{ request.origin }}/#org" }
+}
+</script>
 
   <!-- Breadcrumbs -->
   <script type="application/ld+json">
@@ -82,6 +84,34 @@ Runs only when template = page.book-call.
     ]
   }
   </script>
+
+<!-- Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "{{ request.origin }}/#org",
+  "name": {{ shop.name | json }},
+  "url": {{ request.origin | json }}
+}
+</script>
+
+<!-- WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "{{ request.origin }}/#website",
+  "url": {{ request.origin | json }},
+  "name": {{ shop.name | json }},
+  "publisher": { "@id": "{{ request.origin }}/#org" },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ routes.search_url }}?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 
   <!-- FAQ from .nb-faq blocks on this page -->
   <script>
@@ -137,6 +167,8 @@ Runs only when template = page.book-call.
   })();
   </script>
 {%- endif -%}
+
+
 
   </head>
 
