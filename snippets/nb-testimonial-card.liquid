@@ -1,6 +1,6 @@
 {%- comment -%}
 Card snippet used by the Testimonials section (and slider).
-Params: quote, name, title, location, avatar, tags
+Expected params: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
 {%- assign _quote = quote | strip | default: '' -%}
@@ -12,8 +12,7 @@ Params: quote, name, title, location, avatar, tags
 <article class="nb-tcard" data-tags="{{ _tagsr | downcase }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
 
-  <div class="nb-tcard__quote" data-q tabindex="0" aria-label="Testimonial">
-    <span class="nb-tcard__qmark" aria-hidden="true">“</span>
+  <div class="nb-tcard__quote" data-q>
     <p>{{ _quote }}</p>
   </div>
 
@@ -33,5 +32,5 @@ Params: quote, name, title, location, avatar, tags
     </div>
   </div>
 
-  <button class="nb-tcard__more" data-more aria-expanded="false">Read full</button>
+  <button class="nb-tcard__more" data-more hidden>Read full</button>
 </article>
