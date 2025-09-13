@@ -583,23 +583,54 @@ capture actions
     }
   }
 
-/* === NB: Desktop mega overlay (no pointer events → no flicker) === */
+/* === Desktop mega overlay — dim the page content only (not the header) === */
 @media (min-width: 990px){
   #MainContent::before{
     content:"";
     position: fixed;
-    inset: 0;
-    /* subtle, not a heavy blackout */
-    background: rgba(17, 24, 24, .24);
+    top: var(--header-group-height, 64px); /* sits below the header */
+    left: 0; right: 0; bottom: 0;
+    background: rgba(23,33,37,.46);
+    backdrop-filter: saturate(120%) blur(2px);
     opacity: 0;
     transition: opacity .16s ease;
-    /* <<< critical: don't intercept the cursor */
-    pointer-events: none;
-    z-index: var(--z-header-overlay, 20);
+    pointer-events: none;               /* no flicker / no blocking */
+    z-index: 30;                        /* below header popovers */
   }
-  /* toggled by JS (see header-menu.js) */
   html.nb-mega-open #MainContent::before{ opacity: 1; }
 }
+
+/* === Make Shopify's mega container transparent (we use our own card) === */
+@media (min-width: 990px){
+  #header-group .mega-menu,
+  #header-group [data-header-nav-popover],
+  #header-group [data-header-nav-popover] .popover,
+  #header-group [data-header-nav-popover]::part(overlay),
+  #header-group [data-header-nav-popover]::part(content){
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+}
+
+/* === Nav link polish + services list hover === */
+.header [data-nav="top"] a:hover,
+.header [data-nav="top"] a:focus {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nb-slim-menu .nb-slim-item{
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: background-color .18s ease, transform .18s ease;
+}
+.nb-slim-menu .nb-slim-item:hover,
+.nb-slim-menu .nb-slim-item:focus{
+  background: #EAF4F3;           /* NIBANA sage */
+  transform: translateY(-1px);
+}
+
 
 /* === Nibana Header polish =============================== */
 :root{
