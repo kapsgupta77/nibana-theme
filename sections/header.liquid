@@ -583,7 +583,7 @@ body:has(> #header-group > header-component) {
     }
   }
 
-/* === Desktop mega overlay — dim page content only (keep header + submenu bright) === */
+/* === PATCH — dim page content only (keep header + submenu crisp) === */
 @media (min-width: 990px){
   /* 1) The dimmer (below header) */
   #MainContent::before{
@@ -591,36 +591,35 @@ body:has(> #header-group > header-component) {
     position: fixed;
     top: var(--header-height, 64px);
     left: 0; right: 0; bottom: 0;
-    background: rgba(17, 24, 24, .28);
-    backdrop-filter: saturate(120%) blur(2px);
+    /* lighter, no blur */
+    background: rgba(17, 24, 24, .16);
     opacity: 0;
     transition: opacity .16s ease;
-    pointer-events: none;          /* don't intercept cursor */
-    z-index: 30;                   /* below header + popover */
+    pointer-events: none;          /* never intercept cursor */
+    z-index: 30;                   /* sits under header/popover */
   }
   html.nb-mega-open #MainContent::before{ opacity: 1; }
 
-  /* 2) Always keep header & any nav popovers above the dimmer */
+  /* 2) Lift your custom header element above the scrim */
   #header-group,
   #shopify-section-header,
-  header{
+  header-component,
+  header-component .header{
     position: relative;
     z-index: 100;                  /* above 30 */
   }
 
-  /* 3) The Services popover can live outside <header>;
-        lift it above the dimmer no matter where it is */
-  [data-header-nav-popover],
-  [data-header-nav-popover][popover],
-  [data-header-nav-popover] .popover{
+  /* 3) Ensure the Services popover + content are always on top */
+  header-component .header__inline-menu,
+  header-component .mega-menu__content,
+  header-component .mega-menu,
+  [data-header-nav-popover]{
     position: relative;
-    z-index: 110;                  /* above header too */
+    z-index: 120;                  /* above header */
   }
-}
 
-/* === Make Shopify's nav popover/overlay transparent (we use our own white card) === */
-@media (min-width: 990px){
-  /* Kill any dark backdrops/panels Dawn adds to the popover */
+  /* 4) Nuke any theme backdrops/panels (we provide our own white card) */
+  /* Popover API / parts */
   [data-header-nav-popover],
   [data-header-nav-popover] .popover,
   [data-header-nav-popover]::part(overlay),
@@ -629,21 +628,17 @@ body:has(> #header-group > header-component) {
     box-shadow: none !important;
     border: 0 !important;
   }
+  [data-header-nav-popover]::backdrop{ background: transparent !important; }
 
-  /* If the Popover API uses a top-layer backdrop, clear it */
-  [data-header-nav-popover]::backdrop{
-    background: transparent !important;
-  }
-}
-
-/* Kill the wide dark panel behind the Services card */
-@media (min-width: 990px){
-  .header .mega-menu__content{
+  /* Dawn wide dark mega container */
+  header-component .header__inline-menu{ background: transparent !important; }
+  header-component .mega-menu__content{
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
   }
 }
+/* === /PATCH ======================================================== */
 
 /* === Nav link polish + services list hover === */
 .header [data-nav="top"] a:hover,
