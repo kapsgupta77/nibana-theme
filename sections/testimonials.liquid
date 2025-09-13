@@ -108,105 +108,74 @@ Testimonials — grid/slider
 
 {% javascript %}
 (() => {
-  const sec = document.getElementById('shopify-section-{{ section.id }}');
-  if (!sec) return;
+  const root = document.getElementById('shopify-section-{{ section.id }}');
+  if (!root || {{ section.settings.carousel | json }} !== true) return;
 
-  // CHIP FILTERS (kept the same)
-  const grid  = sec.querySelector('[data-grid]');
-  const chips = sec.querySelectorAll('[data-chips] .nb-chip');
-  if (grid && chips.length) {
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
-        chip.classList.add('is-active');
-        const f = chip.getAttribute('data-filter');
-        grid.querySelectorAll('.nb-tcard').forEach(card => {
-          const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-          card.hidden = (f !== '*') && ds.indexOf(f) === -1;
-        });
-      });
-    });
+  // Elements in your current markup
+  const grid = root.querySelector('.nb-tcarousel__track [data-grid]');
+  const nav  = root.querySelector('[data-nav]');
+  const prev = root.querySelector('[data-dir="-1"]');
+  const next = root.querySelector('[data-dir="1"]');
+  const dots = root.querySelector('[data-dots]');
+  if (!grid || !nav || !prev || !next) return;
+
+  const items = Array.from(grid.children);
+
+  // Robust step: distance between first two items (includes CSS gap).
+  // Fallback to item width or grid width if only one item.
+  const stepPx = () => {
+    if (items.length > 1) return items[1].offsetLeft - items[0].offsetLeft;
+    const w = items[0]?.getBoundingClientRect().width || grid.clientWidth;
+    const cs = getComputedStyle(grid);
+    const gap = parseFloat(cs.columnGap || cs.gap || 0) || 0;
+    return w + gap;
+  };
+
+  const perView = () => Math.max(1, Math.round(grid.clientWidth / stepPx()));
+  const pages   = () => Math.max(1, Math.ceil(items.length / perView()));
+
+  let page = 0;
+
+  function go(to){
+    page = Math.max(0, Math.min(pages() - 1, to));
+    const x = page * perView() * stepPx();
+    grid.scrollTo({ left: x, behavior: 'smooth' });
+    update();
   }
-
-  // SLIDER
-  const isCarousel = {{ section.settings.carousel | json }};
-  if (!isCarousel) return;
-
-  const nav     = sec.querySelector('[data-nav]');
-  const dotsBox = sec.querySelector('[data-dots]');
-  const prevBtn = sec.querySelector('[data-dir="-1"]');
-  const nextBtn = sec.querySelector('[data-dir="1"]');
-  const scroller = sec.querySelector('.nb-tcarousel__track [data-grid]');
-  if (!scroller || !nav || !prevBtn || !nextBtn) return;
-
-  const slides = Array.from(scroller.children);
-
-  const gapPx = () => {
-    const cs = getComputedStyle(scroller);
-    return parseFloat(cs.columnGap || cs.gap || 0) || 0;
-  };
-  const cardW = () => {
-    const first = slides[0];
-    if (!first) return scroller.clientWidth || 0;
-    const r = first.getBoundingClientRect();
-    return r.width + gapPx();
-  };
-  const perView = () => {
-    // dynamic: how many cards currently fit
-    const w = scroller.clientWidth || 0;
-    const step = cardW() || 1;
-    return Math.max(1, Math.round(w / step));
-  };
-  const pageCount = () => {
-    const total = slides.length;
-    const pv    = perView();
-    return Math.max(1, Math.ceil(total / pv));
-  };
-
-  let pages  = pageCount();
-  let active = 0;
-
-  function goTo(i){
-    const x = i * perView() * cardW();
-    scroller.scrollTo({ left: x, behavior: 'smooth' });
-  }
-  function goBy(dir){
-    const x = dir * perView() * cardW();
-    scroller.scrollBy({ left: x, behavior: 'smooth' });
-  }
+  function goBy(delta){ go(page + delta); }
 
   function buildDots(){
-    if (!dotsBox) return;
-    dotsBox.innerHTML = '';
-    for (let i = 0; i < pages; i++){
-      const dot = document.createElement('i');
-      if (i === active) dot.classList.add('is-active');
-      dot.addEventListener('click', () => goTo(i));
-      dotsBox.appendChild(dot);
+    if (!dots) return;
+    dots.innerHTML = '';
+    for (let i = 0; i < pages(); i++){
+      const el = document.createElement('i');
+      if (i === page) el.classList.add('is-active');
+      el.addEventListener('click', () => go(i));
+      dots.appendChild(el);
     }
   }
 
   function update(){
-    const step = perView() * cardW() || 1;
-    active = Math.max(0, Math.min(pages - 1, Math.round(scroller.scrollLeft / step)));
-    dotsBox?.querySelectorAll('i')?.forEach((d, i) => d.classList.toggle('is-active', i === active));
-    nav.hidden       = pages <= 1;
-    prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pages - 1;
+    const currentStep = perView() * stepPx() || 1;
+    page = Math.max(0, Math.min(pages() - 1, Math.round(grid.scrollLeft / currentStep)));
+
+    // Hide nav if not needed or if not scrollable
+    nav.hidden       = pages() <= 1 || grid.scrollWidth <= grid.clientWidth + 2;
+    prev.disabled    = page <= 0;
+    next.disabled    = page >= pages() - 1;
+
+    dots?.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === page));
   }
 
-  prevBtn.addEventListener('click', () => goBy(-1));
-  nextBtn.addEventListener('click', () => goBy( 1));
-  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  prev.addEventListener('click', e => { e.preventDefault(); goBy(-1); });
+  next.addEventListener('click', e => { e.preventDefault(); goBy(+1); });
+  grid.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 
-  const ro = new ResizeObserver(() => {
-    const p = pageCount();
-    if (p !== pages){ pages = p; buildDots(); }
-    update();
-  });
-  ro.observe(scroller);
+  // Recalculate on resize
+  const ro = new ResizeObserver(() => { buildDots(); update(); });
+  ro.observe(grid);
 
-  pages = pageCount();
+  // Init
   buildDots();
   update();
 })();
@@ -388,3 +357,4 @@ Testimonials — grid/slider
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
