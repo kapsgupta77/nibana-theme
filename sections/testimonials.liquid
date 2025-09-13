@@ -1,9 +1,7 @@
 {% comment %}
-Testimonials — grid/slider, supports:
-- Manual blocks
-- Metaobject list (nb_testimonial) via section setting
-
-If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
+Testimonials — grid/slider
+- Source: Manual blocks OR Metaobject list (setting: mo_list -> nb_testimonial)
+- Cards are rendered by 'nb-testimonial-card' (rich text friendly)
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
@@ -11,7 +9,7 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
     assign heading    = section.settings.heading        | default: 'What our clients say'
     assign sub        = section.settings.subheading     | default: '-'
     assign show_sub   = false
-    if sub != '-' and sub != '' 
+    if sub != '-' and sub != ''
       assign show_sub = true
     endif
 
@@ -41,21 +39,21 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
     {%- comment -%} ---------- Build cards once ---------- {%- endcomment -%}
     {%- capture cards_only -%}
       {%- assign mo_used = false -%}
-      {%- assign mo_count = 0 -%}
+      {%- assign count_so_far = 0 -%}
 
       {%- if source == 'metaobject' -%}
         {%- comment -%}
-          IMPORTANT: some themes can't `size` a metaobject_list directly.
-          We just iterate; if the loop runs at least once, we mark mo_used = true.
+          Iterate the metaobject_list setting directly.
+          We don't rely on `.size`; we just mark mo_used when we render at least one.
         {%- endcomment -%}
         {%- for entry in section.settings.mo_list -%}
-          {%- if forloop.index0 < limit -%}
+          {%- if count_so_far < limit -%}
             {%- assign mo_used = true -%}
-            {%- assign mo_count = mo_count | plus: 1 -%}
+            {%- assign count_so_far = count_so_far | plus: 1 -%}
 
-            {%- assign q   = entry.quote -%}      
-            {%- assign n   = entry.name | default: '' -%}
-            {%- assign tt  = entry.title | default: '' -%}
+            {%- assign q   = entry.quote -%}
+            {%- assign n   = entry.name     | default: '' -%}
+            {%- assign tt  = entry.title    | default: '' -%}
             {%- assign loc = entry.location | default: '' -%}
             {%- assign av  = entry.avatar -%}
             {%- assign tg  = entry.tags | join: ',' | default: '' -%}
@@ -85,35 +83,26 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
       {%- endunless -%}
     {%- endcapture -%}
 
-    {%- comment -%} Tiny debug line — remove after validating {%- endcomment -%}
-    <small style="display:block;opacity:.55;margin:.25rem 0 .5rem">
-      source: {{ source }} • mo_count: {{ mo_count | default: 0 }} • used_metaobjects: {{ mo_used }}
-    </small>
-
     {%- comment -%} ---------- Render grid or slider ---------- {%- endcomment -%}
-    {%- capture render_cards -%}
-      {%- if carousel -%}
-        <div class="nb-tcarousel__viewport" data-viewport>
-          <div class="nb-tcarousel__track" data-track>
-            <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
-          </div>
+    {%- if carousel -%}
+      <div class="nb-tcarousel__viewport" data-viewport>
+        <div class="nb-tcarousel__track" data-track>
+          <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
         </div>
-        <div class="nb-tcarousel__nav" data-nav hidden>
-          <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
-          <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
-          <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
+      </div>
+      <div class="nb-tcarousel__nav" data-nav hidden>
+        <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
+        <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
+        <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
+      </div>
+      {%- if cta_link != blank -%}
+        <div class="nb-tcarousel__cta">
+          <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
         </div>
-        {%- if cta_link != blank -%}
-          <div class="nb-tcarousel__cta">
-            <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
-          </div>
-        {%- endif -%}
-      {%- else -%}
-        <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
       {%- endif -%}
-    {%- endcapture -%}
-
-    {{ render_cards }}
+    {%- else -%}
+      <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -122,7 +111,7 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
   const sec = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  /* -------- Chips (only if you turn them on elsewhere) -------- */
+  // CHIP FILTERS (kept the same)
   const grid  = sec.querySelector('[data-grid]');
   const chips = sec.querySelectorAll('[data-chips] .nb-chip');
   if (grid && chips.length) {
@@ -139,7 +128,7 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
     });
   }
 
-  /* ---------------- Slider wiring ---------------- */
+  // SLIDER
   const isCarousel = {{ section.settings.carousel | json }};
   if (!isCarousel) return;
 
@@ -147,15 +136,44 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
   const dotsBox = sec.querySelector('[data-dots]');
   const prevBtn = sec.querySelector('[data-dir="-1"]');
   const nextBtn = sec.querySelector('[data-dir="1"]');
-
-  // The real scroller is the grid inside the track
   const scroller = sec.querySelector('.nb-tcarousel__track [data-grid]');
   if (!scroller || !nav || !prevBtn || !nextBtn) return;
 
-  const vw        = () => scroller.clientWidth;
-  const pageCount = () => Math.max(1, Math.ceil(scroller.scrollWidth / vw()));
-  let pages = pageCount();
+  const slides = Array.from(scroller.children);
+
+  const gapPx = () => {
+    const cs = getComputedStyle(scroller);
+    return parseFloat(cs.columnGap || cs.gap || 0) || 0;
+  };
+  const cardW = () => {
+    const first = slides[0];
+    if (!first) return scroller.clientWidth || 0;
+    const r = first.getBoundingClientRect();
+    return r.width + gapPx();
+  };
+  const perView = () => {
+    // dynamic: how many cards currently fit
+    const w = scroller.clientWidth || 0;
+    const step = cardW() || 1;
+    return Math.max(1, Math.round(w / step));
+  };
+  const pageCount = () => {
+    const total = slides.length;
+    const pv    = perView();
+    return Math.max(1, Math.ceil(total / pv));
+  };
+
+  let pages  = pageCount();
   let active = 0;
+
+  function goTo(i){
+    const x = i * perView() * cardW();
+    scroller.scrollTo({ left: x, behavior: 'smooth' });
+  }
+  function goBy(dir){
+    const x = dir * perView() * cardW();
+    scroller.scrollBy({ left: x, behavior: 'smooth' });
+  }
 
   function buildDots(){
     if (!dotsBox) return;
@@ -163,28 +181,23 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
     for (let i = 0; i < pages; i++){
       const dot = document.createElement('i');
       if (i === active) dot.classList.add('is-active');
-      dot.addEventListener('click', () => {
-        scroller.scrollTo({ left: i * vw(), behavior: 'smooth' });
-      });
+      dot.addEventListener('click', () => goTo(i));
       dotsBox.appendChild(dot);
     }
   }
 
   function update(){
-    active = Math.round(scroller.scrollLeft / vw());
+    const step = perView() * cardW() || 1;
+    active = Math.max(0, Math.min(pages - 1, Math.round(scroller.scrollLeft / step)));
     dotsBox?.querySelectorAll('i')?.forEach((d, i) => d.classList.toggle('is-active', i === active));
-    // hide nav if not needed
-    nav.hidden = pages <= 1 || scroller.scrollWidth <= scroller.clientWidth + 2;
+    nav.hidden       = pages <= 1;
     prevBtn.disabled = active <= 0;
     nextBtn.disabled = active >= pages - 1;
   }
 
-  prevBtn.addEventListener('click', () => {
-    scroller.scrollBy({ left: -vw(), behavior: 'smooth' });
-  });
-  nextBtn.addEventListener('click', () => {
-    scroller.scrollBy({ left:  vw(), behavior: 'smooth' });
-  });
+  prevBtn.addEventListener('click', () => goBy(-1));
+  nextBtn.addEventListener('click', () => goBy( 1));
+  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 
   const ro = new ResizeObserver(() => {
     const p = pageCount();
@@ -193,14 +206,14 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
   });
   ro.observe(scroller);
 
+  pages = pageCount();
   buildDots();
   update();
-  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 })();
 {% endjavascript %}
 
 {% stylesheet %}
-/* Container width aligns with the rest of the site */
+/* Container */
 .nb-testimonials__container{ max-width: var(--narrow-page-width, 1120px); margin: 0 auto; padding: 0 20px; }
 
 /* Header */
@@ -208,13 +221,13 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 .nb-testimonials__title{ margin:0 0 6px; color: var(--nb-ink, #1F2C2A); }
 .nb-testimonials__dek{ margin:0 auto; color:#55656c; max-width:46ch; }
 
-/* Grid layout (non-slider) */
+/* Grid (non-slider) */
 .nb-tgrid{ display:grid; gap: clamp(16px, 2.2vw, 26px); align-items: stretch; }
 @media (min-width: 960px){ .nb-tgrid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (min-width: 720px) and (max-width: 959.98px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 719.98px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
-/* Card (same as page) */
+/* Card style (same as page) */
 .nb-tcard{
   --t-quote-lines: 10;
   position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
@@ -227,7 +240,7 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 .nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px; background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
 .nb-tcard__qmark{ position:absolute; left:14px; top:10px; color:#e3e7e6; font-size:22px; line-height:1; }
 
-/* Quote: scroll when overflow */
+/* Quote scroll */
 .nb-tcard__quote{
   margin: 0 2px 12px 2px;
   font: inherit;
@@ -242,7 +255,7 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 .nb-tcard__quote::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.12); border-radius:8px; }
 .nb-tcard__quote{ scrollbar-width:thin; scrollbar-color: rgba(0,0,0,.18) transparent; }
 
-/* Fixed meta area pinned to bottom */
+/* Meta area */
 .nb-tcard__meta{
   margin-top:auto; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center;
   min-height:88px; padding-top:12px; border-top:1px solid #eef2f3;
@@ -307,6 +320,24 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 }
 #shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
   background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
+}
+
+/* ---- Flatten the extra theme panels/gutters inside this section only ---- */
+#shopify-section-{{ section.id }} .nb-testimonials__container > *{
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__viewport,
+#shopify-section-{{ section.id }} .nb-tcarousel__track,
+#shopify-section-{{ section.id }} .nb-tcarousel__nav,
+#shopify-section-{{ section.id }} .nb-tcarousel__cta{
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
 }
 {% endstylesheet %}
 
