@@ -160,28 +160,3 @@ function findSubmenu(element) {
   const submenu = element?.parentElement?.querySelector('[ref="submenu[]"]');
   return submenu instanceof HTMLElement ? submenu : null;
 }
-
-/* === NB: Class toggle for desktop mega overlay (to dim the hero) === */
-(function () {
-  var desktopMQ = window.matchMedia('(min-width: 990px)');
-  var header = document.querySelector('header');
-  if (!header) return;
-
-  var openClass = 'nb-mega-open';
-  var overCount = 0;
-
-  function enable(){ if (desktopMQ.matches) document.documentElement.classList.add(openClass); }
-  function disable(){ if (desktopMQ.matches) document.documentElement.classList.remove(openClass); }
-
-  header.addEventListener('mouseenter', function (e) {
-    var el = e.target.closest('[data-header-nav-popover], .mega-menu, .header__inline-menu');
-    if (el) { overCount++; enable(); }
-  }, true);
-
-  header.addEventListener('mouseleave', function (e) {
-    var el = e.target.closest('[data-header-nav-popover], .mega-menu, .header__inline-menu');
-    if (el) { overCount = Math.max(0, overCount - 1); if (overCount === 0) disable(); }
-  }, true);
-
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') disable(); });
-})();
