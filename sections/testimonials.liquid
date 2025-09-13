@@ -112,20 +112,21 @@ Testimonials — grid or slider
   const sec = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  // Elements in YOUR current layout
-  const scroller = sec.querySelector('.nb-tcarousel__track [data-grid]') || sec.querySelector('[data-grid]');
-  const slides   = Array.from(scroller?.children || []);
+  // ---- YOUR DOM (nb-hstrip + data-prev/next) ----
+  const scroller = sec.querySelector('[data-strip]') || sec.querySelector('.nb-hstrip__strip');
   const nav      = sec.querySelector('[data-nav]');
   const dotsBox  = sec.querySelector('[data-dots]');
-  const prevBtn  = sec.querySelector('[data-dir="-1"]');
-  const nextBtn  = sec.querySelector('[data-dir="1"]');
-
+  const prevBtn  = sec.querySelector('[data-prev]');
+  const nextBtn  = sec.querySelector('[data-next]');
   if (!scroller || !nav || !prevBtn || !nextBtn) return;
 
-  // --- Helpers --------------------------------------------------------------
+  const slides = Array.from(scroller.children);
+
+  // ---- helpers ----
   const gapPx = () => {
     const cs = getComputedStyle(scroller);
-    return parseFloat(cs.columnGap || cs.gap || 0) || 0;
+    const g  = parseFloat(cs.columnGap || cs.gap || 0);
+    return isNaN(g) ? 0 : g;
   };
 
   const cardW = () => {
@@ -136,30 +137,27 @@ Testimonials — grid or slider
   };
 
   const perView = () => {
-    const w = scroller.clientWidth || 0;
     const step = cardW() || 1;
-    return Math.max(1, Math.round(w / step));
+    return Math.max(1, Math.round((scroller.clientWidth || step) / step));
   };
 
   const pageCount = () => {
-    const total = slides.length;
-    const pv    = perView();
-    return Math.max(1, Math.ceil(total / pv));
+    const pv = perView();
+    return Math.max(1, Math.ceil(slides.length / pv));
   };
 
+  // ---- state ----
   let pages  = pageCount();
   let active = 0;
 
   function goTo(i){
-    const pv = perView();
-    const x  = i * pv * cardW();
+    const x = i * perView() * cardW();
     try { scroller.scrollTo({ left: x, behavior: 'smooth' }); }
     catch { scroller.scrollLeft = x; }
   }
 
   function goBy(dir){
-    const pv = perView();
-    const x  = dir * pv * cardW();
+    const x = dir * perView() * cardW();
     try { scroller.scrollBy({ left: x, behavior: 'smooth' }); }
     catch { scroller.scrollLeft += x; }
   }
@@ -176,18 +174,19 @@ Testimonials — grid or slider
   }
 
   function update(){
-    const pv = perView();
-    const step = pv * cardW() || 1;
+    // derive active page from current scroll
+    const step = perView() * cardW() || 1;
     active = Math.max(0, Math.min(pages - 1, Math.round(scroller.scrollLeft / step)));
 
-    // dots + buttons
     dotsBox?.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
-    nav.hidden       = pages <= 1;
-    prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pages - 1;
+
+    const needsScroll = (scroller.scrollWidth - scroller.clientWidth) > 2;
+    nav.hidden        = !needsScroll || pages <= 1;
+    prevBtn.disabled  = active <= 0;
+    nextBtn.disabled  = active >= pages - 1;
   }
 
-  // Events
+  // ---- events ----
   prevBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goBy(-1); });
   nextBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); goBy( 1); });
 
@@ -200,7 +199,7 @@ Testimonials — grid or slider
   });
   ro.observe(scroller);
 
-  // Init
+  // ---- init ----
   pages = pageCount();
   buildDots();
   update();
@@ -316,3 +315,4 @@ Testimonials — grid or slider
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
