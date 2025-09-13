@@ -9,7 +9,10 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 {%- liquid
   assign heading    = section.settings.heading        | default: 'What our clients say'
   assign sub        = section.settings.subheading     | default: '-'
-  assign show_sub   = sub != '-' and sub != ''
+  assign show_sub = false
+  if sub != '-' and sub != ''
+    assign show_sub = true
+  endif
   assign limit      = section.settings.limit          | default: 12
   assign source     = section.settings.source         | default: 'blocks'
   assign carousel   = section.settings.carousel       | default: false
@@ -19,6 +22,17 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 
   assign tag_bucket = ''
 -%}
+
+{%- if heading != blank or show_sub -%}
+  <header class="nb-testimonials__head">
+    {%- if heading != blank -%}
+      <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
+    {%- endif -%}
+    {%- if show_sub -%}
+      <p class="nb-testimonials__dek">{{ sub }}</p>
+    {%- endif -%}
+  </header>
+{%- endif -%}
 
 <section id="nb-ts-{{ section.id }}" class="nb-testimonials tone-pebble" style="--nb-per: {{ per_view | default: 3 }};">
   <div class="nb-shell nb-testimonials__container">
@@ -122,28 +136,34 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
   const root  = document.getElementById('shopify-section-{{ section.id }}');
   if (!root) return;
 
-  const strip = root.querySelector('[data-strip]');   // the flex scroller
-  if (!strip) return;                                 // not in slider mode
+  // Find the horizontal scroller robustly
+  const strip =
+    root.querySelector('[data-strip]') ||
+    Array.from(root.querySelectorAll('[data-grid], .nb-hstrip__strip, .nb-tcarousel__track, .nb-tcarousel__viewport'))
+      .find(el => {
+        const cs = getComputedStyle(el);
+        return (el.scrollWidth - el.clientWidth) > 2 || cs.overflowX === 'auto' || cs.overflowX === 'scroll';
+      });
 
-  const nav   = root.querySelector('[data-nav]');
-  const prev  = root.querySelector('[data-prev]');
-  const next  = root.querySelector('[data-next]');
-  if (!nav || !prev || !next) return;
+  const nav  = root.querySelector('[data-nav]');
+  const prev = root.querySelector('[data-prev]') || root.querySelector('[data-dir="-1"]');
+  const next = root.querySelector('[data-next]') || root.querySelector('[data-dir="1"]');
+
+  if (!strip || !nav || !prev || !next) return;
 
   function canScroll(){ return (strip.scrollWidth - strip.clientWidth) > 2; }
   function page(){ return strip.clientWidth || 0; }
 
   function go(dx){
-    // robust scroll with fallback (some browsers ignore smooth when mid-scroll)
     try { strip.scrollBy({ left: dx, behavior: 'smooth' }); }
-    catch(e){ strip.scrollLeft += dx; }
+    catch { strip.scrollLeft += dx; }
     requestAnimationFrame(update);
   }
 
   function update(){
     nav.hidden = !canScroll();
     prev.disabled = strip.scrollLeft <= 1;
-    const atEnd = Math.ceil(strip.scrollLeft + strip.clientWidth) >= (strip.scrollWidth - 1);
+    const atEnd = Math.ceil(strip.scrollLeft + strip.clientWidth) >= strip.scrollWidth - 1;
     next.disabled = atEnd;
   }
 
@@ -152,8 +172,7 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 
   strip.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
   new ResizeObserver(update).observe(strip);
-
-  update(); // initial
+  update();
 })();
 {% endjavascript %}
 
@@ -254,6 +273,13 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 .nb-tcard__name{ font-weight:800; letter-spacing:.1px; color:#182126; margin-bottom:2px; }
 .nb-tcard__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
 .nb-tcard__loc{ color:#6b7b86; font-size:.95rem; margin-top:1px; }
+
+#shopify-section-{{ section.id }} .nb-hstrip__btn,
+#shopify-section-{{ section.id }} [data-prev],
+#shopify-section-{{ section.id }} [data-next]{
+  pointer-events:auto; z-index:3;
+}
+
 {% endstylesheet %}
 
 {% schema %}
@@ -297,4 +323,5 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
