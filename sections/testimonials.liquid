@@ -1,7 +1,8 @@
 {% comment %}
-Testimonials — page grid with optional slider + filter chips
-Source: manual blocks (default) or metaobject `nb_testimonial`
-Cards use the same design as the Testimonials page.
+  Testimonials — grid or slider, with metaobject support + fallback and a small debug probe.
+  - Source can be manual blocks or metaobject `nb_testimonial`
+  - Cards use the shared 'nb-testimonial-card' snippet
+  - If metaobject resolves to zero items, we fall back to blocks so the section never appears empty
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
@@ -9,7 +10,7 @@ Cards use the same design as the Testimonials page.
     assign heading    = section.settings.heading        | default: 'What our clients say'
     assign sub        = section.settings.subheading     | default: '-'
     assign show_sub   = false
-    if sub != '-' and sub != '' 
+    if sub != '-' and sub != ''
       assign show_sub = true
     endif
 
@@ -36,26 +37,58 @@ Cards use the same design as the Testimonials page.
       </header>
     {%- endif -%}
 
-    {%- comment -%} Build cards once {%- endcomment -%}
+    {%- comment -%}
+      --- DEBUG (temporary): shows how many entries Liquid sees when Source=Metaobject.
+      Remove this <small> once verified.
+    {%- endcomment -%}
+    {%- if source == 'metaobject' -%}
+      {%- assign __mo_dbg = shop.metaobjects.nb_testimonial | default: shop.metaobjects['nb_testimonial'] -%}
+      <small style="display:block;margin:.5rem 0;color:#6b7b86;">
+        nb_testimonial entries seen by theme:
+        <strong>{{ __mo_dbg.values | size | default: 0 }}</strong>
+      </small>
+    {%- endif -%}
+
+    {%- comment -%} Build cards once (metaobject first, with fallback to blocks) {%- endcomment -%}
     {%- capture cards_only -%}
       {%- if source == 'metaobject' -%}
-        {%- assign entries = shop.metaobjects['nb_testimonial'].values -%}
-        {%- if entries and entries.size > 0 -%}
+        {%- assign _mo = shop.metaobjects.nb_testimonial | default: shop.metaobjects['nb_testimonial'] -%}
+        {%- assign entries = _mo.values -%}
+
+        {%- if entries != blank and entries.size > 0 -%}
           {%- for m in entries limit: limit -%}
             {%- liquid
-              # m.quote is Rich text → flatten for card
-              assign q   = m.quote    | metafield_text | default: ''
-              assign n   = m.name     | default: ''
-              assign tt  = m.title    | default: ''
+              # quote can be a richtext metafield; try to normalize but still pass through if already plain/HTML
+              assign q = m.quote | metafield_text | default: m.quote | default: ''
+              assign n = m.name     | default: ''
+              assign tt = m.title   | default: ''
               assign loc = m.location | default: ''
-              assign av  = m.avatar
-              assign tg  = m.tags | join: ',' | default: ''
+              assign av = m.avatar
+              assign tg = m.tags | join: ',' | default: ''
               assign tag_bucket = tag_bucket | append: tg | append: ','
             -%}
             {% render 'nb-testimonial-card',
-              quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+              quote: q,
+              name: n,
+              title: tt,
+              location: loc,
+              avatar: av,
+              tags: tg %}
+          {%- endfor -%}
+        {%- else -%}
+          <!-- DEBUG: metaobject nb_testimonial returned 0 entries; rendering blocks instead -->
+          {%- for block in section.blocks limit: limit -%}
+            {%- assign q   = block.settings.quote    | default: '' -%}
+            {%- assign n   = block.settings.name     | default: '' -%}
+            {%- assign tt  = block.settings.title    | default: '' -%}
+            {%- assign loc = block.settings.location | default: '' -%}
+            {%- assign av  = block.settings.avatar -%}
+            {%- assign tg  = block.settings.tags     | default: '' -%}
+            {%- assign tag_bucket = tag_bucket | append: tg | append: ',' -%}
+            {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
           {%- endfor -%}
         {%- endif -%}
+
       {%- else -%}
         {%- for block in section.blocks limit: limit -%}
           {%- assign q   = block.settings.quote    | default: '' -%}
@@ -93,7 +126,7 @@ Cards use the same design as the Testimonials page.
       {%- endif -%}
     {%- endcapture -%}
 
-    {%- comment -%} Build unique, cleaned tag list for chips {%- endcomment -%}
+    {%- comment -%} Build unique tag list for filter chips (tags collected while rendering) {%- endcomment -%}
     {%- assign tags_tmp = tag_bucket | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' | split: ',' -%}
     {%- assign tags_all = tags_tmp | uniq | sort -%}
     {%- assign tags_clean = '' -%}
@@ -150,12 +183,11 @@ Cards use the same design as the Testimonials page.
   const prevBtn = sec.querySelector('[data-dir="-1"]');
   const nextBtn = sec.querySelector('[data-dir="1"]');
 
-  // Find the actual horizontal scroller (the one with overflow-x)
   function findScroller(root){
     const candidates = root.querySelectorAll('[data-grid], .nb-tcarousel__track, .nb-tcarousel__viewport');
     for (const el of candidates){
       const cs = getComputedStyle(el);
-      if (el.scrollWidth - el.clientWidth > 2 || cs.overflowX === 'auto' || cs.overflowX === 'scroll') return el;
+      if ((el.scrollWidth - el.clientWidth) > 2 || cs.overflowX === 'auto' || cs.overflowX === 'scroll') return el;
     }
     return null;
   }
@@ -182,7 +214,8 @@ Cards use the same design as the Testimonials page.
 
   function update(){
     active = Math.round(scroller.scrollLeft / vw());
-    dotsBox?.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
+    const dots = dotsBox?.querySelectorAll('i') || [];
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
     nav.hidden = pages <= 1;
     prevBtn.disabled = active <= 0;
     nextBtn.disabled = active >= pages - 1;
@@ -212,10 +245,10 @@ Cards use the same design as the Testimonials page.
 /* Container width aligns with the rest of the site */
 .nb-testimonials__container{ max-width: var(--narrow-page-width, 1120px); margin: 0 auto; padding: 0 20px; }
 
-/* Header */
+/* Header (match FAQ look & align) */
 .nb-testimonials__head{ margin: 0 0 clamp(10px, 2vw, 18px); text-align:center; }
-.nb-testimonials__title{ margin:0 0 6px; }
-.nb-testimonials__dek{ margin:0; color:#54636a; }
+.nb-testimonials__title{ margin:0 0 6px; color: var(--nb-ink, #1F2C2A); }
+.nb-testimonials__dek{ margin:0; color:#55656c; max-width:46ch; margin-left:auto; margin-right:auto; }
 
 /* Chips scroller */
 .nb-tchips{ position:relative; margin:8px 0 18px; }
@@ -230,7 +263,7 @@ Cards use the same design as the Testimonials page.
 @media (min-width: 720px) and (max-width: 959.98px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 719.98px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
-/* Card (same as page) */
+/* Card (same visual style as page) */
 .nb-tcard{
   --t-quote-lines: 10;
   position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
@@ -243,7 +276,7 @@ Cards use the same design as the Testimonials page.
 .nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px; background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
 .nb-tcard__qmark{ position:absolute; left:14px; top:10px; color:#e3e7e6; font-size:22px; line-height:1; }
 
-/* Quote: scroll when overflow */
+/* Quote overflow (scroll) */
 .nb-tcard__quote{
   margin: 0 2px 12px 2px;
   font: inherit;
@@ -270,39 +303,32 @@ Cards use the same design as the Testimonials page.
 .nb-tcard__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
 .nb-tcard__loc{ color:#6b7b86; font-size:.95rem; margin-top:1px; }
 
-/* ===== Header polish ===== */
-.nb-testimonials__container{ padding-top: clamp(28px, 4.2vw, 56px); }
-.nb-testimonials__head{ margin: 0 0 clamp(14px, 2.2vw, 22px); }
-.nb-testimonials__title{ max-width: 26ch; letter-spacing: -0.005em; }
-.nb-testimonials__head::after{ content:""; display:block; height:1px; background:#eef2f3; margin-top: clamp(10px, 1.6vw, 14px); border-radius:1px; }
-.nb-testimonials__dek{ color:#55656c; max-width: 46ch; }
-
 /* ===== Slider mode (scoped to this section) ===== */
 #shopify-section-{{ section.id }} .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
 #shopify-section-{{ section.id }} .nb-tcarousel__track{ display:block; }
 #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-  width: 100%;
-  display: grid;
-  grid-template-columns: none !important;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(88%, 1fr);
-  gap: 18px;
+  /* reset grid to horizontal cards */
+  width:100%;
+  display:grid;
+  grid-template-columns:none !important;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(88%, 1fr);
+  gap:18px;
 
-  scroll-snap-type: x mandatory;
-  overflow-x: auto;
-  padding: 4px 4px 8px;
-  scrollbar-width: none;
+  scroll-snap-type:x mandatory;
+  overflow-x:auto;
+  padding:4px 4px 8px;
+  scrollbar-width:none;
 }
 #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
-#shopify-section-{{ section.id }} .nb-tcard{ scroll-snap-align: start; }
+#shopify-section-{{ section.id }} .nb-tcard{ scroll-snap-align:start; }
 
+/* 2-up tablets, N-up desktop by editor setting */
 @media (min-width: 740px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{ grid-auto-columns: minmax(48%, 1fr); }
+  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(48%, 1fr); }
 }
 @media (min-width: 1024px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-    grid-auto-columns: minmax(calc(100% / {{ section.settings.per_view | default: 3 }}), 1fr);
-  }
+  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(calc(100% / {{ section.settings.per_view | default: 3 }}), 1fr); }
 }
 
 /* Nav + dots */
@@ -317,38 +343,25 @@ Cards use the same design as the Testimonials page.
 }
 #shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
 #shopify-section-{{ section.id }} .nb-tcarousel__dots{ display:flex; gap:8px; }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
-  width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block;
-}
+#shopify-section-{{ section.id }} .nb-tcarousel__dots i{ width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block; }
 #shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
 
-/* Flatten theme panels inside this section */
+/* CTA — Nibana teal */
+#shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
+#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta{
+  background: var(--nb_teal, #0C8A7B) !important; color:#fff !important; border-color: transparent !important;
+}
+#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
+  background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
+}
+
+/* Flatten extra panel chrome inside this section */
 #shopify-section-{{ section.id }} .nb-testimonials__container > * {
   background: transparent !important;
   box-shadow: none !important;
   border-radius: 0 !important;
   padding: 0 !important;
   border: 0 !important;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__viewport,
-#shopify-section-{{ section.id }} .nb-tcarousel__track,
-#shopify-section-{{ section.id }} .nb-tcarousel__nav,
-#shopify-section-{{ section.id }} .nb-tcarousel__cta {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-}
-
-/* CTA: Teal */
-#shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
-#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta{
-  background: var(--nb_teal, #0C8A7B) !important;
-  color:#fff !important;
-  border-color: transparent !important;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
-  background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
 }
 {% endstylesheet %}
 
