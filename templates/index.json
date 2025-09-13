@@ -2021,7 +2021,7 @@
       "settings": {
         "heading": "Testimonials",
         "subheading": "What our client's say",
-        "source": "blocks",
+        "source": "metaobject",
         "limit": 8,
         "show_filter": false,
         "carousel": true,
