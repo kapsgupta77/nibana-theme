@@ -196,6 +196,35 @@
   {% endif %}
 </section>
 
+{%- comment -%} FAQ JSON-LD (global) {%- endcomment -%}
+{%- if section.settings.emit_jsonld and section.blocks.size > 0 -%}
+  {%- assign items = '' -%}
+  {%- for b in section.blocks -%}
+    {%- assign q = b.settings.q | to_s | strip -%}
+    {%- assign a_html = b.settings.a | to_s | strip -%}
+    {%- if q != blank and a_html != blank -%}
+      {%- assign qa = 
+        '{ "@type":"Question", "name":' 
+        | append: (q | json) 
+        | append: ', "acceptedAnswer":{ "@type":"Answer", "text":' 
+        | append: (a_html | json) 
+        | append: ' } }' 
+      -%}
+      {%- if items != blank -%}{%- assign items = items | append: ',' -%}{%- endif -%}
+      {%- assign items = items | append: qa -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if items != blank -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [ {{ items }} ]
+    }
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
 {% schema %}
 {
   "name": "NB — FAQ (Global)",
@@ -213,6 +242,9 @@
     },
     { "type": "checkbox", "id": "wrap_shell", "label": "Wrap in soft tray background", "default": true },
     { "type": "checkbox", "id": "single_open", "label": "Only one item open at a time", "default": true },
+
+{ "type": "header", "content": "SEO" },
+{ "type": "checkbox", "id": "emit_jsonld", "label": "Emit FAQ JSON-LD (SEO)", "default": true },
 
     { "type": "header", "content": "Colours (optional overrides)" },
     { "type": "color", "id": "ink",       "label": "Ink (text)",            "default": "#223238" },
