@@ -7,7 +7,11 @@
   {%- liquid
     assign heading    = section.settings.heading        | default: 'What our clients say'
     assign sub        = section.settings.subheading     | default: '-'
-    assign show_sub   = sub != '-' and sub != ''
+    assign show_sub   = false
+    if sub != '-' and sub != ''
+      assign show_sub = true
+    endif
+
     assign source     = section.settings.source         | default: 'blocks'
     assign limit      = section.settings.limit          | default: 12
     assign carousel   = section.settings.carousel       | default: false
@@ -48,7 +52,7 @@
         {%- if mo_list and mo_list.size > 0 -%}
           {%- for m in mo_list limit: limit -%}
             {%- liquid
-              assign q   = m.quote | metafield_text | default: m.quote | default: ''
+              assign q   = m.quote | default: ''
               assign n   = m.name     | default: ''
               assign tt  = m.title    | default: ''
               assign loc = m.location | default: ''
@@ -65,7 +69,7 @@
           {%- if entries and entries.size > 0 -%}
             {%- for m in entries limit: limit -%}
               {%- liquid
-                assign q   = m.quote | metafield_text | default: m.quote | default: ''
+                assign q   = m.quote | default: ''
                 assign n   = m.name     | default: ''
                 assign tt  = m.title    | default: ''
                 assign loc = m.location | default: ''
@@ -184,7 +188,7 @@
   const nextBtn = sec.querySelector('[data-dir="1"]');
 
   function findScroller(root){
-    const candidates = root.querySelectorAll('[data-grid], .nb-tcarousel__track, .nb-tcarousel__viewport');
+    const candidates = root.querySelectorAll('[data-grid], .nb-tcarousel__track, .nb-tcarousel__viewport]');
     for (const el of candidates){
       const cs = getComputedStyle(el);
       if ((el.scrollWidth - el.clientWidth) > 2 || cs.overflowX === 'auto' || cs.overflowX === 'scroll') return el;
