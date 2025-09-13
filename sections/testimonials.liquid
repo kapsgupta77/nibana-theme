@@ -1,30 +1,25 @@
 {% comment %}
-Testimonials — page grid with optional slider + filter chips
+Testimonials — page grid with filter chips
 Source: manual blocks (default) or metaobject `nb_testimonial`
-Cards use the same design as the Testimonials page.
+Shows overflow in-card with a scrollbar (no modal).
 {% endcomment %}
 
 <section class="nb-testimonials tone-pebble">
   {%- liquid
-    assign heading    = section.settings.heading        | default: 'What our clients say'
-    assign sub        = section.settings.subheading     | default: '-'
-    assign show_sub   = false
-    if sub != '-' and sub != '' 
+    assign heading  = section.settings.heading    | default: 'What our clients say'
+    assign sub      = section.settings.subheading | default: '-'
+    assign show_sub = false
+    if sub != '-' and sub != ''
       assign show_sub = true
     endif
 
-    assign source     = section.settings.source         | default: 'blocks'
-    assign limit      = section.settings.limit          | default: 12
-
-    assign carousel   = section.settings.carousel       | default: false
-    assign per_view   = section.settings.per_view       | default: 3
-    assign cta_label  = section.settings.cta_label      | default: 'View all'
-    assign cta_link   = section.settings.cta_link       | default: '/pages/testimonial'
+    assign source = section.settings.source | default: 'blocks'
+    assign limit  = section.settings.limit  | default: 12
 
     assign tag_bucket = ''
   -%}
 
-  <div id="nb-testimonials-{{ section.id }}" class="nb-shell nb-testimonials__container">
+  <div class="nb-shell nb-testimonials__container">
     {%- if heading != blank or show_sub -%}
       <header class="nb-testimonials__head">
         {%- if heading != blank -%}
@@ -36,55 +31,39 @@ Cards use the same design as the Testimonials page.
       </header>
     {%- endif -%}
 
-    {%- comment -%} Build cards once {%- endcomment -%}
-    {%- capture cards_only -%}
-      {%- if source == 'metaobject' -%}
-        {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-        {%- if mo and mo.values and mo.values.size > 0 -%}
-          {%- for m in mo.values limit: limit -%}
-            {%- assign q   = m.quote    | default: '' -%}
-            {%- assign n   = m.name     | default: '' -%}
-            {%- assign tt  = m.title    | default: '' -%}
-            {%- assign loc = m.location | default: '' -%}
-            {%- assign av  = m.avatar -%}
-            {%- assign tg  = m.tags | join: ',' | default: '' -%}
+    {%- capture render_cards -%}
+      <div class="nb-tgrid" data-grid>
+        {%- if source == 'metaobject' -%}
+          {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
+          {%- if mo and mo.values and mo.values.size > 0 -%}
+            {%- for m in mo.values limit: limit -%}
+              {%- liquid
+                assign q   = m.quote     | default: ''
+                assign n   = m.name      | default: ''
+                assign tt  = m.title     | default: ''
+                assign loc = m.location  | default: ''
+                assign av  = m.avatar
+                assign tg  = m.tags | join: ',' | default: ''
+                assign tag_bucket = tag_bucket | append: ',' | append: tg
+              -%}
+              {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- for block in section.blocks limit: limit -%}
+            {%- liquid
+              assign q   = block.settings.quote    | default: ''
+              assign n   = block.settings.name     | default: ''
+              assign tt  = block.settings.title    | default: ''
+              assign loc = block.settings.location | default: ''
+              assign av  = block.settings.avatar
+              assign tg  = block.settings.tags     | default: ''
+              assign tag_bucket = tag_bucket | append: ',' | append: tg
+            -%}
             {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
           {%- endfor -%}
         {%- endif -%}
-      {%- else -%}
-        {%- for block in section.blocks limit: limit -%}
-          {%- assign q   = block.settings.quote    | default: '' -%}
-          {%- assign n   = block.settings.name     | default: '' -%}
-          {%- assign tt  = block.settings.title    | default: '' -%}
-          {%- assign loc = block.settings.location | default: '' -%}
-          {%- assign av  = block.settings.avatar -%}
-          {%- assign tg  = block.settings.tags     | default: '' -%}
-          {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-        {%- endfor -%}
-      {%- endif -%}
-    {%- endcapture -%}
-
-    {%- comment -%} Render grid or slider {%- endcomment -%}
-    {%- capture render_cards -%}
-      {%- if carousel -%}
-        <div class="nb-tcarousel__viewport" data-viewport>
-          <div class="nb-tcarousel__track" data-track>
-            <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
-          </div>
-        </div>
-        <div class="nb-tcarousel__nav" data-nav hidden>
-          <button class="nb-tcarousel__btn" type="button" aria-label="Previous" data-dir="-1">‹</button>
-          <div class="nb-tcarousel__dots" aria-hidden="true" data-dots></div>
-          <button class="nb-tcarousel__btn" type="button" aria-label="Next" data-dir="1">›</button>
-        </div>
-        {%- if cta_link != blank -%}
-          <div class="nb-tcarousel__cta">
-            <a class="nb-cta nb-cta--md" href="{{ cta_link }}">{{ cta_label }}</a>
-          </div>
-        {%- endif -%}
-      {%- else -%}
-        <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
-      {%- endif -%}
+      </div>
     {%- endcapture -%}
 
     {%- comment -%} Build unique, cleaned tag list for chips {%- endcomment -%}
@@ -114,10 +93,11 @@ Cards use the same design as the Testimonials page.
 
 {% javascript %}
 (() => {
-  const sec = document.getElementById('shopify-section-{{ section.id }}');
+  // Scope to THIS section
+  const sec  = document.getElementById('shopify-section-{{ section.id }}');
   if (!sec) return;
 
-  /* ---------- Chips (unchanged) ---------- */
+  // Filter chips
   const grid  = sec.querySelector('[data-grid]');
   const chips = sec.querySelectorAll('[data-chips] .nb-chip');
   if (grid && chips.length) {
@@ -127,67 +107,13 @@ Cards use the same design as the Testimonials page.
         chip.classList.add('is-active');
         const f = chip.getAttribute('data-filter');
         grid.querySelectorAll('.nb-tcard').forEach(card => {
+          if (f === '*') { card.hidden = false; return; }
           const ds = (card.getAttribute('data-tags') || '').toLowerCase();
-          card.hidden = (f !== '*') && ds.indexOf(f) === -1;
+          card.hidden = ds.indexOf(f) === -1;
         });
       });
     });
   }
-
-  /* ---------- Slider (scroll the grid, not the viewport) ---------- */
-  const isCarousel = {{ section.settings.carousel | json }};
-  if (!isCarousel) return;
-
-  const viewport = sec.querySelector('.nb-tcarousel__viewport');
-  const scroller = sec.querySelector('.nb-tcarousel__track [data-grid]'); // <— the element that actually scrolls
-  const nav      = sec.querySelector('[data-nav]');
-  const dotsBox  = sec.querySelector('[data-dots]');
-  const prevBtn  = sec.querySelector('[data-dir="-1"]');
-  const nextBtn  = sec.querySelector('[data-dir="1"]');
-
-  if (!viewport || !scroller || !nav || !prevBtn || !nextBtn) return;
-
-  const pageWidth = () => viewport.clientWidth;
-  const countPages = () => Math.max(1, Math.ceil(scroller.scrollWidth / pageWidth()));
-  let pages  = countPages();
-  let active = 0;
-
-  function buildDots() {
-    dotsBox.innerHTML = '';
-    for (let i = 0; i < pages; i++) {
-      const dot = document.createElement('i');
-      if (i === active) dot.classList.add('is-active');
-      dot.addEventListener('click', () => {
-        scroller.scrollTo({ left: i * pageWidth(), behavior: 'smooth' });
-      });
-      dotsBox.appendChild(dot);
-    }
-  }
-
-  function update() {
-    active = Math.round(scroller.scrollLeft / pageWidth());
-    dotsBox.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === active));
-
-    const needNav = scroller.scrollWidth > pageWidth() + 2;
-    nav.hidden = !needNav;
-    prevBtn.disabled = active <= 0;
-    nextBtn.disabled = active >= pages - 1;
-  }
-
-  prevBtn.addEventListener('click', () => scroller.scrollBy({ left: -pageWidth(), behavior: 'smooth' }));
-  nextBtn.addEventListener('click', () => scroller.scrollBy({ left:  pageWidth(), behavior: 'smooth' }));
-
-  const ro = new ResizeObserver(() => {
-    const p = countPages();
-    if (p !== pages) { pages = p; buildDots(); }
-    update();
-  });
-  ro.observe(viewport);
-  ro.observe(scroller);
-
-  buildDots();
-  update();
-  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 })();
 {% endjavascript %}
 
@@ -196,7 +122,7 @@ Cards use the same design as the Testimonials page.
 .nb-testimonials__container{ max-width: var(--narrow-page-width, 1120px); margin: 0 auto; padding: 0 20px; }
 
 /* Header */
-.nb-testimonials__head{ margin: 0 0 clamp(10px, 2vw, 18px); text-align:center; }
+.nb-testimonials__head{ margin: 0 0 clamp(10px, 2vw, 18px); }
 .nb-testimonials__title{ margin:0 0 6px; }
 .nb-testimonials__dek{ margin:0; color:#54636a; }
 
@@ -204,6 +130,9 @@ Cards use the same design as the Testimonials page.
 .nb-tchips{ position:relative; margin:8px 0 18px; }
 .nb-tchips__list{ display:flex; gap:10px; overflow:auto; padding:6px 8px 8px; margin:0; list-style:none; scrollbar-width:none; }
 .nb-tchips__list::-webkit-scrollbar{ display:none; }
+.nb-tchips::before,.nb-tchips::after{ content:""; position:absolute; top:0; bottom:0; width:28px; pointer-events:none; }
+.nb-tchips::before{ left:0; background:linear-gradient(90deg,#fff,rgba(255,255,255,0)); }
+.nb-tchips::after{ right:0; background:linear-gradient(270deg,#fff,rgba(255,255,255,0)); }
 .nb-chip{ display:inline-block; padding:.5rem .75rem; border-radius:999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(0,0,0,.05); white-space:nowrap; }
 .nb-chip.is-active{ background:#f6faf9; border-color:rgba(0,0,0,.06); font-weight:600; }
 
@@ -213,9 +142,9 @@ Cards use the same design as the Testimonials page.
 @media (min-width: 720px) and (max-width: 959.98px){ .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 719.98px){ .nb-tgrid{ grid-template-columns: 1fr; } }
 
-/* Card (same as page) */
+/* Card */
 .nb-tcard{
-  --t-quote-lines: 10;
+  --t-quote-lines: 10; /* number of visible lines before scroll */
   position:relative; background:#fff; border:1px solid #e8ecef; border-radius:18px;
   box-shadow:0 10px 22px rgba(0,0,0,.06);
   padding: clamp(18px, 2.2vw, 24px) clamp(18px, 2.4vw, 28px) clamp(14px, 2vw, 18px) clamp(20px, 2.6vw, 30px);
@@ -226,7 +155,7 @@ Cards use the same design as the Testimonials page.
 .nb-tcard__accent{ position:absolute; left:-1px; top:-1px; bottom:-1px; width:6px; border-radius:18px 0 0 18px; background:linear-gradient(180deg, var(--nb-chocolate), color-mix(in oklab, var(--nb-chocolate), #000 14%)); }
 .nb-tcard__qmark{ position:absolute; left:14px; top:10px; color:#e3e7e6; font-size:22px; line-height:1; }
 
-/* Quote: scroll when overflow */
+/* Quote: scroll when overflow, not clamped */
 .nb-tcard__quote{
   margin: 0 2px 12px 2px;
   font: inherit;
@@ -237,6 +166,8 @@ Cards use the same design as the Testimonials page.
   overflow: auto;
 }
 .nb-tcard__quote p{ margin:0; }
+
+/* (Optional) subtle scrollbar */
 .nb-tcard__quote::-webkit-scrollbar{ width:8px; }
 .nb-tcard__quote::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.12); border-radius:8px; }
 .nb-tcard__quote{ scrollbar-width:thin; scrollbar-color: rgba(0,0,0,.18) transparent; }
@@ -253,115 +184,37 @@ Cards use the same design as the Testimonials page.
 .nb-tcard__title{ color: var(--nb_teal, #0C8A7B); font-weight:600; margin-top:2px; }
 .nb-tcard__loc{ color:#6b7b86; font-size:.95rem; margin-top:1px; }
 
-/* ===== Section header polish ===== */
-.nb-testimonials__container{ padding-top: clamp(28px, 4.2vw, 56px); }
-.nb-testimonials__head{ margin: 0 0 clamp(14px, 2.2vw, 22px); }
-.nb-testimonials__title{ max-width: 26ch; letter-spacing: -0.005em; }
-.nb-testimonials__head::after{ content:""; display:block; height:1px; background:#eef2f3; margin-top: clamp(10px, 1.6vw, 14px); border-radius:1px; }
-.nb-testimonials__dek{ color:#55656c; max-width: 46ch; }
+/* ===== Testimonials header polish ===== */
 
-/* ===== Slider mode (scoped to this section) ===== */
-#shopify-section-{{ section.id }} .nb-tcarousel__viewport{
-  position:relative; overflow:hidden;
+/* Add breathing room from the nav and match site gutters */
+.nb-testimonials__container{
+  /* top padding for air */
+  padding-top: clamp(28px, 4.2vw, 56px);
 }
-#shopify-section-{{ section.id }} .nb-tcarousel__track{
+
+/* Tighter internal spacing, but still relaxed */
+.nb-testimonials__head{
+  margin: 0 0 clamp(14px, 2.2vw, 22px);
+}
+
+/* Keep the big, beautiful H1 but limit line length for elegance */
+.nb-testimonials__title{
+  max-width: 26ch;                  /* ~26 characters per line = calm */
+  letter-spacing: -0.005em;         /* tiny optical tightening */
+}
+
+/* Optional: a very light divider under the heading */
+.nb-testimonials__head::after{
+  content:"";
   display:block;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-  /* IMPORTANT: fully reset the grid layout from normal grid mode */
-  width: 100%;
-  display: grid;
-  grid-template-columns: none !important;  /* cancel repeat(3, …) from grid mode */
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(88%, 1fr);      /* mobile: big comfortable cards */
-  gap: 18px;
-
-  scroll-snap-type: x mandatory;
-  overflow-x: auto;
-  padding: 4px 4px 8px;
-  scrollbar-width: none;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
-#shopify-section-{{ section.id }} .nb-tcard{ scroll-snap-align: start; }
-
-/* 2-up on tablets */
-@media (min-width: 740px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-    grid-auto-columns: minmax(48%, 1fr);
-  }
-}
-/* N-up (1–3) on desktop based on the editor setting */
-@media (min-width: 1024px){
-  #shopify-section-{{ section.id }} .nb-tcarousel__track [data-grid]{
-    grid-auto-columns: minmax(calc(100% / {{ section.settings.per_view | default: 3 }}), 1fr);
-  }
+  height:1px;
+  background:#eef2f3;
+  margin-top: clamp(10px, 1.6vw, 14px);
+  border-radius: 1px;
 }
 
-/* Nav + dots (unchanged) */
-#shopify-section-{{ section.id }} .nb-tcarousel__nav{
-  display:flex; align-items:center; justify-content:center; gap:14px; margin:12px 0 0;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__btn{
-  width:42px; height:42px; border-radius:999px;
-  border:1px solid rgba(0,0,0,.08); background:#fff;
-  box-shadow:0 8px 18px rgba(0,0,0,.08);
-  font-size:22px; line-height:1; cursor:pointer;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__btn[disabled]{ opacity:.4; cursor:not-allowed; }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots{ display:flex; gap:8px; }
-#shopify-section-{{ section.id }} .nb-tcarousel__dots i{
-  width:7px; height:7px; border-radius:999px; background:#cfd6d2; display:inline-block;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
-#shopify-section-{{ section.id }} .nb-tcarousel__cta{ display:flex; justify-content:center; margin:16px 0 0; }
-
-/* --- Flatten theme panels inside this section --- */
-#shopify-section-{{ section.id }} .nb-testimonials__container > * {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;      /* removes the extra “gutter” space */
-  border: 0 !important;
-}
-
-/* Make sure the carousel wrappers themselves don’t re-add panels */
-#shopify-section-{{ section.id }} .nb-tcarousel__viewport,
-#shopify-section-{{ section.id }} .nb-tcarousel__track,
-#shopify-section-{{ section.id }} .nb-tcarousel__nav,
-#shopify-section-{{ section.id }} .nb-tcarousel__cta {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-}
-
-/* Keep only the intentional spacing we define elsewhere */
-#shopify-section-{{ section.id }} .nb-testimonials__head { margin-bottom: clamp(12px,2vw,18px); }
-#shopify-section-{{ section.id }} .nb-tcarousel__nav { margin-top: 12px; }
-#shopify-section-{{ section.id }} .nb-tcarousel__cta { margin-top: 16px; }
-
-/* ----- CTA: make it Nibana teal (not chocolate) ----- */
-#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta{
-  background: var(--nb_teal, #0C8A7B) !important;
-  color:#fff !important;
-  border-color: transparent !important;
-}
-#shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
-  background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
-}
-
-/* ----- Heading/subheading: match FAQ look & align ----- */
-#shopify-section-{{ section.id }} .nb-testimonials__head{ 
-  text-align:center; 
-  margin-bottom: clamp(12px, 2vw, 18px);
-}
-#shopify-section-{{ section.id }} .nb-testimonials__title{
-  /* uses your nb-h2 typography; we just ensure color/centering */
-  color: var(--nb-ink, #1F2C2A);
-  margin-left:auto; margin-right:auto;
-}
-#shopify-section-{{ section.id }} .nb-testimonials__dek{
-  margin-left:auto; margin-right:auto;
+/* Subheading tone if you decide to use it */
+.nb-testimonials__dek{
   color:#55656c;
   max-width: 46ch;
 }
@@ -375,23 +228,13 @@ Cards use the same design as the Testimonials page.
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
     { "type": "text", "id": "subheading", "label": "Subheading", "default": "-" },
-
     { "type": "select", "id": "source", "label": "Source", "options": [
       { "value": "blocks", "label": "Manual (blocks)" },
       { "value": "metaobject", "label": "Metaobject: nb_testimonial" }
     ], "default": "blocks" },
-
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 60, "step": 1, "default": 12 },
     { "type": "checkbox", "id": "show_filter", "label": "Show filter chips", "default": true },
-
-    { "type": "header", "content": "Slider options" },
-    { "type": "checkbox", "id": "carousel", "label": "Show as slider (horizontal scroll)", "default": false },
-    { "type": "range", "id": "per_view", "label": "Cards per view (desktop)", "min": 1, "max": 3, "step": 1, "default": 3 },
-    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "View all" },
-    { "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/testimonial" },
-
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-
     { "type": "header", "content": "Padding" },
     { "type": "range", "id": "padding-block-start", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
     { "type": "range", "id": "padding-block-end", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
@@ -410,12 +253,6 @@ Cards use the same design as the Testimonials page.
       ]
     }
   ],
-  "presets": [{ "name": "Testimonials (grid/slider)" }]
+  "presets": [{ "name": "Testimonials (grid)" }]
 }
 {% endschema %}
-
-
-
-
-
-
