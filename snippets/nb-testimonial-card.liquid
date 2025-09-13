@@ -1,5 +1,5 @@
 {%- comment -%}
-Renders one testimonial card.
+Renders a single testimonial card.
 Params expected: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
@@ -9,27 +9,33 @@ Params expected: quote, name, title, location, avatar, tags
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  <div class="nb-tcard__quote" aria-label="Testimonial quote" data-q>
-    {{ quote | strip | newline_to_br }}
-  </div>
+  {%- comment -%}
+  Details/summary gives us a native expand/collapse for “Read full”
+  We visually place summary below the quote with CSS (flex order).
+  {%- endcomment -%}
+  <details class="nb-tcard__details" data-details>
+    <summary class="nb-tcard__more" aria-expanded="false">
+      <span class="nb-tcard__more-text">Read full</span>
+    </summary>
+
+    <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
+      {{ quote | strip | newline_to_br }}
+    </div>
+  </details>
 
   <div class="nb-tcard__meta">
-    {% if avatar %}
+    {%- if avatar -%}
       <figure class="nb-tcard__avatar">
         {{ avatar
           | image_url: width: 96
-          | image_tag:
-              class: 'nb-tcard__avatar-img',
-              alt: name,
-              loading: 'lazy',
-              sizes: '96px',
-              widths: '48,64,96' }}
+          | image_tag: class: 'nb-tcard__avatar-img', alt: name | default: 'Client', loading: 'lazy', sizes: '96px', widths: '96,128' }}
       </figure>
-    {% endif %}
+    {%- endif -%}
+
     <div class="nb-tcard__who">
-      {% if name %}<div class="nb-tcard__name">{{ name }}</div>{% endif %}
-      {% if title %}<div class="nb-tcard__title">{{ title }}</div>{% endif %}
-      {% if location %}<div class="nb-tcard__loc">{{ location }}</div>{% endif %}
+      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
+      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
+      {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
     </div>
   </div>
 </article>
