@@ -1,248 +1,188 @@
-{% comment %}
-  NB — Global FAQ section (Home-style pill look + single-open accordion)
-  Self-contained: HTML + CSS + JS
-  This version force-disables any Dawn wrapper background around this section
-{% endcomment %}
+{%- comment -%}
+  NB — FAQ (Global)
+  - Blocks-based FAQ UI (details/summary)
+  - JSON-LD (FAQPage) emitter, gated by section setting
+  - Auto-suppresses JSON-LD on Coaching Service pages (those emit their own)
+{%- endcomment -%}
 
-{%- assign c_ink   = section.settings.ink        | default: '#223238' -%}
-{%- assign c_teal  = section.settings.teal       | default: '#0F5B59' -%}
-{%- assign c_shell = section.settings.shell_col  | default: '#E5E8E1' -%}
-{%- assign c_ans   = section.settings.answer     | default: '#EAF4F3' -%}
+{%- comment -%} Detect service pages to avoid duplicate FAQ JSON-LD {%- endcomment -%}
+{%- assign nb_is_service_page = false -%}
+{%- if template contains 'coaching-service' or template contains 'coaching_service' or template contains 'page.coaching' -%}
+  {%- assign nb_is_service_page = true -%}
+{%- endif -%}
+{%- if page and page.metafields.coachingservice.coaching_service -%}
+  {%- assign nb_is_service_page = true -%}
+{%- endif -%}
+{%- if page and page.metafields.custom.coaching_service -%}
+  {%- assign nb_is_service_page = true -%}
+{%- endif -%}
 
-<link rel="stylesheet" href="{{ 'nb-faq.css' | asset_url }}">
-
-<section
-  id="nb-faq-{{ section.id }}"
-  class="nb-faq style-home {% if section.settings.width == 'narrow' %}is-narrow{% elsif section.settings.width == 'wide' %}is-wide{% endif %}"
-  style="--nb-ink: {{ c_ink }}; --nb-teal: {{ c_teal }}; --nb-shell: {{ c_shell }}; --nb-answer: {{ c_ans }};"
->
-  <div class="nb-faq__inner {% unless section.settings.wrap_shell %}is-plain{% endunless %}">
-    {% if section.settings.title != blank %}
-      <h2 class="nb-faq__title">{{ section.settings.title }}</h2>
-    {% endif %}
-
-    <div class="nb-faq__list">
-      {%- for block in section.blocks -%}
-        <details class="nb-faq__item" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
-          <summary class="nb-faq__q">
-            {{ block.settings.q | escape }}
-          </summary>
-          <div class="nb-faq__a rte">
-            {{ block.settings.a }}
-          </div>
-        </details>
-      {%- endfor -%}
-    </div>
-  </div>
-
-{% liquid
-  assign nb_is_service_page = false
-
-  # Detect by template name/suffix
-  if template.name contains 'coaching' or template.suffix contains 'coaching'
-    assign nb_is_service_page = true
-  endif
-
-  # Detect by the presence of a Coaching Service metaobject on the page
-  if page and (page.metafields.custom.coaching_service or page.metafields.coachingservice.coaching_service)
-    assign nb_is_service_page = true
-  endif
-%}
-
-  <style>
-    /* ============================================================
-       NIBANA — Global FAQ (Home-style pill variant)
-       Hard stop any Dawn wrapper around THIS instance
-       ============================================================ */
-    #shopify-section-{{ section.id }}{
-      background: transparent !important;
-      box-shadow: none !important;
-      border: 0 !important;
-    }
-    /* If Dawn adds an inner .section/.color-… container, kill it */
-    #shopify-section-{{ section.id }} > .section,
-    #shopify-section-{{ section.id }} > .color-*,       /* Dawn color scheme wrappers */
-    #shopify-section-{{ section.id }} > .page-width,
-    #shopify-section-{{ section.id }} > .content-container,
-    #shopify-section-{{ section.id }} > .gradient{
-      background: transparent !important;
-      box-shadow: none !important;
-      border: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      border-radius: 0 !important;
-    }
-
-    :root{
-      --nb-shadow-1: 0 12px 30px rgba(0,0,0,.06);
-      --nb-shadow-2: 0 8px 22px rgba(0,0,0,.05);
-    }
-
-    .nb-faq{ padding: clamp(28px,3vw,60px) 0; background: transparent; }
-
-    .nb-faq__inner{
-      max-width: min(1160px, 94vw);
-      margin-inline: auto;
-      background: var(--nb-shell) !important;  /* our single soft tray */
-      border-radius: 22px;
-      box-shadow: var(--nb-shadow-1);
-      padding: clamp(18px, 2.2vw, 28px);
-    }
-    .nb-faq__inner.is-plain{
-      background: transparent !important;
-      box-shadow: none !important;
-      padding: 0;
-    }
-
-    .nb-faq.is-narrow .nb-faq__inner{ max-width: min(920px, 94vw); }
-    .nb-faq.is-wide   .nb-faq__inner{ max-width: min(1320px, 96vw); }
-
-    /* Heading */
-    .nb-faq.style-home .nb-faq__title{
-      color: var(--nb-ink) !important;
-      text-align: center;
-      font-weight: 800;
-      font-size: clamp(28px, 3.6vw, 40px);
-      margin: 0 0 clamp(16px,2vw,22px);
-    }
-
-    .nb-faq__list{ display: grid; gap: 18px; }
-
-    /* Base (fallback) */
-    .nb-faq__item{
-      background: #fff;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,.04);
-      box-shadow: var(--nb-shadow-2);
-      overflow: hidden;
-    }
-    .nb-faq__q{
-      list-style: none;
-      cursor: pointer;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 16px;
-      padding: clamp(14px,1.6vw,18px) clamp(16px,2vw,22px);
-      font-weight: 650;
-      color: var(--nb-ink);
-    }
-    .nb-faq__q::-webkit-details-marker{ display:none; }
-    .nb-faq__a{ padding: 0 clamp(16px,2vw,22px) clamp(16px,2vw,22px); line-height:1.6; color:#3a4a50; }
-    .nb-faq__a ul{ padding-left:1.1rem; margin:.5rem 0 0; }
-    .nb-faq__a li{ margin:.25rem 0; }
-
-    /* HOME LOOK (teal rounded pill + soft answer) */
-    .nb-faq.style-home .nb-faq__item{
-      background: transparent !important;
-      border: 0 !important;
-      box-shadow: none !important;
-      overflow: visible;
-    }
-    .nb-faq.style-home .nb-faq__q{
-      position: relative;
-      background: var(--nb-teal) !important;
-      color: #fff !important;
-      border: 0 !important;
-      border-radius: 9999px !important;
-      padding: 16px 64px 16px 22px !important; /* room for bubble */
-      font-weight: 720 !important;
-      box-shadow: 0 4px 14px rgba(0,0,0,.05);
-    }
-
-    /* hide any theme-provided icon */
-    .nb-faq.style-home .nb-faq__q svg,
-    .nb-faq.style-home .nb-faq__q .icon,
-    .nb-faq.style-home .nb-faq__q .faq__icon{ display:none !important; }
-
-    /* + / – bubble */
-    .nb-faq.style-home .nb-faq__q::after{
-      content: "+";
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 38px; height: 38px;
-      border-radius: 9999px;
-      display: grid; place-items: center;
-      color: #fff;
-      background: rgba(255,255,255,.14);
-      font-size: 22px; font-weight: 800; line-height:1;
-    }
-    .nb-faq.style-home .nb-faq__item[open] .nb-faq__q::after{ content: "–"; }
-
-    .nb-faq.style-home .nb-faq__q:hover{
-      background: color-mix(in srgb, var(--nb-teal) 92%, white) !important;
-    }
-
-    .nb-faq.style-home .nb-faq__a{
-      background: var(--nb-answer) !important;
-      border: 1px solid rgba(0,0,0,.06);
-      border-radius: 14px;
-      margin: 10px 14px 2px !important;
-      padding: 16px 20px !important;
-      color: #2d4046 !important;
-      line-height: 1.65;
-      box-shadow: 0 1px 0 rgba(255,255,255,.4) inset;
-    }
-
-    .nb-faq.style-home .nb-faq__q:focus{
-      outline: 3px solid rgba(15,91,89,.35);
-      outline-offset: 2px;
-      border-radius: 9999px;
-    }
-  </style>
-
-  {% if section.settings.single_open %}
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const root = document.getElementById('nb-faq-{{ section.id }}');
-      if (!root) return;
-      root.addEventListener('toggle', function (ev) {
-        const d = ev.target;
-        if (d.tagName !== 'DETAILS' || !d.open) return;
-        root.querySelectorAll('details[open]').forEach(other => {
-          if (other !== d) other.open = false;
-        });
-      }, true);
-    });
-  </script>
-  {% endif %}
-</section>
-
-{%- comment -%} FAQ JSON-LD (global) — auto-skip on service pages {%- endcomment -%}
 {%- liquid
-  assign nb_is_service_page = false
+  assign title       = section.settings.title | default: 'Frequently asked questions'
+  assign width       = section.settings.width | default: 'normal'  # narrow | normal | wide
+  assign wrap_shell  = section.settings.wrap_shell
+  assign single_open = section.settings.single_open
 
-  # Heuristics: template name/suffix OR presence of a coaching_service metaobject
-  if template.name contains 'coaching' or template.suffix contains 'coaching'
-    assign nb_is_service_page = true
+  assign col_ink     = section.settings.ink       | default: '#223238'
+  assign col_teal    = section.settings.teal      | default: '#0F5B59'
+  assign col_shell   = section.settings.shell_col | default: '#E5E8E1'
+  assign col_answer  = section.settings.answer    | default: '#EAF4F3'
+
+  # width class
+  assign width_class = 'nb-shell'
+  if width == 'narrow'
+    assign width_class = 'nb-shell nb-shell--narrow'
   endif
-  if page and (page.metafields.custom.coaching_service or page.metafields.coachingservice.coaching_service)
-    assign nb_is_service_page = true
+  if width == 'wide'
+    assign width_class = 'nb-shell nb-shell--wide'
   endif
 -%}
 
+<section id="nb-faq-{{ section.id }}"
+         class="nb-faq-section{% if wrap_shell %} nb-faq--tray{% endif %}"
+         style="--nb-faq-ink: {{ col_ink }}; --nb-faq-teal: {{ col_teal }}; --nb-faq-shell: {{ col_shell }}; --nb-faq-answer: {{ col_answer }};">
+
+  <div class="{{ width_class }}">
+    <div class="nb-faq__wrap{% if wrap_shell %} nb-faq__wrap--tray{% endif %}">
+      {%- if title != blank -%}
+        <h2 class="nb-faq__title">{{ title }}</h2>
+      {%- endif -%}
+
+      <div class="nb-faq__list" {% if single_open %}data-single-open="true"{% endif %}>
+        {%- for b in section.blocks -%}
+          {%- assign q = b.settings.q | to_s | strip -%}
+          {%- assign a = b.settings.a | to_s | strip -%}
+          {%- if q != blank -%}
+            <details class="nb-faq__item" {% if b.settings.open %}open{% endif %}>
+              <summary class="nb-faq__q">{{ q }}</summary>
+              {%- if a != blank -%}
+                <div class="nb-faq__a rte">{{ a }}</div>
+              {%- endif -%}
+            </details>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---- Layout widths (reuses your site’s .nb-shell pattern) ---- */
+  .nb-shell{ max-width:min(1160px,94vw); margin-inline:auto; padding-inline:20px; }
+  .nb-shell.nb-shell--narrow{ max-width:min(900px,92vw); }
+  .nb-shell.nb-shell--wide{ max-width:min(1320px,96vw); }
+
+  /* ---- FAQ tray + colors ---- */
+  .nb-faq-section{ color: var(--nb-faq-ink, #223238); }
+  .nb-faq__wrap{ margin: 12px 0; }
+  .nb-faq__wrap--tray{
+    background: var(--nb-faq-shell, #E5E8E1);
+    border-radius: 22px;
+    padding: clamp(16px, 2.6vw, 28px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.06);
+  }
+
+  /* ---- Title ---- */
+  .nb-faq__title{
+    margin: 0 0 clamp(10px, 2vw, 16px);
+    text-align: center;
+    font-weight: 800;
+    color: var(--nb-faq-ink, #223238);
+    font-family: var(--font-heading-family, inherit);
+    font-size: clamp(22px, 2.8vw, 28px);
+  }
+
+  /* ---- Items ---- */
+  .nb-faq__list{ display: grid; gap: 18px; }
+  .nb-faq__item{
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+  .nb-faq__q{
+    position: relative;
+    background: var(--nb-faq-teal, #0F5B59);
+    color: #fff;
+    border: 0;
+    border-radius: 9999px;
+    padding: 16px 64px 16px 22px;
+    font-weight: 720;
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-body-family, inherit);
+  }
+  .nb-faq__q::-webkit-details-marker{ display:none; }
+  .nb-faq__q:hover{ background: color-mix(in oklab, var(--nb-faq-teal, #0F5B59), #000 8%); }
+  .nb-faq__q::after{
+    content: "+";
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 999px;
+    display: grid; place-items: center;
+    color: #fff; background: rgba(255,255,255,.14);
+    font-size: 22px; font-weight: 800; line-height: 1;
+  }
+  details[open] .nb-faq__q::after{ content: "–"; }
+
+  .nb-faq__a{
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 14px;
+    margin: 10px 14px 2px;
+    padding: 16px 20px;
+    color: color-mix(in oklab, var(--nb-faq-ink, #223238), #000 8%);
+    line-height: 1.65;
+  }
+</style>
+
+{%- if section.settings.single_open -%}
+<script>
+  (function(){
+    var root = document.querySelector('#nb-faq-{{ section.id }} .nb-faq__list[data-single-open="true"]');
+    if(!root) return;
+    root.addEventListener('toggle', function(ev){
+      var d = ev.target;
+      if(d.tagName !== 'DETAILS' || !d.open) return;
+      root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+    }, true);
+  })();
+</script>
+{%- endif -%}
+
+{%- comment -%} ---------- JSON-LD (emits only when allowed and not on service pages) ---------- {%- endcomment -%}
 {%- if section.settings.emit_jsonld and section.blocks.size > 0 and nb_is_service_page == false -%}
-  {%- assign items = '' -%}
+  {%- assign any = false -%}
   {%- for b in section.blocks -%}
     {%- assign q = b.settings.q | to_s | strip -%}
-    {%- assign a_html = b.settings.a | to_s | strip -%}
-    {%- if q != blank and a_html != blank -%}
-      {%- assign qa = '{"@type":"Question","name":'
-        | append: (q | json)
-        | append: ',"acceptedAnswer":{"@type":"Answer","text":'
-        | append: (a_html | json)
-        | append: '}}'
-      -%}
-      {%- if items != blank -%}{%- assign items = items | append: ',' -%}{%- endif -%}
-      {%- assign items = items | append: qa -%}
-    {%- endif -%}
+    {%- assign a = b.settings.a | to_s | strip -%}
+    {%- if q != blank and a != blank -%}{%- assign any = true -%}{%- break -%}{%- endif -%}
   {%- endfor -%}
-
-  {%- if items != blank -%}
+  {%- if any -%}
     <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ items }}]}
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- assign first = true -%}
+        {%- for b in section.blocks -%}
+          {%- assign q = b.settings.q | to_s | strip -%}
+          {%- assign a_html = b.settings.a | to_s | strip -%}
+          {%- if q != blank and a_html != blank -%}
+            {%- unless first -%},{%- endunless -%}
+            {
+              "@type": "Question",
+              "name": {{ q | json }},
+              "acceptedAnswer": { "@type": "Answer", "text": {{ a_html | json }} }
+            }
+            {%- assign first = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
     </script>
   {%- endif -%}
 {%- endif -%}
@@ -251,7 +191,7 @@
 {
   "name": "NB — FAQ (Global)",
   "tag": "section",
-  "class": "nb-faq-section",            /* <- DO NOT include Dawn's 'section' class */
+  "class": "nb-faq-section",
   "settings": [
     { "type": "text", "id": "title", "label": "Title", "default": "Frequently asked questions" },
     {
@@ -265,14 +205,14 @@
     { "type": "checkbox", "id": "wrap_shell", "label": "Wrap in soft tray background", "default": true },
     { "type": "checkbox", "id": "single_open", "label": "Only one item open at a time", "default": true },
 
-{ "type": "header", "content": "SEO" },
-{ "type": "checkbox", "id": "emit_jsonld", "label": "Emit FAQ JSON-LD (SEO)", "default": true },
-
     { "type": "header", "content": "Colours (optional overrides)" },
-    { "type": "color", "id": "ink",       "label": "Ink (text)",            "default": "#223238" },
-    { "type": "color", "id": "teal",      "label": "Teal (pill)",            "default": "#0F5B59" },
-    { "type": "color", "id": "shell_col", "label": "Tray / shell background","default": "#E5E8E1" },
-    { "type": "color", "id": "answer",    "label": "Answer background",      "default": "#EAF4F3" }
+    { "type": "color", "id": "ink",       "label": "Ink (text)",             "default": "#223238" },
+    { "type": "color", "id": "teal",      "label": "Teal (pill)",             "default": "#0F5B59" },
+    { "type": "color", "id": "shell_col", "label": "Tray / shell background", "default": "#E5E8E1" },
+    { "type": "color", "id": "answer",    "label": "Answer background",       "default": "#EAF4F3" },
+
+    { "type": "header", "content": "SEO" },
+    { "type": "checkbox", "id": "emit_jsonld", "label": "Output FAQ JSON-LD structured data", "default": true }
   ],
   "blocks": [
     {
@@ -291,8 +231,8 @@
       "name": "NB — FAQ (Global)",
       "category": "Text",
       "blocks": [
-        { "type": "item", "settings": { "q": "What’s included?",         "a": "<p>Answer example.</p>" } },
-        { "type": "item", "settings": { "q": "How long is the call?",    "a": "<p>Answer example.</p>" } }
+        { "type": "item", "settings": { "q": "What’s included?",      "a": "<p>Answer example.</p>" } },
+        { "type": "item", "settings": { "q": "How long is the call?", "a": "<p>Answer example.</p>" } }
       ]
     }
   ]
