@@ -37,32 +37,34 @@ Cards use the same design as the Testimonials page.
     {%- endif -%}
 
     {%- comment -%} Build cards once {%- endcomment -%}
-    {%- capture cards_only -%}
-      {%- if source == 'metaobject' -%}
-        {%- assign mo = shop.metaobjects['nb_testimonial'] -%}
-        {%- if mo and mo.values and mo.values.size > 0 -%}
-          {%- for m in mo.values limit: limit -%}
-            {%- assign q   = m.quote    | default: '' -%}
-            {%- assign n   = m.name     | default: '' -%}
-            {%- assign tt  = m.title    | default: '' -%}
-            {%- assign loc = m.location | default: '' -%}
-            {%- assign av  = m.avatar -%}
-            {%- assign tg  = m.tags | join: ',' | default: '' -%}
-            {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-          {%- endfor -%}
-        {%- endif -%}
-      {%- else -%}
-        {%- for block in section.blocks limit: limit -%}
-          {%- assign q   = block.settings.quote    | default: '' -%}
-          {%- assign n   = block.settings.name     | default: '' -%}
-          {%- assign tt  = block.settings.title    | default: '' -%}
-          {%- assign loc = block.settings.location | default: '' -%}
-          {%- assign av  = block.settings.avatar -%}
-          {%- assign tg  = block.settings.tags     | default: '' -%}
-          {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
-        {%- endfor -%}
-      {%- endif -%}
-    {%- endcapture -%}
+{%- capture cards_only -%}
+  {%- if source == 'metaobject' -%}
+    {%- assign list = shop.metaobjects['nb_testimonial'].values -%}
+    {%- if list and list.size > 0 -%}
+      {%- for m in list limit: limit -%}
+        {%- assign q   = m.quote    | default: '' -%}
+        {%- assign n   = m.name     | default: '' -%}
+        {%- assign tt  = m.title    | default: '' -%}
+        {%- assign loc = m.location | default: '' -%}
+        {%- assign av  = m.avatar -%}
+        {%- assign tg  = m.tags | join: ',' | default: '' -%}
+
+        {% render 'nb-testimonial-card',
+          quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- for block in section.blocks limit: limit -%}
+      {%- assign q   = block.settings.quote    | default: '' -%}
+      {%- assign n   = block.settings.name     | default: '' -%}
+      {%- assign tt  = block.settings.title    | default: '' -%}
+      {%- assign loc = block.settings.location | default: '' -%}
+      {%- assign av  = block.settings.avatar -%}
+      {%- assign tg  = block.settings.tags     | default: '' -%}
+      {% render 'nb-testimonial-card', quote: q, name: n, title: tt, location: loc, avatar: av, tags: tg %}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
 
     {%- comment -%} Render grid or slider {%- endcomment -%}
     {%- capture render_cards -%}
@@ -425,6 +427,7 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
 
