@@ -920,6 +920,59 @@ header-menu .nb-services-flyout{
   background: #fff !important;
 }
 
+/* === NB: Kill the full-width dark strap behind Services (correct selectors) === */
+@media (min-width: 990px){
+  /* The full-width popover wrapper Dawn uses */
+  header-component [data-header-nav-popover],
+  header-component [data-header-nav-popover]::before,
+  header-component [data-header-nav-popover]::after {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* The submenu wrappers your theme outputs (single-underscore class names) */
+  header-component .menu_list__submenu,
+  header-component .menu_list__submenu-inner,
+  header-component .menu_list__submenu::before,
+  header-component .menu_list__submenu::after,
+  header-component .menu_list__submenu-inner::before,
+  header-component .menu_list__submenu-inner::after {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* If the strap is coming from the shadow-DOM overflow menu, nuke its bg too */
+  header-component .overflow-menu::part(overflow),
+  header-component .overflow-menu::part(list) {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Guard against color-scheme classes painting a background in the popover */
+  header-component [data-header-nav-popover] [class*="color-scheme-"] {
+    background: transparent !important;
+    --color-background: transparent !important;
+  }
+}
+
+/* Keep the white “card” itself (the Services list) styled */
+header-component .header-menu .mega-menu{
+  background:#fff !important;
+  color:#223238 !important;
+  border:1px solid color-mix(in oklab, var(--color-border), #000 6%) !important;
+  border-radius:14px !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.14) !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
