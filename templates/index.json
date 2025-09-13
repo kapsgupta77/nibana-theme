@@ -2022,6 +2022,12 @@
         "heading": "Testimonials",
         "subheading": "What our client's say",
         "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "christopher-thomas",
+          "david-chambers",
+          "bhavesh-dhaka"
+        ],
         "limit": 8,
         "show_filter": false,
         "carousel": true,
