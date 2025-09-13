@@ -583,67 +583,7 @@ body:has(> #header-group > header-component) {
     }
   }
 
-/* === NB PATCH — keep submenu crisp, dim page only, remove dark mega bar === */
-@media (min-width: 990px){
-  /* 1) Dimmer lives under the header */
-  #MainContent::before{
-    content:"";
-    position: fixed;
-    top: var(--header-height, 64px);
-    left: 0; right: 0; bottom: 0;
-    background: rgba(17,24,24,.16);  /* no blur */
-    opacity: 0;
-    transition: opacity .16s ease;
-    pointer-events: none;            /* never capture cursor */
-    z-index: 30;                     /* sits below header & submenu */
-  }
-  html.nb-mega-open #MainContent::before{ opacity: 1; }
 
-  /* 2) Lift header + submenu above the dimmer */
-  #header-group,
-  #shopify-section-header,
-  header-component,
-  header-component .header{
-    position: relative;
-    z-index: 100;
-  }
-  header-component .header__inline-menu,
-  header-component .header__submenu,
-  header-component .mega-menu,
-  header-component .mega-menu__content,
-  [data-header-nav-popover]{
-    position: relative;
-    z-index: 120;
-  }
-
-  /* 3) Nuke any popover/overlay blur or backdrop the theme injects */
-  html.nb-mega-open [data-header-nav-popover]::backdrop,
-  html.nb-mega-open [popover]::backdrop,
-  html.nb-mega-open dialog[popover]::backdrop,
-  html.nb-mega-open [data-header-nav-popover]::part(overlay),
-  html.nb-mega-open [data-header-nav-popover]::part(backdrop),
-  html.nb-mega-open header-component .popover,
-  html.nb-mega-open header-component .popover__overlay{
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-  }
-
-  /* 4) Remove the dark mega strap behind the white card (and any pseudo-els) */
-  html.nb-mega-open header-component .header__submenu,
-  html.nb-mega-open header-component .header__submenu::before,
-  html.nb-mega-open header-component .header__inline-menu::after,
-  html.nb-mega-open header-component .mega-menu,
-  html.nb-mega-open header-component .mega-menu::before,
-  html.nb-mega-open header-component .mega-menu__content,
-  html.nb-mega-open header-component .mega-menu__content::before{
-    background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
-  }
-}
-/* === /PATCH =============================================================== */
 
 /* === Nav link polish + services list hover === */
 .header [data-nav="top"] a:hover,
@@ -886,73 +826,38 @@ body:has(> #header-group > header-component) {
   background: color-mix(in oklab, #223238, #fff 92%);
 }
 
-/* === NB HARDENED PATCH — crisp submenu, page-only dim, no dark strap === */
+/* === NB FINAL: No dimmer, no blur, no dark mega strap ===================== */
 @media (min-width: 990px){
-
-  /* A) Dimmer sits under header, no blur */
-  #MainContent::before{
-    content:"";
-    position: fixed;
-    top: var(--header-height, 64px);
-    left: 0; right: 0; bottom: 0;
-    background: rgba(17,24,24,.16);        /* subtle dim only */
-    opacity: 0;
-    transition: opacity .16s ease;
-    pointer-events: none;                  /* never capture cursor */
-    z-index: 30;                           /* below header + submenu */
-  }
-  html.nb-mega-open #MainContent::before{ opacity: 1; }
-
-  /* B) Make sure header + submenu sit above the dimmer */
-  #header-group,
-  #shopify-section-header,
-  header-component,
-  header-component .header,
-  header-component .header__inline-menu,
-  header-component .header__submenu,
-  header-component .mega-menu,
-  header-component [data-header-nav-popover]{
-    position: relative;
-    z-index: 120;
-  }
-
-  /* C) Nuke ANY blur/filters some themes apply when menus open */
-  html.nb-mega-open main,
-  html.nb-mega-open #MainContent,
-  html.nb-mega-open #MainContent > *{
+  /* 0) Ensure no one is blurring the page */
+  main, #MainContent, #MainContent > * {
     filter: none !important;
     -webkit-filter: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
 
-  /* D) Remove Shopify/Dawn popover backdrops and overlays */
-  html.nb-mega-open [popover]::backdrop,
-  html.nb-mega-open dialog[popover]::backdrop,
-  html.nb-mega-open [data-header-nav-popover]::backdrop,
-  html.nb-mega-open [data-header-nav-popover]::part(overlay),
-  html.nb-mega-open [data-header-nav-popover]::part(backdrop),
-  html.nb-mega-open header-component .popover,
-  html.nb-mega-open header-component .popover__overlay{
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-  }
+  /* 1) Remove any dimmer that might have been injected via ::before */
+  #MainContent::before { content: none !important; }
 
-  /* E) Kill the dark “mega strap” panel behind the white card */
-  html.nb-mega-open header-component .header__submenu,
-  html.nb-mega-open header-component .header__submenu::before,
-  html.nb-mega-open header-component .header__inline-menu::after,
-  html.nb-mega-open header-component .mega-menu,
-  html.nb-mega-open header-component .mega-menu::before,
-  html.nb-mega-open header-component .mega-menu__content{
+  /* 2) Kill the dark “mega strap” wrapper behind the white Services card */
+  header-component .header__inline-menu::after,
+  header-component .header__submenu,
+  header-component .header__submenu::before,
+  header-component .mega-menu__content {
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
   }
 }
-/* === /PATCH ================================================================ */
+
+/* Keep the Services card itself white; do NOT set .mega-menu transparent. */
+.header-menu .mega-menu{
+  background:#fff;
+  color:#223238;
+  border:1px solid color-mix(in oklab, var(--color-border), #000 6%);
+  border-radius:14px;
+  box-shadow:0 18px 46px rgba(0,0,0,.14);
+}
 
 {% endstylesheet %}
 
