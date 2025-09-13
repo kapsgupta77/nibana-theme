@@ -246,16 +246,16 @@ capture actions
 ></script>
 
 {% stylesheet %}
-  body {
-    --header-height: 0px;
-    --header-group-height: var(--header-height);
-    --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
-  }
+ body {
+  --header-height: 0px;
+  --header-group-height: var(--header-height);
+  --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
+}
 
-  body:has(> #header-group > header) {
-    --header-height: 60px;
-  }
-
+/* Your theme renders <header-component>, not <header> */
+body:has(> #header-group > header-component) {
+  --header-height: 60px;  /* adjust if your header is taller */
+}
   body:has(> #header-group:empty) {
     --header-group-height: 0px;
   }
@@ -589,7 +589,7 @@ capture actions
   #MainContent::before{
     content:"";
     position: fixed;
-    top: var(--header-group-height, 64px);
+    top: var(--header-height, 64px);
     left: 0; right: 0; bottom: 0;
     background: rgba(17, 24, 24, .28);
     backdrop-filter: saturate(120%) blur(2px);
@@ -633,6 +633,15 @@ capture actions
   /* If the Popover API uses a top-layer backdrop, clear it */
   [data-header-nav-popover]::backdrop{
     background: transparent !important;
+  }
+}
+
+/* Kill the wide dark panel behind the Services card */
+@media (min-width: 990px){
+  .header .mega-menu__content{
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
   }
 }
 
