@@ -17,27 +17,23 @@
   {%- assign nb_is_service_page = true -%}
 {%- endif -%}
 
-{%- liquid
-  assign title       = section.settings.title | default: 'Frequently asked questions'
-  assign width       = section.settings.width | default: 'normal'
-  assign wrap_shell  = section.settings.wrap_shell
-  assign single_open = section.settings.single_open
+{%- comment -%} Settings to locals (avoid {% liquid %} block) {%- endcomment -%}
+{%- assign title       = section.settings.title | default: 'Frequently asked questions' -%}
+{%- assign width       = section.settings.width | default: 'normal' -%}
+{%- assign wrap_shell  = section.settings.wrap_shell -%}
+{%- assign single_open = section.settings.single_open -%}
+{%- assign col_ink     = section.settings.ink       | default: '#223238' -%}
+{%- assign col_teal    = section.settings.teal      | default: '#0F5B59' -%}
+{%- assign col_shell   = section.settings.shell_col | default: '#E5E8E1' -%}
+{%- assign col_answer  = section.settings.answer    | default: '#EAF4F3' -%}
 
-  assign col_ink     = section.settings.ink       | default: '#223238'
-  assign col_teal    = section.settings.teal      | default: '#0F5B59'
-  assign col_shell   = section.settings.shell_col | default: '#E5E8E1'
-  assign col_answer  = section.settings.answer    | default: '#EAF4F3'
-endliquid -%}
-
-{%- liquid
-  assign width_class = 'nb-shell'
-  if width == 'narrow'
-    assign width_class = 'nb-shell nb-shell--narrow'
-  endif
-  if width == 'wide'
-    assign width_class = 'nb-shell nb-shell--wide'
-  endif
--%}
+{%- assign width_class = 'nb-shell' -%}
+{%- if width == 'narrow' -%}
+  {%- assign width_class = 'nb-shell nb-shell--narrow' -%}
+{%- endif -%}
+{%- if width == 'wide' -%}
+  {%- assign width_class = 'nb-shell nb-shell--wide' -%}
+{%- endif -%}
 
 <section id="nb-faq-{{ section.id }}"
          class="nb-faq-section{% if wrap_shell %} nb-faq--tray{% endif %}"
@@ -51,8 +47,8 @@ endliquid -%}
 
       <div class="nb-faq__list" {% if single_open %}data-single-open="true"{% endif %}>
         {%- for b in section.blocks -%}
-          {%- assign q = b.settings.q | to_s | strip -%}
-          {%- assign a = b.settings.a | to_s | strip -%}
+          {%- assign q = b.settings.q | strip -%}
+          {%- assign a = b.settings.a | strip -%}
           {%- if q != blank -%}
             <details class="nb-faq__item" {% if b.settings.open %}open{% endif %}>
               <summary class="nb-faq__q">{{ q }}</summary>
@@ -70,7 +66,7 @@ endliquid -%}
 <style>
   .nb-shell{ max-width:min(1160px,94vw); margin-inline:auto; padding-inline:20px; }
   .nb-shell.nb-shell--narrow{ max-width:min(900px,92vw); }
-  .nb-shell.nb-shell--wide{ max-width:min(1320px,96vw); }
+  .nb-shell.nb-shell--wide{ max_width:min(1320px,96vw); }
 
   .nb-faq-section{ color: var(--nb-faq-ink, #223238); }
   .nb-faq__wrap{ margin: 12px 0; }
@@ -114,7 +110,10 @@ endliquid -%}
     font-family: var(--font-body-family, inherit);
   }
   .nb-faq__q::-webkit-details-marker{ display:none; }
-  .nb-faq__q:hover{ background: color-mix(in oklab, var(--nb-faq-teal, #0F5B59), #000 8%); }
+  .nb-faq__q:hover{
+    /* slightly darker */
+    background: color-mix(in oklab, var(--nb-faq-teal, #0F5B59), #000 8%);
+  }
   .nb-faq__q::after{
     content: "+";
     position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
@@ -152,13 +151,13 @@ endliquid -%}
 
 {%- comment -%} JSON-LD (emits only when allowed and not on service pages) {%- endcomment -%}
 {%- if section.settings.emit_jsonld and section.blocks.size > 0 and nb_is_service_page == false -%}
-  {%- assign any = false -%}
+  {%- assign any_valid = false -%}
   {%- for b in section.blocks -%}
-    {%- assign q = b.settings.q | to_s | strip -%}
-    {%- assign a = b.settings.a | to_s | strip -%}
-    {%- if q != blank and a != blank -%}{%- assign any = true -%}{%- break -%}{%- endif -%}
+    {%- assign q = b.settings.q | strip -%}
+    {%- assign a_html = b.settings.a | strip -%}
+    {%- if q != blank and a_html != blank -%}{%- assign any_valid = true -%}{%- break -%}{%- endif -%}
   {%- endfor -%}
-  {%- if any -%}
+  {%- if any_valid -%}
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -166,8 +165,8 @@ endliquid -%}
       "mainEntity": [
         {%- assign first = true -%}
         {%- for b in section.blocks -%}
-          {%- assign q = b.settings.q | to_s | strip -%}
-          {%- assign a_html = b.settings.a | to_s | strip -%}
+          {%- assign q = b.settings.q | strip -%}
+          {%- assign a_html = b.settings.a | strip -%}
           {%- if q != blank and a_html != blank -%}
             {%- unless first -%},{%- endunless -%}
             {
