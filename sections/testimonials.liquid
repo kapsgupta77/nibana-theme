@@ -85,10 +85,6 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
       {%- endunless -%}
     {%- endcapture -%}
 
-    {%- comment -%} Tiny debug line — remove after validating {%- endcomment -%}
-    <small style="display:block;opacity:.55;margin:.25rem 0 .5rem">
-      source: {{ source }} • mo_count: {{ mo_count | default: 0 }} • used_metaobjects: {{ mo_used }}
-    </small>
 
     {%- comment -%} ---------- Render grid or slider ---------- {%- endcomment -%}
     {%- capture render_cards -%}
@@ -308,6 +304,15 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
 #shopify-section-{{ section.id }} .nb-tcarousel__cta .nb-cta:hover{
   background: color-mix(in oklab, var(--nb_teal, #0C8A7B), #000 8%) !important;
 }
+
+/* Flatten theme panels inside this section */
+#shopify-section-{{ section.id }} .nb-testimonials__container > * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
@@ -357,3 +362,4 @@ If metaobject list yields >0 cards, we use it. Otherwise we fall back to blocks.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
