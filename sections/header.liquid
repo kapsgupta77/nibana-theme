@@ -999,6 +999,32 @@ header-component .header-menu .mega-menu{
   }
 }
 
+/* === Kill the dark mega backdrop completely === */
+
+/* The web-component draws the big backdrop on its ::part(overflow) */
+header-menu overflow-list::part(overflow){
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* The submenu wrapper can also inject a panel via color-scheme */
+header-menu .menu-list__submenu{
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Some themes add an extra layer on the inner wrapper */
+header-menu .menu-list__submenu-inner{
+  background: transparent !important;
+}
+
+/* Safety: silence any pseudo layers some themes add */
+header-menu .menu-list__submenu::before,
+header-menu [data-header-nav-popover]::before{
+  content: none !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
