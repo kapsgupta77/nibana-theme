@@ -729,6 +729,15 @@ capture actions
   display: none !important;
 }
 
+/* NB: Hide carets for items without submenus — even when aria-expanded changes */
+.header__menu-item [data-caret]{ display:none !important; }
+.header__menu-item:has([ref="submenu[]"]) [data-caret]{ display:inline-flex !important; }
+
+/* extra guard: if something sets aria-expanded=true on a no-submenu item, still hide */
+.header__menu-item[aria-expanded="true"]:not(:has([ref="submenu[]"])) [data-caret]{
+  display:none !important;
+}
+
 /* 2.4 Active page underline (subtle, thicker) */
 .menu-list__item[aria-current] > .menu-list__link{ position: relative; }
 .menu-list__item[aria-current] > .menu-list__link::before{
