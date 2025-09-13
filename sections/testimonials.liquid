@@ -111,73 +111,47 @@ Testimonials — grid/slider
   const root = document.getElementById('shopify-section-{{ section.id }}');
   if (!root || {{ section.settings.carousel | json }} !== true) return;
 
-  // Elements in your current markup
-  const grid = root.querySelector('.nb-tcarousel__track [data-grid]');
-  const nav  = root.querySelector('[data-nav]');
-  const prev = root.querySelector('[data-dir="-1"]');
-  const next = root.querySelector('[data-dir="1"]');
-  const dots = root.querySelector('[data-dots]');
-  if (!grid || !nav || !prev || !next) return;
+  // Your existing markup
+  const scroller = root.querySelector('.nb-tcarousel__track [data-grid]') || root.querySelector('[data-grid]');
+  const nav      = root.querySelector('[data-nav]');
+  const prev     = root.querySelector('[data-dir="-1"]');
+  const next     = root.querySelector('[data-dir="1"]');
+  const dotsBox  = root.querySelector('[data-dots]');
+  if (!scroller || !nav || !prev || !next) return;
 
-  const items = Array.from(grid.children);
+  // Show/hide nav only if really not scrollable
+  const showNav = () => (nav.hidden = scroller.scrollWidth <= scroller.clientWidth + 2);
+  const step    = () => Math.max(1, scroller.clientWidth - 24); // one page (little safety)
 
-  // Robust step: distance between first two items (includes CSS gap).
-  // Fallback to item width or grid width if only one item.
-  const stepPx = () => {
-    if (items.length > 1) return items[1].offsetLeft - items[0].offsetLeft;
-    const w = items[0]?.getBoundingClientRect().width || grid.clientWidth;
-    const cs = getComputedStyle(grid);
-    const gap = parseFloat(cs.columnGap || cs.gap || 0) || 0;
-    return w + gap;
-  };
-
-  const perView = () => Math.max(1, Math.round(grid.clientWidth / stepPx()));
-  const pages   = () => Math.max(1, Math.ceil(items.length / perView()));
-
-  let page = 0;
-
-  function go(to){
-    page = Math.max(0, Math.min(pages() - 1, to));
-    const x = page * perView() * stepPx();
-    grid.scrollTo({ left: x, behavior: 'smooth' });
-    update();
+  function scrollByPage(dir){
+    scroller.scrollBy({ left: dir * step(), behavior: 'smooth' });
   }
-  function goBy(delta){ go(page + delta); }
 
-  function buildDots(){
-    if (!dots) return;
-    dots.innerHTML = '';
+  prev.addEventListener('click', e => { e.preventDefault(); scrollByPage(-1); });
+  next.addEventListener('click', e => { e.preventDefault(); scrollByPage( 1); });
+
+  // Dots – simple + resilient to resize
+  function pages(){ return Math.max(1, Math.ceil(scroller.scrollWidth / scroller.clientWidth)); }
+  function rebuildDots(){
+    if (!dotsBox) return;
+    dotsBox.innerHTML = '';
     for (let i = 0; i < pages(); i++){
-      const el = document.createElement('i');
-      if (i === page) el.classList.add('is-active');
-      el.addEventListener('click', () => go(i));
-      dots.appendChild(el);
+      const dot = document.createElement('i');
+      dot.addEventListener('click', () => scroller.scrollTo({ left: i * scroller.clientWidth, behavior: 'smooth' }));
+      dotsBox.appendChild(dot);
     }
+    updateDots();
+  }
+  function updateDots(){
+    const idx = Math.round(scroller.scrollLeft / scroller.clientWidth);
+    dotsBox?.querySelectorAll('i').forEach((d,i) => d.classList.toggle('is-active', i === idx));
   }
 
-  function update(){
-    const currentStep = perView() * stepPx() || 1;
-    page = Math.max(0, Math.min(pages() - 1, Math.round(grid.scrollLeft / currentStep)));
+  scroller.addEventListener('scroll', () => requestAnimationFrame(updateDots), { passive: true });
+  new ResizeObserver(() => { showNav(); rebuildDots(); }).observe(scroller);
 
-    // Hide nav if not needed or if not scrollable
-    nav.hidden       = pages() <= 1 || grid.scrollWidth <= grid.clientWidth + 2;
-    prev.disabled    = page <= 0;
-    next.disabled    = page >= pages() - 1;
-
-    dots?.querySelectorAll('i').forEach((d, i) => d.classList.toggle('is-active', i === page));
-  }
-
-  prev.addEventListener('click', e => { e.preventDefault(); goBy(-1); });
-  next.addEventListener('click', e => { e.preventDefault(); goBy(+1); });
-  grid.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
-
-  // Recalculate on resize
-  const ro = new ResizeObserver(() => { buildDots(); update(); });
-  ro.observe(grid);
-
-  // Init
-  buildDots();
-  update();
+  showNav();
+  rebuildDots();
 })();
 {% endjavascript %}
 
@@ -357,4 +331,5 @@ Testimonials — grid/slider
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
