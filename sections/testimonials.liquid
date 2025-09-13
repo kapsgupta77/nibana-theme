@@ -9,7 +9,10 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 {%- liquid
   assign heading    = section.settings.heading        | default: 'What our clients say'
   assign sub        = section.settings.subheading     | default: '-'
-  assign show_sub   = sub != '-' and sub != ''
+    assign show_sub = false
+  if sub != '-' and sub != ''
+    assign show_sub = true
+  endif
   assign limit      = section.settings.limit          | default: 12
   assign source     = section.settings.source         | default: 'blocks'
   assign carousel   = section.settings.carousel       | default: false
@@ -19,6 +22,17 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
 
   assign tag_bucket = ''
 -%}
+
+{%- if heading != blank or show_sub -%}
+  <header class="nb-testimonials__head">
+    {%- if heading != blank -%}
+      <h1 class="nb-h2 nb-testimonials__title">{{ heading }}</h1>
+    {%- endif -%}
+    {%- if show_sub -%}
+      <p class="nb-testimonials__dek">{{ sub }}</p>
+    {%- endif -%}
+  </header>
+{%- endif -%}
 
 <section id="nb-ts-{{ section.id }}" class="nb-testimonials tone-pebble" style="--nb-per: {{ per_view | default: 3 }};">
   <div class="nb-shell nb-testimonials__container">
@@ -313,3 +327,4 @@ Cards are rendered by 'nb-testimonial-card' and accept rich-text quotes.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
