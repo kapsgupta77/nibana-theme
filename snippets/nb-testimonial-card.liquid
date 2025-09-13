@@ -1,41 +1,37 @@
 {%- comment -%}
-Renders a single testimonial card.
-Params expected: quote, name, title, location, avatar, tags
+Card snippet used by the Testimonials section (and slider).
+Params: quote, name, title, location, avatar, tags
 {%- endcomment -%}
 
-{%- assign _tags = tags | default: '' | strip -%}
+{%- assign _quote = quote | strip | default: '' -%}
+{%- assign _name  = name  | strip | default: '' -%}
+{%- assign _title = title | strip | default: '' -%}
+{%- assign _loc   = location | strip | default: '' -%}
+{%- assign _tagsr = tags | default: '' | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' -%}
 
-<article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
+<article class="nb-tcard" data-tags="{{ _tagsr | downcase }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
-  <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 
-  {%- comment -%}
-  Details/summary gives us a native expand/collapse for “Read full”
-  We visually place summary below the quote with CSS (flex order).
-  {%- endcomment -%}
-  <details class="nb-tcard__details" data-details>
-    <summary class="nb-tcard__more" aria-expanded="false">
-      <span class="nb-tcard__more-text">Read full</span>
-    </summary>
-
-    <div class="nb-tcard__quote" data-q tabindex="0" role="button" aria-label="Read full testimonial">
-      {{ quote | strip | newline_to_br }}
-    </div>
-  </details>
+  <div class="nb-tcard__quote" data-q tabindex="0" aria-label="Testimonial">
+    <span class="nb-tcard__qmark" aria-hidden="true">“</span>
+    <p>{{ _quote }}</p>
+  </div>
 
   <div class="nb-tcard__meta">
     {%- if avatar -%}
       <figure class="nb-tcard__avatar">
         {{ avatar
-          | image_url: width: 96
-          | image_tag: class: 'nb-tcard__avatar-img', alt: name | default: 'Client', loading: 'lazy', sizes: '96px', widths: '96,128' }}
+          | image_url: width: 128
+          | image_tag: alt: _name, class: 'nb-tcard__avatar-img', sizes: '48px', widths: '64,96,128' }}
       </figure>
     {%- endif -%}
 
     <div class="nb-tcard__who">
-      {%- if name != blank -%}<div class="nb-tcard__name">{{ name }}</div>{%- endif -%}
-      {%- if title != blank -%}<div class="nb-tcard__title">{{ title }}</div>{%- endif -%}
-      {%- if location != blank -%}<div class="nb-tcard__loc">{{ location }}</div>{%- endif -%}
+      {%- if _name  != '' -%}<div class="nb-tcard__name">{{ _name }}</div>{%- endif -%}
+      {%- if _title != '' -%}<div class="nb-tcard__title">{{ _title }}</div>{%- endif -%}
+      {%- if _loc   != '' -%}<div class="nb-tcard__loc">{{ _loc }}</div>{%- endif -%}
     </div>
   </div>
+
+  <button class="nb-tcard__more" data-more aria-expanded="false">Read full</button>
 </article>
