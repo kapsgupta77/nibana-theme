@@ -34,6 +34,13 @@ Cards use the same design as the Testimonials page.
           <p class="nb-testimonials__dek">{{ sub }}</p>
         {%- endif -%}
       </header>
+
+{% assign entries = shop.metaobjects.nb_testimonial.values %}
+<!-- nb_testimonial quick count: {{ entries.size }} -->
+<ul style="display:none">
+  {% for e in entries %}<li>{{ e.name }} — {{ e.title }}</li>{% endfor %}
+</ul>
+
     {%- endif -%}
 
     {%- comment -%} Build cards once {%- endcomment -%}
@@ -97,9 +104,6 @@ Cards use the same design as the Testimonials page.
         <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
       {%- endif -%}
     {%- endcapture -%}
-
-<!-- nb_testimonial count: {{ shop.metaobjects['nb_testimonial'].values.size }} -->
-{{ render_cards }}
 
     {%- comment -%} Build unique, cleaned tag list for chips {%- endcomment -%}
     {%- assign tags_tmp = tag_bucket | replace: ';', ',' | replace: ' ,', ',' | replace: ', ', ',' | split: ',' -%}
@@ -440,6 +444,7 @@ Cards use the same design as the Testimonials page.
   "presets": [{ "name": "Testimonials (grid/slider)" }]
 }
 {% endschema %}
+
 
 
 
