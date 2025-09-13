@@ -35,6 +35,20 @@
     </div>
   </div>
 
+{% liquid
+  assign nb_is_service_page = false
+
+  # Detect by template name/suffix
+  if template.name contains 'coaching' or template.suffix contains 'coaching'
+    assign nb_is_service_page = true
+  endif
+
+  # Detect by the presence of a Coaching Service metaobject on the page
+  if page and (page.metafields.custom.coaching_service or page.metafields.coachingservice.coaching_service)
+    assign nb_is_service_page = true
+  endif
+%}
+
   <style>
     /* ============================================================
        NIBANA — Global FAQ (Home-style pill variant)
@@ -196,31 +210,39 @@
   {% endif %}
 </section>
 
-{%- comment -%} FAQ JSON-LD (global) {%- endcomment -%}
-{%- if section.settings.emit_jsonld and section.blocks.size > 0 -%}
+{%- comment -%} FAQ JSON-LD (global) — auto-skip on service pages {%- endcomment -%}
+{%- liquid
+  assign nb_is_service_page = false
+
+  # Heuristics: template name/suffix OR presence of a coaching_service metaobject
+  if template.name contains 'coaching' or template.suffix contains 'coaching'
+    assign nb_is_service_page = true
+  endif
+  if page and (page.metafields.custom.coaching_service or page.metafields.coachingservice.coaching_service)
+    assign nb_is_service_page = true
+  endif
+-%}
+
+{%- if section.settings.emit_jsonld and section.blocks.size > 0 and nb_is_service_page == false -%}
   {%- assign items = '' -%}
   {%- for b in section.blocks -%}
     {%- assign q = b.settings.q | to_s | strip -%}
     {%- assign a_html = b.settings.a | to_s | strip -%}
     {%- if q != blank and a_html != blank -%}
-      {%- assign qa = 
-        '{ "@type":"Question", "name":' 
-        | append: (q | json) 
-        | append: ', "acceptedAnswer":{ "@type":"Answer", "text":' 
-        | append: (a_html | json) 
-        | append: ' } }' 
+      {%- assign qa = '{"@type":"Question","name":'
+        | append: (q | json)
+        | append: ',"acceptedAnswer":{"@type":"Answer","text":'
+        | append: (a_html | json)
+        | append: '}}'
       -%}
       {%- if items != blank -%}{%- assign items = items | append: ',' -%}{%- endif -%}
       {%- assign items = items | append: qa -%}
     {%- endif -%}
   {%- endfor -%}
+
   {%- if items != blank -%}
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [ {{ items }} ]
-    }
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ items }}]}
     </script>
   {%- endif -%}
 {%- endif -%}
