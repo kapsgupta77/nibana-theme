@@ -1272,6 +1272,23 @@ body.is-mega-closing header-component .mega-menu__content {
   }
 }
 
+/* Dynamic width: grow to fit the longest item label, within sensible bounds */
+@media (min-width: 990px){
+  #shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
+    inline-size: max-content;                /* width fits content */
+    min-inline-size: 280px;                  /* never too narrow */
+    max-inline-size: clamp(420px, 38vw, 680px); /* never too wide */
+    padding: clamp(14px,2vw,18px);           /* keep your current padding responsive */
+  }
+  /* Keep titles on one line so width reflects longest item text */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link{ white-space: nowrap; }
+
+  /* (Optional) when you add one-line descriptions later */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__desc{
+    margin-top: 2px; font-size: .9rem; line-height: 1.3; opacity: .75; white-space: normal;
+  }
+}
+
 {% endstylesheet %}
 
 {% schema %}
