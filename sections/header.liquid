@@ -1225,6 +1225,29 @@ nav[header-menu] .menu_list__submenu-inner > * {
   content: none !important;
 }
 
+/* NIBANA — when the menu is open, force the header rows and pseudos fully transparent */
+body.is-mega-open header-component,
+body.is-mega-open header-component .header__row,
+body.is-mega-open header-component .header__row::before,
+body.is-mega-open header-component .header__row::after {
+  --header-bg-color: transparent !important;
+  --color-background: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Also make sure any strap-like wrappers are clear (belt & braces) */
+body.is-mega-open header-component .header__submenu,
+body.is-mega-open header-component .menu-list__submenu,
+body.is-mega-open header-component .menu_list__submenu,
+body.is-mega-open header-component .mega-menu__content {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
