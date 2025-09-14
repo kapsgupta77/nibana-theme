@@ -1225,11 +1225,15 @@ nav[header-menu] .menu_list__submenu-inner > * {
   content: none !important;
 }
 
-/* NIBANA — when the menu is open, force the header rows and pseudos fully transparent */
+/* NIBANA — keep header rows/pseudos fully transparent while menu is open OR closing */
 body.is-mega-open header-component,
+body.is-mega-closing header-component,
 body.is-mega-open header-component .header__row,
+body.is-mega-closing header-component .header__row,
 body.is-mega-open header-component .header__row::before,
-body.is-mega-open header-component .header__row::after {
+body.is-mega-closing header-component .header__row::before,
+body.is-mega-open header-component .header__row::after,
+body.is-mega-closing header-component .header__row::after {
   --header-bg-color: transparent !important;
   --color-background: transparent !important;
   background: transparent !important;
@@ -1238,9 +1242,13 @@ body.is-mega-open header-component .header__row::after {
 
 /* Also make sure any strap-like wrappers are clear (belt & braces) */
 body.is-mega-open header-component .header__submenu,
+body.is-mega-closing header-component .header__submenu,
 body.is-mega-open header-component .menu-list__submenu,
+body.is-mega-closing header-component .menu-list__submenu,
 body.is-mega-open header-component .menu_list__submenu,
-body.is-mega-open header-component .mega-menu__content {
+body.is-mega-closing header-component .menu_list__submenu,
+body.is-mega-open header-component .mega-menu__content,
+body.is-mega-closing header-component .mega-menu__content {
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
