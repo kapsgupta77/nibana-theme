@@ -2,51 +2,34 @@ import { Component } from '@theme/component';
 import { debounce, onDocumentReady } from '@theme/utilities';
 import { MegaMenuHoverEvent } from '@theme/events';
 
-const ACTIVATE_DELAY = 60;  // a tiny delay helps smoothness without feeling laggy
+const ACTIVATE_DELAY = 60;   // tiny delay for smoother intent
 const DEACTIVATE_DELAY = 300;
 
 /**
- * A custom element that manages a header menu.
+ * Header Menu web component.
  *
  * @typedef {Object} State
- * @property {HTMLElement | null} activeItem - The currently active menu item.
+ * @property {HTMLElement | null} activeItem
  *
  * @typedef {object} Refs
- * @property {HTMLElement} overflowMenu - The overflow menu.
- * @property {HTMLElement[]} [submenu] - The submenu in each respective menu item.
- *
- * @extends {Component<Refs>}
+ * @property {HTMLElement} overflowMenu
+ * @property {HTMLElement[]} [submenu]
  */
 class HeaderMenu extends Component {
   requiredRefs = ['overflowMenu'];
   #abortController = new AbortController();
 
-/** Force transparent background for the full-width popover strap */
-#clearStrap = () => {
-  // the strap + its inner wrappers that paint the dark band
-  const nodes = this.querySelectorAll(
-    '[data-header-nav-popover], .menu_list__submenu, .menu_list__submenu-inner'
-  );
-  nodes.forEach((el) => {
-    try {
-      el.style.setProperty('background', 'transparent', 'important');
-      el.style.setProperty('box-shadow', 'none', 'important');
-      el.style.setProperty('border', '0', 'important');
-      // neutralize color-scheme variables used by the theme
-      el.style.setProperty('--color-background', '0 0 0');
-      el.style.setProperty('--opacity-background', '0');
-      el.style.setProperty('--shadow-opacity', '0');
-    } catch (e) {}
-  });
-};
+  /** Internal state */
+  #state = { activeItem: null };
 
-/** Watch for submenu DOM changes and re-apply transparency */
-#strapObserver = new MutationObserver(() => this.#clearStrap());
-  
+  /** Observe DOM changes so we can keep the strap transparent */
+  #strapObserver = new MutationObserver(() => this.#clearStrap());
+
   connectedCallback() {
     super.connectedCallback();
+
     this.#clearStrap();
-this.#strapObserver.observe(this, { childList: true, subtree: true });
+    this.#strapObserver.observe(this, { childList: true, subtree: true });
 
     this.overflowMenu?.addEventListener('pointerleave', () => this.#debouncedDeactivate(), {
       signal: this.#abortController.signal,
@@ -61,33 +44,32 @@ this.#strapObserver.observe(this, { childList: true, subtree: true });
     this.#strapObserver.disconnect();
   }
 
-  /** @type {State} */
-  #state = { activeItem: null };
-
-  /** Time to allow for a closing animation between initiating a deactivation and actually deactivating the active item. */
+  /** Time to allow for a closing animation */
   get animationDelay() {
     const value = this.dataset.animationDelay;
     return value ? parseInt(value, 10) : 0;
   }
 
-  /** The overflow menu element inside the custom element’s shadow */
+  /** Overflow host → Shadow part that renders the row container */
   get overflowMenu() {
-    return /** @type {HTMLElement | null} */ (this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow"]'));
+    return /** @type {HTMLElement | null} */ (
+      this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow"]')
+    );
   }
 
-  /** Is the overflow menu currently hovered? */
+  /** Is the overflow row hovered? */
   get overflowHovered() {
     return this.refs.overflowMenu?.matches(':hover') ?? false;
   }
 
-  /** Activate the selected menu item (public handler used by the template) */
+  /** Public handler: activate on pointer/focus */
   activate = (event) => {
     this.#debouncedDeactivate.cancel();
     this.#debouncedActivateHandler.cancel();
     this.#debouncedActivateHandler(event);
   };
 
-  /** Internal: activate after a small delay */
+  /** Internal activate logic */
   #activateHandler = (event) => {
     this.#debouncedDeactivate.cancel();
     this.dispatchEvent(new MegaMenuHoverEvent());
@@ -102,19 +84,19 @@ this.#strapObserver.observe(this, { childList: true, subtree: true });
     let submenu = findSubmenu(item);
     const overflowMenuHeight = this.overflowMenu?.offsetHeight ?? 0;
 
-    // If we're hovering the “More” item, use the overflow panel as the submenu
+    // When hovering the “More” trigger, the overflow panel acts as submenu
     if (!submenu && !isDefaultSlot) {
       submenu = this.overflowMenu;
     }
 
-    // 🔒 No submenu? Do not enter expanded state. Also ensure overlay is closed.
+    // No submenu? Do not expand; ensure overlay vars are reset.
     if (!submenu) {
       this.dataset.overflowExpanded = 'false';
       this.#deactivate(this.#state.activeItem);
       return;
     }
 
-    // There *is* a submenu: proceed to expand
+    // Proceed to expand
     const previouslyActiveItem = this.#state.activeItem;
     if (previouslyActiveItem) previouslyActiveItem.ariaExpanded = 'false';
 
@@ -126,11 +108,19 @@ this.#strapObserver.observe(this, { childList: true, subtree: true });
     this.dataset.overflowExpanded = (!isDefaultSlot).toString();
     this.style.setProperty('--submenu-height', `${submenuHeight}px`);
     this.style.setProperty('--submenu-opacity', '1');
+
+    // Make sure the full-width strap stays transparent
+    this.#clearStrap();
+
+    // Optional debug: outline any remaining background painters
+    if (document.documentElement.hasAttribute('data-nb-menu-debug')) {
+      try { this.#debugScan(); } catch(_) {}
+    }
   };
 
   #debouncedActivateHandler = debounce(this.#activateHandler, ACTIVATE_DELAY);
 
-  /** Deactivate the active item after a delay (public handler used by template) */
+  /** Public handler: deactivate on pointer/focus out */
   deactivate(event) {
     this.#debouncedActivateHandler.cancel();
     if (!(event.target instanceof Element)) return;
@@ -139,7 +129,7 @@ this.#strapObserver.observe(this, { childList: true, subtree: true });
     if (item === this.#state.activeItem) this.#debouncedDeactivate();
   }
 
-  /** Internal: close immediately */
+  /** Internal close now */
   #deactivate = (item = this.#state.activeItem) => {
     if (!item || item !== this.#state.activeItem) return;
     if (this.overflowHovered) return;
@@ -158,10 +148,70 @@ this.#strapObserver.observe(this, { childList: true, subtree: true });
 
   #debouncedDeactivate = debounce(this.#deactivate, DEACTIVATE_DELAY);
 
-  /** Preload lazy images in the header so the mega doesn’t flash in late */
+  /** Preload lazy header images to avoid flicker */
   #preloadImages = () => {
     const images = this.querySelectorAll('img[loading="lazy"]');
     images?.forEach((image) => image.removeAttribute('loading'));
+  };
+
+  /** Force transparent background / no shadow on the full-width popover strap */
+  #clearStrap = () => {
+    // 1) Shadow part used by the overflow row
+    if (this.overflowMenu) {
+      try {
+        this.overflowMenu.style.setProperty('background', 'transparent', 'important');
+        this.overflowMenu.style.setProperty('box-shadow', 'none', 'important');
+        this.overflowMenu.style.setProperty('border', '0', 'important');
+        // theme vars that sometimes feed into computed background
+        this.overflowMenu.style.setProperty('--color-background', '0 0 0');
+        this.overflowMenu.style.setProperty('--opacity-background', '0');
+        this.overflowMenu.style.setProperty('--shadow-opacity', '0');
+      } catch (_) {}
+    }
+
+    // 2) Light-DOM containers that often paint the strap
+    const nodes = this.querySelectorAll(
+      '[data-header-nav-popover], .menu_list__submenu, .menu_list__submenu-inner'
+    );
+    nodes.forEach((el) => {
+      try {
+        el.style.setProperty('background', 'transparent', 'important');
+        el.style.setProperty('box-shadow', 'none', 'important');
+        el.style.setProperty('border', '0', 'important');
+        el.style.setProperty('--color-background', '0 0 0');
+        el.style.setProperty('--opacity-background', '0');
+        el.style.setProperty('--shadow-opacity', '0');
+      } catch (_) {}
+    });
+  };
+
+  /** Debug helper: outlines any element in the header still painting a bg */
+  #debugScan = () => {
+    const header = this.closest('header');
+    if (!header) return;
+
+    header.querySelectorAll('[data-nb-bg]').forEach(n => {
+      n.style.outline = '';
+      n.removeAttribute('data-nb-bg');
+    });
+
+    const nodes = header.querySelectorAll('*');
+    nodes.forEach(el => {
+      const s = getComputedStyle(el);
+      const bg = s.backgroundColor;
+      const beforeBG = getComputedStyle(el, '::before').backgroundColor;
+      const afterBG  = getComputedStyle(el, '::after').backgroundColor;
+
+      const isOpaque = (c) =>
+        c && c !== 'transparent' && !/^rgba?\(\s*0\s*,\s*0\s*,\s*0(?:\s*,\s*0)?\s*\)$/.test(c);
+
+      if (isOpaque(bg) || isOpaque(beforeBG) || isOpaque(afterBG) || s.boxShadow !== 'none') {
+        el.style.outline = '2px solid red';
+        el.setAttribute('data-nb-bg', '1');
+        // eslint-disable-next-line no-console
+        console.log('[NB menu debug]', el, { bg, beforeBG, afterBG, boxShadow: s.boxShadow });
+      }
+    });
   };
 }
 
@@ -172,9 +222,8 @@ if (!customElements.get('header-menu')) {
 /** Find the closest menu item element */
 function findMenuItem(element) {
   if (!(element instanceof Element)) return null;
-
   if (element?.matches('[slot="more"]')) {
-    // Hovering the “More” trigger → select the first overflowing item’s menuitem
+    // Hovering the “More” trigger → use the first overflow item
     return findMenuItem(element.parentElement?.querySelector('[slot="overflow"]'));
   }
   return element?.querySelector('[ref="menuitem"]');
