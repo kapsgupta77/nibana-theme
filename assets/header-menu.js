@@ -59,50 +59,62 @@ class HeaderMenu extends Component {
     return this.refs.overflowMenu?.matches(':hover') ?? false;
   }
 
-  /** ========== THE FIX: make the strap transparent in Shadow DOM ========== */
+   /** ========== THE FIX: make the strap transparent in Shadow DOM ========== */
   #patchOverflowShadow = () => {
     const host = /** @type {HTMLElement|null} */ (this.refs.overflowMenu);
     if (!host || !host.shadowRoot) return;
 
-    // Inject a style tag once into the Shadow root so we can override internals.
+    // Inject once
     if (!host.shadowRoot.querySelector('#nb-overflow-patch')) {
       const style = document.createElement('style');
       style.id = 'nb-overflow-patch';
       style.textContent = `
-  /* kill the full-width strap behind the white panel */
-  .menu_list__submenu,
-  .menu-list__submenu {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    --color-background: 0 0 0;
-    --opacity-background: 0;
-    --shadow-opacity: 0;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
+/* Kill the full-width strap behind the white panel (all variants) */
+.menu_list__submenu,
+.menu_list__submenu-inner,
+.menu-list__submenu,
+.menu-list__submenu-inner {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  --color-background: 0 0 0;
+  --opacity-background: 0;
+  --shadow-opacity: 0;
+}
+.menu_list__submenu::before,
+.menu_list__submenu::after,
+.menu-list__submenu::before,
+.menu-list__submenu::after {
+  content: none !important;
+}
+:host { --opacity-background: 0 !important; --shadow-opacity: 0 !important; }
 `;
       host.shadowRoot.appendChild(style);
-    } else {
-      // no-op; already patched
     }
   };
 
   /** Also clear any light-DOM strap (some presets render it outside shadow) */
   #clearLightDOMStrap = () => {
     const nodes = this.querySelectorAll(
-  '[data-header-nav-popover], \
-  .menu_list__submenu, .menu_list__submenu-inner, \
-  .menu-list__submenu, .menu-list__submenu-inner, \
-  .header__submenu, .mega-menu__content'
-);
+      '[data-header-nav-popover], \
+       [data-header-nav-popover]::before, \
+       [data-header-nav-popover]::after, \
+       .menu_list__submenu, .menu_list__submenu-inner, \
+       .menu-list__submenu, .menu-list__submenu-inner, \
+       .header__submenu, .mega-menu__content'
+    );
+
     nodes.forEach((el) => {
+      // note: ::before/::after from querySelectorAll won’t apply, but keeping the
+      // selectors ensures future compat if browsers expose them; belt & braces below
       el.style.setProperty('background', 'transparent', 'important');
       el.style.setProperty('box-shadow', 'none', 'important');
       el.style.setProperty('border', '0', 'important');
-      el.style.setProperty('--color-background', '0 0 0');
-      el.style.setProperty('--opacity-background', '0');
-      el.style.setProperty('--shadow-opacity', '0');
+      el.style.setProperty('--color-background', '0 0 0', 'important');
+      el.style.setProperty('--opacity-background', '0', 'important');
+      el.style.setProperty('--shadow-opacity', '0', 'important');
       el.style.setProperty('backdrop-filter', 'none', 'important');
       el.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
     });

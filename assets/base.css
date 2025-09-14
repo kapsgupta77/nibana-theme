@@ -35,6 +35,13 @@ body {
   --nb-black:       #101214;
 }
 
+:root{
+  /* Nibana brand helpers used by the header dropdown */
+  --nb-deep: #0F5B59;
+  --nb-sage: #EAF4F3;
+  --nb-sage-surface: #F7FAF9;
+}
+
 /* Comfortable defaults you can re-use */
 :root{
   --nb-radius-lg: 20px;
