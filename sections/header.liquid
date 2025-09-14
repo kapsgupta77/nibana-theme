@@ -603,11 +603,6 @@ body:has(> #header-group > header-component) {
 
 
 /* === Nibana Header polish =============================== */
-:root{
-  --nb-deep:#0F5B59;            /* brand deep teal */
-  --nb-chocolate:#C86B2A;       /* brand warm accent */
-  --nb-sage-surface:#F7FAF9; /* light sage surface for panels */
-}
 
 /* 1) Compact, consistent row spacing + subtle divider */
 .header .header__row{
@@ -707,40 +702,6 @@ body:has(> #header-group > header-component) {
 }
 @media (max-width: 840px){
   .header-menu .mega-menu__list{ grid-template-columns: 1fr; }
-}
-
-/* link polish + hover (unchanged) */
-.header-menu .mega-menu__link{
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .65rem .8rem;
-  border-radius: 10px;
-  font-weight: 600;
-  color: currentColor;
-  text-decoration: none;
-}
-.header-menu .mega-menu__link:hover,
-.header-menu .mega-menu__link:focus-visible{
-  background: color-mix(in oklab, #223238, #fff 92%);
-  outline: none;
-}
-
-/* link polish + hover */
-.header-menu .mega-menu__link{
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .65rem .8rem;
-  border-radius: 10px;
-  font-weight: 600;
-  color: var(--color-foreground);
-  text-decoration: none;
-}
-.header-menu .mega-menu__link:hover,
-.header-menu .mega-menu__link:focus-visible{
-  background: color-mix(in oklab, var(--color-foreground), #fff 92%);
-  outline: none;
 }
 
 /* 2.3 Caret for parents, flips when open */
