@@ -69,18 +69,19 @@ class HeaderMenu extends Component {
       const style = document.createElement('style');
       style.id = 'nb-overflow-patch';
       style.textContent = `
-        /* kill the full-width strap behind the white panel */
-        .menu_list__submenu {
-          background: transparent !important;
-          box-shadow: none !important;
-          border: 0 !important;
-          --color-background: 0 0 0;
-          --opacity-background: 0;
-          --shadow-opacity: 0;
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
-        }
-      `;
+  /* kill the full-width strap behind the white panel */
+  .menu_list__submenu,
+  .menu-list__submenu {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    --color-background: 0 0 0;
+    --opacity-background: 0;
+    --shadow-opacity: 0;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+`;
       host.shadowRoot.appendChild(style);
     } else {
       // no-op; already patched
@@ -90,8 +91,11 @@ class HeaderMenu extends Component {
   /** Also clear any light-DOM strap (some presets render it outside shadow) */
   #clearLightDOMStrap = () => {
     const nodes = this.querySelectorAll(
-      '[data-header-nav-popover], .menu_list__submenu, .menu_list__submenu-inner'
-    );
+  '[data-header-nav-popover], \
+  .menu_list__submenu, .menu_list__submenu-inner, \
+  .menu-list__submenu, .menu-list__submenu-inner, \
+  .header__submenu, .mega-menu__content'
+);
     nodes.forEach((el) => {
       el.style.setProperty('background', 'transparent', 'important');
       el.style.setProperty('box-shadow', 'none', 'important');

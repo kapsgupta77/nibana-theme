@@ -861,11 +861,15 @@ body:has(> #header-group > header-component) {
 /* === NB: Remove the dark full-width "strap" behind the Services card ==== */
 @media (min-width: 990px){
   /* the strap/wrapper layer */
-  .header__submenu,
-  .header__submenu::before,
-  .header__submenu::after,
-  .mega-menu__content,
-  .header__submenu .header__submenu-content {
+  header-component .header__inline-menu::after,
+  header-component .header__submenu,
+  header-component .header__submenu::before,
+  header-component .header__submenu::after,
+  header-component .menu-list__submenu,
+  header-component .menu-list__submenu::before,
+  header-component .menu-list__submenu::after,
+  header-component .menu-list__submenu-inner,
+  header-component .mega-menu__content {
     background: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -874,6 +878,7 @@ body:has(> #header-group > header-component) {
   }
 
   /* if any rule tries to inject a background inline */
+  nav[header-menu] .menu-list__submenu[style*="background"],
   .header__submenu[style*="background"] { background: transparent !important; }
 }
 
