@@ -283,8 +283,6 @@ body:has(> #header-group > header-component) {
     &[transparent='not-sticky'][data-sticky-state='active'],
     &:hover,
     /* Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
-    &:has(.header-menu[aria-expanded='true']),
-    &:has(nav[header-menu]:focus-within),
     &:has(.menu-list__link[data-animating]),
     &:has(.account-popover[open]),
     &:has(.localization-wrapper:not([hidden])) {
