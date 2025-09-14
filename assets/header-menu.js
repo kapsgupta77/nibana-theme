@@ -211,7 +211,7 @@ function findSubmenu(el) {
   return submenu instanceof HTMLElement ? submenu : null;
 }
 
-/* NIBANA — add a reliable open/close state for the mega menu */
+/* NIBANA — drive open/close from header-menu attributes + add a closing grace period */
 (function () {
   const onReady = (fn) =>
     (document.readyState !== 'loading')
@@ -222,43 +222,57 @@ function findSubmenu(el) {
     const headerMenu = document.querySelector('header-menu');
     if (!headerMenu) return;
 
-    const open = () => document.body.classList.add('is-mega-open');
-    const close = () => document.body.classList.remove('is-mega-open');
+    let closeTO;
 
-    // Services trigger(s) = any link with aria-controls
-    const triggers = headerMenu.querySelectorAll('a[aria-controls], [aria-controls][role="link"], [aria-controls].menu__link');
+    const parseMs = (v) => {
+      if (!v) return 220;
+      v = (v + '').trim();
+      if (v.endsWith('ms')) return Math.max(120, parseFloat(v));
+      if (v.endsWith('s'))  return Math.max(120, parseFloat(v) * 1000);
+      const n = parseFloat(v);
+      return isNaN(n) ? 220 : Math.max(120, n);
+    };
 
-    triggers.forEach((t) => {
-      const id = t.getAttribute('aria-controls');
-      const panel = id ? document.getElementById(id) : null;
-      let inside = false;
-      let to;
+    const getCloseDelay = () => {
+      const z = getComputedStyle(headerMenu).getPropertyValue('--submenu-animation-speed');
+      return parseMs(z) + 60; // buffer to cover repaint
+    };
 
-      const scheduleClose = () => {
-        clearTimeout(to);
-        to = setTimeout(() => { if (!inside) close(); }, 140);
-      };
-
-      t.addEventListener('mouseenter', () => { inside = true; open(); });
-      t.addEventListener('mouseleave', () => { inside = false; scheduleClose(); });
-
-      // Keyboard focus should also open
-      t.addEventListener('focusin', () => { inside = true; open(); });
-      t.addEventListener('focusout', () => { inside = false; scheduleClose(); });
-
-      if (panel) {
-        panel.addEventListener('mouseenter', () => { inside = true; open(); });
-        panel.addEventListener('mouseleave', () => { inside = false; scheduleClose(); });
-        panel.addEventListener('focusin', () => { inside = true; open(); }, true);
-        panel.addEventListener('focusout', () => { inside = false; scheduleClose(); }, true);
+    const setState = (expanded) => {
+      clearTimeout(closeTO);
+      if (expanded) {
+        document.body.classList.add('is-mega-open');
+        document.body.classList.remove('is-mega-closing');
+      } else {
+        // keep transparent during close animation
+        document.body.classList.remove('is-mega-open');
+        document.body.classList.add('is-mega-closing');
+        closeTO = setTimeout(() => {
+          document.body.classList.remove('is-mega-closing');
+        }, getCloseDelay());
       }
-    });
+    };
 
-    // Esc closes, click outside closes
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('header-menu, .menu-list__submenu, .menu_list__submenu')) return;
-      close();
+    const isExpanded = () =>
+      headerMenu.matches('[aria-expanded="true"], [data-overflow-expanded="true"]');
+
+    // Initial state
+    setState(isExpanded());
+
+    // React to attribute changes from the web component
+    const mo = new MutationObserver(() => setState(isExpanded()));
+    mo.observe(headerMenu, { attributes: true, attributeFilter: ['aria-expanded', 'data-overflow-expanded'] });
+
+    // Fallback: hovering the submenu wrappers should force open state
+    const reinforce = () => setState(true);
+    const relax = () => { if (!isExpanded()) setState(false); };
+
+    const panels = document.querySelectorAll('.menu-list__submenu, .menu_list__submenu');
+    panels.forEach(p => {
+      p.addEventListener('mouseenter', reinforce);
+      p.addEventListener('focusin', reinforce, true);
+      p.addEventListener('mouseleave', relax);
+      p.addEventListener('focusout', relax, true);
     });
   });
 })();
