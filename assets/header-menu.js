@@ -21,8 +21,32 @@ class HeaderMenu extends Component {
   requiredRefs = ['overflowMenu'];
   #abortController = new AbortController();
 
+/** Force transparent background for the full-width popover strap */
+#clearStrap = () => {
+  // the strap + its inner wrappers that paint the dark band
+  const nodes = this.querySelectorAll(
+    '[data-header-nav-popover], .menu_list__submenu, .menu_list__submenu-inner'
+  );
+  nodes.forEach((el) => {
+    try {
+      el.style.setProperty('background', 'transparent', 'important');
+      el.style.setProperty('box-shadow', 'none', 'important');
+      el.style.setProperty('border', '0', 'important');
+      // neutralize color-scheme variables used by the theme
+      el.style.setProperty('--color-background', '0 0 0');
+      el.style.setProperty('--opacity-background', '0');
+      el.style.setProperty('--shadow-opacity', '0');
+    } catch (e) {}
+  });
+};
+
+/** Watch for submenu DOM changes and re-apply transparency */
+#strapObserver = new MutationObserver(() => this.#clearStrap());
+  
   connectedCallback() {
     super.connectedCallback();
+    this.#clearStrap();
+this.#strapObserver.observe(this, { childList: true, subtree: true });
 
     this.overflowMenu?.addEventListener('pointerleave', () => this.#debouncedDeactivate(), {
       signal: this.#abortController.signal,
@@ -34,6 +58,7 @@ class HeaderMenu extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#abortController.abort();
+    this.#strapObserver.disconnect();
   }
 
   /** @type {State} */
