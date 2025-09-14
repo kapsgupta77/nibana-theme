@@ -1119,6 +1119,42 @@ overflow-list::part(overflow) {
   box-shadow: 0 18px 46px rgba(0,0,0,.14) !important;
 }
 
+/* === NB — remove the full-width strap behind the Services submenu === */
+
+/* Shadow-DOM strap inside the header-menu component */
+header-menu .overflow-menu::part(overflow){
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  --color-background: 0 0 0;
+  --opacity-background: 0;
+  --shadow-opacity: 0;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Light-DOM wrappers some presets use to paint that band */
+header [data-header-nav-popover],
+header .menu_list__submenu,
+header .menu_list__submenu-inner{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  --color-background: 0 0 0;
+  --opacity-background: 0;
+  --shadow-opacity: 0;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Safety: kill any header pseudo overlay when menu is open */
+.header[aria-expanded="true"]::before,
+.header[aria-expanded="true"]::after{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
