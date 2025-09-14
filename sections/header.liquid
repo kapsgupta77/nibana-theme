@@ -1155,6 +1155,41 @@ header .menu_list__submenu-inner{
   border: 0 !important;
 }
 
+/* === NB HARD OVERRIDE: kill the dark strap behind Services panel === */
+/* Scope to header only so we don't affect page sections */
+nav[header-menu][aria-expanded="true"],
+nav[header-menu][aria-expanded="true"] .menu_list,
+nav[header-menu][aria-expanded="true"] .menu_list::before,
+nav[header-menu][aria-expanded="true"] .menu_list::after,
+nav[header-menu][aria-expanded="true"] .menu_list__submenu,
+nav[header-menu][aria-expanded="true"] .menu_list__submenu::before,
+nav[header-menu][aria-expanded="true"] .menu_list__submenu::after,
+nav[header-menu][aria-expanded="true"] .menu_list__submenu-inner,
+nav[header-menu][aria-expanded="true"] .menu_list__submenu-inner::before,
+nav[header-menu][aria-expanded="true"] .menu_list__submenu-inner::after,
+nav[header-menu][aria-expanded="true"] [data-header-nav-popover],
+nav[header-menu][aria-expanded="true"] [data-header-nav-popover]::before,
+nav[header-menu][aria-expanded="true"] [data-header-nav-popover]::after {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+
+  /* Kill theme variables that may paint the band */
+  --color-background: 0 0 0 !important;
+  --opacity-background: 0 !important;
+  --header-bg-color: transparent !important;
+  --shadow-opacity: 0 !important;
+}
+
+/* Keep the white panel itself white (only its immediate panel box) */
+nav[header-menu] .menu_list__submenu-inner > * {
+  background: #fff;
+}
+
 {% endstylesheet %}
 
 {% schema %}
