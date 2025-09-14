@@ -210,3 +210,55 @@ function findSubmenu(el) {
   const submenu = el?.parentElement?.querySelector('[ref="submenu[]"]');
   return submenu instanceof HTMLElement ? submenu : null;
 }
+
+/* NIBANA — add a reliable open/close state for the mega menu */
+(function () {
+  const onReady = (fn) =>
+    (document.readyState !== 'loading')
+      ? fn()
+      : document.addEventListener('DOMContentLoaded', fn);
+
+  onReady(() => {
+    const headerMenu = document.querySelector('header-menu');
+    if (!headerMenu) return;
+
+    const open = () => document.body.classList.add('is-mega-open');
+    const close = () => document.body.classList.remove('is-mega-open');
+
+    // Services trigger(s) = any link with aria-controls
+    const triggers = headerMenu.querySelectorAll('a[aria-controls], [aria-controls][role="link"], [aria-controls].menu__link');
+
+    triggers.forEach((t) => {
+      const id = t.getAttribute('aria-controls');
+      const panel = id ? document.getElementById(id) : null;
+      let inside = false;
+      let to;
+
+      const scheduleClose = () => {
+        clearTimeout(to);
+        to = setTimeout(() => { if (!inside) close(); }, 140);
+      };
+
+      t.addEventListener('mouseenter', () => { inside = true; open(); });
+      t.addEventListener('mouseleave', () => { inside = false; scheduleClose(); });
+
+      // Keyboard focus should also open
+      t.addEventListener('focusin', () => { inside = true; open(); });
+      t.addEventListener('focusout', () => { inside = false; scheduleClose(); });
+
+      if (panel) {
+        panel.addEventListener('mouseenter', () => { inside = true; open(); });
+        panel.addEventListener('mouseleave', () => { inside = false; scheduleClose(); });
+        panel.addEventListener('focusin', () => { inside = true; open(); }, true);
+        panel.addEventListener('focusout', () => { inside = false; scheduleClose(); }, true);
+      }
+    });
+
+    // Esc closes, click outside closes
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('header-menu, .menu-list__submenu, .menu_list__submenu')) return;
+      close();
+    });
+  });
+})();
