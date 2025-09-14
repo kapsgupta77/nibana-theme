@@ -661,10 +661,10 @@ body:has(> #header-group > header-component) {
 
 /* Optional: when a popover/submenu is open, keep header opaque for contrast */
 .header[transparent]:is(:hover, [data-sticky-state='active']),
-.header[transparent]:has(.header-menu[aria-expanded='true']){
+.header[transparent]:has(nav[header-menu][aria-expanded='true']){
   --header-logo-display: unset;
   --header-logo-inverse-display: unset;
-  --header-bg-color: unset;
+  --header-bg-color: transparent;
 }
 
 /* 5) Tiny polish for the columns wrapper (reduce side “floatiness”) */
@@ -1188,6 +1188,12 @@ nav[header-menu][aria-expanded="true"] [data-header-nav-popover]::after {
 /* Keep the white panel itself white (only its immediate panel box) */
 nav[header-menu] .menu_list__submenu-inner > * {
   background: #fff;
+}
+
+/* NIBANA — lock header fully transparent while menu is open/focused (kills full-width band) */
+.header[transparent]:has(nav[header-menu][aria-expanded="true"]),
+.header[transparent]:has(nav[header-menu]:focus-within) {
+  --header-bg-color: transparent !important;
 }
 
 {% endstylesheet %}
