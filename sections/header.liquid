@@ -661,7 +661,8 @@ body:has(> #header-group > header-component) {
 
 /* Optional: when a popover/submenu is open, keep header opaque for contrast */
 .header[transparent]:is(:hover, [data-sticky-state='active']),
-.header[transparent]:has(nav[header-menu][aria-expanded='true']){
+.header[transparent]:has(header-menu[aria-expanded='true']),
+.header[transparent]:has(header-menu[data-overflow-expanded='true']){
   --header-logo-display: unset;
   --header-logo-inverse-display: unset;
   --header-bg-color: transparent;
@@ -1199,6 +1200,29 @@ nav[header-menu] .menu_list__submenu-inner > * {
 .header[transparent]:has(nav[header-menu][aria-expanded="true"]),
 .header[transparent]:has(nav[header-menu]:focus-within) {
   --header-bg-color: transparent !important;
+}
+
+/* NIBANA — final strap killer: keep rows + pseudos transparent whenever header-menu is open */
+.header[transparent]:has(header-menu[aria-expanded="true"]),
+.header[transparent]:has(header-menu[data-overflow-expanded="true"]) {
+  --header-bg-color: transparent !important;
+  background: transparent !important;
+}
+
+.header[transparent]:has(header-menu[aria-expanded="true"]) .header__row,
+.header[transparent]:has(header-menu[data-overflow-expanded="true"]) .header__row {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* in case a pseudo paints the band */
+.header[transparent]:has(header-menu[aria-expanded="true"])::before,
+.header[transparent]:has(header-menu[data-overflow-expanded="true"])::before,
+.header[transparent]:has(header-menu[aria-expanded="true"])::after,
+.header[transparent]:has(header-menu[data-overflow-expanded="true"])::after {
+  background: transparent !important;
+  box-shadow: none !important;
+  content: none !important;
 }
 
 {% endstylesheet %}
