@@ -1079,6 +1079,46 @@ header-menu [data-header-nav-popover]::before{
   box-shadow:0 18px 46px rgba(0,0,0,.14) !important;
 }
 
+/* === NB: Remove the full-width “strap” behind the Services dropdown === */
+
+/* 1) Host containers the theme uses for the popover row */
+[data-header-nav-popover],
+.menu_list__submenu,
+.menu_list__submenu-inner {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 2) Some themes draw the strap with pseudo elements */
+[data-header-nav-popover]::before,
+[data-header-nav-popover]::after,
+.menu_list__submenu::before,
+.menu_list__submenu::after,
+.menu_list__submenu-inner::before,
+.menu_list__submenu-inner::after {
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* 3) Dawn-like custom element that renders the overflow row */
+overflow-list::part(overflow) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 4) Keep only the inner “card” white/elevated (your narrow menu) */
+.mega-menu {
+  background: #fff !important;
+  color: var(--color-foreground, #223238) !important;
+  border: 1px solid rgba(0,0,0,.06) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 46px rgba(0,0,0,.14) !important;
+}
+
 {% endstylesheet %}
 
 {% schema %}
