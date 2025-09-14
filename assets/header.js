@@ -243,3 +243,36 @@ onDocumentReady(() => {
     mutationObserver.observe(headerGroup, { childList: true });
   }
 });
+
+/* Nibana: scrim + body state when header menu opens */
+document.addEventListener('DOMContentLoaded', () => {
+  const header = document.getElementById('header-component');
+  if (!header) return;
+
+  let scrim = document.getElementById('nb-menu-scrim');
+  if (!scrim) {
+    scrim = document.createElement('div');
+    scrim.id = 'nb-menu-scrim';
+    scrim.className = 'nb-menu-scrim';
+    scrim.hidden = true;
+    document.body.appendChild(scrim);
+  }
+
+  function updateState() {
+    const anyOpen = !!header.querySelector('.header-menu[aria-expanded="true"], nav[header-menu]:focus-within');
+    document.body.classList.toggle('nb-menu-open', anyOpen);
+    scrim.hidden = !anyOpen;
+  }
+
+  // Close menus when clicking the scrim
+  scrim.addEventListener('click', () => {
+    header.querySelectorAll('[aria-expanded="true"]').forEach(el => el.setAttribute('aria-expanded', 'false'));
+    updateState();
+  });
+
+  // Observe aria-expanded changes on menu triggers
+  const mo = new MutationObserver(updateState);
+  mo.observe(header, { subtree: true, attributes: true, attributeFilter: ['aria-expanded'] });
+
+  updateState();
+});

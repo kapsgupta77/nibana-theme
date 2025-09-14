@@ -158,43 +158,6 @@ capture actions
   endif
 %}
 
-<!-- NIBANA — Organization JSON-LD -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": {{ shop.name | json }},
-  {% if settings.logo %}
-  "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
-  {% endif %}
-  "url": {{ request.origin | json }}
-  {% assign sameAs = '' | split: ',' %}
-  {% if settings.social_instagram %}{% assign sameAs = sameAs | push: settings.social_instagram %}{% endif %}
-  {% if settings.social_twitter %}{% assign sameAs = sameAs | push: settings.social_twitter %}{% endif %}
-  {% if settings.social_facebook %}{% assign sameAs = sameAs | push: settings.social_facebook %}{% endif %}
-  {% if settings.social_linkedin %}{% assign sameAs = sameAs | push: settings.social_linkedin %}{% endif %}
-  {% if sameAs.size > 0 %},
-  "sameAs": {{ sameAs | json }}
-  {% endif %}
-}
-</script>
-
-<!-- NIBANA — WebSite JSON-LD (SearchAction) -->
-{% capture nb_search_target %}{{ request.origin }}/search?q={search_term_string}{% endcapture %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "url": {{ request.origin | json }},
-  "name": {{ shop.name | json }},
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {{ nb_search_target | json }},
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-
 <header-component
   id="header-component"
   class="{{ class }}"
@@ -283,16 +246,16 @@ capture actions
 ></script>
 
 {% stylesheet %}
-  body {
-    --header-height: 0px;
-    --header-group-height: var(--header-height);
-    --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
-  }
+ body {
+  --header-height: 0px;
+  --header-group-height: var(--header-height);
+  --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
+}
 
-  body:has(> #header-group > header) {
-    --header-height: 60px;
-  }
-
+/* Your theme renders <header-component>, not <header> */
+body:has(> #header-group > header-component) {
+  --header-height: 60px;  /* adjust if your header is taller */
+}
   body:has(> #header-group:empty) {
     --header-group-height: 0px;
   }
@@ -320,8 +283,6 @@ capture actions
     &[transparent='not-sticky'][data-sticky-state='active'],
     &:hover,
     /* Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
-    &:has(.header-menu[aria-expanded='true']),
-    &:has(nav[header-menu]:focus-within),
     &:has(.menu-list__link[data-animating]),
     &:has(.account-popover[open]),
     &:has(.localization-wrapper:not([hidden])) {
@@ -619,6 +580,275 @@ capture actions
       margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
     }
   }
+
+
+
+/* === Nav link polish + services list hover === */
+.header [data-nav="top"] a:hover,
+.header [data-nav="top"] a:focus {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nb-slim-menu .nb-slim-item{
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: background-color .18s ease, transform .18s ease;
+}
+.nb-slim-menu .nb-slim-item:hover,
+.nb-slim-menu .nb-slim-item:focus{
+  background: #EAF4F3;           /* NIBANA sage */
+  transform: translateY(-1px);
+}
+
+
+/* === Nibana Header polish =============================== */
+
+/* 1) Compact, consistent row spacing + subtle divider */
+.header .header__row{
+  /* keep the theme’s spacing system intact, just trim a little */
+  padding-block: clamp(8px, 1.4vw, 14px);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-border), #000 5%);
+}
+
+/* 2) Sticky translucency + soft shadow when engaged */
+@supports (backdrop-filter: blur(2px)){
+  .header[sticky][data-sticky-state='active'],
+  .header:not([transparent]){
+    background: color-mix(in oklab, var(--color-background), #fff 12%);
+    backdrop-filter: saturate(160%) blur(8px);
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  }
+}
+
+/* 3) Primary CTA (right side) — brand-forward, squared-pill */
+.header .nb-cta{
+  --_bg: var(--nb-chocolate);
+  --_fg: #fff;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding: 10px 16px;
+  background: var(--_bg);
+  color: var(--_fg);
+  border: 2px solid var(--_bg);
+  border-radius: 12px;               /* squared-pill */
+  font-weight: 750;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 0 8px 22px rgba(0,0,0,.08);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.header .nb-cta:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(0,0,0,.10);
+}
+
+/* 4) Menu link rhythm + legibility */
+.header .menu-list__link{
+  padding-block: .55rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+/* Optional: when a popover/submenu is open, keep header opaque for contrast */
+.header[transparent]:is(:hover, [data-sticky-state='active']),
+.header[transparent]:has(header-menu[aria-expanded='true']),
+.header[transparent]:has(header-menu[data-overflow-expanded='true']){
+  --header-logo-display: unset;
+  --header-logo-inverse-display: unset;
+  --header-bg-color: transparent;
+}
+
+/* 5) Tiny polish for the columns wrapper (reduce side “floatiness”) */
+.header .header__columns.spacing-style{
+  gap: clamp(8px, 2.2vw, 20px);
+}
+/* === /Nibana Header polish ============================== */
+
+
+/* === Nibana — Menu tray + scrim + affordances ================== */
+
+/* 2.2 Narrow panel (centred card under the nav) */
+.header .mega-menu__content{
+  /* make the container stop spanning the full viewport and center the card */
+  display: grid;
+  place-items: center;
+  padding: 0 16px;               /* breathing room on small screens */
+}
+
+.header-menu .mega-menu{
+  /* the actual card */
+  background: #fff;
+  color: #223238;                /* force dark ink inside the white card */
+  border: 1px solid color-mix(in oklab, var(--color-border), #000 6%);
+  border-radius: 14px;
+  box-shadow: 0 18px 46px rgba(0,0,0,.14);
+  padding: clamp(14px,2vw,18px);
+
+  /* narrow sizing */
+  width: min(720px, 92vw);
+  max-width: 720px;
+  margin: 12px auto;             /* centers the card inside mega_menu__content */
+}
+
+/* 2.2.1 Two-column list on desktop, single column on mobile */
+.header-menu .mega-menu__list{
+  display: grid;
+  gap: 10px 28px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 840px){
+  .header-menu .mega-menu__list{ grid-template-columns: 1fr; }
+}
+
+/* 2.3 Caret for parents, flips when open */
+.menu-list__link[aria-expanded]::after{
+  content: "";
+  margin-inline-start: .4rem;
+  border: 5px solid transparent;
+  border-top-color: currentColor;
+  opacity: .6;
+  transform: translateY(2px);
+}
+.menu-list__link[aria-expanded='true']::after{
+  transform: rotate(180deg) translateY(-2px);
+  opacity: 1;
+}
+
+/* Hide carets for items that don't own a submenu */
+.header .menu-list__link:not([aria-expanded])::after { 
+  content: none !important; 
+}
+
+/* EXTRA GUARD: even if aria-expanded is toggled by the theme, suppress caret when no submenu exists */
+.header__menu-item:not(:has([ref="submenu[]"])) > .menu-list__link::after{
+  content: none !important;
+}
+
+/* Theme outputs a real .icon-caret node for all items — kill it unless the link is a real panel parent */
+.header .menu-list__link:not(.has-panel) .icon-caret,
+.header .menu-list__link:not(.has-panel) svg.icon-caret {
+  display: none !important;
+}
+
+/* NB: Hide carets for items without submenus — even when aria-expanded changes */
+.header__menu-item [data-caret]{ display:none !important; }
+.header__menu-item:has([ref="submenu[]"]) [data-caret]{ display:inline-flex !important; }
+
+/* extra guard: if something sets aria-expanded=true on a no-submenu item, still hide */
+.header__menu-item[aria-expanded="true"]:not(:has([ref="submenu[]"])) [data-caret]{
+  display:none !important;
+}
+
+/* 2.4 Active page underline (subtle, thicker) */
+.menu-list__item[aria-current] > .menu-list__link{ position: relative; }
+.menu-list__item[aria-current] > .menu-list__link::before{
+  content: "";
+  position: absolute;
+  left: .3rem; right: .3rem; bottom: -.4rem;
+  height: 2px; border-radius: 2px;
+  background: currentColor; opacity: .65;
+}
+/* === /Nibana — Menu tray + scrim + affordances =============== */
+
+/* === NB: Mega panel sizing & tidying (desktop) === */
+@media (min-width: 990px){
+  /* the popover/menu container – selector matches Dawn’s header markup */
+  .header [data-header-nav-popover],
+  .header [popover],
+  .header .header__inline-menu .mega-menu__content{
+    max-height: calc(100vh - var(--header-height) - 24px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* typography & spacing polish */
+  .header .list-menu > li > a{
+    padding: 14px 12px;
+    font-weight: 600;
+    letter-spacing: .005em;
+  }
+  .header .mega-menu__content{ padding: 22px 24px; }
+  .header .mega-menu__content li{ margin-bottom: 6px; }
+}
+
+/* Force dark ink inside the white mega menu panel even when header is inverse */
+.header .header-menu .mega-menu { color: #223238; }
+.header .header-menu .mega-menu__link { color: #223238; }
+
+.header .header-menu .mega-menu__link:hover,
+.header .header-menu .mega-menu__link:focus-visible {
+  /* keep your soft hover */
+  background: color-mix(in oklab, #223238, #fff 92%);
+}
+
+
+/* NIBANA — keep header rows/pseudos fully transparent while menu is open OR closing */
+body.is-mega-open header-component,
+body.is-mega-closing header-component,
+body.is-mega-open header-component .header__row,
+body.is-mega-closing header-component .header__row,
+body.is-mega-open header-component .header__row::before,
+body.is-mega-closing header-component .header__row::before,
+body.is-mega-open header-component .header__row::after,
+body.is-mega-closing header-component .header__row::after {
+  --header-bg-color: transparent !important;
+  --color-background: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Also make sure any strap-like wrappers are clear (belt & braces) */
+body.is-mega-open header-component .header__submenu,
+body.is-mega-closing header-component .header__submenu,
+body.is-mega-open header-component .menu-list__submenu,
+body.is-mega-closing header-component .menu-list__submenu,
+body.is-mega-open header-component .menu_list__submenu,
+body.is-mega-closing header-component .menu_list__submenu,
+body.is-mega-open header-component .mega-menu__content,
+body.is-mega-closing header-component .mega-menu__content {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Hide header CTA on mobile — we already have a floating CTA */
+@media (max-width: 989px){
+  header-component .nb-cta { display: none !important; }
+}
+
+/* Desktop dropdown surface = light brand sage (instead of white) */
+@media (min-width: 990px){
+  #shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
+    background: var(--nb-sage-surface) !important;
+    color: var(--nb-deep) !important;
+    border: 1px solid color-mix(in oklab, var(--nb-deep), #fff 88%) !important;
+    box-shadow: 0 18px 46px rgba(15,91,89,.12) !important; /* cool, brand-tinted shadow */
+  }
+}
+
+/* Dynamic width: grow to fit the longest item label, within sensible bounds */
+@media (min-width: 990px){
+  #shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
+    inline-size: max-content;                /* width fits content */
+    min-inline-size: 280px;                  /* never too narrow */
+    max-inline-size: clamp(420px, 38vw, 680px); /* never too wide */
+    padding: clamp(14px,2vw,18px);           /* keep your current padding responsive */
+  }
+  /* Keep titles on one line so width reflects longest item text */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link{ white-space: nowrap; }
+
+  /* (Optional) when you add one-line descriptions later */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__desc{
+    margin-top: 2px; font-size: .9rem; line-height: 1.3; opacity: .75; white-space: normal;
+  }
+}
 
 {% endstylesheet %}
 
