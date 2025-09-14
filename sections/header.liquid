@@ -823,16 +823,6 @@ body.is-mega-closing header-component .mega-menu__content {
   header-component .nb-cta { display: none !important; }
 }
 
-/* Desktop dropdown surface = light brand sage (instead of white) */
-@media (min-width: 990px){
-  #shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
-    background: var(--nb-sage-surface) !important;
-    color: var(--nb-deep) !important;
-    border: 1px solid color-mix(in oklab, var(--nb-deep), #fff 88%) !important;
-    box-shadow: 0 18px 46px rgba(15,91,89,.12) !important; /* cool, brand-tinted shadow */
-  }
-}
-
 /* Dynamic width: grow to fit the longest item label, within sensible bounds */
 @media (min-width: 990px){
   #shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
@@ -850,13 +840,17 @@ body.is-mega-closing header-component .mega-menu__content {
   }
 }
 
-/* Desktop dropdown surface = light brand sage (instead of white) */
+/* Desktop dropdown surface — luxe tray */
 @media (min-width: 990px){
   #shopify-section-{{ section.id }} header-component .header-menu .mega-menu{
     background: var(--nb-sage-surface, #F7FAF9) !important;
     color: var(--nb-deep, #0F5B59) !important;
+    border-radius: 16px !important; /* softer corners */
     border: 1px solid color-mix(in oklab, var(--nb-deep, #0F5B59), #fff 88%) !important;
-    box-shadow: 0 18px 46px rgba(15,91,89,.12) !important;
+    /* airier, longer shadow with brand tint */
+    box-shadow:
+      0 2px 6px rgba(15,91,89,.04),
+      0 24px 60px rgba(15,91,89,.14) !important;
   }
 }
 
@@ -871,6 +865,57 @@ header-component header-menu .menu-list__link[aria-expanded="true"]{
 @media (min-width: 990px){
   body:not(.is-mega-open):not(.is-mega-closing) header-component[data-sticky-state="active"] .header__row{
     box-shadow: 0 1px 0 color-mix(in oklab, var(--nb-deep, #0F5B59), #fff 88%);
+  }
+}
+
+/* Luxe item hover/focus — silk highlight pill */
+@media (min-width: 990px){
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__list{
+    padding: 10px;            /* gives the pill a little breathing room */
+    gap: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link{
+    border-radius: 12px;
+    padding: 10px 14px;
+    line-height: 1.35;
+    transition:
+      color .18s ease,
+      background-color .18s ease,
+      transform .18s ease,
+      box-shadow .18s ease;
+  }
+
+  /* hover + keyboard focus */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link:hover,
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link:focus-visible{
+    background: color-mix(in oklab, var(--nb-sage-surface, #F7FAF9), #fff 28%);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--nb-deep, #0F5B59), #fff 85%) inset,
+      0 10px 26px rgba(15,91,89,.10);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  /* precise focus ring for accessibility */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link:focus-visible{
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--nb-deep, #0F5B59), #fff 70%) inset,
+      0 12px 28px rgba(15,91,89,.12);
+  }
+
+  /* optional: current page highlight (keeps it calmer than hover) */
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link[aria-current="page"],
+  #shopify-section-{{ section.id }} .header-menu .mega-menu__link[aria-current="true"]{
+    background: color-mix(in oklab, var(--nb-sage-surface, #F7FAF9), #fff 15%);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--nb-deep, #0F5B59), #fff 88%) inset;
+  }
+
+  /* respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    #shopify-section-{{ section.id }} .header-menu .mega-menu__link{
+      transition: none;
+    }
   }
 }
 

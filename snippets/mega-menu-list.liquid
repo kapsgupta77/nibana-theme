@@ -101,27 +101,32 @@
       </a>
       {% if link.links != blank %}
         <ul
-          class="list-unstyled"
-          {% if should_break_columns %}
-            style="column-count: {{ column_span }};"
-          {% endif %}
-        >
-          {% for childLink in link.links %}
-            {% assign break_after_modulo = forloop.index | modulo: links_before_wrap %}
-            <li
-              {% if break_after_modulo == 0 and should_break_columns %}
-                style="break-after: column;"
-              {% endif %}
-            >
-              <a
-                href="{{ childLink.url }}"
-                class="mega-menu__link"
-              >
-                <span class="mega-menu__link-title">{{- childLink.title -}}</span>
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
+  class="list-unstyled"
+  role="menu"
+  aria-label="{{ link.title | escape }}"
+  {% if should_break_columns %}
+    style="column-count: {{ column_span }};"
+  {% endif %}
+>
+  {% for childLink in link.links %}
+    {% assign break_after_modulo = forloop.index | modulo: links_before_wrap %}
+    <li
+      role="none"
+      {% if break_after_modulo == 0 and should_break_columns %}
+        style="break-after: column;"
+      {% endif %}
+    >
+      <a
+        href="{{ childLink.url }}"
+        class="mega-menu__link"
+        role="menuitem"
+        {% if childLink.current or childLink.active %}aria-current="page"{% endif %}
+      >
+        <span class="mega-menu__link-title">{{- childLink.title -}}</span>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
       {% endif %}
     </div>
 
