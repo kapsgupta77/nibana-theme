@@ -297,15 +297,20 @@
       "settings": {
         "heading": "Our Testimonial",
         "subheading": "-",
-        "source": "blocks",
-        "mo_list": [],
+        "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "david-chambers",
+          "jason-rogers",
+          "santiago-ruge"
+        ],
         "limit": 12,
         "show_filter": false,
-        "carousel": false,
+        "carousel": true,
         "per_view": 3,
         "cta_label": "View all",
         "cta_link": "/pages/testimonial",
-        "color_scheme": "",
+        "color_scheme": "scheme-3",
         "padding-block-start": 0,
         "padding-block-end": 0
       }
