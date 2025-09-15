@@ -5343,3 +5343,8 @@ body.nb-typography{
   font-weight:600;
 }
 .nb-tagbar__chip.is-active{ border-color: var(--nb-chocolate,#C86B2A); color:#000; }
+
+/* temp: hide footer products block until offer is ready */
+.footer [data-footer-products],
+.footer a[href*="/products"],
+.footer a[href*="/collections"] { display: none !important; }
