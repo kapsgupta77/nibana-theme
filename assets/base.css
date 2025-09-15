@@ -5348,3 +5348,14 @@ body.nb-typography{
 .footer [data-footer-products],
 .footer a[href*="/products"],
 .footer a[href*="/collections"] { display: none !important; }
+
+/* Blog meta: reading time separator + tone */
+.rt-sep{ opacity:.45; margin:0 .35rem; }
+.rt{ opacity:.75; }
+
+/* Subtle hairline above footer utilities */
+.footer .footer-utilities{
+  border-top: 1px solid color-mix(in oklab, var(--nb-deep, #0F5B59), #fff 88%);
+  padding-top: 12px;
+}
+
