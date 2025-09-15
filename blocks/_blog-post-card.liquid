@@ -29,10 +29,26 @@
     </div>
   {%- endif -%}
 
-  <div class="blog-post-card__content">
+    <div class="blog-post-card__content">
     <a href="{{ article.url }}">{{ title }}</a>
 
-    {{ details }}
+    {%- liquid
+      assign _w = article.content | strip_html | split: ' ' | size
+      assign _m = _w | divided_by: 200
+      assign _r = _w | modulo: 200
+      if _r > 0
+        assign _m = _m | plus: 1
+      endif
+      if _m < 1
+        assign _m = 1
+      endif
+    -%}
+
+    <div class="blog-post-card__meta">
+      {{ details }}
+      <span class="blog-post-card__sep" aria-hidden="true">·</span>
+      <span class="blog-post-card__read">{{ _m }} min read</span>
+    </div>
 
     {{ description }}
   </div>
@@ -101,6 +117,12 @@
   .blog-post-card__content a:hover [style*='--color: var(--color-foreground)'] {
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
+
+  /* Blog micro-upgrade: reading minutes on cards */
+  .blog-post-card__meta { color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text)); font-size: var(--font-size--body-sm); }
+  .blog-post-card__meta > * { display: inline; margin: 0; }
+  .blog-post-card__sep { margin: 0 .4em; }
+
 {% endstylesheet %}
 
 {% schema %}
