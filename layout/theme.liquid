@@ -36,6 +36,10 @@ DNS prefetch is cheap site-wide; preconnect opens TLS early where it matters.
 {%- if template.name == 'page' and template.suffix == 'book-call' -%}
   <link rel="preconnect" href="https://calendly.com" crossorigin>
   <link rel="preconnect" href="https://assets.calendly.com" crossorigin>
+<!-- Optional: preload widget CSS if you inline-embed Calendly -->
+  <link rel="preload" href="https://assets.calendly.com/assets/external/widget.css"
+        as="style" crossorigin onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css"></noscript>
 {%- endif -%}
 
     {%- render 'scripts' -%}
