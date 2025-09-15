@@ -24,6 +24,20 @@
 
     {%- render 'meta-tags' -%}
     {%- render 'fonts' -%}
+
+<!-- NIBANA — Speed hints for Calendly -->
+<link rel="dns-prefetch" href="//calendly.com">
+<link rel="dns-prefetch" href="//assets.calendly.com">
+
+{%- comment -%}
+Preconnect only on pages that embed Calendly (book-call). 
+DNS prefetch is cheap site-wide; preconnect opens TLS early where it matters.
+{%- endcomment -%}
+{%- if template.name == 'page' and template.suffix == 'book-call' -%}
+  <link rel="preconnect" href="https://calendly.com" crossorigin>
+  <link rel="preconnect" href="https://assets.calendly.com" crossorigin>
+{%- endif -%}
+
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
