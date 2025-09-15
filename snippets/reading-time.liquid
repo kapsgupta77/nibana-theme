@@ -1,0 +1,10 @@
+{%- comment -%}
+  Compute reading time at ~200 wpm.
+  Prefer full content; fallback to excerpt, then title (never empty).
+{%- endcomment -%}
+{%- assign _source = article.content | strip_html -%}
+{%- if _source == blank -%}{%- assign _source = article.excerpt | strip_html -%}{%- endif -%}
+{%- if _source == blank -%}{%- assign _source = article.title -%}{%- endif -%}
+{%- assign _words = _source | split: ' ' | size -%}
+{%- assign _read_mins = _words | plus: 199 | divided_by: 200 -%}
+{{ _read_mins }} min read
