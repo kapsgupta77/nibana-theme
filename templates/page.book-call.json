@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "custom_liquid_7QtCq8": {
@@ -18,7 +27,7 @@
           "type": "text",
           "name": "Title",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}<\/h1>",
+            "text": "<h1>{{ closest.page.title }}</h1>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -46,7 +55,10 @@
           "blocks": {}
         }
       },
-      "block_order": ["heading", "page-content"],
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
       "disabled": true,
       "settings": {
         "content_direction": "column",
@@ -62,7 +74,7 @@
         "text_Jwknh6": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Book a free 20-min call<\/strong><\/p>",
+            "text": "<p><strong>Book a free 20-min call</strong></p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -87,7 +99,7 @@
         "text_gEbUmJ": {
           "type": "text",
           "settings": {
-            "text": "<p>A no-pressure chat to explore where you are, what “aligned success” looks like, and whether we’re a fit<br\/><\/p><p><\/p>",
+            "text": "<p>A no-pressure chat to explore where you are, what “aligned success” looks like, and whether we’re a fit<br/></p><p></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -125,7 +137,11 @@
           "blocks": {}
         }
       },
-      "block_order": ["text_Jwknh6", "text_gEbUmJ", "button_ddB6Dg"],
+      "block_order": [
+        "text_Jwknh6",
+        "text_gEbUmJ",
+        "button_ddB6Dg"
+      ],
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "image",
@@ -162,7 +178,7 @@
           "type": "item",
           "settings": {
             "heading": "20 min connection call",
-            "text": "<p><em>We get to know each other and check fit.<\/em><\/p><ul><li>Your current situation<\/li><li>What you want to change<\/li><li>Whether we’re a good fit<br\/><\/li><\/ul><p><\/p>",
+            "text": "<p><em>We get to know each other and check fit.</em></p><ul><li>Your current situation</li><li>What you want to change</li><li>Whether we’re a good fit<br/></li></ul><p></p>",
             "link_label": "",
             "link_url": ""
           }
@@ -171,7 +187,7 @@
           "type": "item",
           "settings": {
             "heading": "60-90 min deep-dive call",
-            "text": "<p><em>We go into the details in this call.<\/em><\/p><ul><li>Define outcomes clearly<\/li><li>Surface what’s in the way<\/li><li>Map a first practical move<br\/><\/li><\/ul><p><\/p>",
+            "text": "<p><em>We go into the details in this call.</em></p><ul><li>Define outcomes clearly</li><li>Surface what’s in the way</li><li>Map a first practical move<br/></li></ul><p></p>",
             "link_label": "",
             "link_url": ""
           }
@@ -180,13 +196,17 @@
           "type": "item",
           "settings": {
             "heading": "Offers & next steps",
-            "text": "<p><em>Only if it feels right for both of us.<\/em><\/p><ul><li>Options & cadence<\/li><li>Investment & logistics<\/li><li>You decide—no pressure<br\/><\/li><\/ul><p><\/p>",
+            "text": "<p><em>Only if it feels right for both of us.</em></p><ul><li>Options & cadence</li><li>Investment & logistics</li><li>You decide—no pressure<br/></li></ul><p></p>",
             "link_label": "",
             "link_url": ""
           }
         }
       },
-      "block_order": ["item_Kp7T39", "item_fWb46W", "item_F4Likb"],
+      "block_order": [
+        "item_Kp7T39",
+        "item_fWb46W",
+        "item_F4Likb"
+      ],
       "name": "Cards: Multi-column",
       "settings": {
         "overline": "What to expect",
@@ -209,7 +229,9 @@
           }
         }
       },
-      "block_order": ["col_mJjUWP"],
+      "block_order": [
+        "col_mJjUWP"
+      ],
       "name": "Cards — Multi-column List",
       "settings": {
         "heading": "Is this for you?",
@@ -238,37 +260,54 @@
         "testimonial_diwBLk": {
           "type": "testimonial",
           "settings": {
+            "quote": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”",
             "name": "Sunil Singh",
             "title": "Entrepreneur",
             "location": "London",
-            "testimonial": "Working with Kapil who has the ability to hold your energy and help you figure out how to direct it in purposeful ways, has helped me expand my ability to navigate life more creatively. It’s allowed me to be in acceptance of who I am as a person and provided me the tools to have a peace of mind."
+            "tags": "-"
           }
         },
         "testimonial_4cMnwt": {
           "type": "testimonial",
           "settings": {
+            "quote": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”",
             "name": "P P",
             "title": "Business Owner",
             "location": "London",
-            "testimonial": "I was going through separation and was struggling with self-worth and hadn’t had any sex in years. I was full of anxiety and fears about meeting women. I am amazed how my life changed since last year Sex is great. I forgot how good sex could be!"
+            "tags": "-"
           }
         },
         "testimonial_V8bnmC": {
           "type": "testimonial",
           "settings": {
+            "quote": "“This work helped me get clear, make braver choices, and feel more alive in daily life.”",
             "name": "Christopher Thomas",
             "title": "Club Quarter Hotels",
             "location": "New York",
-            "testimonial": "I’ve had the honour of working with Kapil for the last few months and each and every session has always left me with an “aha” moment. His insightfulness, guidance and compassion has truly been a blessing. I never thought that I would need a “coach” when Kapil was recommended to me yet now I have a better understanding of my fears, more clarity around my desires, and certainty about the life that I want to live. For that, I’m truly grateful. I would highly recommend Kapil"
+            "tags": "-"
           }
         }
       },
-      "block_order": ["testimonial_diwBLk", "testimonial_4cMnwt", "testimonial_V8bnmC"],
+      "block_order": [
+        "testimonial_diwBLk",
+        "testimonial_4cMnwt",
+        "testimonial_V8bnmC"
+      ],
       "name": "Testimonials",
       "settings": {
         "heading": "Our Testimonial",
-        "button_label": "VIEW ALL",
-        "button_link": ""
+        "subheading": "-",
+        "source": "blocks",
+        "mo_list": [],
+        "limit": 12,
+        "show_filter": false,
+        "carousel": false,
+        "per_view": 3,
+        "cta_label": "View all",
+        "cta_link": "/pages/testimonial",
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "nb_faq_drwekh": {
@@ -278,7 +317,7 @@
           "type": "item",
           "settings": {
             "q": "Will we coach in the 20-min call?",
-            "a": "<p>The first call is a connection and fit check. We’ll get to know each other and explore where you are, and what you are looking for. If it feels right to both of us, we’ll book a longer deep-dive call to go into the details<\/p>",
+            "a": "<p>The first call is a connection and fit check. We’ll get to know each other and explore where you are, and what you are looking for. If it feels right to both of us, we’ll book a longer deep-dive call to go into the details</p>",
             "open": true
           }
         },
@@ -286,7 +325,7 @@
           "type": "item",
           "settings": {
             "q": "What’s the difference between the 20-min call and the 60–90-min deep-dive?",
-            "a": "<p>YourThe deep-dive is where we go into the details. We’ll:<\/p><p>Define clear outcomes<br\/>Surface patterns and what’s getting in the way<br\/>Explain my coaching process<\/p><p>By the end, I will make an offer based on our conversation that would include investment, cadence, and logistics so you know exactly how it could look.<br\/><\/p><p>You can say Yes or No to the offer at this point<\/p>",
+            "a": "<p>The deep-dive is where we go into the details. We’ll:</p><p>Define clear outcomes<br/>Surface patterns and what’s getting in the way<br/>Explain my coaching process</p><p>By the end, I will make an offer based on our conversation that would include investment, cadence, and logistics so you know exactly how it could look.<br/></p><p>You can say Yes or No to the offer at this point</p>",
             "open": false
           }
         },
@@ -294,7 +333,7 @@
           "type": "item",
           "settings": {
             "q": "Do I have to decide on the call?",
-            "a": "<p>I ask that you make a clear decision by the end of the second call, just so that it feels energetically clean. <br\/><br\/>Don't worry, No is always an acceptable answer. <br\/><br\/>And if there's still an appropriate reason to take more time to decide, then we can discuss that too. <\/p>",
+            "a": "<p>I ask that you make a clear decision by the end of the second call, just so that it feels energetically clean. <br/><br/>Don't worry, No is always an acceptable answer. <br/><br/>And if there's still an appropriate reason to take more time to decide, then we can discuss that too. </p>",
             "open": false
           }
         },
@@ -302,12 +341,17 @@
           "type": "item",
           "settings": {
             "q": "How do we meet—and what about time zones?",
-            "a": "<p>Sessions are usually on Zoom. Calendly shows times in your local time zone automatically. If you need a different time or format, just mention it in the notes and we’ll make it work.<\/p>",
+            "a": "<p>Sessions are usually on Zoom. Calendly shows times in your local time zone automatically. If you need a different time or format, just mention it in the notes and we’ll make it work.</p>",
             "open": false
           }
         }
       },
-      "block_order": ["item_XFRb9B", "item_YiD4KB", "item_EbBYPA", "item_Cb8qic"],
+      "block_order": [
+        "item_XFRb9B",
+        "item_YiD4KB",
+        "item_EbBYPA",
+        "item_Cb8qic"
+      ],
       "name": "FAQ (NIBANA)",
       "settings": {
         "title": "Frequently asked questions",
@@ -317,7 +361,8 @@
         "ink": "#00535d",
         "teal": "#0f5b59",
         "shell_col": "#e5e8e1",
-        "answer": "#eaf4f3"
+        "answer": "#eaf4f3",
+        "emit_jsonld": true
       }
     },
     "section_keMyKD": {
@@ -387,7 +432,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Ready to Talk?<\/h2>",
+                "text": "<h2>Ready to Talk?</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -449,10 +494,17 @@
               "blocks": {}
             }
           },
-          "block_order": ["text_nATjEK", "text_yMzxF6", "button_3NhAgE"]
+          "block_order": [
+            "text_nATjEK",
+            "text_yMzxF6",
+            "button_3NhAgE"
+          ]
         }
       },
-      "block_order": ["image_6URmjf", "group_YnYnpG"],
+      "block_order": [
+        "image_6URmjf",
+        "group_YnYnpG"
+      ],
       "custom_css": [],
       "name": "t:names.image_with_text",
       "settings": {
