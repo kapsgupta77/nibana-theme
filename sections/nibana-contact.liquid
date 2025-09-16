@@ -12,8 +12,14 @@
 
 {% assign secid = 'nibana-contact--' | append: section.id %}
 
-<section id="{{ secid }}" class="page-width color-{{ section.settings.color_scheme }}" style="max-width: {{ section.settings.max_width }}; margin: 0 auto; padding: {{ section.settings.section_padding }};">
-  <style>
+<section
+  id="{{ secid }}"
+  class="page-width color-{{ section.settings.color_scheme }}"
+  style="max-width: {{ section.settings.max_width }}; margin: 0 auto; padding: {{ section.settings.section_padding }};"
+  data-nb-contact="true"
+  data-nb-debug="{{ section.settings.enable_debug | default: true }}"
+>
+<style>
     /* Scoped to this section */
     #{{ secid }} .nib-grid {
       display: grid;
@@ -211,82 +217,7 @@
     </div>
   </div>
 
-<script>
-(function() {
-  const contactForm = document.getElementById('NibanaContactForm');
-  const hiddenForm  = document.getElementById('NibanaHiddenNewsletter');
-  const hiddenFrame = document.getElementById('NewsletterFrame');
-
-  if (!contactForm || !hiddenForm) return;
-  if (hiddenFrame) hiddenForm.setAttribute('target', 'NewsletterFrame');
-
-  // --- lightweight inline debug UI (turn off by setting debug=false) ---
-  const debug = true; // set to false to hide
-  const dbg = document.createElement('div');
-  if (debug) {
-    dbg.style.cssText = 'position:fixed;right:10px;bottom:10px;background:#111;color:#0f0;padding:8px 10px;border-radius:8px;font:12px/1.4 system-ui, -apple-system;z-index:99999;max-width:320px';
-    dbg.textContent = 'Mailchimp debug: idle';
-    document.body.appendChild(dbg);
-  }
-  const log = (msg) => { if (debug && dbg) dbg.textContent = 'Mailchimp debug: ' + msg; };
-
-  contactForm.addEventListener('submit', function(ev) {
-    const join = document.getElementById('JoinEmails');
-    if (!join || !join.checked) { log('opt-in unchecked — skip'); return; }
-
-    // Browser validation first — don't interfere with native errors
-    if (!contactForm.checkValidity()) { log('form invalid — skip'); return; }
-
-    const email   = document.getElementById('ContactEmail')?.value || '';
-    const purpose = document.getElementById('InquiryPurpose')?.value || '';
-    const tags    = ['Contact Form'];
-    if (purpose) tags.push('Purpose: ' + purpose);
-
-    // Fill the hidden form so it contains Shopify's hidden fields (form_type, utf8, etc.)
-    document.getElementById('HiddenCustomerEmail').value = email;
-    document.getElementById('HiddenCustomerTags').value  = tags.join(', ');
-
-    // Build data from the hidden form (includes Shopify's hidden inputs)
-    const fd = new FormData(hiddenForm);
-    fd.set('contact[email]', email);
-    fd.set('contact[tags]', tags.join(', '));
-
-    // Convert to URL-encoded for sendBeacon (most compatible)
-    const url = hiddenForm.getAttribute('action') || '/contact#' + (hiddenForm.id || 'contact_form');
-    const params = new URLSearchParams();
-    for (const [k,v] of fd.entries()) params.append(k, v);
-
-    let sent = false;
-
-    // 1) Try navigator.sendBeacon (fires even on page unload)
-    try {
-      const ok = navigator.sendBeacon(url, new Blob([params.toString()], { type: 'application/x-www-form-urlencoded;charset=UTF-8' }));
-      if (ok) { sent = true; log('sent via sendBeacon'); }
-    } catch (e) { /* ignore */ }
-
-    // 2) Also fire fetch keepalive (works in modern browsers)
-    try {
-      fetch(url, {
-        method: 'POST',
-        body: params,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        credentials: 'same-origin',
-        keepalive: true
-      }).then(() => log('fetch keepalive complete')).catch(() => {});
-      sent = true;
-    } catch (e) { /* ignore */ }
-
-    // 3) Final fallback: synchronous POST into hidden iframe (does not block)
-    try {
-      document.getElementById('HiddenSubmit').click();
-      sent = true;
-      log('fallback iframe submit fired');
-    } catch (e) { /* ignore */ }
-
-    if (!sent) log('no transport fired');
-  }, { passive: true });
-})();
-</script>
+<script src="{{ 'nb-contact.js' | asset_url }}" defer></script>
 </section>
 
 {% schema %}
@@ -331,6 +262,8 @@
     { "type": "text", "id": "subheading_class", "label": "Subheading class", "default": "paragraph" },
     { "type": "text", "id": "block_heading_class", "label": "Panel heading class", "default": "h3" },
 
+    { "type": "checkbox", "id": "enable_debug", "label": "Enable Mailchimp debug badge (temporary)", "default": true },
+
     { "type": "text", "id": "max_width", "label": "Max width", "default": "1100px" },
     { "type": "text", "id": "section_padding", "label": "Section padding", "default": "48px 16px" },
 
@@ -338,7 +271,7 @@
     { "type": "color", "id": "card_border", "label": "Panel border (fallback)", "default": "#E5E7EB" },
     { "type": "text",  "id": "card_radius", "label": "Panel border-radius", "default": "16px" },
     { "type": "text",  "id": "card_padding", "label": "Panel padding", "default": "22px" },
-    { "type": "text",  "id": "card_shadow", "label": "Panel shadow", "default": "0 8px 24px rgba(0,0,0,.06)" }
+    { "type": "text",  "id": "card_shadow", "label": "Panel shadow", "default": "0 8px 24px rgba(0,0,0,.14)" }
   ],
   "blocks": [
     {
