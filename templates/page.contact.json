@@ -12,7 +12,7 @@
     "main": {
       "type": "nibana-contact",
       "settings": {
-        "color_scheme": "scheme-4",
+        "color_scheme": "scheme-1",
         "heading": "Contact",
         "subheading": "Feel free to ask us anything. We're here to help.",
         "details_heading": "Contact Details",
@@ -42,7 +42,7 @@
         "block_heading_class": "h3",
         "max_width": "1100px",
         "section_padding": "48px 16px",
-        "card_bg": "#ffffff",
+        "card_bg": "#dfdfdf",
         "card_border": "#00535d",
         "card_radius": "16px",
         "card_padding": "22px",
