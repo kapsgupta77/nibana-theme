@@ -196,17 +196,18 @@
       {% endform %}
 
       {%- comment -%}
-        Hidden customer/newsletter form used ONLY when opt-in is checked.
-        Creates/updates a Shopify Customer with accepts_marketing=true and tags.
-      {%- endcomment -%}
-      <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-        {% form 'customer', id: 'NibanaHiddenNewsletter' %}
-          <input type="email" name="contact[email]" id="HiddenCustomerEmail">
-          <input type="hidden" name="customer[accepts_marketing]" value="true">
-          <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="Contact Form">
-          <button id="HiddenSubmit" type="submit">Submit</button>
-        {% endform %}
-      </div>
+  Hidden customer/newsletter form (creates/updates Shopify Customer).
+  We also include a hidden iframe for a last-resort synchronous POST.
+{%- endcomment -%}
+<div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
+  <iframe id="NewsletterFrame" name="NewsletterFrame" tabindex="-1"></iframe>
+  {% form 'customer', id: 'NibanaHiddenNewsletter' %}
+    <input type="email" name="contact[email]" id="HiddenCustomerEmail">
+    <input type="hidden" name="customer[accepts_marketing]" value="true">
+    <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="Contact Form">
+    <button id="HiddenSubmit" type="submit">Submit</button>
+  {% endform %}
+</div>
     </div>
   </div>
 
@@ -214,29 +215,75 @@
 (function() {
   const contactForm = document.getElementById('NibanaContactForm');
   const hiddenForm  = document.getElementById('NibanaHiddenNewsletter');
+  const hiddenFrame = document.getElementById('NewsletterFrame');
+
   if (!contactForm || !hiddenForm) return;
+  if (hiddenFrame) hiddenForm.setAttribute('target', 'NewsletterFrame');
 
-  contactForm.addEventListener('submit', function() {
+  // --- lightweight inline debug UI (turn off by setting debug=false) ---
+  const debug = true; // set to false to hide
+  const dbg = document.createElement('div');
+  if (debug) {
+    dbg.style.cssText = 'position:fixed;right:10px;bottom:10px;background:#111;color:#0f0;padding:8px 10px;border-radius:8px;font:12px/1.4 system-ui, -apple-system;z-index:99999;max-width:320px';
+    dbg.textContent = 'Mailchimp debug: idle';
+    document.body.appendChild(dbg);
+  }
+  const log = (msg) => { if (debug && dbg) dbg.textContent = 'Mailchimp debug: ' + msg; };
+
+  contactForm.addEventListener('submit', function(ev) {
     const join = document.getElementById('JoinEmails');
-    if (!join || !join.checked) return; // No opt-in -> do nothing extra
+    if (!join || !join.checked) { log('opt-in unchecked — skip'); return; }
 
-    // Build the newsletter payload from the hidden form + live values
-    const fd = new FormData(hiddenForm);
+    // Browser validation first — don't interfere with native errors
+    if (!contactForm.checkValidity()) { log('form invalid — skip'); return; }
 
     const email   = document.getElementById('ContactEmail')?.value || '';
     const purpose = document.getElementById('InquiryPurpose')?.value || '';
     const tags    = ['Contact Form'];
     if (purpose) tags.push('Purpose: ' + purpose);
 
+    // Fill the hidden form so it contains Shopify's hidden fields (form_type, utf8, etc.)
+    document.getElementById('HiddenCustomerEmail').value = email;
+    document.getElementById('HiddenCustomerTags').value  = tags.join(', ');
+
+    // Build data from the hidden form (includes Shopify's hidden inputs)
+    const fd = new FormData(hiddenForm);
     fd.set('contact[email]', email);
     fd.set('contact[tags]', tags.join(', '));
 
-    // Submit in the background and let the page keep navigating.
-    const action = hiddenForm.getAttribute('action') || '/contact#contact_form';
+    // Convert to URL-encoded for sendBeacon (most compatible)
+    const url = hiddenForm.getAttribute('action') || '/contact#' + (hiddenForm.id || 'contact_form');
+    const params = new URLSearchParams();
+    for (const [k,v] of fd.entries()) params.append(k, v);
+
+    let sent = false;
+
+    // 1) Try navigator.sendBeacon (fires even on page unload)
     try {
-      fetch(action, { method: 'POST', body: fd, credentials: 'same-origin', keepalive: true })
-        .catch(function(){ /* ignore network errors */ });
-    } catch(e) { /* older browsers */ }
+      const ok = navigator.sendBeacon(url, new Blob([params.toString()], { type: 'application/x-www-form-urlencoded;charset=UTF-8' }));
+      if (ok) { sent = true; log('sent via sendBeacon'); }
+    } catch (e) { /* ignore */ }
+
+    // 2) Also fire fetch keepalive (works in modern browsers)
+    try {
+      fetch(url, {
+        method: 'POST',
+        body: params,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        credentials: 'same-origin',
+        keepalive: true
+      }).then(() => log('fetch keepalive complete')).catch(() => {});
+      sent = true;
+    } catch (e) { /* ignore */ }
+
+    // 3) Final fallback: synchronous POST into hidden iframe (does not block)
+    try {
+      document.getElementById('HiddenSubmit').click();
+      sent = true;
+      log('fallback iframe submit fired');
+    } catch (e) { /* ignore */ }
+
+    if (!sent) log('no transport fired');
   }, { passive: true });
 })();
 </script>

@@ -1,3 +1,4 @@
+
 {% comment %}
   NIBANA — Calendly section
   • Desktop: inline embed
@@ -10,7 +11,7 @@
   <!-- Desktop inline calendar -->
   <div
     class="calendly-inline-widget nb-cal-desktop"
-    data-url="{{ section.settings.url | escape }}"
+  data-url="{{ section.settings.url | default: 'https://calendly.com/nibana/20min?hide_event_type_details=1&hide_gdpr_banner=1' | escape }}"
     style="min-width:320px;height:{{ section.settings.height | default: 740 }}px;">
   </div>
 
@@ -38,7 +39,7 @@
 
     var inline = root.querySelector('.nb-cal-desktop');
     var btn    = root.querySelector('.nb-cal-mobile-btn');
-    var url    = (inline && inline.getAttribute('data-url')) || '{{ section.settings.url | escape }}';
+   var url    = (inline && inline.getAttribute('data-url')) || '{{ section.settings.url | default: "https://calendly.com/nibana/20min?hide_event_type_details=1&hide_gdpr_banner=1" | escape }}';
 
     if (isMobile()) {
       if (inline) inline.style.display = 'none';
@@ -73,13 +74,12 @@
 
 {% schema %}
 {
-  "name": "Calendly (inline + mobile popup)",
+  "name": "Calendly embed",
   "settings": [
     {
       "type": "url",
       "id": "url",
-      "label": "Calendly URL",
-      "default": "https://calendly.com/nibana/20min?hide_event_type_details=1&hide_gdpr_banner=1"
+      "label": "Calendly URL"
     },
     {
       "type": "text",
@@ -88,17 +88,18 @@
       "default": "Pick a time"
     },
     {
-      "type": "number",
+      "type": "range",
       "id": "height",
-      "label": "Desktop inline height (px)",
-      "default": 740,
+      "label": "Desktop inline height",
       "min": 500,
       "max": 1400,
-      "step": 10
+      "step": 10,
+      "default": 740,
+      "unit": "px"
     }
   ],
   "presets": [
-    { "name": "Calendly (inline + mobile popup)" }
+    { "name": "Calendly embed" }
   ]
 }
 {% endschema %}
