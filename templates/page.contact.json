@@ -1,10 +1,56 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-  "name": "Contact",
   "sections": {
     "main": {
       "type": "nibana-contact",
-      "settings": {}
+      "settings": {
+        "color_scheme": "scheme-4",
+        "heading": "Contact",
+        "subheading": "Feel free to ask us anything. We're here to help.",
+        "details_heading": "Contact Details",
+        "details_email": "info@nibana.life",
+        "details_phone": "+44 20 7173 5775",
+        "details_note": "We usually reply within 1 business day.",
+        "call_heading": "Prefer to talk?",
+        "call_sub": "Book a free 20-minute discovery call.",
+        "call_label": "Book a Free 20-min Call",
+        "call_link": "",
+        "label_name": "Name",
+        "label_email": "Email",
+        "label_phone": "Phone",
+        "label_purpose": "Inquiry Purpose",
+        "purpose_placeholder": "Choose one…",
+        "label_message": "Message",
+        "optin_checked": true,
+        "optin_label": "Also send me occasional tips & updates",
+        "optin_help": "We'll only email with useful insights. Unsubscribe anytime.",
+        "submit_label": "Submit",
+        "success_text": "Thanks for reaching out — we’ll get back within 1 business day.",
+        "error_text": "Please check the highlighted fields and try again.",
+        "cta_submit_class": "button",
+        "cta_call_class": "nb-cta",
+        "heading_class": "h1",
+        "subheading_class": "paragraph",
+        "block_heading_class": "h3",
+        "max_width": "1100px",
+        "section_padding": "48px 16px",
+        "card_bg": "#ffffff",
+        "card_border": "#00535d",
+        "card_radius": "16px",
+        "card_padding": "22px",
+        "card_shadow": "0 8px 24px rgba(0,0,0,.06)"
+      }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
