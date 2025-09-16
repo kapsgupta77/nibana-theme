@@ -1,0 +1,134 @@
+{% comment %}
+  Nibana – Contact Section
+  - Calm, premium layout with friendly note and clear labels
+  - Adds "Inquiry Purpose" dropdown
+  - Optional newsletter consent that creates/updates a Customer with tags for Mailchimp sync
+{% endcomment %}
+
+<section class="page-width" style="max-width: 960px; margin: 0 auto; padding: 48px 16px;">
+  <div style="margin-bottom: 16px;">
+    <h1 class="h2" style="margin:0 0 8px 0;">Contact</h1>
+    <p style="margin:0; opacity:.9;">Feel free to ask us anything. We’re here to help.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: 1fr; gap:32px;">
+    <div>
+      {% form 'contact', id: 'NibanaContactForm', class: 'contact-form' %}
+        {% if form.posted_successfully? %}
+          <div role="status" style="padding:12px 16px; border:1px solid #d9ead3; background:#f6fff6; border-radius:8px; margin-bottom:16px;">
+            Thanks for reaching out — we’ll get back within 1 business day.
+          </div>
+        {% endif %}
+        {% if form.errors %}
+          <div role="alert" style="padding:12px 16px; border:1px solid #f3c2c2; background:#fff5f5; border-radius:8px; margin-bottom:16px;">
+            Please check the highlighted fields and try again.
+          </div>
+        {% endif %}
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div style="grid-column: span 2;">
+            <label for="ContactName">Name</label>
+            <input id="ContactName" type="text" name="contact[name]" autocapitalize="words" autocomplete="name" value="{{ form.name | default: customer.name }}" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px;">
+          </div>
+
+          <div style="grid-column: span 2;">
+            <label for="ContactEmail">Email <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+            <input id="ContactEmail" type="email" name="contact[email]" required value="{{ form.email | default: customer.email }}" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px;">
+          </div>
+
+          <div style="grid-column: span 2;">
+            <label for="ContactPhone">Phone</label>
+            <input id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px;">
+          </div>
+
+          <div style="grid-column: span 2;">
+            <label for="InquiryPurpose">Inquiry Purpose</label>
+            <select id="InquiryPurpose" name="contact[Inquiry Purpose]" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px;">
+              <option value="" selected>Choose one…</option>
+              <option>Discovery Call</option>
+              <option>Men’s Coaching</option>
+              <option>Relationship Coaching</option>
+              <option>Executive Coaching</option>
+              <option>Speaking / Workshops</option>
+              <option>Media / Press</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div style="grid-column: span 2;">
+            <label for="ContactMessage">Message</label>
+            <textarea id="ContactMessage" name="contact[body]" rows="6" required style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px;"></textarea>
+          </div>
+
+          <div style="grid-column: span 2; display:flex; align-items:center; gap:8px;">
+            <input id="JoinEmails" type="checkbox" aria-describedby="JoinEmailsHelp">
+            <label for="JoinEmails" style="margin:0;">Also send me occasional tips & updates</label>
+          </div>
+          <p id="JoinEmailsHelp" style="grid-column: span 2; margin:0; font-size:12px; opacity:.7;">
+            We’ll only email with useful insights. Unsubscribe anytime.
+          </p>
+
+          <div style="grid-column: span 2;">
+            <button type="submit" class="button" style="width:100%; padding:14px 18px; border:none; border-radius:999px; background:#5b3a2f; color:#fff; font-weight:600;">
+              Submit
+            </button>
+          </div>
+        </div>
+      {% endform %}
+
+      {%- comment -%}
+        Hidden newsletter/customer form used ONLY when user checks "Also send me emails".
+        This creates/updates a Shopify Customer with accepts_marketing=true and tags.
+        Mailchimp for Shopify will sync those tags to your Mailchimp audience. 
+      {%- endcomment -%}
+      <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px; top:auto;">
+        {% form 'customer', id: 'NibanaHiddenNewsletter' %}
+          <input type="email" name="contact[email]" id="HiddenCustomerEmail">
+          <input type="hidden" name="customer[accepts_marketing]" value="true">
+          <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="Contact Form">
+          <button id="HiddenSubmit" type="submit">Submit</button>
+        {% endform %}
+      </div>
+    </div>
+
+    <aside style="display:flex; flex-direction:column; gap:12px;">
+      <div style="padding:16px; border:1px solid #e5e7eb; border-radius:12px;">
+        <h3 style="margin:0 0 8px 0;">Contact Details</h3>
+        <p style="margin:0;">info@nibana.life<br>+44 20 7173 5775</p>
+        <p style="margin:8px 0 0 0; opacity:.8;">We usually reply within 1 business day.</p>
+      </div>
+
+      <div style="padding:16px; border:1px solid #e5e7eb; border-radius:12px;">
+        <h3 style="margin:0 0 8px 0;">Prefer to talk?</h3>
+        <p style="margin:0 0 12px 0; opacity:.9;">Book a free 20-minute discovery call.</p>
+        <a href="/pages/book-a-call" class="button" style="display:inline-block; padding:12px 16px; border-radius:999px; background:#5b3a2f; color:#fff; text-decoration:none; font-weight:600;">Book a Free 20-min Call</a>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function() {
+      const contactForm = document.getElementById('NibanaContactForm');
+      if (!contactForm) return;
+
+      contactForm.addEventListener('submit', function() {
+        const join = document.getElementById('JoinEmails');
+        if (!join || !join.checked) return; // respect consent
+
+        // Copy values into the hidden customer/newsletter form
+        const email = document.getElementById('ContactEmail')?.value || '';
+        const purpose = document.getElementById('InquiryPurpose')?.value || '';
+        const tags = ['Contact Form'];
+        if (purpose) { tags.push('Purpose: ' + purpose); }
+
+        document.getElementById('HiddenCustomerEmail').value = email;
+        document.getElementById('HiddenCustomerTags').value = tags.join(', ');
+
+        // Fire hidden newsletter form in the background just before the contact submit navigates
+        setTimeout(function(){
+          document.getElementById('HiddenSubmit').click();
+        }, 50);
+      }, { passive: true });
+    })();
+  </script>
+</section>
