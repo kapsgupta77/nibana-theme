@@ -140,14 +140,31 @@
             <label for="InquiryPurpose" class="nib-label">
   {{ section.settings.label_purpose }} <span class="nib-req" aria-hidden="true">*</span>
 </label>
-            <select id="InquiryPurpose" name="contact[Inquiry Purpose]" required aria-required="true" class="nib-select">
-              <option value="" disabled selected>{{ section.settings.purpose_placeholder }}</option>
-              {% for block in section.blocks %}
-                {% if block.type == 'purpose_option' %}
-                  <option value="{{ block.settings.option_label }}">{{ block.settings.option_label }}</option>
-                {% endif %}
-              {% endfor %}
-            </select>
+{% comment %} Fallback options if no blocks exist {% endcomment %}
+{% assign has_purpose_blocks = false %}
+{% for block in section.blocks %}
+  {% if block.type == 'purpose_option' %}
+    {% assign has_purpose_blocks = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+<select id="InquiryPurpose" name="contact[Inquiry Purpose]" required aria-required="true" class="nib-select">
+  <option value="" disabled selected>{{ section.settings.purpose_placeholder }}</option>
+
+  {% if has_purpose_blocks %}
+    {% for block in section.blocks %}
+      {% if block.type == 'purpose_option' %}
+        <option value="{{ block.settings.option_label }}">{{ block.settings.option_label }}</option>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% assign defaults = "Discovery Call|Transformatioanal Life Coaching|Relationship Coaching|Executive Coaching|Speaking / Workshops|Media / Press|Other" | split: "|" %}
+    {% for label in defaults %}
+      <option value="{{ label }}">{{ label }}</option>
+    {% endfor %}
+  {% endif %}
+</select>
           </div>
 
           <!-- Message (required) -->
