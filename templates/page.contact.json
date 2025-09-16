@@ -28,6 +28,16 @@
         "label_phone": "Phone",
         "label_purpose": "Inquiry Purpose",
         "purpose_placeholder": "Choose one…",
+        "blocks": {
+        "purpose-1": { "type": "purpose_option", "settings": { "option_label": "Discovery Call" } },
+        "purpose-2": { "type": "purpose_option", "settings": { "option_label": "Transformational Life Coaching" } },
+        "purpose-3": { "type": "purpose_option", "settings": { "option_label": "Relationship Coaching" } },
+        "purpose-4": { "type": "purpose_option", "settings": { "option_label": "Executive Coaching" } },
+        "purpose-5": { "type": "purpose_option", "settings": { "option_label": "Speaking / Workshops" } },
+        "purpose-6": { "type": "purpose_option", "settings": { "option_label": "Media / Press" } },
+        "purpose-7": { "type": "purpose_option", "settings": { "option_label": "Other" } }
+      },
+      "block_order": ["purpose-1","purpose-2","purpose-3","purpose-4","purpose-5","purpose-6","purpose-7"]
         "label_message": "Message",
         "optin_checked": true,
         "optin_label": "Also send me occasional tips & updates",
