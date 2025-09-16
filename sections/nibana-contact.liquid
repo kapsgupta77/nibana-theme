@@ -1,0 +1,297 @@
+{% comment %}
+  Nibana – Contact Section (v2.1)
+  - 2-panel layout: Info (left) + Form (right)
+  - Uses global tokens from base.css:
+      • Call CTA: .nb-cta (optionally add .nb-cta--xl)
+      • Non-call CTA: .button
+      • Panels: .nib-panel
+  - Required: Name, Inquiry Purpose, Message
+  - Opt-in checkbox checked by default (Theme Editor toggle)
+  - Hidden customer form creates/updates Customer with tags for Mailchimp sync
+{% endcomment %}
+
+{% assign secid = 'nibana-contact--' | append: section.id %}
+
+<section id="{{ secid }}" class="page-width color-{{ section.settings.color_scheme }}" style="max-width: {{ section.settings.max_width }}; margin: 0 auto; padding: {{ section.settings.section_padding }};">
+  <style>
+    /* Scoped to this section */
+    #{{ secid }} .nib-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    @media (min-width: 900px) {
+      #{{ secid }} .nib-grid {
+        grid-template-columns: 1.05fr 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+    }
+    #{{ secid }} .nib-card {
+  background: {{ section.settings.card_bg }};
+  border: 1px solid {{ section.settings.card_border }};
+  border-radius: {{ section.settings.card_radius }};
+  /* Upgrade to luxe/3D shadow using global token (falls back to section setting) */
+  box-shadow: var(--nb-shadow-2, {{ section.settings.card_shadow }});
+  padding: {{ section.settings.card_padding }};
+}
+/* Center the left column card relative to the taller right column */
+#{{ secid }} .left-panel { align-self: center; }
+
+/* Red star for all required labels */
+#{{ secid }} .nib-req { color:#b91c1c; margin-left:4px; }
+    #{{ secid }} .nib-muted { opacity: .8; }
+    #{{ secid }} .nib-label { display:block; margin:0 0 6px 0; font-weight: 500; }
+    #{{ secid }} .nib-input, #{{ secid }} .nib-select, #{{ secid }} .nib-textarea {
+      width:100%; padding:12px 14px; border:1px solid var(--color-input-border, #e5e7eb);
+      border-radius: 10px; background:#fff;
+    }
+    #{{ secid }} .nib-help { font-size: 12px; opacity:.7; margin-top: 6px; }
+    #{{ secid }} .nib-actions { display:flex; gap:12px; align-items:center; }
+    #{{ secid }} .nib-form-grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
+
+#{{ secid }} .nib-card.nib-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.14);
+  transition: box-shadow .2s ease, transform .12s ease;
+}
+
+  </style>
+
+  <div class="nib-grid">
+    <!-- LEFT PANEL: Info + Details + Book a Call -->
+   <div class="nib-card nib-panel left-panel">
+      <h1 class="{{ section.settings.heading_class }}" style="margin:0 0 6px 0;">
+        {{ section.settings.heading }}
+      </h1>
+      <p class="{{ section.settings.subheading_class }} nib-muted" style="margin:0 0 22px 0;">
+        {{ section.settings.subheading }}
+      </p>
+
+      <div style="display:grid; gap:18px;">
+        <!-- Contact Details -->
+        <div class="nib-card nib-panel" style="padding:16px;">
+          <h3 class="{{ section.settings.block_heading_class }}" style="margin:0 0 8px 0;">{{ section.settings.details_heading }}</h3>
+          <p style="margin:0;">
+            <a href="mailto:{{ section.settings.details_email }}">{{ section.settings.details_email }}</a><br>
+            <a href="tel:{{ section.settings.details_phone | replace: ' ', '' }}">{{ section.settings.details_phone }}</a>
+          </p>
+          {% if section.settings.details_note != blank %}
+            <p class="nib-muted" style="margin:8px 0 0 0;">{{ section.settings.details_note }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Prefer to talk -->
+        <div class="nib-card nib-panel" style="padding:16px;">
+          <h3 class="{{ section.settings.block_heading_class }}" style="margin:0 0 8px 0;">{{ section.settings.call_heading }}</h3>
+          <p class="nib-muted" style="margin:0 0 12px 0;">{{ section.settings.call_sub }}</p>
+          <a href="{{ section.settings.call_link }}"
+             class="{{ section.settings.cta_call_class }}"
+             style="text-decoration:none;">
+             {{ section.settings.call_label }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Contact Form -->
+    <div class="nib-card nib-panel">
+      {% form 'contact', id: 'NibanaContactForm', class: 'contact-form' %}
+        {% if form.posted_successfully? %}
+          <div role="status" class="nib-card nib-panel" style="padding:12px; background:#f6fff6; border-color:#d9ead3;">
+            {{ section.settings.success_text }}
+          </div>
+        {% endif %}
+        {% if form.errors %}
+          <div role="alert" class="nib-card nib-panel" style="padding:12px; background:#fff5f5; border-color:#f3c2c2;">
+            {{ section.settings.error_text }}
+          </div>
+        {% endif %}
+
+        <div class="nib-form-grid">
+          <!-- Name (required) -->
+          <div>
+            <label for="ContactName" class="nib-label">
+  {{ section.settings.label_name }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
+            <input id="ContactName" type="text" name="contact[name]"
+                   required aria-required="true" autocapitalize="words" autocomplete="name"
+                   value="{{ form.name | default: customer.name }}" class="nib-input">
+          </div>
+
+          <!-- Email (required) -->
+          <div>
+            <label for="ContactEmail" class="nib-label">
+  {{ section.settings.label_email }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
+            <input id="ContactEmail" type="email" name="contact[email]"
+                   required aria-required="true" autocomplete="email"
+                   value="{{ form.email | default: customer.email }}" class="nib-input">
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label for="ContactPhone" class="nib-label">{{ section.settings.label_phone }}</label>
+            <input id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" class="nib-input">
+          </div>
+
+          <!-- Inquiry Purpose (required) -->
+          <div>
+            <label for="InquiryPurpose" class="nib-label">
+  {{ section.settings.label_purpose }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
+            <select id="InquiryPurpose" name="contact[Inquiry Purpose]" required aria-required="true" class="nib-select">
+              <option value="" disabled selected>{{ section.settings.purpose_placeholder }}</option>
+              {% for block in section.blocks %}
+                {% if block.type == 'purpose_option' %}
+                  <option value="{{ block.settings.option_label }}">{{ block.settings.option_label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Message (required) -->
+          <div>
+            <label for="ContactMessage" class="nib-label">
+  {{ section.settings.label_message }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
+            <textarea id="ContactMessage" name="contact[body]" rows="6" required aria-required="true" class="nib-textarea"></textarea>
+          </div>
+
+          <!-- Opt-in (checked by default; editable) -->
+          <div>
+            <label style="display:flex; gap:8px; align-items:center;">
+              <input id="JoinEmails" type="checkbox" {% if section.settings.optin_checked %}checked{% endif %}>
+              <span>{{ section.settings.optin_label }}</span>
+            </label>
+            <div class="nib-help">{{ section.settings.optin_help }}</div>
+          </div>
+
+          <!-- Submit -->
+          <div class="nib-actions" style="margin-top: 6px;">
+            <button type="submit"
+        class="{{ section.settings.cta_submit_class }}"
+        style="width:100%; background: var(--nb-teal, #10636c); color:#fff;">
+  {{ section.settings.submit_label }}
+</button>
+          </div>
+        </div>
+      {% endform %}
+
+      {%- comment -%}
+        Hidden customer/newsletter form used ONLY when opt-in is checked.
+        Creates/updates a Shopify Customer with accepts_marketing=true and tags.
+      {%- endcomment -%}
+      <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
+        {% form 'customer', id: 'NibanaHiddenNewsletter' %}
+          <input type="email" name="contact[email]" id="HiddenCustomerEmail">
+          <input type="hidden" name="customer[accepts_marketing]" value="true">
+          <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="Contact Form">
+          <button id="HiddenSubmit" type="submit">Submit</button>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const contactForm = document.getElementById('NibanaContactForm');
+      if (!contactForm) return;
+
+      contactForm.addEventListener('submit', function() {
+        const join = document.getElementById('JoinEmails');
+        if (!join || !join.checked) return; // respect consent
+
+        const email = document.getElementById('ContactEmail')?.value || '';
+        const purpose = document.getElementById('InquiryPurpose')?.value || '';
+        const tags = ['Contact Form'];
+        if (purpose) { tags.push('Purpose: ' + purpose); }
+
+        document.getElementById('HiddenCustomerEmail').value = email;
+        document.getElementById('HiddenCustomerTags').value = tags.join(', ');
+
+        // Fire hidden form right before navigation
+        setTimeout(function(){
+          document.getElementById('HiddenSubmit').click();
+        }, 40);
+      }, { passive: true });
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Nibana Contact",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "background-1" },
+
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Contact" },
+    { "type": "textarea", "id": "subheading", "label": "Intro text", "default": "Feel free to ask us anything. We're here to help." },
+
+    { "type": "text", "id": "details_heading", "label": "Contact details heading", "default": "Contact Details" },
+    { "type": "text", "id": "details_email", "label": "Email", "default": "info@nibana.life" },
+    { "type": "text", "id": "details_phone", "label": "Phone", "default": "+44 20 7173 5775" },
+    { "type": "text", "id": "details_note", "label": "Reply-time note", "default": "We usually reply within 1 business day." },
+
+    { "type": "text", "id": "call_heading", "label": "Prefer to talk — heading", "default": "Prefer to talk?" },
+    { "type": "text", "id": "call_sub", "label": "Prefer to talk — subtext", "default": "Book a free 20-minute discovery call." },
+    { "type": "text", "id": "call_label", "label": "Call CTA label", "default": "Book a Free 20-min Call" },
+    { "type": "url",  "id": "call_link", "label": "Call CTA link" },
+
+    { "type": "text", "id": "label_name", "label": "Form label — Name", "default": "Name" },
+    { "type": "text", "id": "label_email", "label": "Form label — Email", "default": "Email" },
+    { "type": "text", "id": "label_phone", "label": "Form label — Phone", "default": "Phone" },
+    { "type": "text", "id": "label_purpose", "label": "Form label — Inquiry Purpose", "default": "Inquiry Purpose" },
+    { "type": "text", "id": "purpose_placeholder", "label": "Purpose placeholder", "default": "Choose one…" },
+    { "type": "text", "id": "label_message", "label": "Form label — Message", "default": "Message" },
+
+    { "type": "checkbox", "id": "optin_checked", "label": "Opt-in checkbox checked by default", "default": true },
+    { "type": "text", "id": "optin_label", "label": "Opt-in label", "default": "Also send me occasional tips & updates" },
+    { "type": "textarea", "id": "optin_help", "label": "Opt-in help text", "default": "We'll only email with useful insights. Unsubscribe anytime." },
+
+    { "type": "text", "id": "submit_label", "label": "Submit button label", "default": "Submit" },
+    { "type": "text", "id": "success_text", "label": "Success message", "default": "Thanks for reaching out — we’ll get back within 1 business day." },
+    { "type": "text", "id": "error_text", "label": "Error message", "default": "Please check the highlighted fields and try again." },
+
+    { "type": "text", "id": "cta_submit_class", "label": "Submit button class (non-call CTA)", "default": "button" },
+    { "type": "text", "id": "cta_call_class", "label": "Book-a-call button class (call CTA)", "default": "nb-cta" },
+    { "type": "text", "id": "heading_class", "label": "Heading class", "default": "h1" },
+    { "type": "text", "id": "subheading_class", "label": "Subheading class", "default": "paragraph" },
+    { "type": "text", "id": "block_heading_class", "label": "Panel heading class", "default": "h3" },
+
+    { "type": "text", "id": "max_width", "label": "Max width", "default": "1100px" },
+    { "type": "text", "id": "section_padding", "label": "Section padding", "default": "48px 16px" },
+
+    { "type": "color", "id": "card_bg", "label": "Panel background (fallback)", "default": "#ffffff" },
+    { "type": "color", "id": "card_border", "label": "Panel border (fallback)", "default": "#E5E7EB" },
+    { "type": "text",  "id": "card_radius", "label": "Panel border-radius", "default": "16px" },
+    { "type": "text",  "id": "card_padding", "label": "Panel padding", "default": "22px" },
+    { "type": "text",  "id": "card_shadow", "label": "Panel shadow", "default": "0 8px 24px rgba(0,0,0,.06)" }
+  ],
+  "blocks": [
+    {
+      "type": "purpose_option",
+      "name": "Purpose option",
+      "settings": [
+        { "type": "text", "id": "option_label", "label": "Option label", "default": "Discovery Call" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Nibana Contact",
+      "blocks": [
+        { "type": "purpose_option", "settings": { "option_label": "Discovery Call" } },
+        { "type": "purpose_option", "settings": { "option_label": "Men’s Coaching" } },
+        { "type": "purpose_option", "settings": { "option_label": "Relationship Coaching" } },
+        { "type": "purpose_option", "settings": { "option_label": "Executive Coaching" } },
+        { "type": "purpose_option", "settings": { "option_label": "Speaking / Workshops" } },
+        { "type": "purpose_option", "settings": { "option_label": "Media / Press" } },
+        { "type": "purpose_option", "settings": { "option_label": "Other" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
