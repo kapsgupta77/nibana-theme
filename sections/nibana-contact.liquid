@@ -28,12 +28,18 @@
       }
     }
     #{{ secid }} .nib-card {
-      background: {{ section.settings.card_bg }};
-      border: 1px solid {{ section.settings.card_border }};
-      border-radius: {{ section.settings.card_radius }};
-      box-shadow: {{ section.settings.card_shadow }};
-      padding: {{ section.settings.card_padding }};
-    }
+  background: {{ section.settings.card_bg }};
+  border: 1px solid {{ section.settings.card_border }};
+  border-radius: {{ section.settings.card_radius }};
+  /* Upgrade to luxe/3D shadow using global token (falls back to section setting) */
+  box-shadow: var(--nb-shadow-2, {{ section.settings.card_shadow }});
+  padding: {{ section.settings.card_padding }};
+}
+/* Center the left column card relative to the taller right column */
+#{{ secid }} .left-panel { align-self: center; }
+
+/* Red star for all required labels */
+#{{ secid }} .nib-req { color:#b91c1c; margin-left:4px; }
     #{{ secid }} .nib-muted { opacity: .8; }
     #{{ secid }} .nib-label { display:block; margin:0 0 6px 0; font-weight: 500; }
     #{{ secid }} .nib-input, #{{ secid }} .nib-select, #{{ secid }} .nib-textarea {
@@ -43,11 +49,18 @@
     #{{ secid }} .nib-help { font-size: 12px; opacity:.7; margin-top: 6px; }
     #{{ secid }} .nib-actions { display:flex; gap:12px; align-items:center; }
     #{{ secid }} .nib-form-grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
+
+#{{ secid }} .nib-card.nib-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.14);
+  transition: box-shadow .2s ease, transform .12s ease;
+}
+
   </style>
 
   <div class="nib-grid">
     <!-- LEFT PANEL: Info + Details + Book a Call -->
-    <div class="nib-card nib-panel">
+   <div class="nib-card nib-panel left-panel">
       <h1 class="{{ section.settings.heading_class }}" style="margin:0 0 6px 0;">
         {{ section.settings.heading }}
       </h1>
@@ -98,7 +111,9 @@
         <div class="nib-form-grid">
           <!-- Name (required) -->
           <div>
-            <label for="ContactName" class="nib-label">{{ section.settings.label_name }}</label>
+            <label for="ContactName" class="nib-label">
+  {{ section.settings.label_name }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
             <input id="ContactName" type="text" name="contact[name]"
                    required aria-required="true" autocapitalize="words" autocomplete="name"
                    value="{{ form.name | default: customer.name }}" class="nib-input">
@@ -106,7 +121,9 @@
 
           <!-- Email (required) -->
           <div>
-            <label for="ContactEmail" class="nib-label">{{ section.settings.label_email }} <span aria-hidden="true" style="color:#b91c1c">*</span></label>
+            <label for="ContactEmail" class="nib-label">
+  {{ section.settings.label_email }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
             <input id="ContactEmail" type="email" name="contact[email]"
                    required aria-required="true" autocomplete="email"
                    value="{{ form.email | default: customer.email }}" class="nib-input">
@@ -120,7 +137,9 @@
 
           <!-- Inquiry Purpose (required) -->
           <div>
-            <label for="InquiryPurpose" class="nib-label">{{ section.settings.label_purpose }}</label>
+            <label for="InquiryPurpose" class="nib-label">
+  {{ section.settings.label_purpose }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
             <select id="InquiryPurpose" name="contact[Inquiry Purpose]" required aria-required="true" class="nib-select">
               <option value="" disabled selected>{{ section.settings.purpose_placeholder }}</option>
               {% for block in section.blocks %}
@@ -133,7 +152,9 @@
 
           <!-- Message (required) -->
           <div>
-            <label for="ContactMessage" class="nib-label">{{ section.settings.label_message }}</label>
+            <label for="ContactMessage" class="nib-label">
+  {{ section.settings.label_message }} <span class="nib-req" aria-hidden="true">*</span>
+</label>
             <textarea id="ContactMessage" name="contact[body]" rows="6" required aria-required="true" class="nib-textarea"></textarea>
           </div>
 
@@ -148,9 +169,11 @@
 
           <!-- Submit -->
           <div class="nib-actions" style="margin-top: 6px;">
-            <button type="submit" class="{{ section.settings.cta_submit_class }}" style="width:100%;">
-              {{ section.settings.submit_label }}
-            </button>
+            <button type="submit"
+        class="{{ section.settings.cta_submit_class }}"
+        style="width:100%; background: var(--nb-teal, #10636c); color:#fff;">
+  {{ section.settings.submit_label }}
+</button>
           </div>
         </div>
       {% endform %}
