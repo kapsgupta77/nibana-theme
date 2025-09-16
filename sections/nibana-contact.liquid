@@ -210,30 +210,36 @@
     </div>
   </div>
 
-  <script>
-    (function() {
-      const contactForm = document.getElementById('NibanaContactForm');
-      if (!contactForm) return;
+<script>
+(function() {
+  const contactForm = document.getElementById('NibanaContactForm');
+  const hiddenForm  = document.getElementById('NibanaHiddenNewsletter');
+  if (!contactForm || !hiddenForm) return;
 
-      contactForm.addEventListener('submit', function() {
-        const join = document.getElementById('JoinEmails');
-        if (!join || !join.checked) return; // respect consent
+  contactForm.addEventListener('submit', function() {
+    const join = document.getElementById('JoinEmails');
+    if (!join || !join.checked) return; // No opt-in -> do nothing extra
 
-        const email = document.getElementById('ContactEmail')?.value || '';
-        const purpose = document.getElementById('InquiryPurpose')?.value || '';
-        const tags = ['Contact Form'];
-        if (purpose) { tags.push('Purpose: ' + purpose); }
+    // Build the newsletter payload from the hidden form + live values
+    const fd = new FormData(hiddenForm);
 
-        document.getElementById('HiddenCustomerEmail').value = email;
-        document.getElementById('HiddenCustomerTags').value = tags.join(', ');
+    const email   = document.getElementById('ContactEmail')?.value || '';
+    const purpose = document.getElementById('InquiryPurpose')?.value || '';
+    const tags    = ['Contact Form'];
+    if (purpose) tags.push('Purpose: ' + purpose);
 
-        // Fire hidden form right before navigation
-        setTimeout(function(){
-          document.getElementById('HiddenSubmit').click();
-        }, 40);
-      }, { passive: true });
-    })();
-  </script>
+    fd.set('contact[email]', email);
+    fd.set('contact[tags]', tags.join(', '));
+
+    // Submit in the background and let the page keep navigating.
+    const action = hiddenForm.getAttribute('action') || '/contact#contact_form';
+    try {
+      fetch(action, { method: 'POST', body: fd, credentials: 'same-origin', keepalive: true })
+        .catch(function(){ /* ignore network errors */ });
+    } catch(e) { /* older browsers */ }
+  }, { passive: true });
+})();
+</script>
 </section>
 
 {% schema %}
