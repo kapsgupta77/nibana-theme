@@ -40,10 +40,11 @@
         "heading_class": "h1",
         "subheading_class": "paragraph",
         "block_heading_class": "h3",
+        "enable_debug": true,
         "max_width": "1100px",
         "section_padding": "48px 16px",
         "card_bg": "#eaf5f4",
-        "card_border": "#00535d",
+        "card_border": "#dfdfdf",
         "card_radius": "16px",
         "card_padding": "22px",
         "card_shadow": "0 8px 24px rgba(0,0,0,.06)"
