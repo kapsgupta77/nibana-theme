@@ -21,15 +21,17 @@ Testimonials — grid/slider
     assign cta_label  = section.settings.cta_label      | default: 'View all'
     assign cta_link   = section.settings.cta_link       | default: '/pages/testimonial'
 
-    assign filter_raw  = section.settings.tag_filter | default: ''
-    assign filter_norm = filter_raw | downcase
-    assign filters     = filter_norm | split: ','
-    assign filter_on   = false
-    for f in filters
-      if f | strip != ''
-        assign filter_on = true
-      endif
-    endfor
+  assign filter_raw  = section.settings.tag_filter | default: ''
+assign filter_norm = filter_raw | downcase
+assign filters     = filter_norm | split: ','
+
+assign filter_on   = false
+for f in filters
+  assign f2 = f | strip
+  if f2 != blank
+    assign filter_on = true
+  endif
+endfor
 
     assign tag_bucket = ''
   -%}
@@ -397,6 +399,7 @@ Testimonials — grid/slider
 ]
 }
 {% endschema %}
+
 
 
 
