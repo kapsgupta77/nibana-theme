@@ -766,7 +766,7 @@
   }
 
   /* Center the inner content and cap width */
-  .nb-explainer__wrap{ max-width: 1080px; margin: 0 auto; }
+ .nb-explainer__wrap{ max-width: none; margin: 0; }
 
   /* Heading: a touch lighter for refinement */
   .nb-explainer__title{
@@ -776,7 +776,7 @@
   }
 
   /* Lede + body copy width cap for editorial feel */
-  .nb-explainer__rte{ max-width: 72ch; }
+  .nb-explainer__rte{ max-width: none; }
   .nb-explainer__rte p:first-child{
     font-size:clamp(1.02rem,1.1vw,1.15rem);
     color: rgb(var(--color-foreground-rgb) / 0.80);
@@ -788,25 +788,23 @@
   }
 
   /* Bullets → elegant rows (fixed, comfy columns) */
-  .nb-explainer__list{
-    list-style:none; margin: clamp(12px,2vw,16px) 0 0; padding:0;
-    display:grid; row-gap: 10px; column-gap: 28px;
-    grid-template-columns: repeat(2, minmax(0, 32rem)); /* consistent width */
-    justify-content: space-between;                    /* balance columns */
-  }
-  @media (max-width: 900px){
-    .nb-explainer__list{ grid-template-columns:1fr; }
-  }
+.nb-explainer__list{
+  list-style:none; margin: clamp(12px,2vw,16px) 0 0; padding:0;
+  display:grid; row-gap: 10px; column-gap: 28px;
+  grid-template-columns: repeat(2, minmax(0,1fr));  /* full-width columns */
+}
+@media (max-width: 900px){
+  .nb-explainer__list{ grid-template-columns:1fr; }
+}
 
-  .nb-explainer__li{
-    position:relative;
-    background: transparent;
-    max-width: 32rem;                        /* matches column width */
-    padding: .9rem 0 1rem 2.1rem;            /* room for dot */
-    line-height: 1.6;
-    transition: transform .28s ease, opacity .28s ease;
-    will-change: transform, opacity;
-  }
+ .nb-explainer__li{
+  position:relative;
+  background: transparent;
+  padding: .9rem 0 1rem 2.1rem;   /* room for the dot */
+  line-height: 1.6;
+  transition: transform .28s ease, opacity .28s ease;
+  will-change: transform, opacity;
+}
 
   /* Gutter rule that starts after the dot (cleaner than full-width border) */
   .nb-explainer__li::after{
@@ -1543,6 +1541,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
