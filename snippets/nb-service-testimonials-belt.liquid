@@ -1,15 +1,15 @@
 {%- comment -%}
-Service-page testimonials belt (global source + tag filter).
-- Data source: shop.metaobjects[...] (centralized), with robust fallback.
-- Filter: param `tag_filter` OR `service.testimonials_tag_filter`; "All" (any case) = no filter
-- Limit: param `limit` (default 4)
-- Heading: param `heading` (default "What clients say")
-Requires existing 'nb-testimonial-card' snippet for card rendering.
+Service-page testimonials belt (centralized cards).
+Order of sources:
+1) service.testimonials_list (Metaobject list → nb_testimonial)
+2) shop.metaobjects[...] global list (fallback)
+Filter: param `tag_filter` OR service.testimonials_tag_filter; "All" (any case) = no filter.
+Limit: `limit` param (default 4)
 {%- endcomment -%}
 
 {%- liquid
   assign _heading = heading | default: 'What clients say'
-  assign _limit   = limit | default: 4
+  assign _limit   = limit   | default: 4
 
   assign _svc = service
 
@@ -32,9 +32,18 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
   endfor
 
   assign _list = blank
-  assign _collection = shop.metaobjects['nb_testimonial']
-  if _collection and _collection.values
-    assign _list = _collection.values
+
+  {%- comment -%} 1) Prefer service-selected list {%- endcomment -%}
+  if _svc and _svc.testimonials_list
+    assign _list = _svc.testimonials_list
+  endif
+
+  {%- comment -%} 2) Fallback to global metaobjects {%- endcomment -%}
+  if _list == blank
+    assign _collection = shop.metaobjects['nb_testimonial']
+    if _collection and _collection.values
+      assign _list = _collection.values
+    endif
   endif
   if _list == blank and shop.metaobjects.nb_testimonial and shop.metaobjects.nb_testimonial.values
     assign _list = shop.metaobjects.nb_testimonial.values
@@ -49,13 +58,17 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
         assign include = true
         if _filter_on
           assign include = false
-          assign et = entry.tags | join: ',' | downcase
-          for f in _filters
-            assign f2 = f | strip | downcase
-            if f2 != '' and f2 != 'all' and et contains f2
-              assign include = true
-            endif
-          endfor
+          if entry.tags
+            for tag in entry.tags
+              assign lt = tag | downcase
+              for f in _filters
+                assign f2 = f | strip | downcase
+                if f2 != '' and f2 != 'all' and lt contains f2
+                  assign include = true
+                endif
+              endfor
+            endfor
+          endif
         endif
       -%}
       {%- if include and _count < _limit -%}
@@ -91,9 +104,5 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
         </div>
       </div>
     </section>
-  {%- else -%}
-    {%- comment -%} nb-service-testimonials-belt: list found but no cards after filtering (Filter='{{ _raw }}'). {%- endcomment -%}
   {%- endif -%}
-{%- else -%}
-  {%- comment -%} nb-service-testimonials-belt: could not resolve global nb_testimonial metaobjects. {%- endcomment -%}
 {%- endif -%}
