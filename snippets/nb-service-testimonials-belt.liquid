@@ -159,9 +159,26 @@ Mode: pass `carousel: true` to enable slider UI.
     inline-size:7px; block-size:7px; border-radius:999px; background:#d8dee2; display:inline-block; cursor:pointer;
   }
   .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+
+/* Mint panel wrapper */
+.nb-service-tbelt--panel{
+  background: var(--nb-mist, #F3FAF8); /* soft brand mint; uses var if defined */
+  border-radius: 20px;
+  padding: clamp(18px, 2.2vw, 26px);
+  box-shadow:
+    0 10px 28px rgba(12, 138, 123, 0.08),
+    0 1px 0 rgba(255,255,255,0.8) inset;
+}
+
+/* Tighter spacing for title inside the panel */
+.nb-service-tbelt--panel .nb-testimonials__head{ margin-top: 0; }
+
+/* Give the panel some breathing room from neighbors */
+.nb-service-tbelt--panel{ margin-block: clamp(14px, 2.2vw, 22px); }
+
 </style>
 
- <section class="nb-service-tbelt" data-carousel="{% if _carousel %}1{% else %}0{% endif %}">
+<section class="nb-service-tbelt nb-service-tbelt--panel" data-carousel="{% if _carousel %}1{% else %}0{% endif %}">
   <div class="nb-shell nb-testimonials__container">
     <div class="nb-service-tbelt__panel">
       <header class="nb-testimonials__head">
