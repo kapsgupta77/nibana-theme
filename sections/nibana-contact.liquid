@@ -17,7 +17,10 @@
   class="page-width color-{{ section.settings.color_scheme }}"
   style="max-width: {{ section.settings.max_width }}; margin: 0 auto; padding: {{ section.settings.section_padding }};"
   data-nb-contact="true"
-  data-nb-debug="{{ section.settings.enable_debug | default: true }}"
+  data-nb-debug="{{ section.settings.enable_debug }}"
+  data-mc-enabled="{{ section.settings.use_mailchimp_flow }}"
+  data-mc-action="{{ section.settings.mailchimp_action }}"
+  data-shopify-customer-enabled="{{ section.settings.use_shopify_customer_flow }}"
 >
 <style>
     /* Scoped to this section */
@@ -205,17 +208,35 @@
   Hidden customer/newsletter form (creates/updates Shopify Customer).
   We also include a hidden iframe for a last-resort synchronous POST.
 {%- endcomment -%}
-<div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-  <iframe id="NewsletterFrame" name="NewsletterFrame" tabindex="-1"></iframe>
-  {% form 'customer', id: 'NibanaHiddenNewsletter' %}
-    <input type="email" name="contact[email]" id="HiddenCustomerEmail">
-    <input type="hidden" name="customer[accepts_marketing]" value="true">
-    <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="Contact Form">
-    <button id="HiddenSubmit" type="submit">Submit</button>
-  {% endform %}
-</div>
+{% if section.settings.use_shopify_customer_flow %}
+  <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
+    <iframe id="NewsletterFrame" name="NewsletterFrame" tabindex="-1"></iframe>
+    {% form 'customer', id: 'NibanaHiddenNewsletter' %}
+      <input type="email" name="contact[email]" id="HiddenCustomerEmail">
+      <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="newsletter, Contact Form">
+      <button id="HiddenSubmit" type="submit">Submit</button>
+    {% endform %}
+  </div>
+{% endif %}
     </div>
   </div>
+
+{%- comment -%}
+  Hidden Mailchimp embed form (posts to your Mailchimp audience in the background).
+  Requires "mailchimp_action" setting (subscribe/post?... URL from Mailchimp Embedded form).
+{%- endcomment -%}
+<div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
+  <iframe id="MailchimpFrame" name="MailchimpFrame" tabindex="-1"></iframe>
+  <form id="NibanaMailchimp" method="post" target="MailchimpFrame" action="{{ section.settings.mailchimp_action }}">
+    <input type="email" name="EMAIL" id="MC_EMAIL">
+    <input type="text"  name="FNAME" id="MC_FNAME">
+    <input type="text"  name="PHONE" id="MC_PHONE">
+    <!-- Mailchimp accepts a comma-separated "tags" field -->
+    <input type="hidden" name="tags"  id="MC_TAGS"  value="Contact Form">
+    <!-- Honeypot fields Mailchimp expects (keeps it happy even when empty) -->
+    <input type="text" name="b_" tabindex="-1" value="">
+  </form>
+</div>
 
 <script src="{{ 'nb-contact.js' | asset_url }}" defer></script>
 </section>
@@ -263,6 +284,10 @@
     { "type": "text", "id": "block_heading_class", "label": "Panel heading class", "default": "h3" },
 
     { "type": "checkbox", "id": "enable_debug", "label": "Enable Mailchimp debug badge (temporary)", "default": true },
+
+{ "type": "checkbox", "id": "use_mailchimp_flow", "label": "Add contacts to Mailchimp directly on submit", "default": true },
+{ "type": "url",      "id": "mailchimp_action",  "label": "Mailchimp embed form action (subscribe/post?...)" },
+{ "type": "checkbox", "id": "use_shopify_customer_flow", "label": "Also create a Shopify customer (advanced; may be blocked by hCaptcha)", "default": false }
 
     { "type": "text", "id": "max_width", "label": "Max width", "default": "1100px" },
     { "type": "text", "id": "section_padding", "label": "Section padding", "default": "48px 16px" },
