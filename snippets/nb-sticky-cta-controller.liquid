@@ -1,0 +1,112 @@
+{%- comment -%}
+Global controller for the mobile sticky CTA.
+Hides the sticky bar when a *call-booking* CTA is visible.
+- Sticky bar selector: .nb-sticky-cta  (this is your existing global bar)
+- Auto-detect booking CTAs: anchors/buttons that link to booking URLs (no per-page tagging required)
+- Optional opt-in: any element with [data-cta="book-call"] will also be observed
+{%- endcomment -%}
+
+<style>
+  .nb-sticky-cta{ transition: transform .28s ease, opacity .2s ease; will-change: transform; }
+  .nb-sticky-cta.is-hidden{ transform: translateY(140%); opacity: 0; pointer-events: none; }
+  .nb-sticky-cta{ bottom: max(12px, env(safe-area-inset-bottom)); }
+</style>
+
+<script>
+(function(){
+  var sticky = document.querySelector('.nb-sticky-cta');
+  if(!sticky) return;
+
+  // Only care on mobile-ish widths (matches where your bar is visible)
+  var mm = window.matchMedia('(max-width: 960px)');
+  if(!mm.matches) return;
+
+  var HIDDEN = 'is-hidden';
+  function setHidden(v){ sticky.classList.toggle(HIDDEN, !!v); }
+
+  // Booking URL patterns (edit if your booking URL changes)
+  var BOOKING_URL_PATTERNS = [
+    /\/pages\/book-a-call/i,
+    /book-a-call/i,
+    /\/book\b/i,
+    /\/schedule\b/i,
+    /calendly\.com/i,
+    /cal\.com/i,
+    /tidycal\.com/i,
+    /youcanbook\.me/i
+  ];
+
+  function isBookingLink(el){
+    if(!el) return false;
+    // explicit opt-in
+    if(el.dataset && el.dataset.cta === 'book-call') return true;
+
+    var href = el.getAttribute && el.getAttribute('href');
+    // Also consider absolute URL in .href
+    var full = el.href || '';
+    if(href){
+      for(var i=0;i<BOOKING_URL_PATTERNS.length;i++){
+        if(BOOKING_URL_PATTERNS[i].test(href)) return true;
+      }
+    }
+    if(full){
+      for(var j=0;j<BOOKING_URL_PATTERNS.length;j++){
+        if(BOOKING_URL_PATTERNS[j].test(full)) return true;
+      }
+    }
+    return false;
+  }
+
+  function collectTargets(){
+    var arr = [];
+    // Explicit opt-ins
+    arr = arr.concat([].slice.call(document.querySelectorAll('[data-cta="book-call"]')));
+    // All anchors that look like booking links
+    var anchors = [].slice.call(document.querySelectorAll('a[href]'));
+    anchors.forEach(function(a){
+      if (sticky.contains(a)) return; // ignore anything inside the sticky itself
+      if (isBookingLink(a)) arr.push(a);
+    });
+    // Optional: buttons that trigger booking (if you ever use them)
+    var btns = [].slice.call(document.querySelectorAll('button'));
+    btns.forEach(function(b){
+      if (sticky.contains(b)) return;
+      if (b.dataset && b.dataset.cta === 'book-call') arr.push(b);
+    });
+    // De-dupe
+    return Array.from(new Set(arr));
+  }
+
+  var targets = collectTargets();
+
+  if(!('IntersectionObserver' in window) || !targets.length){
+    setHidden(false);
+    return;
+  }
+
+  var anyVisible = false;
+  var io = new IntersectionObserver(function(entries){
+    anyVisible = entries.some(function(e){ return e.isIntersecting && e.intersectionRatio > 0.2; });
+    setHidden(anyVisible);
+  }, { root: null, threshold: [0, 0.2, 0.4, 1], rootMargin: '0px 0px -8% 0px' });
+
+  targets.forEach(function(el){ io.observe(el); });
+
+  // Re-scan if the DOM changes (sections load, SPA-ish nav, etc.)
+  var mo = new MutationObserver(function(){
+    var fresh = collectTargets();
+    fresh.forEach(function(el){ io.observe(el); });
+  });
+  mo.observe(document.documentElement, {childList:true, subtree:true});
+
+  // Optional analytics
+  var clickEl = sticky.querySelector('a,button');
+  if(clickEl){
+    clickEl.addEventListener('click', function(){
+      try{ (window.dataLayer = window.dataLayer || []).push({event:'cta_sticky_click', href: clickEl.getAttribute('href')}); }catch(_){}
+    }, { passive:true });
+  }
+
+  window.addEventListener('pagehide', function(){ try{ io.disconnect(); mo.disconnect(); }catch(_){} });
+})();
+</script>
