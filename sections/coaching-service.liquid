@@ -721,6 +721,10 @@
   /* slightly trim the trustbelt below the hero so rhythm matches */
   .nb-trustbelt{ padding-bottom: 6px; }
 </style>
+<style>
+  /* Mid-CTA utility */
+  .nb-midcta{ margin-top: clamp(10px,2vw,16px); text-align: center; }
+</style>
 
 {%- liquid
   assign oc_raw  = service.outcomes | append: ''
@@ -756,6 +760,11 @@
           {%- assign it = item | strip -%}
           {%- if it != '' -%}<div class="nb-outcome">{{ it }}</div>{%- endif -%}
         {%- endfor -%}
+      </div>
+      <div class="nb-midcta nb-midcta--outcomes">
+        <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-mid-cta-outcomes">
+          {{ btn_label }}
+        </a>
       </div>
     </div>
   </div>
@@ -1374,5 +1383,6 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
