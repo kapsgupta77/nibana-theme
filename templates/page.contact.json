@@ -40,7 +40,7 @@
         "heading_class": "h1",
         "subheading_class": "paragraph",
         "block_heading_class": "h3",
-        "enable_debug": true,
+        "enable_debug": false,
         "use_mailchimp_flow": true,
         "mailchimp_action": "https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&id=d3d64ba831",
         "use_shopify_customer_flow": false,
