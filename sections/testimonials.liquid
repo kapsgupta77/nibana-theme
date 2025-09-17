@@ -27,8 +27,8 @@ assign filters     = filter_norm | split: ','
 
 assign filter_on   = false
 for f in filters
-  assign f2 = f | strip
-  if f2 != blank
+  assign f2 = f | strip | downcase
+  if f2 != blank and f2 != 'all'
     assign filter_on = true
   endif
 endfor
@@ -63,7 +63,7 @@ endfor
               assign et = entry.tags | join: ',' | downcase
               for f in filters
                 assign f2 = f | strip
-                if f2 != '' and et contains f2
+                if f2 != '' and f2 != 'all' and et contains f2
                   assign include = true
                 endif
               endfor
@@ -101,7 +101,7 @@ endfor
               assign bt = block.settings.tags | downcase
               for f in filters
                 assign f2 = f | strip
-                if f2 != '' and bt contains f2
+                if f2 != '' and f2 != 'all' and bt contains f2
                   assign include = true
                 endif
               endfor
@@ -345,7 +345,7 @@ endfor
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 60, "step": 1, "default": 12 },
 
     { "type": "header", "content": "Filtering" },
-    { "type": "text", "id": "tag_filter", "label": "Filter by tags (comma separated)", "default": "" },
+    { "type": "text", "id": "tag_filter", "label": "Filter by tags (comma separated)", "default": "All" },
 
     { "type": "checkbox", "id": "show_filter", "label": "Show filter chips", "default": false },
 
@@ -401,6 +401,7 @@ endfor
   ]
 }
 {% endschema %}
+
 
 
 
