@@ -756,25 +756,28 @@
 
 {%- if ex_title or ex_rich or ex_count > 0 -%}
 <style>
-  /* ===== Explainer — Editorial Luxe ===== */
+  /* ===== Explainer — Editorial Luxe (final) ===== */
   .nb-explainer{
     background:#fff;
-    border:1px solid #eceff2;            /* hairline border */
+    border:1px solid #eef2f5;             /* hairline border (lighter) */
     border-radius:24px;
-    padding: clamp(22px, 3vw, 36px);      /* more breath */
-    box-shadow: 0 30px 80px rgba(0,0,0,.06); /* wide, soft */
+    padding: clamp(22px, 3vw, 36px);       /* more breath */
+    box-shadow: 0 30px 80px rgba(0,0,0,.05); /* slightly softer than before */
   }
 
-  /* Heading: slightly larger, tighter tracking */
+  /* Heading: slightly larger, tighter tracking, lighter weight */
   .nb-explainer__title{
-    margin:0 0 clamp(12px,2.2vw,18px);
+    margin:0 0 clamp(14px,2.4vw,20px);     /* a touch more space to lede */
     letter-spacing:-0.01em;
+    font-weight: 700;                       /* down one step for refinement */
   }
 
-  /* Lede: first paragraph softer & a touch larger */
+  /* Constrain body copy width for editorial feel */
+  .nb-explainer__rte{ max-width: 72ch; }
   .nb-explainer__rte p:first-child{
     font-size:clamp(1.02rem,1.1vw,1.15rem);
     color: rgb(var(--color-foreground-rgb) / 0.80);
+    margin-top: 2px;                        /* subtle lede separation */
   }
   .nb-explainer__rte p{
     color: rgb(var(--color-foreground-rgb) / 0.92);
@@ -793,28 +796,31 @@
 
   .nb-explainer__li{
     position:relative;
-    background: transparent;             /* no card box */
-    padding: .85rem 0 .95rem 2.1rem;     /* room for the dot */
-    border-top:1px solid #eef1f3;        /* hairline divider per item */
+    background: transparent;                /* no card boxes */
+    padding: .85rem 0 .95rem 2.1rem;        /* room for the dot */
+    border-top:1px solid #f1f4f6;           /* lighter divider */
     transition: transform .28s ease, opacity .28s ease;
-    will-change: transform;
+    will-change: transform, opacity;
   }
-  /* remove top rule for first row in 2-col layout */
+  /* remove top rule for first row in each column */
   .nb-explainer__li:nth-child(-n+2){ border-top:0; }
+  @media (max-width: 900px){
+    .nb-explainer__li:first-child{ border-top:0; }
+  }
 
-  /* Brand “pebble” dot with subtle halo */
+  /* Brand “pebble” dot with subtle halo, aligned to first line */
   .nb-explainer__li::before{
-    content:""; position:absolute; left:.6rem; top:1.2rem;
+    content:""; position:absolute; left:.6rem; top: 0.95em;   /* tighter alignment */
     width:8px; height:8px; border-radius:50%;
     background: var(--nb-chocolate);
     box-shadow:0 0 0 6px color-mix(in oklab, var(--nb-chocolate), #fff 88%);
   }
 
-  /* Micro-interaction */
+  /* Micro-interaction: hover/focus lift */
   .nb-explainer__li:hover,
   .nb-explainer__li:focus-within{ transform: translateY(-2px); }
 
-  /* Subtle reveal on scroll */
+  /* On-scroll reveal (disabled when user prefers reduced motion) */
   @media (prefers-reduced-motion: no-preference){
     .nb-ex-anim{ opacity:0; transform: translateY(6px); }
     .nb-ex-anim.in{ opacity:1; transform:none; transition: transform .45s ease, opacity .45s ease; }
@@ -851,7 +857,6 @@
     if(!root) return;
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduce) return;
-
     var items = root.querySelectorAll('.nb-ex-anim');
     if(!items.length) return;
 
@@ -1529,6 +1534,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
