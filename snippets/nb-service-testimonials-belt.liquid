@@ -1,12 +1,11 @@
 {%- comment -%}
-Service-page testimonials belt (diagnostic, robust).
+Service-page testimonials belt (deep diagnostics).
 Source priority:
 1) service.testimonials_list         (direct)
 2) service.testimonials_list.value
 3) service.testimonials_list.values
 4) shop.metaobjects[...] (global fallback)
-Filter: `tag_filter` param OR service.testimonials_tag_filter; "All" disables filtering.
-Limit: `limit` param (default 4)
+Filter: param tag_filter OR service.testimonials_tag_filter; "All" disables.
 {%- endcomment -%}
 
 {%- liquid
@@ -32,23 +31,30 @@ Limit: `limit` param (default 4)
     endif
   endfor
 
+  assign _svc_has_list   = false
+  assign _svc_has_value  = false
+  assign _svc_has_values = false
+
   assign _list      = blank
   assign _list_size = 0
   assign _source    = 'none'
 
   if _svc and _svc.testimonials_list
+    assign _svc_has_list = true
     assign _list = _svc.testimonials_list
     assign _list_size = _list | size
     assign _source = 'service.direct'
   endif
 
   if _list_size == 0 and _svc and _svc.testimonials_list and _svc.testimonials_list.value
+    assign _svc_has_value = true
     assign _list = _svc.testimonials_list.value
     assign _list_size = _list | size
     assign _source = 'service.value'
   endif
 
   if _list_size == 0 and _svc and _svc.testimonials_list and _svc.testimonials_list.values
+    assign _svc_has_values = true
     assign _list = _svc.testimonials_list.values
     assign _list_size = _list | size
     assign _source = 'service.values'
@@ -108,20 +114,21 @@ Limit: `limit` param (default 4)
 <style>
   .nb-service-tbelt{ margin-block: clamp(16px,3vw,28px); }
   .nb-service-tbelt__head{ margin: 0 0 clamp(10px,1.6vw,14px); }
-  .nb-service-tbelt__grid{
-    display:grid; gap:16px;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-  }
+  .nb-service-tbelt__grid{ display:grid; gap:16px; grid-template-columns: repeat(2, minmax(0,1fr)); }
   @media (max-width: 900px){ .nb-service-tbelt__grid{ grid-template-columns:1fr; } }
   .nb-service-tbelt__debug{ font-size:.85rem; opacity:.7; margin:8px 0 0; }
+  .nb-service-tbelt__debug code{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 </style>
 
 <section class="nb-service-tbelt"
-         data-source="{{ _source }}"
-         data-list-size="{{ _list_size }}"
-         data-rendered="{{ _count }}"
-         data-filter-on="{{ _filter_on }}"
-         data-filter-raw="{{ _raw }}">
+  data-source="{{ _source }}"
+  data-list-size="{{ _list_size }}"
+  data-rendered="{{ _count }}"
+  data-filter-on="{{ _filter_on }}"
+  data-filter-raw="{{ _raw }}"
+  data-svc-has-list="{{ _svc_has_list }}"
+  data-svc-has-value="{{ _svc_has_value }}"
+  data-svc-has-values="{{ _svc_has_values }}">
   <div class="nb-shell">
     {%- if _heading != blank and _heading != '-' -%}
       <h3 class="nb-h3 nb-service-tbelt__head">{{ _heading }}</h3>
@@ -131,11 +138,15 @@ Limit: `limit` param (default 4)
       <div class="nb-service-tbelt__grid">{{ _cards }}</div>
     {%- else -%}
       <div class="nb-service-tbelt__debug">
+        <!-- DEBUG -->
         Source=<strong>{{ _source }}</strong>,
         list.size=<strong>{{ _list_size }}</strong>,
         rendered=<strong>{{ _count }}</strong>,
         filter_on=<strong>{{ _filter_on }}</strong>,
-        filter="<strong>{{ _raw }}</strong>"
+        filter="<strong>{{ _raw }}</strong>"<br>
+        svc.has_list=<code>{{ _svc_has_list }}</code>,
+        svc.has_value=<code>{{ _svc_has_value }}</code>,
+        svc.has_values=<code>{{ _svc_has_values }}</code>
       </div>
     {%- endif -%}
   </div>
