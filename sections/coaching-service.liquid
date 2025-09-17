@@ -178,10 +178,6 @@
   .nb-steps--curve li::after{ display:none; }
 }
 
-  /* Sticky mobile CTA */
-  .nb-sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;padding:max(10px, env(safe-area-inset-bottom));background:linear-gradient(to top, rgba(255,255,255,.98), rgba(255,255,255,.88));border-top:1px solid #e8ecef;backdrop-filter:saturate(180%) blur(6px)}
-  .nb-sticky-cta__btn{display:block;text-align:center;font-weight:700;text-decoration:none;background:var(--nb-chocolate);color:#fff;padding:.9rem 1.1rem;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-  @media (max-width:860px){ .nb-sticky-cta{display:block} .nb-shell{padding-bottom:84px} }
 
   /* ===========================
      HERO SUPERKIT (full-bleed + effects)
@@ -1540,11 +1536,8 @@
   {%- endif -%}
 
   <!-- Bottom CTA centered (flex wrapper) -->
-  <div style="padding:10px 0 24px; display:flex; justify-content:center;">
-  <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-bottom-cta">{{ btn_label }}</a>
-  <div class="nb-sticky-cta" data-cta="service-sticky-cta">
-    <a class="button nb-sticky-cta__btn" href="{{ btn_href }}">{{ btn_label }}</a>
-  </div>
+<div style="padding:10px 0 24px; display:flex; justify-content:center;">
+  <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="book-call">{{ btn_label }}</a>
 </div>
 
 </section>
@@ -1552,6 +1545,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
