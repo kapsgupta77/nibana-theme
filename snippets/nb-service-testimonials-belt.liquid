@@ -32,13 +32,9 @@ Limit: `limit` param (default 4)
   endfor
 
   assign _list = blank
-
-  {%- comment -%} 1) Prefer service-selected list {%- endcomment -%}
   if _svc and _svc.testimonials_list
     assign _list = _svc.testimonials_list
   endif
-
-  {%- comment -%} 2) Fallback to global metaobjects {%- endcomment -%}
   if _list == blank
     assign _collection = shop.metaobjects['nb_testimonial']
     if _collection and _collection.values
