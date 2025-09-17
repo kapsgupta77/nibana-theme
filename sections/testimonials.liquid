@@ -343,8 +343,10 @@ endfor
     { "type": "metaobject_list", "id": "mo_list", "label": "Testimonials (metaobject list)", "metaobject_type": "nb_testimonial" },
 
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 60, "step": 1, "default": 12 },
+
     { "type": "header", "content": "Filtering" },
-    { "type": "text", "id": "tag_filter", "label": "Filter by tags (comma separated)", "default": "" }
+    { "type": "text", "id": "tag_filter", "label": "Filter by tags (comma separated)", "default": "" },
+
     { "type": "checkbox", "id": "show_filter", "label": "Show filter chips", "default": false },
 
     { "type": "header", "content": "Slider options" },
@@ -374,31 +376,32 @@ endfor
     }
   ],
   "presets": [
-  {
-    "name": "Testimonials (Grid)",
-    "category": "Testimonials",
-    "settings": {
-      "source": "metaobject",
-      "carousel": false,
-      "per_view": 3,
-      "cta_label": "View all",
-      "cta_link": "/pages/testimonial"
+    {
+      "name": "Testimonials (Grid)",
+      "category": "Testimonials",
+      "settings": {
+        "source": "metaobject",
+        "carousel": false,
+        "per_view": 3,
+        "cta_label": "View all",
+        "cta_link": "/pages/testimonial"
+      }
+    },
+    {
+      "name": "Testimonials (Slider)",
+      "category": "Testimonials",
+      "settings": {
+        "source": "metaobject",
+        "carousel": true,
+        "per_view": 3,
+        "cta_label": "View all",
+        "cta_link": "/pages/testimonial"
+      }
     }
-  },
-  {
-    "name": "Testimonials (Slider)",
-    "category": "Testimonials",
-    "settings": {
-      "source": "metaobject",
-      "carousel": true,
-      "per_view": 3,
-      "cta_label": "View all",
-      "cta_link": "/pages/testimonial"
-    }
-  }
-]
+  ]
 }
 {% endschema %}
+
 
 
 
