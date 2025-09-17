@@ -1258,6 +1258,14 @@
 
   </div>
 </section>
+
+{%- comment -%} === Insertable blocks: After Method === {%- endcomment -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'testimonials_belt' and block.settings.position == 'after_method' -%}
+    {%- render 'nb-service-testimonials-belt', block: block -%}
+  {%- endif -%}
+{%- endfor -%}
+
 {%- endif -%}
 
  {%- comment -%} MYTHS / TRUTHS — Before → After compare rows {%- endcomment -%}
@@ -1541,6 +1549,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
