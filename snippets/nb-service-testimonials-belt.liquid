@@ -1,8 +1,10 @@
 {%- comment -%}
 Service-page testimonials belt (centralized cards).
-Order of sources:
-1) service.testimonials_list (Metaobject list → nb_testimonial)
-2) shop.metaobjects[...] global list (fallback)
+Source order:
+1) service.testimonials_list.value (Metaobject list → nb_testimonial)
+2) service.testimonials_list.values
+3) service.testimonials_list
+4) shop.metaobjects[...] global list (fallback)
 Filter: param `tag_filter` OR service.testimonials_tag_filter; "All" (any case) = no filter.
 Limit: `limit` param (default 4)
 {%- endcomment -%}
@@ -32,9 +34,19 @@ Limit: `limit` param (default 4)
   endfor
 
   assign _list = blank
-  if _svc and _svc.testimonials_list
-    assign _list = _svc.testimonials_list
+
+  if _svc
+    if _svc.testimonials_list and _svc.testimonials_list.value
+      assign _list = _svc.testimonials_list.value
+    endif
+    if _list == blank and _svc.testimonials_list and _svc.testimonials_list.values
+      assign _list = _svc.testimonials_list.values
+    endif
+    if _list == blank and _svc.testimonials_list
+      assign _list = _svc.testimonials_list
+    endif
   endif
+
   if _list == blank
     assign _collection = shop.metaobjects['nb_testimonial']
     if _collection and _collection.values
