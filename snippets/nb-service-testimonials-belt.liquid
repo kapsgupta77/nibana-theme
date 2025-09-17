@@ -1,0 +1,74 @@
+{%- comment -%}
+Service-page testimonials belt, rendered from a block inside sections/coaching-service.liquid.
+Settings are read from the passed-in `block`.
+- block.settings.heading
+- block.settings.tag_filter (comma-separated; "All" = no filter)
+- block.settings.mo_list (metaobject_list of nb_testimonial)
+- block.settings.limit (int)
+Optional fields on each testimonial metaobject entry we use: quote, name, title, location, avatar, tags (list).
+Uses existing 'nb-testimonial-card' snippet.
+{%- endcomment -%}
+
+{%- assign _heading   = block.settings.heading | default: 'What clients say' -%}
+{%- assign _limit     = block.settings.limit | default: 4 -%}
+{%- assign _mo_list   = block.settings.mo_list -%}
+
+{%- assign _raw  = block.settings.tag_filter | default: 'All' -%}
+{%- assign _norm = _raw | downcase -%}
+{%- assign _filters = _norm | split: ',' -%}
+{%- assign _filter_on = false -%}
+{%- for f in _filters -%}
+  {%- assign f2 = f | strip | downcase -%}
+  {%- if f2 != blank and f2 != 'all' -%}{%- assign _filter_on = true -%}{%- endif -%}
+{%- endfor -%}
+
+{%- assign _count = 0 -%}
+{%- capture _cards -%}
+  {%- for entry in _mo_list -%}
+    {%- liquid
+      assign include = true
+      if _filter_on
+        assign include = false
+        assign et = entry.tags | join: ',' | downcase
+        for f in _filters
+          assign f2 = f | strip | downcase
+          if f2 != '' and f2 != 'all' and et contains f2
+            assign include = true
+          endif
+        endfor
+      endif
+    -%}
+    {%- if include and _count < _limit -%}
+      {%- assign _count = _count | plus: 1 -%}
+      {% render 'nb-testimonial-card',
+        quote: entry.quote,
+        name: entry.name | default: '',
+        title: entry.title | default: '',
+        location: entry.location | default: '',
+        avatar: entry.avatar,
+        tags: entry.tags | join: ',' | default: '' %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if _count > 0 -%}
+  <style>
+    .nb-service-tbelt{ margin-block: clamp(16px,3vw,28px); }
+    .nb-service-tbelt__head{ margin: 0 0 clamp(10px,1.6vw,14px); }
+    .nb-service-tbelt__grid{
+      display:grid; gap:16px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+    @media (max-width: 900px){ .nb-service-tbelt__grid{ grid-template-columns:1fr; } }
+  </style>
+  <section class="nb-service-tbelt" {{ block.shopify_attributes }}>
+    <div class="nb-shell">
+      {%- if _heading != blank and _heading != '-' -%}
+        <h3 class="nb-h3 nb-service-tbelt__head">{{ _heading }}</h3>
+      {%- endif -%}
+      <div class="nb-service-tbelt__grid">
+        {{ _cards }}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
