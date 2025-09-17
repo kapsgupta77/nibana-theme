@@ -726,6 +726,79 @@
   .nb-midcta{ margin-top: clamp(10px,2vw,16px); text-align: center; }
 </style>
 
+{%- comment -%} EXPLAINER — “What is {{ service.title }} at Nibana?” (placed under trustbelt) {%- endcomment -%}
+{%- liquid
+  assign ex_title = service.explainer_title
+  assign ex_rich  = service.explainer_richtext
+
+  assign ex_bullets_raw = service.explainer_points | append: ''
+  assign ex_html  = ex_bullets_raw | newline_to_br
+  assign br_tag   = '<br />'
+  assign ex_norm  = ex_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+  assign ex_pipe  = ex_norm | replace: br_tag, '|||'
+  assign ex_items = ex_pipe | split: '|||'
+
+  assign ex_count = 0
+  for it in ex_items
+    assign t = it | strip
+    if t != ''
+      assign ex_count = ex_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if ex_title or ex_rich or ex_count > 0 -%}
+<style>
+  /* ===== Explainer (scoped) ===== */
+  .nb-explainer{
+    background:#fff; border-radius:22px; padding:clamp(16px,2.6vw,28px);
+    box-shadow:0 10px 24px rgba(0,0,0,.06);
+  }
+  .nb-explainer__title{ margin:0 0 clamp(10px,2vw,16px); }
+  .nb-explainer__rte p{ color:var(--nb-muted); line-height:1.65; }
+  .nb-explainer__list{
+    list-style:none; margin:clamp(8px,1.4vw,14px) 0 0; padding:0;
+    display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  @media (max-width: 900px){ .nb-explainer__list{ grid-template-columns:1fr; } }
+  .nb-explainer__li{
+    position:relative; background:#fff; border:1px solid #e8ecef; border-radius:14px;
+    padding:.85rem 1rem .9rem 2.25rem; box-shadow:0 8px 18px rgba(0,0,0,.05);
+  }
+  .nb-explainer__li::before{
+    content:""; position:absolute; left:.9rem; top:50%; transform:translateY(-50%);
+    width:8px; height:8px; border-radius:50%;
+    background:var(--nb-chocolate);
+    box-shadow:0 0 0 6px color-mix(in oklab, var(--nb-chocolate), #fff 85%);
+  }
+</style>
+
+<section class="nb-explainer">
+  <div class="nb-shell">
+    <div class="nb-explainer__wrap">
+      <h2 class="nb-h2 nb-explainer__title">
+        {{ ex_title | default: 'What is ' | append: (service.title | default: 'Transformational Life Coaching') | append: ' at Nibana?' }}
+      </h2>
+
+      {%- if ex_rich -%}
+        <div class="nb-rte nb-explainer__rte">
+          {{ ex_rich | metafield_tag }}
+        </div>
+      {%- endif -%}
+
+      {%- if ex_count > 0 -%}
+        <ul class="nb-explainer__list">
+          {%- for it in ex_items -%}
+            {%- assign t = it | strip -%}
+            {%- if t != '' -%}<li class="nb-explainer__li">{{ t }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
 {%- liquid
   assign oc_raw  = service.outcomes | append: ''
   assign oc_html = oc_raw | newline_to_br
@@ -1386,6 +1459,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
