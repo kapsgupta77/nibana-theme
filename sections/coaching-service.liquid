@@ -761,11 +761,6 @@
           {%- if it != '' -%}<div class="nb-outcome">{{ it }}</div>{%- endif -%}
         {%- endfor -%}
       </div>
-      <div class="nb-midcta nb-midcta--outcomes">
-        <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-mid-cta-outcomes">
-          {{ btn_label }}
-        </a>
-      </div>
     </div>
   </div>
 </section>
@@ -1098,6 +1093,14 @@
         <p>Straight, respectful conversations. No fluff. We go at the pace of truth—and we make room for play and mystery along the way.</p>
       </div>
     {%- endif -%}
+
+    <!-- Mid-page CTA (below Method tray) -->
+    <div class="nb-midcta nb-midcta--method">
+      <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-mid-cta-method">
+        {{ btn_label }}
+      </a>
+    </div>
+
   </div>
 </section>
 {%- endif -%}
@@ -1383,6 +1386,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
