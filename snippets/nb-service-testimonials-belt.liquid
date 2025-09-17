@@ -1,6 +1,6 @@
 {%- comment -%}
 Service-page testimonials belt (global source + tag filter).
-- Data source: shop.metaobjects['nb_testimonial'].values (centralized)
+- Data source: shop.metaobjects[...] (centralized), with robust fallback.
 - Filter: param `tag_filter` OR `service.testimonials_tag_filter`; "All" (any case) = no filter
 - Limit: param `limit` (default 4)
 - Heading: param `heading` (default "What clients say")
@@ -11,10 +11,8 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
   assign _heading = heading | default: 'What clients say'
   assign _limit   = limit | default: 4
 
-  # Accept service via render param; otherwise noop
   assign _svc = service
 
-  # Determine raw filter string
   assign _raw = tag_filter
   if _raw == blank and _svc
     assign _raw = _svc.testimonials_tag_filter
@@ -23,7 +21,6 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
     assign _raw = 'All'
   endif
 
-  # Normalize + detect if filtering is on
   assign _norm      = _raw | downcase
   assign _filters   = _norm | split: ','
   assign _filter_on = false
@@ -34,8 +31,14 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
     endif
   endfor
 
-  # Global testimonials list (centralized data)
-  assign _list = shop.metaobjects['nb_testimonial'].values
+  assign _list = blank
+  assign _collection = shop.metaobjects['nb_testimonial']
+  if _collection
+    assign _list = _collection.values
+  endif
+  if _list == blank and shop.metaobjects.nb_testimonial
+    assign _list = shop.metaobjects.nb_testimonial.values
+  endif
 -%}
 
 {%- if _list and _list.size > 0 -%}
@@ -88,5 +91,9 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
         </div>
       </div>
     </section>
+  {%- else -%}
+    {%- comment -%} nb-service-testimonials-belt: list found but no cards after filtering (Filter='{{ _raw }}'). {%- endcomment -%}
   {%- endif -%}
+{%- else -%}
+  {%- comment -%} nb-service-testimonials-belt: could not resolve global nb_testimonial metaobjects. {%- endcomment -%}
 {%- endif -%}
