@@ -84,55 +84,86 @@ Mode: pass `carousel: true` to enable slider UI.
 
 {%- if _count > 0 -%}
   <style>
-    .nb-service-tbelt .nb-testimonials__container{ max-width: var(--narrow-page-width, 1120px); margin: 0 auto; padding: 0 20px; }
-    .nb-service-tbelt .nb-testimonials__head{ margin: 0 0 clamp(10px, 2vw, 18px); text-align:left; }
-    .nb-service-tbelt .nb-testimonials__title{ margin:0 0 6px; color: var(--nb-ink, #1F2C2A); }
+  .nb-service-tbelt .nb-testimonials__container{
+    max-width: var(--narrow-page-width, 1120px);
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .nb-service-tbelt .nb-testimonials__head{
+    margin: 0 0 clamp(10px, 2vw, 18px);
+    text-align:left;
+  }
+  .nb-service-tbelt .nb-testimonials__title{
+    margin:0 0 6px;
+    color: var(--nb-ink, #1F2C2A);
+  }
 
-    /* Grid */
-    .nb-service-tbelt .nb-tgrid{ display:grid; gap: clamp(16px, 2.2vw, 26px); align-items: stretch; }
-    @media (min-width: 960px){ .nb-service-tbelt .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    @media (max-width: 959.98px){ .nb-service-tbelt .nb-tgrid{ grid-template-columns: 1fr; } }
+  /* NEW: soft green panel */
+  .nb-service-tbelt__panel{
+    background: var(--nb-mist, #F3FAF8); /* soft mint; uses var if present */
+    border-radius: 20px;
+    padding: clamp(18px, 2.2vw, 26px);
+    box-shadow:
+      0 10px 28px rgba(12, 138, 123, 0.08),
+      0 1px 0 rgba(255,255,255,0.8) inset;
+  }
 
-    /* Slider */
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track{ display:block; }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{
-      width:100%;
-      display:grid;
-      grid-template-columns:none !important;
-      grid-auto-flow:column;
-      grid-auto-columns:minmax(88%, 1fr);
-      gap:18px;
-      scroll-snap-type:x mandatory;
-      overflow-x:auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 2px;
-    }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid] > *{ scroll-snap-align:start; }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
-    @media (min-width: 720px){
-      .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(48%, 1fr); }
-    }
-    @media (min-width: 1040px){
-      .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(32%, 1fr); }
-    }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__nav{
-      display:flex; align-items:center; justify-content:center; gap:12px; margin: 12px 0 0;
-    }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn{
-      inline-size:34px; block-size:34px; border-radius:999px; border:1px solid #d8dee2; background:#fff;
-      font-size:18px; line-height:1; display:grid; place-items:center;
-    }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn:hover{ box-shadow:0 6px 14px rgba(0,0,0,.07); transform: translateY(-1px); }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots{ display:flex; gap:8px; }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i{
-      inline-size:7px; block-size:7px; border-radius:999px; background:#d8dee2; display:inline-block; cursor:pointer;
-    }
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
-  </style>
+  /* Grid */
+  .nb-service-tbelt .nb-tgrid{
+    display:grid;
+    gap: clamp(16px, 2.2vw, 26px);
+    align-items: stretch;
+  }
+  @media (min-width: 960px){
+    .nb-service-tbelt .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 959.98px){
+    .nb-service-tbelt .nb-tgrid{ grid-template-columns: 1fr; }
+  }
 
-  <section class="nb-service-tbelt" data-carousel="{% if _carousel %}1{% else %}0{% endif %}">
-    <div class="nb-shell nb-testimonials__container">
+  /* Slider */
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track{ display:block; }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{
+    width:100%;
+    display:grid;
+    grid-template-columns:none !important;
+    grid-auto-flow:column;
+    grid-auto-columns:minmax(88%, 1fr);
+    gap:18px;
+    scroll-snap-type:x mandatory;
+    overflow-x:auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px;
+  }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid] > *{ scroll-snap-align:start; }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
+  @media (min-width: 720px){
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(48%, 1fr); }
+  }
+  @media (min-width: 1040px){
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(32%, 1fr); }
+  }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__nav{
+    display:flex; align-items:center; justify-content:center; gap:12px; margin: 12px 0 0;
+  }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn{
+    inline-size:34px; block-size:34px; border-radius:999px; border:1px solid #d8dee2; background:#fff;
+    font-size:18px; line-height:1; display:grid; place-items:center;
+  }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn:hover{
+    box-shadow:0 6px 14px rgba(0,0,0,.07); transform: translateY(-1px);
+  }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots{ display:flex; gap:8px; }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i{
+    inline-size:7px; block-size:7px; border-radius:999px; background:#d8dee2; display:inline-block; cursor:pointer;
+  }
+  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+</style>
+
+ <section class="nb-service-tbelt" data-carousel="{% if _carousel %}1{% else %}0{% endif %}">
+  <div class="nb-shell nb-testimonials__container">
+    <div class="nb-service-tbelt__panel">
       <header class="nb-testimonials__head">
         <h3 class="nb-h3 nb-testimonials__title">{{ _heading }}</h3>
       </header>
@@ -198,5 +229,6 @@ Mode: pass `carousel: true` to enable slider UI.
         <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
       {%- endif -%}
     </div>
-  </section>
+  </div>
+</section>
 {%- endif -%}
