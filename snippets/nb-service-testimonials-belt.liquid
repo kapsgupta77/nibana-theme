@@ -1,0 +1,92 @@
+{%- comment -%}
+Service-page testimonials belt (global source + tag filter).
+- Data source: shop.metaobjects['nb_testimonial'].values (centralized)
+- Filter: param `tag_filter` OR `service.testimonials_tag_filter`; "All" (any case) = no filter
+- Limit: param `limit` (default 4)
+- Heading: param `heading` (default "What clients say")
+Requires existing 'nb-testimonial-card' snippet for card rendering.
+{%- endcomment -%}
+
+{%- liquid
+  assign _heading = heading | default: 'What clients say'
+  assign _limit   = limit | default: 4
+
+  # Accept service via render param; otherwise noop
+  assign _svc = service
+
+  # Determine raw filter string
+  assign _raw = tag_filter
+  if _raw == blank and _svc
+    assign _raw = _svc.testimonials_tag_filter
+  endif
+  if _raw == blank
+    assign _raw = 'All'
+  endif
+
+  # Normalize + detect if filtering is on
+  assign _norm      = _raw | downcase
+  assign _filters   = _norm | split: ','
+  assign _filter_on = false
+  for f in _filters
+    assign f2 = f | strip | downcase
+    if f2 != blank and f2 != 'all'
+      assign _filter_on = true
+    endif
+  endfor
+
+  # Global testimonials list (centralized data)
+  assign _list = shop.metaobjects['nb_testimonial'].values
+-%}
+
+{%- if _list and _list.size > 0 -%}
+  {%- assign _count = 0 -%}
+  {%- capture _cards -%}
+    {%- for entry in _list -%}
+      {%- liquid
+        assign include = true
+        if _filter_on
+          assign include = false
+          assign et = entry.tags | join: ',' | downcase
+          for f in _filters
+            assign f2 = f | strip | downcase
+            if f2 != '' and f2 != 'all' and et contains f2
+              assign include = true
+            endif
+          endfor
+        endif
+      -%}
+      {%- if include and _count < _limit -%}
+        {%- assign _count = _count | plus: 1 -%}
+        {% render 'nb-testimonial-card',
+          quote: entry.quote,
+          name: entry.name | default: '',
+          title: entry.title | default: '',
+          location: entry.location | default: '',
+          avatar: entry.avatar,
+          tags: entry.tags | join: ',' | default: '' %}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if _count > 0 -%}
+    <style>
+      .nb-service-tbelt{ margin-block: clamp(16px,3vw,28px); }
+      .nb-service-tbelt__head{ margin: 0 0 clamp(10px,1.6vw,14px); }
+      .nb-service-tbelt__grid{
+        display:grid; gap:16px;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+      @media (max-width: 900px){ .nb-service-tbelt__grid{ grid-template-columns:1fr; } }
+    </style>
+    <section class="nb-service-tbelt">
+      <div class="nb-shell">
+        {%- if _heading != blank and _heading != '-' -%}
+          <h3 class="nb-h3 nb-service-tbelt__head">{{ _heading }}</h3>
+        {%- endif -%}
+        <div class="nb-service-tbelt__grid">
+          {{ _cards }}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
