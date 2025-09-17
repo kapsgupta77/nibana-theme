@@ -1259,6 +1259,9 @@
   </div>
 </section>
 
+{%- comment -%} === Testimonials belt (inline; global data; tag-filtered) — After Method === {%- endcomment -%}
+{%- render 'nb-service-testimonials-belt', service: service, limit: 4 -%}
+
 {%- comment -%} === Insertable blocks: After Method === {%- endcomment -%}
 {%- for block in section.blocks -%}
   {%- if block.type == 'testimonials_belt' and block.settings.position == 'after_method' -%}
@@ -1549,6 +1552,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
