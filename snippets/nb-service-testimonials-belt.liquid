@@ -33,10 +33,10 @@ Requires existing 'nb-testimonial-card' snippet for card rendering.
 
   assign _list = blank
   assign _collection = shop.metaobjects['nb_testimonial']
-  if _collection
+  if _collection and _collection.values
     assign _list = _collection.values
   endif
-  if _list == blank and shop.metaobjects.nb_testimonial
+  if _list == blank and shop.metaobjects.nb_testimonial and shop.metaobjects.nb_testimonial.values
     assign _list = shop.metaobjects.nb_testimonial.values
   endif
 -%}
