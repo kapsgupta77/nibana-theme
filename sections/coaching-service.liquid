@@ -745,6 +745,13 @@
       assign ex_count = ex_count | plus: 1
     endif
   endfor
+
+  assign _svc_title = service.title | default: 'Transformational Life Coaching'
+  if ex_title != blank
+    assign ex_heading = ex_title
+  else
+    assign ex_heading = 'What is ' | append: _svc_title | append: ' at Nibana?'
+  endif
 -%}
 
 {%- if ex_title or ex_rich or ex_count > 0 -%}
@@ -776,9 +783,7 @@
 <section class="nb-explainer">
   <div class="nb-shell">
     <div class="nb-explainer__wrap">
-      <h2 class="nb-h2 nb-explainer__title">
-        {{ ex_title | default: 'What is ' | append: (service.title | default: 'Transformational Life Coaching') | append: ' at Nibana?' }}
-      </h2>
+      <h2 class="nb-h2 nb-explainer__title">{{ ex_heading }}</h2>
 
       {%- if ex_rich -%}
         <div class="nb-rte nb-explainer__rte">
@@ -1459,6 +1464,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
