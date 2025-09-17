@@ -726,6 +726,161 @@
   .nb-midcta{ margin-top: clamp(10px,2vw,16px); text-align: center; }
 </style>
 
+{%- comment -%} EXPLAINER — “What is {{ service.title }} at Nibana?” (placed under trustbelt) {%- endcomment -%}
+{%- liquid
+  assign ex_title = service.explainer_title
+  assign ex_rich  = service.explainer_richtext
+
+  assign ex_bullets_raw = service.explainer_points | append: ''
+  assign ex_html  = ex_bullets_raw | newline_to_br
+  assign br_tag   = '<br />'
+  assign ex_norm  = ex_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+  assign ex_pipe  = ex_norm | replace: br_tag, '|||'
+  assign ex_items = ex_pipe | split: '|||'
+
+  assign ex_count = 0
+  for it in ex_items
+    assign t = it | strip
+    if t != ''
+      assign ex_count = ex_count | plus: 1
+    endif
+  endfor
+
+  assign _svc_title = service.title | default: 'Transformational Life Coaching'
+  if ex_title != blank
+    assign ex_heading = ex_title
+  else
+    assign ex_heading = 'What is ' | append: _svc_title | append: ' at Nibana?'
+  endif
+-%}
+
+{%- if ex_title or ex_rich or ex_count > 0 -%}
+<style>
+  /* ===== Explainer — Editorial Luxe A* ===== */
+  .nb-explainer{
+    background:#fff;
+    border:1px solid #eef2f5;              /* hairline border */
+    border-radius:24px;
+    padding: clamp(22px, 3vw, 36px);
+    box-shadow: 0 30px 80px rgba(0,0,0,.045); /* softer, wider */
+  }
+
+  /* Center the inner content and cap width */
+ .nb-explainer__wrap{ max-width: none; margin: 0; }
+
+  /* Heading: a touch lighter for refinement */
+  .nb-explainer__title{
+    margin:0 0 clamp(14px,2.4vw,20px);
+    letter-spacing:-0.01em;
+    font-weight: 600;                       /* down a notch */
+  }
+
+  /* Lede + body copy width cap for editorial feel */
+  .nb-explainer__rte{ max-width: none; }
+  .nb-explainer__rte p:first-child{
+    font-size:clamp(1.02rem,1.1vw,1.15rem);
+    color: rgb(var(--color-foreground-rgb) / 0.80);
+    margin-top: 2px;
+  }
+  .nb-explainer__rte p{
+    color: rgb(var(--color-foreground-rgb) / 0.92);
+    line-height:1.7;
+  }
+
+  /* Bullets → elegant rows (fixed, comfy columns) */
+.nb-explainer__list{
+  list-style:none; margin: clamp(12px,2vw,16px) 0 0; padding:0;
+  display:grid; row-gap: 10px; column-gap: 28px;
+  grid-template-columns: repeat(2, minmax(0,1fr));  /* full-width columns */
+}
+@media (max-width: 900px){
+  .nb-explainer__list{ grid-template-columns:1fr; }
+}
+
+ .nb-explainer__li{
+  position:relative;
+  background: transparent;
+  padding: .9rem 0 1rem 2.1rem;   /* room for the dot */
+  line-height: 1.6;
+  transition: transform .28s ease, opacity .28s ease;
+  will-change: transform, opacity;
+}
+
+  /* Gutter rule that starts after the dot (cleaner than full-width border) */
+  .nb-explainer__li::after{
+    content:""; position:absolute; left:2.1rem; right:0; top:0;
+    height:1px; background:#f1f4f6;
+  }
+  /* hide the top rule for the first row in each column */
+  .nb-explainer__li:nth-child(-n+2)::after{ display:none; }
+  @media (max-width: 900px){ .nb-explainer__li:first-child::after{ display:none; } }
+
+  /* Brand dot with halo, aligned to the first line */
+  .nb-explainer__li::before{
+    content:""; position:absolute; left:.6rem; top: .88em;   /* refined align */
+    width:8px; height:8px; border-radius:50%;
+    background: var(--nb-chocolate);
+    box-shadow:0 0 0 6px color-mix(in oklab, var(--nb-chocolate), #fff 88%);
+  }
+
+  /* Micro-interaction: hover/focus lift */
+  .nb-explainer__li:hover,
+  .nb-explainer__li:focus-within{ transform: translateY(-2px); }
+
+  /* On-scroll reveal (honors reduced motion) */
+  @media (prefers-reduced-motion: no-preference){
+    .nb-ex-anim{ opacity:0; transform: translateY(6px); }
+    .nb-ex-anim.in{ opacity:1; transform:none; transition: transform .45s ease, opacity .45s ease; }
+  }
+</style>
+
+<section class="nb-explainer">
+  <div class="nb-shell">
+    <div class="nb-explainer__wrap">
+      <h2 class="nb-h2 nb-explainer__title">{{ ex_heading }}</h2>
+
+      {%- if ex_rich -%}
+        <div class="nb-rte nb-explainer__rte">
+          {{ ex_rich | metafield_tag }}
+        </div>
+      {%- endif -%}
+
+      {%- if ex_count > 0 -%}
+  <ul class="nb-explainer__list">
+    {%- for it in ex_items -%}
+      {%- assign t = it | strip -%}
+      {%- if t != '' -%}
+        <li class="nb-explainer__li nb-ex-anim">{{ t }}</li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+    </div>
+  </div>
+</section>
+<script>
+  (function(){
+    var root = document.querySelector('.nb-explainer');
+    if(!root) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce) return;
+    var items = root.querySelectorAll('.nb-ex-anim');
+    if(!items.length) return;
+
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+
+    items.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+{%- endif -%}
+
 {%- liquid
   assign oc_raw  = service.outcomes | append: ''
   assign oc_html = oc_raw | newline_to_br
@@ -1386,6 +1541,12 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
+
+
+
+
+
 
 
 
