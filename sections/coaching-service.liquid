@@ -1171,37 +1171,56 @@
   /* Heading */
   .nb-method__title{ margin:0 0 clamp(10px,2vw,16px); }
 
-  /* CHIPS: style the FIRST ul in the richtext as a chip grid */
-  .nb-method__rte > ul:first-of-type{
-    list-style:none; margin:0 0 clamp(12px,2vw,18px); padding:0;
-    display:grid; gap:12px;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-  }
-  @media (max-width: 900px){
-    .nb-method__rte > ul:first-of-type{ grid-template-columns:1fr; }
-  }
-  .nb-method__rte > ul:first-of-type > li{
-    position:relative;
-    background:#fff;
-    border:1px solid #e8ecef;
-    border-radius:14px;
-    padding:.85rem 1rem .9rem 2.25rem;
-    box-shadow:0 8px 18px rgba(0,0,0,.05);
-    transition:transform .18s ease, box-shadow .18s ease;
-  }
-  .nb-method__rte > ul:first-of-type > li::before{
-    content:""; position:absolute; left:.9rem; top:50%; transform:translateY(-50%);
-    width:8px; height:8px; border-radius:50%;
-    background:var(--m-accent);
-    box-shadow:0 0 0 6px color-mix(in oklab, var(--m-accent), #fff 85%);
-  }
-  .nb-method__rte > ul:first-of-type > li:hover{
-    transform:translateY(-2px);
-    box-shadow:0 12px 26px rgba(0,0,0,.08);
-  }
-  @media (prefers-reduced-motion:reduce){
-    .nb-method__rte > ul:first-of-type > li:hover{ transform:none; }
-  }
+  /* CHIPS: style the FIRST list (ul/ol) anywhere inside the richtext */
+.nb-method__rte ul:first-of-type,
+.nb-method__rte ol:first-of-type{
+  /* kill the generic bordered-list styling applied elsewhere */
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+
+  list-style: none;
+  margin: 0 0 clamp(12px,2vw,18px);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+@media (max-width: 900px){
+  .nb-method__rte ul:first-of-type,
+  .nb-method__rte ol:first-of-type{ grid-template-columns: 1fr; }
+}
+
+.nb-method__rte ul:first-of-type > li,
+.nb-method__rte ol:first-of-type > li{
+  position: relative;
+  background: #fff;
+  border: 1px solid #e8ecef;
+  border-radius: 14px;
+  padding: .85rem 1rem .9rem 2.25rem;
+  box-shadow: 0 8px 18px rgba(0,0,0,.05);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+/* if the CMS wrapped list text in <p>, make it behave inline */
+.nb-method__rte ul:first-of-type > li > p,
+.nb-method__rte ol:first-of-type > li > p{ margin: 0; display: inline; }
+
+.nb-method__rte ul:first-of-type > li::before,
+.nb-method__rte ol:first-of-type > li::before{
+  content:"";
+  position:absolute; left:.9rem; top:50%; transform:translateY(-50%);
+  width:8px; height:8px; border-radius:50%;
+  background: var(--m-accent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--m-accent), #fff 85%);
+}
+.nb-method__rte ul:first-of-type > li:hover,
+.nb-method__rte ol:first-of-type > li:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0,0,0,.08);
+}
+@media (prefers-reduced-motion:reduce){
+  .nb-method__rte ul:first-of-type > li:hover,
+  .nb-method__rte ol:first-of-type > li:hover{ transform:none; }
+}
 
   /* MINI-MANIFESTO BANDS
      Style any h3 + p (or h2 + p) groups that come AFTER the chip list */
@@ -1562,6 +1581,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
