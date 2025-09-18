@@ -5,6 +5,7 @@
 >
   <head>
     {%- render 'stylesheets' -%}
+{{ 'nb-visuals.css' | asset_url | stylesheet_tag }}
 
     {%- if settings.favicon != blank -%}
       <link
