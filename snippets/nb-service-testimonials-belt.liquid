@@ -57,23 +57,24 @@ Mode: pass `carousel: true` to enable slider UI.
       {%- if entry -%}
         {%- liquid
           assign include = true
-          if _filter_on
-            assign include = false
-            if entry.tags
-              assign tags_lc = ''
-              if entry.tags.respond_to? 'join'
-                assign tags_lc = entry.tags | join: ',' | downcase
-              else
-                assign tags_lc = entry.tags | downcase
-              endif
-              for f in _filters
-                assign f2 = f | strip | downcase
-                if f2 != '' and f2 != 'all' and tags_lc contains f2
-                  assign include = true
-                endif
-              endfor
-            endif
-          endif
+if _filter_on
+  assign include = false
+  if entry.tags
+    # Try join (works when tags is an array). If blank, fall back to string.
+    assign tags_csv = entry.tags | join: ','
+    if tags_csv == ''
+      assign tags_csv = entry.tags | append: ''
+    endif
+    assign tags_lc = tags_csv | downcase
+
+    for f in _filters
+      assign f2 = f | strip | downcase
+      if f2 != '' and f2 != 'all' and tags_lc contains f2
+        assign include = true
+      endif
+    endfor
+  endif
+endif
         -%}
         {%- if include and _count < _limit -%}
           {%- assign _count = _count | plus: 1 -%}
@@ -91,23 +92,23 @@ Mode: pass `carousel: true` to enable slider UI.
     {%- for entry in _entries -%}
       {%- liquid
         assign include = true
-        if _filter_on
-          assign include = false
-          if entry.tags
-            assign tags_lc = ''
-            if entry.tags.respond_to? 'join'
-              assign tags_lc = entry.tags | join: ',' | downcase
-            else
-              assign tags_lc = entry.tags | downcase
-            endif
-            for f in _filters
-              assign f2 = f | strip | downcase
-              if f2 != '' and f2 != 'all' and tags_lc contains f2
-                assign include = true
-              endif
-            endfor
-          endif
-        endif
+if _filter_on
+  assign include = false
+  if entry.tags
+    assign tags_csv = entry.tags | join: ','
+    if tags_csv == ''
+      assign tags_csv = entry.tags | append: ''
+    endif
+    assign tags_lc = tags_csv | downcase
+
+    for f in _filters
+      assign f2 = f | strip | downcase
+      if f2 != '' and f2 != 'all' and tags_lc contains f2
+        assign include = true
+      endif
+    endfor
+  endif
+endif
       -%}
       {%- if include and _count < _limit -%}
         {%- assign _count = _count | plus: 1 -%}
