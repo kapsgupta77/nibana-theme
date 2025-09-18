@@ -24,8 +24,8 @@ About — Who we help
   assign lines = with_delims | split: '|||'
 %}
 
-<section class="nb-about-who{% if _panel %} nb-panel--mint{% endif %}">
-  <div class="nb-shell nb-about-who__wrap" style="position:relative; padding: clamp(18px, 2.2vw, 26px);" data-anim>
+<section class="nb-about-who">
+  <div class="nb-shell nb-about-who__wrap{% if _panel %} nb-about-who__panel{% endif %}" data-anim>
     {% comment %} Decorative motif {% endcomment %}
     <img class="nb-motif nb-motif--tr nb-motif--front" src="{{ 'swash-01.svg' | asset_url }}" alt="">
 
@@ -84,6 +84,20 @@ About — Who we help
   .nb-about-who__label{ font-weight: 700; color: var(--nb-ink, #1F2C2A); }
   .nb-about-who__desc{ margin-top: 4px; color: var(--nb-muted, #445); opacity: .9; }
   .nb-about-who__cta{ margin-top: clamp(12px,1.8vw,18px); }
+
+/* Move the panel styling to the inner wrapper so it’s not full-bleed */
+.nb-about-who__wrap{ position:relative; padding: clamp(18px, 2.2vw, 26px); }
+.nb-about-who__panel{
+  background: var(--nb-mist, #F3FAF8);
+  border-radius: 20px;
+  box-shadow:
+    0 10px 28px rgba(12, 138, 123, 0.08),
+    0 1px 0 rgba(255,255,255,0.8) inset;
+  margin-block: clamp(14px, 2.2vw, 22px);
+}
+
+/* keep the existing card/grid styles as-is */
+
 </style>
 
 {% schema %}
