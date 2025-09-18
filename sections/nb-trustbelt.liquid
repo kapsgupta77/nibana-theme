@@ -17,31 +17,21 @@ Source can be:
   assign _items = nil
   assign _layout = 'belt'
 
-   if _source == 'service_metaobject' and section.settings.service
+ if _source == 'service_metaobject' and section.settings.service
   assign svc = section.settings.service
 
-  # 1) Treat as multi-line text first (pure \n splits)
-  assign sp_raw = svc.social_proof | to_string
-  assign sp_norm = sp_raw
+  assign sp_clean = svc.social_proof
+    | to_string
     | replace: '\r\n', '\n'
-    | replace: '&#13;', ''
-    | replace: '&#10;', '\n'
+    | replace: '\r', '\n'
+    | replace: '<br />', '\n'
+    | replace: '<br/>',  '\n'
+    | replace: '<br>',   '\n'
+    | replace: '</p><p>', '\n'
+    | replace: '<p>', ''
+    | replace: '</p>', ''
 
-  assign sp_lines = sp_norm | split: '\n'
-
-  # 2) If we only got one line, fall back to splitting HTML <br>/paragraphs
-  if sp_lines.size > 1
-    assign _items = sp_lines
-  else
-    assign sp_html = sp_raw | newline_to_br
-    assign sp_pipe = sp_html
-      | replace: '<br />', '|||'
-      | replace: '<br/>',  '|||'
-      | replace: '<br>',   '|||'
-      | replace: '</p><p>', '|||'
-      | replace: '<p>', '' | replace: '</p>', ''
-    assign _items = sp_pipe | split: '|||'
-  endif
+  assign _items = sp_clean | split: '\n'
 
   if _layout_choice == 'inherit' and svc.social_proof_layout
     assign _layout = svc.social_proof_layout | downcase | strip
