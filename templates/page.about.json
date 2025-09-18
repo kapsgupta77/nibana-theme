@@ -103,7 +103,7 @@
         "cta_label": "Book a 20-min free call",
         "cta_link": "/pages/book-a-call",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -126,6 +126,22 @@
           "pallavi-s"
         ],
         "tag_filter": ""
+      }
+    },
+    "about_final_cta_tBWmz6": {
+      "type": "about-final-cta",
+      "name": "About—Final CTA",
+      "settings": {
+        "kicker": "",
+        "heading": "Ready to work together?",
+        "subheading": "Book a free 20-minute call to see if we’re a fit.",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "/pages/book-a-call",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
       }
     },
     "faq": {
@@ -182,6 +198,7 @@
     "about_founder_VAe8QJ",
     "about_philosophy_aHRzNc",
     "about_testimonials",
+    "about_final_cta_tBWmz6",
     "faq"
   ]
 }
