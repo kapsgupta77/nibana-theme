@@ -20,8 +20,9 @@
         "image_side": "right",
         "cta_label": "Book a 20-min free call",
         "cta_link": "/pages/book-a-call",
+        "full_bleed": true,
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#dfdfdf",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
