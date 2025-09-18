@@ -28,6 +28,15 @@
         "heading": "What our clients say",
         "limit": 6,
         "carousel": true,
+        "mo_list": [
+          "tanuj-kalia",
+          "christopher-thomas",
+          "david-chambers",
+          "nitesh-jaruhar",
+          "jason-rogers",
+          "sandipan",
+          "pallavi-s"
+        ],
         "tag_filter": "All"
       }
     },
