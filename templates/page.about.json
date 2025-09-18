@@ -65,6 +65,7 @@
         "cta_label": "Book a 20-min free call",
         "cta_link": "/pages/book-a-call",
         "mint_bg": true,
+        "panel_color": "#fafafa",
         "color_scheme": "scheme-3",
         "pad_top": 0,
         "pad_bottom": 0
