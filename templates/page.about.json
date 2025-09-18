@@ -1,0 +1,33 @@
+{
+  "sections": {
+    "trustbelt": {
+      "type": "nb-trustbelt",
+      "settings": {
+        "heading": "",
+        "layout": "belt",
+        "speed": 22,
+        "items_text": "Trusted by founders\nLoved by couples\nUsed by executives",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "about_testimonials": {
+      "type": "about-testimonials",
+      "settings": {
+        "heading": "What our clients say",
+        "limit": 6,
+        "carousel": true,
+        "tag_filter": "All"
+      }
+    },
+    "faq": {
+      "type": "nb-faq",
+      "settings": { }
+    }
+  },
+  "order": [
+    "trustbelt",
+    "about_testimonials",
+    "faq"
+  ]
+}
