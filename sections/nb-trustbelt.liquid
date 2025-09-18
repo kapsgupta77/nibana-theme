@@ -17,20 +17,11 @@ Source can be:
   assign _items = nil
   assign _layout = 'belt'
 
- if _source == 'service_metaobject' and section.settings.service
+if _source == 'service_metaobject' and section.settings.service
   assign svc = section.settings.service
 
-  assign sp_clean = svc.social_proof
-    | to_string
-    | replace: '\r\n', '\n'
-    | replace: '\r', '\n'
-    | replace: '<br />', '\n'
-    | replace: '<br/>',  '\n'
-    | replace: '<br>',   '\n'
-    | replace: '</p><p>', '\n'
-    | replace: '<p>', ''
-    | replace: '</p>', ''
-
+  {%- comment -%} normalize newlines & HTML breaks, then split {%- endcomment -%}
+  assign sp_clean = svc.social_proof | to_string | replace: '\r\n', '\n' | replace: '\r', '\n' | replace: '<br />', '\n' | replace: '<br/>', '\n' | replace: '<br>', '\n' | replace: '</p><p>', '\n' | replace: '<p>', '' | replace: '</p>', ''
   assign _items = sp_clean | split: '\n'
 
   if _layout_choice == 'inherit' and svc.social_proof_layout
