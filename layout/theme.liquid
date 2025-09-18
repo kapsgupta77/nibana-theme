@@ -5,6 +5,7 @@
 >
   <head>
     {%- render 'stylesheets' -%}
+{{ 'nb-visuals.css' | asset_url | stylesheet_tag }}
 
     {%- if settings.favicon != blank -%}
       <link
@@ -501,5 +502,6 @@ It:
 })();
 </script>
 {% render 'nb-sticky-cta-controller' %}
+{% render 'nb-anim-init' %}
   </body>
 </html>
