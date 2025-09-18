@@ -9,11 +9,12 @@
  */
 {
   "sections": {
-    "about_who": {
+    "about_who_mbCg3U": {
       "type": "about-who",
+      "name": "About — Who we help",
       "settings": {
-        "color_scheme": "scheme-1",
-        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "panel_color": "#f3faf8",
         "heading": "Who we help",
         "intro": "<p>We partner with ambitious people who want a steadier nervous system, clearer choices, and more aliveness.</p>",
         "columns": "3",
@@ -36,10 +37,11 @@
         "pad_bottom": 0
       }
     },
-    "about_different": {
+    "about_different_TFCzha": {
       "type": "about-different",
+      "name": "About — What makes us different",
       "settings": {
-        "color_scheme": "scheme-1",
+        "color_scheme": "",
         "panel_color": "#F3FAF8",
         "heading": "What makes us different",
         "intro": "<p>A few core principles guide how we work.</p>",
@@ -114,9 +116,9 @@
     }
   },
   "order": [
-    "about_who",
+    "about_who_mbCg3U",
     "trustbelt",
-    "about_different",
+    "about_different_TFCzha",
     "about_testimonials",
     "faq"
   ]
