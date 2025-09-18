@@ -44,9 +44,16 @@ About — Philosophy (origins + principles)
 
         <div class="nb-phil__col nb-phil__col--right">
           {% liquid
-            assign lines_html = section.settings.principles | default: '' | newline_to_br
-            assign lines = lines_html | split: '<br />'
-          %}
+  assign raw_principles = section.settings.principles | default: ''
+  assign norm = raw_principles | replace: '\r\n', '\n'
+  assign norm = norm | replace: '&#13;', ''
+  assign norm = norm | replace: '&#10;', '\n'
+  assign as_html = norm | newline_to_br
+  assign with_delims = as_html | replace: '<br />', '|||'
+  assign with_delims = with_delims | replace: '<br/>', '|||'
+  assign with_delims = with_delims | replace: '<br>', '|||'
+  assign lines = with_delims | split: '|||'
+%}
           {% if lines.size > 0 %}
             <div class="nb-phil__list">
               {% for line in lines %}
