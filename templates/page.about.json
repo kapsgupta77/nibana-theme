@@ -35,6 +35,18 @@
         "pad_bottom": 0
       }
     },
+    "about_different": {
+  "type": "about-different",
+  "settings": {
+    "color_scheme": "scheme-1",
+    "panel_color": "#F3FAF8",
+    "heading": "What makes us different",
+    "intro": "<p>A few core principles guide how we work.</p>",
+    "columns": "3",
+    "items_text": "Embodied approach | We combine mind, body, and soul.\nIdentity work | We start at the level of who you are, not just habits.\nPractices that stick | Simple reps that compound into durable change.\nStraight, respectful conversations | No fluff. We go at the pace of truth.\nPlay as principle | We make room for joy and aliveness while we work.",
+    "panel": true
+  }
+}
     "about_testimonials": {
       "type": "about-testimonials",
       "settings": {
@@ -101,9 +113,10 @@
     }
   },
   "order": [
-    "about_who_mbCg3U",
-    "trustbelt",
-    "about_testimonials",
-    "faq"
-  ]
+  "about_who",
+  "trustbelt",
+  "about_different",
+  "about_testimonials",
+  "faq"
+]
 }
