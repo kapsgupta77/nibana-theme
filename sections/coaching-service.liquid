@@ -832,7 +832,9 @@
 
 <section class="nb-explainer">
   <div class="nb-shell">
-    <div class="nb-explainer__wrap">
+    <div class="nb-explainer__wrap nb-panel--mint" style="position:relative; padding: clamp(18px, 2.2vw, 26px);" data-anim>
+      <img class="nb-motif nb-motif--tr" src="{{ 'swash-01.svg' | asset_url }}" alt="">
+
       <h2 class="nb-h2 nb-explainer__title">{{ ex_heading }}</h2>
 
       {%- if ex_rich -%}
@@ -903,10 +905,13 @@
 
 {%- if oc_count > 0 -%}
 <section class="nb-outcomes {{ oc_tone_class }}">
-  <div class="nb-shell">
+  <div class="nb-shell" style="position:relative;">
+    <!-- Decorative brand motif (top-right) -->
+    <img class="nb-motif nb-motif--tr" src="{{ 'arc-02.svg' | asset_url }}" alt="">
+
     <div class="nb-outcomes__wrap">
       <h2 class="nb-h2 nb-outcomes__title">What you’ll get</h2>
-      <div class="nb-outcomes__grid">
+      <div class="nb-outcomes__grid" data-anim>
         {%- for item in outcomes -%}
           {%- assign it = item | strip -%}
           {%- if it != '' -%}<div class="nb-outcome">{{ it }}</div>{%- endif -%}
@@ -1232,12 +1237,24 @@
     {%- else -%}
       {#-- Simple fallback if richtext is empty --#}
       <div class="nb-method__rte">
-        <ul>
-          <li><strong>Identity work</strong> — clarify who you are beneath roles and expectations.</li>
-          <li><strong>Inner skills</strong> — attention, emotional literacy, and embodied practices.</li>
-          <li><strong>Practices</strong> — repeatable reps that create durable change.</li>
-          <li><strong>Life as Play</strong> — principles for a life that is meaningful and alive.</li>
-        </ul>
+        <ul class="nb-list nb-list--icons" data-anim>
+  <li>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;"><path d="M20 6L9 17l-5-5" fill="none" stroke="#0C8A7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <strong>Identity work</strong> — clarify who you are beneath roles and expectations.
+  </li>
+  <li>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;"><path d="M20 6L9 17l-5-5" fill="none" stroke="#0C8A7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <strong>Inner skills</strong> — attention, emotional literacy, and embodied practices.
+  </li>
+  <li>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;"><path d="M20 6L9 17l-5-5" fill="none" stroke="#0C8A7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <strong>Practices</strong> — repeatable reps that create durable change.
+  </li>
+  <li>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;"><path d="M20 6L9 17l-5-5" fill="none" stroke="#0C8A7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <strong>Life as Play</strong> — principles for a life that is meaningful and alive.
+  </li>
+</ul>
         <h3>How change becomes durable</h3>
         <p>We pair insight with <em>embodied practices</em>—simple daily reps that re-train attention, emotion, and energy. Over weeks, these compound into a steadier nervous system and visible results at work and in relationships.</p>
         <h3>Our vibe</h3>
@@ -1545,6 +1562,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
