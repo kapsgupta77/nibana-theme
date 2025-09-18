@@ -17,25 +17,38 @@ Source can be:
   assign _items = nil
   assign _layout = 'belt'
 
-    if _source == 'service_metaobject' and section.settings.service
-    assign svc = section.settings.service
+   if _source == 'service_metaobject' and section.settings.service
+  assign svc = section.settings.service
 
-    assign sp_raw  = svc.social_proof | append: ''
-    assign br_tag  = '<br class="nb-br">'
-    assign sp_html = sp_raw | newline_to_br
-    assign sp_norm = sp_html
-      | replace: '<br />', br_tag
-      | replace: '<br/>',  br_tag
-      | replace: '<br>',   br_tag
-    assign sp_pipe = sp_norm | replace: br_tag, '|||'
-    assign _items  = sp_pipe | split: '|||'
+  # 1) Treat as multi-line text first (pure \n splits)
+  assign sp_raw = svc.social_proof | to_string
+  assign sp_norm = sp_raw
+    | replace: '\r\n', '\n'
+    | replace: '&#13;', ''
+    | replace: '&#10;', '\n'
 
-    if _layout_choice == 'inherit' and svc.social_proof_layout
-      assign _layout = svc.social_proof_layout | downcase | strip
-    else
-      assign _layout = _layout_choice
-    endif
+  assign sp_lines = sp_norm | split: '\n'
+
+  # 2) If we only got one line, fall back to splitting HTML <br>/paragraphs
+  if sp_lines.size > 1
+    assign _items = sp_lines
   else
+    assign sp_html = sp_raw | newline_to_br
+    assign sp_pipe = sp_html
+      | replace: '<br />', '|||'
+      | replace: '<br/>',  '|||'
+      | replace: '<br>',   '|||'
+      | replace: '</p><p>', '|||'
+      | replace: '<p>', '' | replace: '</p>', ''
+    assign _items = sp_pipe | split: '|||'
+  endif
+
+  if _layout_choice == 'inherit' and svc.social_proof_layout
+    assign _layout = svc.social_proof_layout | downcase | strip
+  else
+    assign _layout = _layout_choice
+  endif
+else
     assign _raw   = section.settings.items_text | to_string
     assign _items = _raw | split: '\n'
 
