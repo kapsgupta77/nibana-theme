@@ -9,6 +9,24 @@
  */
 {
   "sections": {
+    "about_hero_idcKQa": {
+      "type": "about-hero",
+      "name": "About—Hero",
+      "settings": {
+        "kicker": "About Nibana",
+        "heading": "Coaching for steady clarity & aliveness",
+        "sub_rich": "<p>We help founders, execs and couples create durable change: a steadier nervous system, clearer choices and a life that feels alive.</p>",
+        "image_alt": "About hero image",
+        "image_side": "right",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "/pages/book-a-call",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
     "about_who_mbCg3U": {
       "type": "about-who",
       "name": "About — Who we help",
@@ -19,7 +37,7 @@
         "intro": "<p>We partner with ambitious people who want a steadier nervous system, clearer choices, and more aliveness.</p>",
         "columns": "3",
         "items_text": "Founders | Scale without burning out\nExecutives | Lead with clarity and calm\nCouples | Rekindle intimacy and play\nCreators | Ship boldly without self-sabotage\nHigh-performers | Sustainable drive without the crash",
-        "cta_label": "Book a 20-min free call",
+        "cta_label": "",
         "cta_link": "shopify://pages/book-a-call",
         "panel": true
       }
@@ -59,8 +77,8 @@
         "intro_rich": "<p>Everything we do is designed to create durable change — steady nervous system, clearer choices, more aliveness.</p>",
         "cols": "2",
         "steps": "Identity reset | See who you are beyond roles and expectations.\nInner skills | Retrain attention, emotion, and energy with embodied practices.\nAligned action | Make clearer choices and move with less friction.\nPlay-based integration | Build a life that feels alive, meaningful, and sustainable.",
-        "cta_label": "Book a 20-min free call",
-        "cta_link": "/pages/book-a-call",
+        "cta_label": "",
+        "cta_link": "",
         "panel_on": true,
         "panel_color": "#f3faf8",
         "color_scheme": "",
@@ -80,7 +98,7 @@
         "quote": "We go at the pace of truth—no fluff; with respect, play and real change.",
         "photo": "shopify://shop_images/AJS_20190130_Kapil_0973-700x750_1.webp",
         "image_side": "left",
-        "cta_label": "Book a 20-min free call",
+        "cta_label": "",
         "cta_link": "/pages/book-a-call",
         "mint_bg": true,
         "panel_color": "#fafafa",
@@ -100,7 +118,7 @@
         "show_collapsed": true,
         "principles": "Kāma | Intimacy, desire, eros, sensuality—emotional fulfillment that enlivens your days.\nArtha | Purpose and meaningful creation—bringing value to the world with clarity.\nDharma | Living with integrity—alignment between what matters and how you act.",
         "image_alt": "Philosophy graphic",
-        "cta_label": "Book a 20-min free call",
+        "cta_label": "",
         "cta_link": "/pages/book-a-call",
         "panel_on": true,
         "panel_color": "#f3faf8",
@@ -138,7 +156,7 @@
         "cta_label": "Book a 20-min free call",
         "cta_link": "/pages/book-a-call",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -191,6 +209,7 @@
     }
   },
   "order": [
+    "about_hero_idcKQa",
     "about_who_mbCg3U",
     "trustbelt",
     "about_different_TFCzha",
