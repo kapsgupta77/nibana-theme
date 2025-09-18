@@ -27,6 +27,29 @@
 }
 .nb-list--icons svg{ flex: 0 0 auto; margin-top: .15rem; }
 
+/* Slightly more airy cards */
+.nb-method__rte ul:first-of-type,
+.nb-method__rte ol:first-of-type{ gap: 14px; }
+
+.nb-method__rte ul:first-of-type > li,
+.nb-method__rte ol:first-of-type > li{
+  border-radius: 16px;              /* a touch rounder */
+  padding: .9rem 1.05rem .95rem 2.15rem;
+}
+
+/* Softer dot + halo */
+.nb-method__rte ul:first-of-type > li::before,
+.nb-method__rte ol:first-of-type > li::before{
+  width: 7px; height: 7px;
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--m-accent), #fff 88%);
+}
+
+/* Mobile: stack with comfy spacing */
+@media (max-width: 900px){
+  .nb-method__rte ul:first-of-type,
+  .nb-method__rte ol:first-of-type{ gap: 12px; }
+}
+
 /* Mint panel (soft, luxe) */
 .nb-panel--mint{
   background: var(--nb-mist);
