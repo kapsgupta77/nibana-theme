@@ -1,0 +1,182 @@
+{% comment %}
+About — Philosophy (origins + principles)
+- Left: short origin narrative (richtext), optional "read more" long richtext
+- Right: principles list (one per line: Title | Blurb)
+- Optional image/graphic
+- Optional CTA
+- Panel bg toggle + color picker + color scheme
+{% endcomment %}
+
+<section
+  id="nb-about-phil-{{ section.id }}"
+  class="nb-about-phil {{ section.settings.color_scheme }}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;"
+>
+  <div class="nb-shell">
+    <div class="nb-phil__wrap" {% if section.settings.panel_on %}style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};"{% endif %}>
+
+      <header class="nb-phil__head">
+        {% if section.settings.kicker != blank %}<p class="nb-kicker">{{ section.settings.kicker }}</p>{% endif %}
+        <h2 class="nb-h2 nb-phil__title">{{ section.settings.heading }}</h2>
+      </header>
+
+      <div class="nb-phil__grid" data-graphic="{% if section.settings.image != blank %}1{% else %}0{% endif %}">
+        <div class="nb-phil__col nb-phil__col--left">
+          {% if section.settings.intro_rich != blank %}
+            <div class="nb-rte nb-phil__intro">{{ section.settings.intro_rich }}</div>
+          {% endif %}
+
+          {% if section.settings.long_rich != blank %}
+            <div class="nb-phil__more" data-more {% if section.settings.show_collapsed %}data-collapsed="1"{% endif %}>
+              <div class="nb-rte nb-phil__long" data-long>{{ section.settings.long_rich }}</div>
+              {% if section.settings.show_collapsed %}
+                <button class="nb-link nb-phil__toggle" type="button" data-toggle aria-expanded="false">Read more</button>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+            <div class="nb-phil__cta">
+              <a class="nb-cta" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="nb-phil__col nb-phil__col--right">
+          {% liquid
+  assign raw_principles = section.settings.principles | default: ''
+  assign norm = raw_principles | replace: '\r\n', '\n'
+  assign norm = norm | replace: '&#13;', ''
+  assign norm = norm | replace: '&#10;', '\n'
+  assign as_html = norm | newline_to_br
+  assign with_delims = as_html | replace: '<br />', '|||'
+  assign with_delims = with_delims | replace: '<br/>', '|||'
+  assign with_delims = with_delims | replace: '<br>', '|||'
+  assign lines = with_delims | split: '|||'
+%}
+          {% if lines.size > 0 %}
+            <div class="nb-phil__list">
+              {% for line in lines %}
+                {% assign raw = line | strip %}
+                {% if raw != '' %}
+                  {% assign parts = raw | split: '|' %}
+                  {% assign t = parts[0] | strip %}
+                  {% assign b = parts[1] | default: '' | strip %}
+                  <div class="nb-phil__item">
+                    <div class="nb-dot"></div>
+                    <div class="nb-phil__item-body">
+                      {% if t != '' %}<h3 class="nb-phil__st">{{ t }}</h3>{% endif %}
+                      {% if b != '' %}<p class="nb-phil__blurb">{{ b }}</p>{% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if section.settings.image != blank %}
+            <figure class="nb-phil__figure">
+              {{ section.settings.image | image_url: width: 960 | image_tag: class: 'nb-phil__img', alt: section.settings.image_alt | escape }}
+            </figure>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+  .nb-about-phil .nb-phil__wrap{
+    background: {% if section.settings.panel_on %}var(--nb-panel-bg, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
+    border-radius: 20px;
+    padding: clamp(18px, 2.4vw, 28px);
+    box-shadow: {% if section.settings.panel_on %}0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset{% else %}none{% endif %};
+  }
+  .nb-about-phil .nb-phil__head{ margin-bottom: clamp(10px,1.6vw,16px); }
+  .nb-about-phil .nb-phil__grid{
+    display:grid; gap: clamp(16px, 2.2vw, 24px);
+    grid-template-columns: 1fr; align-items:start;
+  }
+  @media (min-width: 980px){
+    .nb-about-phil .nb-phil__grid{ grid-template-columns: 1.15fr 1fr; }
+  }
+  .nb-about-phil .nb-phil__list{ display:grid; gap: 14px; }
+  .nb-about-phil .nb-phil__item{ display:flex; gap:12px; background:#fff; border-radius:14px; padding:14px 16px; box-shadow:0 1px 0 rgba(22,34,31,.04); }
+  .nb-about-phil .nb-dot{ inline-size:10px; block-size:10px; border-radius:999px; background: radial-gradient(circle at 30% 30%, #ffb26f, #d66c2f); margin-top:7px; flex:0 0 auto; }
+  .nb-about-phil .nb-phil__st{ margin:0 0 4px; font-size:1.06rem; }
+  .nb-about-phil .nb-phil__blurb{ margin:0; opacity:.9; }
+  .nb-about-phil .nb-phil__figure{ margin:14px 0 0; }
+  .nb-about-phil .nb-phil__img{ width:100%; height:auto; border-radius:16px; display:block; }
+
+  /* Read-more */
+  .nb-about-phil [data-more][data-collapsed="1"] [data-long]{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .3s ease;
+  }
+  .nb-about-phil .nb-phil__toggle{ margin-top: 10px; background:none; border:none; cursor:pointer; }
+  </style>
+
+  {% if section.settings.show_collapsed %}
+  <script>
+    (function(){
+      var root = document.currentScript.closest('#nb-about-phil-{{ section.id }}');
+      if(!root) return;
+      var more = root.querySelector('[data-more]');
+      var longEl = root.querySelector('[data-long]');
+      var btn = root.querySelector('[data-toggle]');
+      if(!more || !btn || !longEl) return;
+
+      function expand(){
+        longEl.style.maxHeight = longEl.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded','true');
+        btn.textContent = 'Show less';
+        more.dataset.collapsed = '0';
+      }
+      function collapse(){
+        longEl.style.maxHeight = '0px';
+        btn.setAttribute('aria-expanded','false');
+        btn.textContent = 'Read more';
+        more.dataset.collapsed = '1';
+      }
+      btn.addEventListener('click', function(){
+        if(more.dataset.collapsed === '1'){ expand(); } else { collapse(); }
+      });
+      // initialize collapsed state
+      collapse();
+    })();
+  </script>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "About—Philosophy",
+  "class": "section-wrapper nb-about-phil-wrap",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Our philosophy" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Liberation in practice" },
+
+    { "type": "richtext", "id": "intro_rich", "label": "Origins (short)", "default": "<p>Nibana is inspired by Buddhist and Hindu traditions. We translate timeless ideas into practical coaching that builds a steadier nervous system, clearer choices, and more aliveness.</p>" },
+    { "type": "richtext", "id": "long_rich", "label": "Long explainer (optional)", "default": "<p>In the Indian traditions, liberation is lived, not merely understood. To move toward freedom we cultivate integrity (dharma), meaningful creation (artha), and intimacy with life (kāma). In practice, that means attention, embodiment, and play.</p>" },
+    { "type": "checkbox", "id": "show_collapsed", "label": "Collapse long explainer with Read more", "default": true },
+
+    { "type": "textarea", "id": "principles", "label": "Principles list (one per line: Title | Blurb)", "default": "Kāma | Intimacy, desire, eros, sensuality—emotional fulfillment that enlivens your days.\nArtha | Purpose and meaningful creation—bringing value to the world with clarity.\nDharma | Living with integrity—alignment between what matters and how you act." },
+
+    { "type": "image_picker", "id": "image", "label": "Optional image/graphic" },
+    { "type": "text", "id": "image_alt", "label": "Graphic alt text", "default": "Philosophy graphic" },
+
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Book a 20-min free call" },
+    { "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/book-a-call" },
+
+    { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": true },
+    { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "About—Philosophy" }
+  ]
+}
+{% endschema %}

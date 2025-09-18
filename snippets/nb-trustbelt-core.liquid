@@ -1,103 +1,80 @@
 {%- comment -%}
-  nb-trustbelt-core — reusable trust "belt/grid" renderer
-  Params:
-    - items  : array of strings (chips)
-    - layout : 'belt' | 'grid' | 'cards' (grid/cards behave same)
-    - speed  : marquee duration in seconds (number) for 'belt' (default 22)
+nb-trustbelt-core
+Reusable renderer for trustbelt items.
+
+Accepts via render:
+- items  : array of strings (already split; can include <br> or <p> tags)
+- layout : 'belt' (default) or 'grid'
+- speed  : seconds for marquee (default 22)
+
+Usage:
+  {% render 'nb-trustbelt-core', items: _items, layout: _layout, speed: _speed %}
 {%- endcomment -%}
 
-{%- assign _items = items | default: blank -%}
-{%- assign _layout = layout | downcase | default: 'belt' -%}
-{%- assign _speed = speed | default: 22 -%}
+{%- liquid
+  assign _items  = items
+  assign _layout = layout | default: 'belt'
+  assign _speed  = speed  | default: 22
+-%}
 
-{%- comment -%} Count non-blank items {%- endcomment -%}
-{%- assign _filled = 0 -%}
-{%- for s in _items -%}
-  {%- assign t = s | strip -%}
-  {%- if t != '' -%}{%- assign _filled = _filled | plus: 1 -%}{%- endif -%}
-{%- endfor -%}
+{%- capture _chips -%}
+  {%- for it in _items -%}
+    {%- assign t = it
+      | replace: '<p>', ''
+      | replace: '</p>', ''
+      | strip -%}
+    {%- if t != '' -%}
+      <span class="nb-trustbelt__chip"><i aria-hidden="true"></i><span>{{ t }}</span></span>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
 
-{%- if _filled > 0 -%}
-  {%- if _layout == 'grid' or _layout == 'cards' -%}
-    <section class="nb-trustgrid">
-      <div class="nb-trustgrid__inner nb-shell">
-        <ul class="nb-trustgrid__list">
-          {%- for s in _items -%}{%- assign sv = s | strip -%}{%- if sv != '' -%}
-            <li class="nb-trustgrid__chip">
-              <span class="nb-trustgrid__tick" aria-hidden="true"></span>{{ sv }}
-            </li>
-          {%- endif -%}{%- endfor -%}
-        </ul>
-      </div>
-    </section>
-  {%- else -%}
-    <section class="nb-trustbelt" style="--nb-marquee-speed: {{ _speed }}s;">
-      <div class="nb-trustbelt__inner nb-shell">
+{%- if _chips contains 'nb-trustbelt__chip' -%}
+  <style>
+    .nb-trustbelt{ --nb-marquee-speed: {{ _speed }}s; }
+    .nb-trustbelt__viewport{ overflow: hidden; }
+    .nb-trustbelt__track{
+  display:flex; gap:14px; padding:12px 18px;
+  width: max-content;                 /* added */
+  animation: nb-marquee var(--nb-marquee-speed, 22s) linear infinite;
+  will-change: transform;
+}
+    @keyframes nb-marquee{ from{ transform: translateX(0) } to{ transform: translateX(-50%) } }
+    @media (prefers-reduced-motion: reduce){ .nb-trustbelt__track{ animation:none } }
+
+    .nb-trustbelt__chip{
+      display:inline-flex; align-items:center; gap:10px;
+      background:#fff; border:1px solid #e8ecef; border-radius:999px;
+      padding:10px 14px; white-space:nowrap;
+      box-shadow:0 2px 10px rgba(0,0,0,.04);
+    }
+    .nb-trustbelt__chip > i{
+      width:8px; height:8px; border-radius:999px;
+      background:#0C8A7B; box-shadow:0 0 0 3px rgba(12,138,123,.12) inset;
+      display:inline-block;
+    }
+
+    .nb-trustbelt__grid{
+      display:grid; gap:12px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .nb-trustbelt__grid .nb-trustbelt__chip{ width:100%; justify-content:flex-start; }
+  </style>
+
+  <div class="nb-trustbelt" data-layout="{{ _layout | escape }}">
+    <div class="nb-shell">
+      {%- if _layout == 'grid' -%}
+        <div class="nb-trustbelt__grid">
+          {{ _chips }}
+        </div>
+      {%- else -%}
         <div class="nb-trustbelt__viewport">
           <div class="nb-trustbelt__track">
-            {%- for s in _items -%}{%- assign sv = s | strip -%}{%- if sv != '' -%}
-              <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
-            {%- endif -%}{%- endfor -%}
-            {%- comment -%} duplicate for seamless loop {%- endcomment -%}
-            {%- for s in _items -%}{%- assign sv = s | strip -%}{%- if sv != '' -%}
-              <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
-            {%- endif -%}{%- endfor -%}
+            {{ _chips }}
+            {{ _chips }} {{ _chips }}
           </div>
         </div>
-      </div>
-    </section>
-  {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
 {%- endif -%}
-
-<style>
-  /* GRID variant */
-  .nb-trustgrid{ background:#fff; padding: 18px 0; border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef; }
-  .nb-trustgrid__list{
-    list-style:none; margin:0; padding:0;
-    display:grid; gap:12px;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-  }
-  @media (min-width: 900px){ .nb-trustgrid__list{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-  .nb-trustgrid__chip{
-    background:#fff; border:1px solid #e8ecef; border-radius:14px; padding:.8rem 1rem;
-    box-shadow:0 8px 22px rgba(0,0,0,.06); color: var(--nb-muted); display:flex; align-items:center; gap:10px;
-  }
-  .nb-trustgrid__tick{
-    width:8px; height:8px; border-radius:999px; background:#0C8A7B;
-    box-shadow: 0 0 0 6px color-mix(in oklab, #0C8A7B, #fff 86%);
-  }
-
-  /* BELT (marquee) variant */
-  .nb-trustbelt{
-    background:#fff; padding: 8px 0 4px;
-    border-top:1px solid #e8ecef; border-bottom:1px solid #e8ecef;
-  }
-  .nb-trustbelt__viewport{
-    position:relative; overflow:hidden; border-radius:14px;
-    background:linear-gradient(180deg, #ffffff, #fafcfc);
-    box-shadow:0 8px 22px rgba(0,0,0,.06);
-    -webkit-mask-image: linear-gradient( to right, transparent 0, #000 6%, #000 94%, transparent 100%);
-            mask-image: linear-gradient( to right, transparent 0, #000 6%, #000 94%, transparent 100%);
-  }
-  .nb-trustbelt__track{
-    display:flex; gap:14px; padding:12px 18px;
-    animation: nb-marquee var(var(--nb-marquee-speed, 22s)) linear infinite;
-    will-change: transform;
-  }
-  .nb-trustbelt__chip{
-    display:inline-flex; align-items:center; gap:10px; white-space:nowrap;
-    background:#fff; border:1px solid #e8ecef; border-radius:999px; padding:.55rem .9rem;
-    color: var(--nb-muted); box-shadow:0 8px 22px rgba(0,0,0,.06);
-  }
-  .nb-trustbelt__chip i{
-    display:inline-block; width:7px; height:7px; border-radius:999px; background:#0C8A7B;
-    box-shadow: 0 0 0 6px color-mix(in oklab, #0C8A7B, #fff 86%);
-  }
-  @keyframes nb-marquee{
-    from{ transform: translateX(0); }
-    to{   transform: translateX(-50%); }
-  }
-  @media (prefers-reduced-motion:reduce){
-    .nb-trustbelt__track{ animation: none; }
-  }
-</style>

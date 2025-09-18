@@ -1,0 +1,122 @@
+{% comment %}
+About — Hero (calm intro band)
+- Kicker, headline, short blurb, optional image
+- Single CTA (keep page focused)
+- Panel background toggle + color picker + color scheme
+{% endcomment %}
+
+<section
+  id="nb-about-hero-{{ section.id }}"
+  class="nb-about-hero {{ section.settings.color_scheme }}{% if section.settings.full_bleed and section.settings.panel_on %} is-fullbleed{% endif %}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;{% if section.settings.panel_on %} --nb-hero-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};{% endif %}"
+>
+  <div class="nb-shell">
+    <div
+  class="nb-hero__wrap {% if section.settings.image_side == 'right' %}is-image-right{% endif %}"
+>
+      <div class="nb-hero__content">
+        {% if section.settings.kicker != blank %}
+          <p class="nb-kicker">{{ section.settings.kicker }}</p>
+        {% endif %}
+
+        <h1 class="nb-h1 nb-hero__title">{{ section.settings.heading }}</h1>
+
+        {% if section.settings.sub_rich != blank %}
+          <div class="nb-rte nb-hero__sub">{{ section.settings.sub_rich }}</div>
+        {% endif %}
+
+        {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+          <div class="nb-hero__actions">
+            <a class="nb-cta nb-cta--xl"
+               href="{{ section.settings.cta_link }}"
+               data-cta="about-hero-cta">
+               {{ section.settings.cta_label }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if section.settings.image != blank %}
+        <div class="nb-hero__media">
+          {{ section.settings.image | image_url: width: 1200 | image_tag: class: 'nb-hero__img', alt: section.settings.image_alt | escape }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    .nb-about-hero .nb-hero__wrap{
+      display:grid;
+      gap: clamp(18px, 3vw, 36px);
+      grid-template-columns: 1fr;
+      align-items: center;
+      background: {% if section.settings.panel_on %}var(--nb-hero-bg, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
+      border-radius: 20px;
+      padding: clamp(22px, 3vw, 40px);
+      box-shadow: {% if section.settings.panel_on %}0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset{% else %}none{% endif %};
+    }
+    .nb-about-hero .nb-hero__title{ margin: 0 0 8px; line-height: 1.08; }
+    .nb-about-hero .nb-hero__sub{ margin: 0 0 14px; opacity:.95; }
+    .nb-about-hero .nb-hero__actions{ margin-top: 6px; }
+
+    .nb-about-hero .nb-hero__media{ order: 1; }
+    .nb-about-hero .nb-hero__img{ width:100%; height:auto; display:block; border-radius: 18px; }
+
+    .nb-about-hero .nb-hero__content{ order: 0; }
+
+    @media (min-width: 980px){
+      .nb-about-hero .nb-hero__wrap{ grid-template-columns: 1.25fr 1fr; }
+      .nb-about-hero .nb-hero__wrap.is-image-right .nb-hero__media{ order: 1; }
+      .nb-about-hero .nb-hero__wrap.is-image-right .nb-hero__content{ order: 0; }
+      .nb-about-hero .nb-hero__wrap:not(.is-image-right) .nb-hero__media{ order: 0; }
+      .nb-about-hero .nb-hero__wrap:not(.is-image-right) .nb-hero__content{ order: 1; }
+    }
+
+/* Full-bleed background on the section root; content stays in .nb-shell */
+.nb-about-hero.is-fullbleed{
+  background: var(--nb-hero-bg, var(--nb-mist, #F3FAF8));
+}
+
+/* When full-bleed, the inner card loses its panel look */
+.nb-about-hero.is-fullbleed .nb-hero__wrap{
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "About—Hero",
+  "class": "section-wrapper nb-about-hero-wrap",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "About Nibana" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Coaching for steady clarity & aliveness" },
+    { "type": "richtext", "id": "sub_rich", "label": "Short blurb", "default": "<p>We help founders, execs and couples create durable change: a steadier nervous system, clearer choices and a life that feels alive.</p>" },
+
+    { "type": "image_picker", "id": "image", "label": "Optional image" },
+    { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "About hero image" },
+    { "type": "select", "id": "image_side", "label": "Image position (desktop)", "default": "right",
+      "options": [
+        { "value": "left",  "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Book a 20-min free call" },
+    { "type": "text", "id": "cta_link",  "label": "CTA link",  "default": "/pages/book-a-call" },
+    { "type": "checkbox", "id": "full_bleed", "label": "Full-bleed background", "default": true },
+    { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": true },
+    { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "About—Hero" }
+  ]
+}
+{% endschema %}

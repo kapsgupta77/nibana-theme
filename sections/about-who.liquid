@@ -1,0 +1,140 @@
+{% comment %}
+About — Who we help
+- Simple, editor-friendly section for the About page.
+- One item per line; optional short blurb with a pipe: "Founders | Scale without burning out".
+- Uses nb-visuals.css tokens (mint panel + motif) if present.
+{% endcomment %}
+
+{% liquid
+  assign _heading   = section.settings.heading   | default: 'Who we help'
+  assign _intro     = section.settings.intro
+  assign _panel     = section.settings.panel
+  assign _columns   = section.settings.columns   | default: '3'
+  assign _cta_label = section.settings.cta_label
+  assign _cta_link  = section.settings.cta_link  | default: '/pages/book-a-call'
+
+  assign raw_txt = section.settings.items_text | default: ''
+  assign norm = raw_txt | replace: '\r\n', '\n'
+  assign norm = norm | replace: '&#13;', ''
+  assign norm = norm | replace: '&#10;', '\n'
+  assign as_html = norm | newline_to_br
+  assign with_delims = as_html | replace: '<br />', '|||'
+  assign with_delims = with_delims | replace: '<br/>',  '|||'
+  assign with_delims = with_delims | replace: '<br>',   '|||'
+  assign lines = with_delims | split: '|||'
+%}
+
+<section class="nb-about-who color-scheme-{{ section.settings.color_scheme }}" style="--nb-panel-bg: {{ section.settings.panel_color }};">
+  <div
+    class="nb-shell nb-about-who__wrap{% if _panel %} nb-about-who__panel{% endif %}"
+    data-anim
+    {% if _panel %}style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }}"{% endif %}
+  >
+    {% comment %} Decorative motif {% endcomment %}
+    <img class="nb-motif nb-motif--tr nb-motif--front" src="{{ 'swash-01.svg' | asset_url }}" alt="">
+
+    <header class="nb-about-who__head">
+      <h2 class="nb-h2 nb-about-who__title">{{ _heading }}</h2>
+      {% if _intro != blank %}
+        <div class="nb-rte nb-about-who__intro">{{ _intro }}</div>
+      {% endif %}
+    </header>
+
+    <ul class="nb-about-who__grid nb-about-who__grid--cols-{{ _columns }}">
+      {% for l in lines %}
+        {% assign t = l | strip %}
+        {% if t != '' %}
+          {% assign label = t %}
+          {% assign desc  = '' %}
+          {% if t contains '|' %}
+            {% assign parts = t | split: '|' %}
+            {% assign label = parts[0] | strip %}
+            {% assign desc  = parts[1] | strip %}
+          {% endif %}
+          <li class="nb-about-who__card">
+            <div class="nb-about-who__label">{{ label }}</div>
+            {% if desc != '' %}
+              <div class="nb-about-who__desc">{{ desc }}</div>
+            {% endif %}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% if _cta_label != blank %}
+      <div class="nb-about-who__cta">
+        <a class="nb-cta" href="{{ _cta_link }}" data-cta="about-who-cta">{{ _cta_label }}</a>
+      </div>
+    {% endif %}
+  </div>
+
+<style>
+  /* A11 — About—Who panel stays inset inside the shell */
+  .nb-about-who > .nb-shell{
+    background: var(--nb-panel-bg, var(--nb-mist, #F3FAF8));
+    border-radius: 20px;
+    padding: var(--nb-panel-pad);
+  }
+</style>
+
+
+</section>
+
+<style>
+  .nb-about-who__head{ margin-bottom: clamp(10px,1.4vw,16px); }
+  .nb-about-who__intro{ margin-top: 6px; }
+  .nb-about-who__grid{ list-style:none; padding:0; margin:0; display:grid; gap: clamp(12px, 1.8vw, 18px); }
+  .nb-about-who__grid--cols-2{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .nb-about-who__grid--cols-3{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+  @media (max-width: 900px){ .nb-about-who__grid--cols-2, .nb-about-who__grid--cols-3{ grid-template-columns: 1fr; } }
+
+  .nb-about-who__card{
+    background:#fff; border:1px solid #e8ecef; border-radius:14px;
+    padding: clamp(12px,1.6vw,16px) clamp(14px,1.8vw,18px);
+    box-shadow:0 2px 8px rgba(0,0,0,.03);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .nb-about-who__card:hover{ box-shadow:0 12px 26px rgba(12,138,123,.10); transform: translateY(-1px); }
+
+  .nb-about-who__label{ font-weight: 700; color: var(--nb-ink, #1F2C2A); }
+  .nb-about-who__desc{ margin-top: 4px; color: var(--nb-muted, #445); opacity: .9; }
+  .nb-about-who__cta{ margin-top: clamp(12px,1.8vw,18px); }
+
+/* Move the panel styling to the inner wrapper so it’s not full-bleed */
+.nb-about-who__wrap{ position:relative; padding: clamp(18px, 2.2vw, 26px); }
+
+.nb-about-who__panel{
+  background: var(--nb-panel-bg, var(--nb-mist, #F3FAF8)); /* uses override or theme token */
+  border-radius: 20px;
+  box-shadow:
+    0 10px 28px rgba(12, 138, 123, 0.08),
+    0 1px 0 rgba(255,255,255,0.8) inset;
+  margin-block: clamp(14px, 2.2vw, 22px);
+}
+
+/* keep the existing card/grid styles as-is */
+
+</style>
+
+{% schema %}
+{
+  "name": "About — Who we help",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color", "id": "panel_color", "label": "Panel background override", "default": "#F3FAF8" }, 
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Who we help" },
+    { "type": "richtext", "id": "intro", "label": "Intro (optional)", "default": "<p>We partner with ambitious people who want a steadier nervous system, clearer choices, and more aliveness.</p>" },
+    { "type": "select", "id": "columns", "label": "Columns (desktop)", "options": [
+      { "value": "2", "label": "Two" },
+      { "value": "3", "label": "Three" }
+    ], "default": "3" },
+    { "type": "textarea", "id": "items_text", "label": "Items (one per line; optional blurb with |)", "default": "Founders | Scale without burning out\nExecutives | Lead with clarity and calm\nCouples | Rekindle intimacy and play\nCreators | Ship boldly without self-sabotage\nHigh-performers | Sustainable drive without the crash" },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Book a 20-min free call" },
+    { "type": "url", "id": "cta_link", "label": "CTA link", "default": "/" },
+    { "type": "checkbox", "id": "panel", "label": "Mint panel background", "default": true }
+  ],
+  "presets": [
+    { "name": "About — Who we help", "category": "About" }
+  ]
+}
+{% endschema %}

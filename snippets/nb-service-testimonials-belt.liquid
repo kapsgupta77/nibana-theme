@@ -1,9 +1,10 @@
 {%- comment -%}
 Service-page testimonials belt — grid/slider using the same classes as Testimonials.
+
 Sources (first non-blank wins):
-1) service.testimonials_list.value
-2) service.testimonials_list
-3) shop.metaobjects[...] (global)
+1) service.testimonials_list (metaobject_list of nb_testimonial refs)
+2) shop.metaobjects['nb_testimonial'].values (global fallback)
+
 Filter: param `tag_filter` OR service.testimonials_tag_filter; "All" disables.
 Limit: `limit` (default 4)
 Mode: pass `carousel: true` to enable slider UI.
@@ -31,156 +32,161 @@ Mode: pass `carousel: true` to enable slider UI.
     endif
   endfor
 
-  assign _list = blank
-  if service and service.testimonials_list and service.testimonials_list.value
-    assign _list = service.testimonials_list.value
-  endif
-  if _list == blank and service and service.testimonials_list
-    assign _list = service.testimonials_list
-  endif
-  if _list == blank
-    assign _collection = shop.metaobjects['nb_testimonial']
-    if _collection and _collection.values
-      assign _list = _collection.values
+  assign _has_refs = false
+  assign _refs     = blank
+  if service and service.testimonials_list
+    assign _refs = service.testimonials_list
+    if _refs and _refs.size > 0
+      assign _has_refs = true
     endif
   endif
-  if _list == blank and shop.metaobjects.nb_testimonial and shop.metaobjects.nb_testimonial.values
-    assign _list = shop.metaobjects.nb_testimonial.values
+
+  assign _entries = blank
+  if _has_refs == false
+    if shop.metaobjects['nb_testimonial'] and shop.metaobjects['nb_testimonial'].values
+      assign _entries = shop.metaobjects['nb_testimonial'].values
+    endif
   endif
 -%}
 
 {%- assign _count = 0 -%}
 {%- capture cards_only -%}
-  {%- for entry in _list -%}
-    {%- liquid
-      assign include = true
-      if _filter_on
-        assign include = false
-        if entry.tags
-          for tag in entry.tags
-            assign lt = tag | downcase
-            for f in _filters
-              assign f2 = f | strip | downcase
-              if f2 != '' and f2 != 'all' and lt contains f2
-                assign include = true
-              endif
-            endfor
-          endfor
-        endif
+  {%- if _has_refs -%}
+    {%- for ref in _refs -%}
+      {%- assign entry = ref.value -%}
+      {%- if entry -%}
+        {%- liquid
+          assign include = true
+if _filter_on
+  assign include = false
+  if entry.tags
+    # Try join (works when tags is an array). If blank, fall back to string.
+    assign tags_csv = entry.tags | join: ','
+    if tags_csv == ''
+      assign tags_csv = entry.tags | append: ''
+    endif
+    assign tags_lc = tags_csv | downcase
+
+    for f in _filters
+      assign f2 = f | strip | downcase
+      if f2 != '' and f2 != 'all' and tags_lc contains f2
+        assign include = true
       endif
-    -%}
-    {%- if include and _count < _limit -%}
-      {%- assign _count = _count | plus: 1 -%}
-      {% render 'nb-testimonial-card',
-        quote: entry.quote,
-        name: entry.name | default: '',
-        title: entry.title | default: '',
-        location: entry.location | default: '',
-        avatar: entry.avatar,
-        tags: entry.tags | join: ',' | default: '' %}
-    {%- endif -%}
-  {%- endfor -%}
+    endfor
+  endif
+endif
+        -%}
+        {%- if include and _count < _limit -%}
+          {%- assign _count = _count | plus: 1 -%}
+          {% render 'nb-testimonial-card',
+            quote:    entry.quote,
+            name:     entry.name     | default: '',
+            title:    entry.title    | default: '',
+            location: entry.location | default: '',
+            avatar:   entry.avatar,
+            tags:     entry.tags | join: ',' | default: '' %}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- else -%}
+    {%- for entry in _entries -%}
+      {%- liquid
+        assign include = true
+if _filter_on
+  assign include = false
+  if entry.tags
+    assign tags_csv = entry.tags | join: ','
+    if tags_csv == ''
+      assign tags_csv = entry.tags | append: ''
+    endif
+    assign tags_lc = tags_csv | downcase
+
+    for f in _filters
+      assign f2 = f | strip | downcase
+      if f2 != '' and f2 != 'all' and tags_lc contains f2
+        assign include = true
+      endif
+    endfor
+  endif
+endif
+      -%}
+      {%- if include and _count < _limit -%}
+        {%- assign _count = _count | plus: 1 -%}
+        {% render 'nb-testimonial-card',
+          quote:    entry.quote,
+          name:     entry.name     | default: '',
+          title:    entry.title    | default: '',
+          location: entry.location | default: '',
+          avatar:   entry.avatar,
+          tags:     entry.tags | join: ',' | default: '' %}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
 {%- endcapture -%}
 
 {%- if _count > 0 -%}
   <style>
-  .nb-service-tbelt .nb-testimonials__container{
-    max-width: var(--narrow-page-width, 1120px);
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  .nb-service-tbelt .nb-testimonials__head{
-    margin: 0 0 clamp(10px, 2vw, 18px);
-    text-align:left;
-  }
-  .nb-service-tbelt .nb-testimonials__title{
-    margin:0 0 6px;
-    color: var(--nb-ink, #1F2C2A);
-  }
+    .nb-service-tbelt .nb-testimonials__container{
+      max-width: var(--narrow-page-width, 1120px);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .nb-service-tbelt .nb-testimonials__head{ margin: 0 0 clamp(10px, 2vw, 18px); text-align:left; }
+    .nb-service-tbelt .nb-testimonials__title{ margin:0 0 6px; color: var(--nb-ink, #1F2C2A); }
 
-  /* NEW: soft green panel */
-  .nb-service-tbelt__panel{
-    background: var(--nb-mist, #F3FAF8); /* soft mint; uses var if present */
-    border-radius: 20px;
-    padding: clamp(18px, 2.2vw, 26px);
-    box-shadow:
-      0 10px 28px rgba(12, 138, 123, 0.08),
-      0 1px 0 rgba(255,255,255,0.8) inset;
-  }
+    .nb-service-tbelt--panel{
+      background: var(--nb-mist, #F3FAF8);
+      border-radius: 20px;
+      padding: clamp(18px, 2.2vw, 26px);
+      box-shadow: 0 10px 28px rgba(12, 138, 123, 0.08), 0 1px 0 rgba(255,255,255,0.8) inset;
+      margin-block: clamp(14px, 2.2vw, 22px);
+    }
 
-  /* Grid */
-  .nb-service-tbelt .nb-tgrid{
-    display:grid;
-    gap: clamp(16px, 2.2vw, 26px);
-    align-items: stretch;
-  }
-  @media (min-width: 960px){
-    .nb-service-tbelt .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-  }
-  @media (max-width: 959.98px){
-    .nb-service-tbelt .nb-tgrid{ grid-template-columns: 1fr; }
-  }
+    .nb-service-tbelt .nb-tgrid{ display:grid; gap: clamp(16px, 2.2vw, 26px); align-items: stretch; }
+    @media (min-width: 960px){ .nb-service-tbelt .nb-tgrid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 959.98px){ .nb-service-tbelt .nb-tgrid{ grid-template-columns: 1fr; } }
 
-  /* Slider */
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track{ display:block; }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{
-    width:100%;
-    display:grid;
-    grid-template-columns:none !important;
-    grid-auto-flow:column;
-    grid-auto-columns:minmax(88%, 1fr);
-    gap:18px;
-    scroll-snap-type:x mandatory;
-    overflow-x:auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 2px;
-  }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid] > *{ scroll-snap-align:start; }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
-  @media (min-width: 720px){
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(48%, 1fr); }
-  }
-  @media (min-width: 1040px){
-    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(32%, 1fr); }
-  }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__nav{
-    display:flex; align-items:center; justify-content:center; gap:12px; margin: 12px 0 0;
-  }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn{
-    inline-size:34px; block-size:34px; border-radius:999px; border:1px solid #d8dee2; background:#fff;
-    font-size:18px; line-height:1; display:grid; place-items:center;
-  }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn:hover{
-    box-shadow:0 6px 14px rgba(0,0,0,.07); transform: translateY(-1px);
-  }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots{ display:flex; gap:8px; }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i{
-    inline-size:7px; block-size:7px; border-radius:999px; background:#d8dee2; display:inline-block; cursor:pointer;
-  }
-  .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__viewport{ position:relative; overflow:hidden; }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track{ display:block; }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{
+      width:100%;
+      display:grid;
+      grid-template-columns:none !important;
+      grid-auto-flow:column;
+      grid-auto-columns:minmax(88%, 1fr);
+      gap:18px;
+      scroll-snap-type:x mandatory;
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px;
+    }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid] > *{ scroll-snap-align:start; }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]::-webkit-scrollbar{ display:none; }
+    @media (min-width: 720px){
+      .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(48%, 1fr); }
+    }
+    @media (min-width: 1040px){
+      .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__track [data-grid]{ grid-auto-columns:minmax(32%, 1fr); }
+    }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__nav{
+      display:flex; align-items:center; justify-content:center; gap:12px; margin: 12px 0 0;
+    }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn{
+      inline-size:34px; block-size:34px; border-radius:999px; border:1px solid #d8dee2; background:#fff;
+      font-size:18px; line-height:1; display:grid; place-items:center;
+    }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__btn:hover{
+      box-shadow:0 6px 14px rgba(0,0,0,.07); transform: translateY(-1px);
+    }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots{ display:flex; gap:8px; }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i{
+      inline-size:7px; block-size:7px; border-radius:999px; background:#d8dee2; display:inline-block; cursor:pointer;
+    }
+    .nb-service-tbelt[data-carousel="1"] .nb-tcarousel__dots i.is-active{ background:#0C8A7B; }
+  </style>
 
-/* Mint panel wrapper */
-.nb-service-tbelt--panel{
-  background: var(--nb-mist, #F3FAF8); /* soft brand mint; uses var if defined */
-  border-radius: 20px;
-  padding: clamp(18px, 2.2vw, 26px);
-  box-shadow:
-    0 10px 28px rgba(12, 138, 123, 0.08),
-    0 1px 0 rgba(255,255,255,0.8) inset;
-}
-
-/* Tighter spacing for title inside the panel */
-.nb-service-tbelt--panel .nb-testimonials__head{ margin-top: 0; }
-
-/* Give the panel some breathing room from neighbors */
-.nb-service-tbelt--panel{ margin-block: clamp(14px, 2.2vw, 22px); }
-
-</style>
-
-<section class="nb-service-tbelt nb-service-tbelt--panel" data-carousel="{% if _carousel %}1{% else %}0{% endif %}">
-  <div class="nb-shell nb-testimonials__container">
-    <div class="nb-service-tbelt__panel">
+  <section class="nb-service-tbelt nb-service-tbelt--panel" data-carousel="{% if _carousel %}1{% else %}0{% endif %}">
+    <div class="nb-shell nb-testimonials__container">
       <header class="nb-testimonials__head">
         <h3 class="nb-h3 nb-testimonials__title">{{ _heading }}</h3>
       </header>
@@ -246,6 +252,5 @@ Mode: pass `carousel: true` to enable slider UI.
         <div class="nb-tgrid" data-grid>{{ cards_only }}</div>
       {%- endif -%}
     </div>
-  </div>
-</section>
+  </section>
 {%- endif -%}

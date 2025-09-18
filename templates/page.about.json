@@ -1,12 +1,130 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "about_hero_idcKQa": {
+      "type": "about-hero",
+      "name": "About—Hero",
+      "settings": {
+        "kicker": "About Nibana",
+        "heading": "Coaching for steady clarity & aliveness",
+        "sub_rich": "<p>We help founders, execs and couples create durable change: a steadier nervous system, clearer choices and a life that feels alive.</p>",
+        "image": "shopify://shop_images/Kapil-headshot1.jpg",
+        "image_alt": "About hero image",
+        "image_side": "right",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "/pages/book-a-call",
+        "full_bleed": true,
+        "panel_on": true,
+        "panel_color": "#dfdfdf",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "about_who_mbCg3U": {
+      "type": "about-who",
+      "name": "About — Who we help",
+      "settings": {
+        "color_scheme": "",
+        "panel_color": "#f3faf8",
+        "heading": "Who we help",
+        "intro": "<p>We partner with ambitious people who want a steadier nervous system, clearer choices, and more aliveness.</p>",
+        "columns": "3",
+        "items_text": "Founders | Scale without burning out\nExecutives | Lead with clarity and calm\nCouples | Rekindle intimacy and play\nCreators | Ship boldly without self-sabotage\nHigh-performers | Sustainable drive without the crash",
+        "cta_label": "",
+        "cta_link": "shopify://pages/book-a-call",
+        "panel": true
+      }
+    },
     "trustbelt": {
       "type": "nb-trustbelt",
       "settings": {
         "heading": "",
+        "source": "service_metaobject",
+        "service": "transformational-life-coaching-helps-you-change-from-the-inside-out",
         "layout": "belt",
         "speed": 22,
         "items_text": "Trusted by founders\nLoved by couples\nUsed by executives",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "about_different_TFCzha": {
+      "type": "about-different",
+      "name": "About — What makes us different",
+      "settings": {
+        "color_scheme": "",
+        "panel_color": "#f3faf8",
+        "heading": "What makes us different",
+        "intro": "<p>A few core principles guide how we work.</p>",
+        "columns": "3",
+        "items_text": "Embodied approach | We combine mind, body, and soul.\nIdentity work | We start at the level of who you are, not just habits.\nPractices that stick | Simple reps that compound into durable change.\nStraight, respectful conversations | No fluff. We go at the pace of truth.\nPlay as principle | We make room for joy and aliveness while we work.",
+        "panel": true
+      }
+    },
+    "about_how_dYqUMP": {
+      "type": "about-how",
+      "name": "About—How we work",
+      "settings": {
+        "kicker": "How we work",
+        "heading": "A practical, embodied approach",
+        "intro_rich": "<p>Everything we do is designed to create durable change — steady nervous system, clearer choices, more aliveness.</p>",
+        "cols": "2",
+        "steps": "Identity reset | See who you are beyond roles and expectations.\nInner skills | Retrain attention, emotion, and energy with embodied practices.\nAligned action | Make clearer choices and move with less friction.\nPlay-based integration | Build a life that feels alive, meaningful, and sustainable.",
+        "cta_label": "",
+        "cta_link": "",
+        "panel_on": true,
+        "panel_color": "#f3faf8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "about_founder_VAe8QJ": {
+      "type": "about-founder",
+      "name": "About—Founder Card",
+      "settings": {
+        "kicker": "Founder",
+        "heading": "Why I do this",
+        "story_rich": "<p>I believe transformation sticks when it is embodied, playful and honest. My work is about helping you find that steadier system so clarity and aliveness become your norm.</p><p>Following a 15 year corporate career and an MBA from the University of Edinburgh, Kapil co-founded TurnON Britain, a company dedicated to personal growth. He spent 6 years living a very spiritually monastic lifestyle, full of practices based in connection and relating.</p><p>Kapil is a TEDx Speaker (‘<a href=\"https://youtu.be/sdTy9IZR87k\"><em><strong>Dare to be Sensitive</strong></em></a>”) and a co-author of the <span style=\"text-decoration:underline\">book</span>, <em><strong>“Being Fine: The other ‘F’ word men use”</strong></em>.</p><p>Brought up in an environment that valued “education, success, achievement, a good career, wealth, and family,” Kapil says he spent 15 years successfully striving towards them all, including a MBA and an 11 year relationship that ended in divorce, only to discover that he was “only happy on the surface while disconnected underneath.” </p>",
+        "name": "Kapil",
+        "role": "Founder & Coach",
+        "quote": "We go at the pace of truth—no fluff; with respect, play and real change.",
+        "photo": "shopify://shop_images/AJS_20190130_Kapil_0973-700x750_1.webp",
+        "image_side": "left",
+        "cta_label": "",
+        "cta_link": "/pages/book-a-call",
+        "mint_bg": true,
+        "panel_color": "#fafafa",
+        "color_scheme": "scheme-3",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "about_philosophy_aHRzNc": {
+      "type": "about-philosophy",
+      "name": "About—Philosophy",
+      "settings": {
+        "kicker": "Our philosophy",
+        "heading": "Liberation in practice",
+        "intro_rich": "<p>Nibana is inspired by Buddhist and Hindu traditions. We translate timeless ideas into practical coaching that builds a steadier nervous system, clearer choices, and more aliveness.</p>",
+        "long_rich": "<p>In the Indian traditions, liberation is lived, not merely understood. To move toward freedom we cultivate integrity (dharma), meaningful creation (artha), and intimacy with life (kāma). In practice, that means attention, embodiment, and play.</p><p>The inspiration for Nibana comes from Buddhism and Hinduism. Nibana is the Pali translation of the word Nirvana, which in Hinduism is also referred to as Moksha - which means <strong>Liberation or Bliss</strong></p><p>To attain Liberation or ultimate Bliss, we have to have freedom in three areas in life:</p><ol><li>Kama - which is Intimacy, desire, eros, sensuality, passion, enjoyment and emotional fulfilment</li><li>Artha - a life of purpose, meaning, essence and material prosperity</li><li>Dharma - our value system and the integrity with which we live our lives and our impact on the people and our environment</li></ol><p>It is said that just like money is the currency in our external world, attention is the currency in our internal world. Whatever we put our attention on expands</p><p>Through our own journey of personal growth, we have come to discover that in order to cultivate attention and presence, we have to:</p><ul><li>Be connected with our body</li><li>Have congruence between our mind and body</li><li>Integrate our shadow; And</li><li>Find our intrinsic value, self-worth and self-love</li></ul><p>When we are able to do that, we are able to find our own blueprint, deep joy, fulfilment, and play in our lives and start to live from that place. We start to pour it out and transmit it to everyone and everything because we are so full of joy and gratitude that the only way to keep it is to share it with others.</p>",
+        "show_collapsed": true,
+        "principles": "Kāma | Intimacy, desire, eros, sensuality—emotional fulfillment that enlivens your days.\nArtha | Purpose and meaningful creation—bringing value to the world with clarity.\nDharma | Living with integrity—alignment between what matters and how you act.",
+        "image_alt": "Philosophy graphic",
+        "cta_label": "",
+        "cta_link": "/pages/book-a-call",
+        "panel_on": true,
+        "panel_color": "#f3faf8",
+        "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
       }
@@ -17,17 +135,91 @@
         "heading": "What our clients say",
         "limit": 6,
         "carousel": true,
-        "tag_filter": "All"
+        "service": "",
+        "mo_list": [
+          "tanuj-kalia",
+          "christopher-thomas",
+          "david-chambers",
+          "nitesh-jaruhar",
+          "jason-rogers",
+          "sandipan",
+          "pallavi-s"
+        ],
+        "tag_filter": ""
+      }
+    },
+    "about_final_cta_tBWmz6": {
+      "type": "about-final-cta",
+      "name": "About—Final CTA",
+      "settings": {
+        "kicker": "",
+        "heading": "Ready to work together?",
+        "subheading": "Book a free 20-minute call to see if we’re a fit.",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "/pages/book-a-call",
+        "panel_on": true,
+        "panel_color": "#f3faf8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
       }
     },
     "faq": {
       "type": "nb-faq",
-      "settings": { }
+      "blocks": {
+        "item_keEX39": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        },
+        "item_rniacN": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        },
+        "item_naELRc": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "item_keEX39",
+        "item_rniacN",
+        "item_naELRc"
+      ],
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#223238",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
+        "emit_jsonld": true
+      }
     }
   },
   "order": [
+    "about_hero_idcKQa",
+    "about_who_mbCg3U",
     "trustbelt",
+    "about_different_TFCzha",
+    "about_how_dYqUMP",
+    "about_founder_VAe8QJ",
+    "about_philosophy_aHRzNc",
     "about_testimonials",
+    "about_final_cta_tBWmz6",
     "faq"
   ]
 }

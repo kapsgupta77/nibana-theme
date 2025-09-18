@@ -88,3 +88,232 @@
     width: 180px;          /* slightly smaller on mobile */
   }
 }
+
+/* === About page polish (shared panel + spacing) === */
+
+.nb-about-who__panel,
+.nb-about-diff__panel,
+.nb-about-how .nb-how__wrap,
+.nb-about-phil .nb-phil__wrap,
+.nb-about-final-cta .nb-fcta__wrap,
+.nb-about-founder .nb-founder__wrap {
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset;
+}
+
+.nb-about-who__wrap,
+.nb-about-diff__wrap,
+.nb-about-how .nb-how__wrap,
+.nb-about-phil .nb-phil__wrap,
+.nb-about-final-cta .nb-fcta__wrap,
+.nb-about-founder .nb-founder__wrap {
+  padding: clamp(18px, 2.4vw, 28px);
+}
+
+/* Headings and micro-spacing */
+.nb-about-who__head,
+.nb-about-diff__head,
+.nb-about-how .nb-how__head,
+.nb-about-phil .nb-phil__head {
+  margin-bottom: clamp(10px, 1.6vw, 18px);
+}
+
+.nb-about-final-cta .nb-fcta__title { margin-bottom: 8px; }
+
+/* Cards consistency */
+.nb-about-diff__card,
+.nb-about-how .nb-how__item,
+.nb-about-phil .nb-phil__item {
+  background: #fff;
+  border: 1px solid #e8ecef;
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(22,34,31,.04);
+}
+
+/* Optional hover lift (desktop only) */
+@media (hover:hover) and (pointer:fine){
+  .nb-about-diff__card:hover,
+  .nb-about-how .nb-how__item:hover,
+  .nb-about-phil .nb-phil__item:hover {
+    box-shadow: 0 12px 26px rgba(12,138,123,.10);
+    transform: translateY(-1px);
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+}
+
+/* Section breathing room (use per-page padding controls too) */
+.nb-about-who,
+.nb-about-diff,
+.nb-about-how,
+.nb-about-phil,
+.nb-about-founder,
+.nb-about-final-cta {
+  margin-block: clamp(12px, 2.6vw, 28px);
+}
+
+/* === A10 — About: type scale & rhythm === */
+
+/* Headings */
+.nb-h1{
+  font-size: clamp(32px, 4.2vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-top: 0;
+}
+.nb-h2{
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.15;
+  margin-top: 0;
+}
+.nb-h3{
+  font-size: clamp(18px, 2.2vw, 20px);
+  line-height: 1.28;
+  margin-top: 0;
+}
+
+/* Kicker / eyebrow */
+.nb-kicker{
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 12.5px;
+  color: var(--nb-muted, #51615d);
+  margin: 0 0 8px;
+}
+
+/* Body rhythm */
+.nb-rte p{ font-size: clamp(16.5px, 1.2vw, 18px); line-height: 1.7; }
+.nb-rte p + p{ margin-top: .9em; }
+
+/* Section title spacing for About blocks */
+.nb-about-who__title,
+.nb-about-diff__title,
+.nb-how__title,
+.nb-phil__title,
+.nb-fcta__title,
+.nb-hero__title{
+  margin: 0 0 clamp(8px, 1.2vw, 12px);
+}
+
+/* Consistent gaps */
+.nb-about-diff__grid,
+.nb-how__grid,
+.nb-phil .nb-phil__list{
+  gap: clamp(14px, 2vw, 20px);
+}
+
+/* Section breathing room (overrides older values if any) */
+.nb-about-who,
+.nb-about-diff,
+.nb-about-how,
+.nb-about-phil,
+.nb-about-founder,
+.nb-about-final-cta{
+  margin-block: clamp(20px, 5vw, 72px);
+}
+
+/* === A11 — About: rhythm, panel pad, motif guards === */
+
+/* Shared spacing variables (safe fallbacks) */
+:root{
+  --nb-section-gap: clamp(20px, 5vw, 72px);
+  --nb-panel-pad: clamp(18px, 2.4vw, 28px);
+}
+
+/* Section breathing room */
+.nb-about-who,
+.nb-about-diff,
+.nb-about-how,
+.nb-about-phil,
+.nb-about-founder,
+.nb-about-testimonials,
+.nb-about-final-cta{
+  margin-block: var(--nb-section-gap);
+}
+
+/* Headline rhythm (works with A10) */
+.nb-about-who__title,
+.nb-about-diff__title,
+.nb-how__title,
+.nb-phil__title,
+.nb-fcta__title,
+.nb-hero__title{
+  margin: 0 0 clamp(8px, 1.2vw, 12px);
+}
+
+/* Motif guardrails (keep flourishes subtle & out of the way) */
+@media (max-width: 900px){
+  .nb-motif-top-right,
+  .nb-motif-bottom-left{ display:none; }
+}
+
+/* === A12 — Luxe accents & a11y === */
+
+/* Subtle inner gradient on panels (barely-there depth) */
+.nb-about-who > .nb-shell,
+.nb-about-diff > .nb-shell,
+.nb-about-how .nb-how__wrap,
+.nb-about-phil .nb-phil__wrap,
+.nb-about-founder .nb-founder__wrap,
+.nb-about-testimonials .nb-service-tbelt__panel,
+.nb-about-final-cta .nb-fcta__wrap{
+  position: relative;
+  isolation: isolate;
+}
+
+.nb-about-who > .nb-shell::before,
+.nb-about-diff > .nb-shell::before,
+.nb-about-how .nb-how__wrap::before,
+.nb-about-phil .nb-phil__wrap::before,
+.nb-about-founder .nb-founder__wrap::before,
+.nb-about-testimonials .nb-service-tbelt__panel::before,
+.nb-about-final-cta .nb-fcta__wrap::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  /* whisper-faint top highlight; keep ultra subtle */
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.00) 24%
+  );
+  z-index: -1;
+}
+
+/* Branded, visible focus ring for links & buttons */
+a.nb-cta,
+a.nb-link,
+button,
+[role="button"],
+.nb-tcarousel__btn{
+  outline: none;
+}
+a.nb-cta:focus-visible,
+a.nb-link:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+.nb-tcarousel__btn:focus-visible{
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px rgba(12,138,123,.55);
+  border-radius: 12px;
+}
+
+/* Hover lift stays classy */
+@media (hover:hover) and (pointer:fine){
+  .nb-about-diff__card:hover,
+  .nb-about-how .nb-how__item:hover,
+  .nb-about-phil .nb-phil__item:hover{
+    transform: translateY(-1px);
+  }
+}
+
+/* Reduced motion: pause marquee belt, tame smooth scroll */
+@media (prefers-reduced-motion: reduce){
+  .nb-trustbelt__track{ animation-play-state: paused !important; }
+  html:focus-within{ scroll-behavior: auto; }
+}
+
+/* Tighten kicker–title spacing a touch for consistency */
+.nb-kicker{ margin-bottom: 6px; }
