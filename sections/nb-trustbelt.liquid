@@ -1,25 +1,41 @@
 {% comment %}
-Section: nb-trustbelt
-Reusable trust belt/grid that wraps the global snippet `nb-trustbelt-core`.
-
-Settings:
-- heading (optional)
-- layout: belt | grid
-- items_text: newline-separated items
-- speed: marquee duration (belt only)
-- padding controls (optional)
+Section: nb-trustbelt (reusable)
+- Wraps the global snippet `nb-trustbelt-core`
+- Source can be:
+  1) Textarea (one item per line), or
+  2) A selected coaching_service metaobject's `social_proof` field
 {% endcomment %}
 
 {% liquid
   assign _heading = section.settings.heading
+  assign _source  = section.settings.source | default: 'text'  # 'text' | 'service_metaobject'
   assign _layout  = section.settings.layout | default: 'belt'
-  assign _speed   = section.settings.speed | default: 22
+  assign _speed   = section.settings.speed  | default: 22
   assign _pad_t   = section.settings.pad_top | default: 0
   assign _pad_b   = section.settings.pad_bottom | default: 0
 
-  assign _raw     = section.settings.items_text | to_string
-  assign _lines   = _raw | split: newline
-  assign _items   = _lines
+  assign _items = nil
+
+  if _source == 'service_metaobject' and section.settings.service
+    assign svc = section.settings.service
+
+    # Pull newline or <br> separated 'social_proof' from the service metaobject
+    assign sp_raw  = svc.social_proof | append: ''
+    assign br_tag  = '<br class="nb-br">'
+    assign sp_html = sp_raw | newline_to_br
+    assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign sp_pipe = sp_norm | replace: br_tag, '|||'
+    assign _items  = sp_pipe | split: '|||'
+
+    # If no explicit layout chosen, inherit from service metaobject (grid/cards/belt)
+    if section.settings.layout == blank and svc.social_proof_layout
+      assign _layout = svc.social_proof_layout | downcase | strip
+    endif
+  else
+    # Textarea fallback: split by newline (Shopify needs '\n', not 'newline')
+    assign _raw   = section.settings.items_text | to_string
+    assign _items = _raw | split: '\n'
+  endif
 %}
 
 {% style %}
@@ -42,14 +58,27 @@ Settings:
   "name": "Trustbelt",
   "settings": [
     { "type": "text",  "id": "heading", "label": "Heading", "default": "Trusted by" },
-    { "type": "select","id": "layout",  "label": "Layout",  "default": "belt",
+
+    { "type": "select", "id": "source", "label": "Source", "default": "text",
+      "options": [
+        { "value": "text", "label": "Manual (textarea)" },
+        { "value": "service_metaobject", "label": "Service metaobject → social_proof" }
+      ]
+    },
+
+    { "type": "metaobject", "id": "service", "label": "Service (when using metaobject)", "metaobject_type": "coaching_service" },
+
+    { "type": "select", "id": "layout", "label": "Layout (optional override)", "default": "belt",
       "options": [
         { "value": "belt",  "label": "Belt (marquee)" },
         { "value": "grid",  "label": "Grid" }
       ]
     },
+
     { "type": "range","id": "speed","label": "Marquee speed (seconds, belt only)","min": 8, "max": 40, "step": 1, "default": 22 },
-    { "type": "textarea", "id": "items_text", "label": "Items (one per line)", "default": "Trusted by founders\nLoved by couples\nUsed by executives" },
+
+    { "type": "textarea", "id": "items_text", "label": "Items (one per line; used when Source = Manual)", "default": "Trusted by founders\nLoved by couples\nUsed by executives" },
+
     { "type": "header", "content": "Padding" },
     { "type": "range", "id": "pad_top",    "label": "Top (px)",    "min": 0, "max": 100, "step": 1, "default": 0 },
     { "type": "range", "id": "pad_bottom", "label": "Bottom (px)", "min": 0, "max": 100, "step": 1, "default": 0 }
