@@ -1,0 +1,90 @@
+/* === Nibana Visual Utilities (tokens, motifs, panels, motion) === */
+
+/* Tokens (fallbacks if vars missing) */
+:root{
+  --nb-mist: #F3FAF8;           /* soft mint */
+  --nb-ink:  #1F2C2A;           /* dark ink */
+  --nb-shadow-mint: 0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset;
+}
+
+/* Decorative motif container */
+.nb-motif{
+  position: absolute; pointer-events: none; user-select: none;
+  opacity: .08; filter: saturate(90%);
+}
+.nb-motif--tr{ top: -12px; right: -12px; width: 160px; height: auto; }
+@media (min-width: 900px){
+  .nb-motif--tr{ top: -18px; right: -18px; width: 220px; }
+  /* Lift motif above soft gradients/panels */
+.nb-motif--front{ z-index: 3; }
+}
+
+/* Icon-pipped list */
+.nb-list--icons{ list-style: none; padding-left: 0; margin: 0; }
+.nb-list--icons li{
+  display: flex; gap: 8px; align-items: flex-start;
+  margin: .45rem 0;
+}
+.nb-list--icons svg{ flex: 0 0 auto; margin-top: .15rem; }
+
+/* Slightly more airy cards */
+.nb-method__rte ul:first-of-type,
+.nb-method__rte ol:first-of-type{ gap: 14px; }
+
+.nb-method__rte ul:first-of-type > li,
+.nb-method__rte ol:first-of-type > li{
+  border-radius: 16px;              /* a touch rounder */
+  padding: .9rem 1.05rem .95rem 2.15rem;
+}
+
+/* Softer dot + halo */
+.nb-method__rte ul:first-of-type > li::before,
+.nb-method__rte ol:first-of-type > li::before{
+  width: 7px; height: 7px;
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--m-accent), #fff 88%);
+}
+
+/* Mobile: stack with comfy spacing */
+@media (max-width: 900px){
+  .nb-method__rte ul:first-of-type,
+  .nb-method__rte ol:first-of-type{ gap: 12px; }
+}
+
+/* Mint panel (soft, luxe) */
+.nb-panel--mint{
+  background: var(--nb-mist);
+  border-radius: 20px;
+  box-shadow: var(--nb-shadow-mint);
+}
+
+/* Duotone photo helper (keeps photos on-brand) */
+.nb-duotone{
+  position: relative;
+  isolation: isolate;
+}
+.nb-duotone::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(0deg, rgba(243,250,248,.28), rgba(243,250,248,.28));
+  mix-blend-mode: multiply; pointer-events:none;
+  border-radius: inherit;
+}
+
+/* Subtle in-view motion (respects reduced motion) */
+@media (prefers-reduced-motion: no-preference){
+  [data-anim]{ opacity:0; transform: translateY(8px); transition: opacity .22s ease, transform .22s ease; }
+  [data-anim].is-inview{ opacity:1; transform:none; }
+}
+
+/* Outcomes motif: soften + tuck to the corner */
+.nb-outcomes .nb-motif--tr{
+  opacity: .06;            /* lighter than global .08 */
+  right: -12px;
+  top:   -12px;
+  width: clamp(160px, 24vw, 280px);
+}
+
+@media (max-width: 900px){
+  .nb-outcomes .nb-motif--tr{
+    width: 180px;          /* slightly smaller on mobile */
+  }
+}
