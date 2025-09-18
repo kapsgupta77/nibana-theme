@@ -50,6 +50,24 @@
         "panel": true
       }
     },
+    "about_how_dYqUMP": {
+      "type": "about-how",
+      "name": "About—How we work",
+      "settings": {
+        "kicker": "How we work",
+        "heading": "A practical, embodied approach",
+        "intro_rich": "<p>Everything we do is designed to create durable change — steady nervous system, clearer choices, more aliveness.</p>",
+        "cols": "2",
+        "steps": "Identity reset | See who you are beyond roles and expectations.\nInner skills | Retrain attention, emotion, and energy with embodied practices.\nAligned action | Make clearer choices and move with less friction.\nPlay-based integration | Build a life that feels alive, meaningful, and sustainable.",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "/pages/book-a-call",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
     "about_founder_VAe8QJ": {
       "type": "about-founder",
       "name": "About—Founder Card",
@@ -140,6 +158,7 @@
     "about_who_mbCg3U",
     "trustbelt",
     "about_different_TFCzha",
+    "about_how_dYqUMP",
     "about_founder_VAe8QJ",
     "about_testimonials",
     "faq"
