@@ -17,13 +17,16 @@ Source can be:
   assign _items = nil
   assign _layout = 'belt'
 
-  if _source == 'service_metaobject' and section.settings.service
+    if _source == 'service_metaobject' and section.settings.service
     assign svc = section.settings.service
 
     assign sp_raw  = svc.social_proof | append: ''
     assign br_tag  = '<br class="nb-br">'
     assign sp_html = sp_raw | newline_to_br
-    assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+    assign sp_norm = sp_html
+      | replace: '<br />', br_tag
+      | replace: '<br/>',  br_tag
+      | replace: '<br>',   br_tag
     assign sp_pipe = sp_norm | replace: br_tag, '|||'
     assign _items  = sp_pipe | split: '|||'
 
