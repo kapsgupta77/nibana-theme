@@ -42,12 +42,32 @@
       "name": "About — What makes us different",
       "settings": {
         "color_scheme": "",
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "heading": "What makes us different",
         "intro": "<p>A few core principles guide how we work.</p>",
         "columns": "3",
         "items_text": "Embodied approach | We combine mind, body, and soul.\nIdentity work | We start at the level of who you are, not just habits.\nPractices that stick | Simple reps that compound into durable change.\nStraight, respectful conversations | No fluff. We go at the pace of truth.\nPlay as principle | We make room for joy and aliveness while we work.",
         "panel": true
+      }
+    },
+    "about_founder_VAe8QJ": {
+      "type": "about-founder",
+      "name": "About—Founder Card",
+      "settings": {
+        "kicker": "Founder",
+        "heading": "Why I do this",
+        "story_rich": "<p>I believe transformation sticks when it is embodied, playful and honest. My work is about helping you find that steadier system so clarity and aliveness become your norm.</p><p>Following a 15 year corporate career and an MBA from the University of Edinburgh, Kapil co-founded TurnON Britain, a company dedicated to personal growth. He spent 6 years living a very spiritually monastic lifestyle, full of practices based in connection and relating.</p><p>Kapil is a TEDx Speaker (‘<a href=\"https://youtu.be/sdTy9IZR87k\"><em><strong>Dare to be Sensitive</strong></em></a>”) and a co-author of the <span style=\"text-decoration:underline\">book</span>, <em><strong>“Being Fine: The other ‘F’ word men use”</strong></em>.</p><p>Brought up in an environment that valued “education, success, achievement, a good career, wealth, and family,” Kapil says he spent 15 years successfully striving towards them all, including a MBA and an 11 year relationship that ended in divorce, only to discover that he was “only happy on the surface while disconnected underneath.” </p>",
+        "name": "Kapil",
+        "role": "Founder & Coach",
+        "quote": "We go at the pace of truth—no fluff; with respect, play and real change.",
+        "photo": "shopify://shop_images/AJS_20190130_Kapil_0973-700x750_1.webp",
+        "image_side": "left",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "/pages/book-a-call",
+        "mint_bg": true,
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
       }
     },
     "about_testimonials": {
@@ -119,6 +139,7 @@
     "about_who_mbCg3U",
     "trustbelt",
     "about_different_TFCzha",
+    "about_founder_VAe8QJ",
     "about_testimonials",
     "faq"
   ]
