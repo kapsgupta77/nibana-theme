@@ -1,11 +1,20 @@
 {% comment %}
 About — Founder Card (compact story with image, quote, CTA)
-Reusable anywhere; supports mint panel + color scheme.
+Reusable anywhere; supports adjustable panel color + color scheme.
 {% endcomment %}
 
-<section class="nb-about-founder {% if section.settings.mint_bg %}tone-mist{% endif %} {{ section.settings.color_scheme }}">
+<section
+  id="nb-founder-{{ section.id }}"
+  class="nb-about-founder {{ section.settings.color_scheme }}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;"
+>
   <div class="nb-shell">
-    <div class="nb-founder__wrap {% if section.settings.image_side == 'right' %}is-image-right{% endif %}">
+    <div
+      class="nb-founder__wrap {% if section.settings.image_side == 'right' %}is-image-right{% endif %}"
+      {% if section.settings.mint_bg %}
+        style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};"
+      {% endif %}
+    >
       {% if section.settings.photo != blank %}
         <div class="nb-founder__media">
           {{ section.settings.photo | image_url: width: 800 | image_tag: class: 'nb-founder__img', alt: section.settings.name | escape }}
@@ -45,16 +54,14 @@ Reusable anywhere; supports mint panel + color scheme.
 
   <style>
     .nb-about-founder .nb-founder__wrap{
-      display:grid; gap: clamp(18px, 3vw, 36px);
+      display:grid;
+      gap: clamp(18px, 3vw, 36px);
       grid-template-columns: 1fr;
       align-items: center;
-      background: var(--nb-panel, transparent);
+      background: {% if section.settings.mint_bg %}var(--nb-panel-bg, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
       border-radius: 20px;
       padding: clamp(16px, 2.5vw, 28px);
       box-shadow: {% if section.settings.mint_bg %}0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset{% else %}none{% endif %};
-    }
-    .nb-about-founder.tone-mist .nb-founder__wrap{
-      background: var(--nb-mist, #F3FAF8);
     }
     .nb-about-founder .nb-founder__media{ order: 0; }
     .nb-about-founder .nb-founder__img{
@@ -100,7 +107,8 @@ Reusable anywhere; supports mint panel + color scheme.
     { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Book a 20-min free call" },
     { "type": "text", "id": "cta_link", "label": "CTA link", "default": "/pages/book-a-call" },
 
-    { "type": "checkbox", "id": "mint_bg", "label": "Mint panel background", "default": true },
+    { "type": "checkbox", "id": "mint_bg", "label": "Show panel background", "default": true },
+    { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
 
     { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
