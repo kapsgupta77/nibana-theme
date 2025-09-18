@@ -19,6 +19,14 @@
 .nb-motif--front{ z-index: 3; }
 }
 
+/* Icon-pipped list */
+.nb-list--icons{ list-style: none; padding-left: 0; margin: 0; }
+.nb-list--icons li{
+  display: flex; gap: 8px; align-items: flex-start;
+  margin: .45rem 0;
+}
+.nb-list--icons svg{ flex: 0 0 auto; margin-top: .15rem; }
+
 /* Mint panel (soft, luxe) */
 .nb-panel--mint{
   background: var(--nb-mist);
