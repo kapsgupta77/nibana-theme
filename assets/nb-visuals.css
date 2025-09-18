@@ -211,3 +211,39 @@
 .nb-about-final-cta{
   margin-block: clamp(20px, 5vw, 72px);
 }
+
+/* === A11 — About: rhythm, panel pad, motif guards === */
+
+/* Shared spacing variables (safe fallbacks) */
+:root{
+  --nb-section-gap: clamp(20px, 5vw, 72px);
+  --nb-panel-pad: clamp(18px, 2.4vw, 28px);
+}
+
+/* Section breathing room */
+.nb-about-hero,
+.nb-about-who,
+.nb-about-different,
+.nb-about-how,
+.nb-about-phil,
+.nb-about-founder,
+.nb-about-testimonials,
+.nb-about-final-cta{
+  margin-block: var(--nb-section-gap);
+}
+
+/* Headline rhythm (works with A10) */
+.nb-about-who__title,
+.nb-about-diff__title,
+.nb-how__title,
+.nb-phil__title,
+.nb-fcta__title,
+.nb-hero__title{
+  margin: 0 0 clamp(8px, 1.2vw, 12px);
+}
+
+/* Motif guardrails (keep flourishes subtle & out of the way) */
+@media (max-width: 900px){
+  .nb-motif-top-right,
+  .nb-motif-bottom-left{ display:none; }
+}
