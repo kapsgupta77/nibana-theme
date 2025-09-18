@@ -20,7 +20,7 @@ About — What makes us different (pillars grid, minimal-safe version)
   assign lines = with_delims | split: '|||'
 %}
 
-<section class="nb-about-diff color-scheme-{{ section.settings.color_scheme }}">
+<section class="nb-about-diff color-scheme-{{ section.settings.color_scheme }}" style="--nb-panel-bg: {{ section.settings.panel_color }};">
   <div
     class="nb-shell nb-about-diff__wrap{% if _panel %} nb-about-diff__panel{% endif %}"
     {% if _panel %}style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }}"{% endif %}
@@ -53,6 +53,16 @@ About — What makes us different (pillars grid, minimal-safe version)
       {% endfor %}
     </ul>
   </div>
+
+<style>
+  /* A11 — About—Different panel stays inset inside the shell */
+  .nb-about-diff > .nb-shell{
+    background: var(--nb-panel-bg, var(--nb-mist, #F3FAF8));
+    border-radius: 20px;
+    padding: var(--nb-panel-pad);
+  }
+</style>
+
 </section>
 
 <style>
