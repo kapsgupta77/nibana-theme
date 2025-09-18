@@ -1,9 +1,20 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "trustbelt": {
       "type": "nb-trustbelt",
       "settings": {
         "heading": "",
+        "source": "text",
+        "service": "",
         "layout": "belt",
         "speed": 22,
         "items_text": "Trusted by founders\nLoved by couples\nUsed by executives",
@@ -22,7 +33,48 @@
     },
     "faq": {
       "type": "nb-faq",
-      "settings": { }
+      "blocks": {
+        "item_keEX39": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        },
+        "item_rniacN": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        },
+        "item_naELRc": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "item_keEX39",
+        "item_rniacN",
+        "item_naELRc"
+      ],
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#223238",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
+        "emit_jsonld": true
+      }
     }
   },
   "order": [
