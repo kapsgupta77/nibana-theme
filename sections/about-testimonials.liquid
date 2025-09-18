@@ -1,5 +1,5 @@
 {% comment %}
-About — Testimonials
+About — Testimonials (inset)
 Thin wrapper around the shared 'nb-service-testimonials-belt' snippet
 so it can be added as a proper Section in the Theme Editor.
 
@@ -11,22 +11,31 @@ Defaults:
 {% endcomment %}
 
 {% liquid
-  assign _heading  = section.settings.heading  | default: 'What our clients say'
-  assign _limit    = section.settings.limit    | default: 6
-  assign _carousel = section.settings.carousel | default: true
-  assign _tag      = section.settings.tag_filter | default: 'All'
-  assign _mo_list = section.settings.mo_list
-  assign _service  = section.settings.service
+  assign _heading   = section.settings.heading    | default: 'What our clients say'
+  assign _limit     = section.settings.limit      | default: 6
+  assign _carousel  = section.settings.carousel   | default: true
+  assign _tag       = section.settings.tag_filter | default: 'All'
+  assign _mo_list   = section.settings.mo_list
+  assign _service   = section.settings.service
 %}
 
-{%- render 'nb-service-testimonials-belt',
-  heading: _heading,
-  tag_filter: _tag,
-  limit: _limit,
-  carousel: _carousel,
-  mo_list: _mo_list,
-  service: _service
--%}
+<section class="nb-about-testimonials color-scheme-{{ section.settings.color_scheme }}">
+  {%- render 'nb-service-testimonials-belt',
+    heading: _heading,
+    tag_filter: _tag,
+    limit: _limit,
+    carousel: _carousel,
+    mo_list: _mo_list,
+    service: _service
+  -%}
+</section>
+
+<style>
+  /* Keep the About version inset and consistent */
+  .nb-about-testimonials{ margin-block: clamp(20px, 5vw, 72px); }
+  /* Ensure no full-bleed background leaks from the wrapper itself */
+  .nb-about-testimonials{ background: transparent; }
+</style>
 
 {% schema %}
 {
@@ -35,9 +44,12 @@ Defaults:
     { "type": "text", "id": "heading", "label": "Heading", "default": "What our clients say" },
     { "type": "range", "id": "limit", "label": "Max items", "min": 1, "max": 12, "step": 1, "default": 6 },
     { "type": "checkbox", "id": "carousel", "label": "Enable slider", "default": true },
+
     { "type": "metaobject", "id": "service", "label": "Service (optional: use its testimonial list)", "metaobject_type": "coachingservice" },
     { "type": "metaobject_list", "id": "mo_list", "label": "Choose testimonials (optional)", "metaobject_type": "nb_testimonial" },
-    { "type": "text", "id": "tag_filter", "label": "Tag filter (comma-separated or 'All')", "default": "All" }
+    { "type": "text", "id": "tag_filter", "label": "Tag filter (comma-separated or 'All')", "default": "All" },
+
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
   ],
   "presets": [
     { "name": "About — Testimonials", "category": "Testimonials" }
