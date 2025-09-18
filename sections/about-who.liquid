@@ -24,7 +24,7 @@ About — Who we help
   assign lines = with_delims | split: '|||'
 %}
 
-<section class="nb-about-who color-scheme-{{ section.settings.color_scheme }}">
+<section class="nb-about-who color-scheme-{{ section.settings.color_scheme }}" style="--nb-panel-bg: {{ section.settings.panel_color }};">
   <div
     class="nb-shell nb-about-who__wrap{% if _panel %} nb-about-who__panel{% endif %}"
     data-anim
@@ -67,6 +67,17 @@ About — Who we help
       </div>
     {% endif %}
   </div>
+
+<style>
+  /* A11 — About—Who panel stays inset inside the shell */
+  .nb-about-who > .nb-shell{
+    background: var(--nb-panel-bg, var(--nb-mist, #F3FAF8));
+    border-radius: 20px;
+    padding: var(--nb-panel-pad);
+  }
+</style>
+
+
 </section>
 
 <style>
