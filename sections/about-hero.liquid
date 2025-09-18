@@ -7,14 +7,13 @@ About — Hero (calm intro band)
 
 <section
   id="nb-about-hero-{{ section.id }}"
-  class="nb-about-hero {{ section.settings.color_scheme }}"
-  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;"
+  class="nb-about-hero {{ section.settings.color_scheme }}{% if section.settings.full_bleed and section.settings.panel_on %} is-fullbleed{% endif %}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;{% if section.settings.panel_on %} --nb-hero-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};{% endif %}"
 >
   <div class="nb-shell">
     <div
-      class="nb-hero__wrap {% if section.settings.image_side == 'right' %}is-image-right{% endif %}"
-      {% if section.settings.panel_on %}style="--nb-hero-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};"{% endif %}
-    >
+  class="nb-hero__wrap {% if section.settings.image_side == 'right' %}is-image-right{% endif %}"
+>
       <div class="nb-hero__content">
         {% if section.settings.kicker != blank %}
           <p class="nb-kicker">{{ section.settings.kicker }}</p>
@@ -72,6 +71,19 @@ About — Hero (calm intro band)
       .nb-about-hero .nb-hero__wrap:not(.is-image-right) .nb-hero__media{ order: 0; }
       .nb-about-hero .nb-hero__wrap:not(.is-image-right) .nb-hero__content{ order: 1; }
     }
+
+/* Full-bleed background on the section root; content stays in .nb-shell */
+.nb-about-hero.is-fullbleed{
+  background: var(--nb-hero-bg, var(--nb-mist, #F3FAF8));
+}
+
+/* When full-bleed, the inner card loses its panel look */
+.nb-about-hero.is-fullbleed .nb-hero__wrap{
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
   </style>
 </section>
 
@@ -95,7 +107,7 @@ About — Hero (calm intro band)
 
     { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Book a 20-min free call" },
     { "type": "text", "id": "cta_link",  "label": "CTA link",  "default": "/pages/book-a-call" },
-
+    { "type": "checkbox", "id": "full_bleed", "label": "Full-bleed background", "default": true },
     { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": true },
     { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
