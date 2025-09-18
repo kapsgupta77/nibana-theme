@@ -150,3 +150,64 @@
 .nb-about-final-cta {
   margin-block: clamp(12px, 2.6vw, 28px);
 }
+
+/* === A10 — About: type scale & rhythm === */
+
+/* Headings */
+.nb-h1{
+  font-size: clamp(32px, 4.2vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-top: 0;
+}
+.nb-h2{
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.15;
+  margin-top: 0;
+}
+.nb-h3{
+  font-size: clamp(18px, 2.2vw, 20px);
+  line-height: 1.28;
+  margin-top: 0;
+}
+
+/* Kicker / eyebrow */
+.nb-kicker{
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 12.5px;
+  color: var(--nb-muted, #51615d);
+  margin: 0 0 8px;
+}
+
+/* Body rhythm */
+.nb-rte p{ font-size: clamp(16.5px, 1.2vw, 18px); line-height: 1.7; }
+.nb-rte p + p{ margin-top: .9em; }
+
+/* Section title spacing for About blocks */
+.nb-about-who__title,
+.nb-about-diff__title,
+.nb-how__title,
+.nb-phil__title,
+.nb-fcta__title,
+.nb-hero__title{
+  margin: 0 0 clamp(8px, 1.2vw, 12px);
+}
+
+/* Consistent gaps */
+.nb-about-diff__grid,
+.nb-how__grid,
+.nb-phil .nb-phil__list{
+  gap: clamp(14px, 2vw, 20px);
+}
+
+/* Section breathing room (overrides older values if any) */
+.nb-about-hero,
+.nb-about-who,
+.nb-about-diff,
+.nb-about-how,
+.nb-about-phil,
+.nb-about-founder,
+.nb-about-final-cta{
+  margin-block: clamp(20px, 5vw, 72px);
+}
