@@ -31,10 +31,17 @@ About — How we work (explainer)
         {% endif %}
       </header>
 
-      {% liquid
-        assign steps_html = section.settings.steps | default: '' | newline_to_br
-        assign step_lines = steps_html | split: '<br />'
-      %}
+     {% liquid
+  assign steps_raw = section.settings.steps | default: ''
+  assign norm = steps_raw | replace: '\r\n', '\n'
+  assign norm = norm | replace: '&#13;', ''
+  assign norm = norm | replace: '&#10;', '\n'
+  assign as_html = norm | newline_to_br
+  assign with_delims = as_html | replace: '<br />', '|||'
+  assign with_delims = with_delims | replace: '<br/>', '|||'
+  assign with_delims = with_delims | replace: '<br>', '|||'
+  assign step_lines = with_delims | split: '|||'
+%}
 
       {% if step_lines.size > 0 %}
         <div class="nb-how__grid" data-cols="{{ section.settings.cols }}">
