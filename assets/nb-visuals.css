@@ -43,3 +43,17 @@
   [data-anim]{ opacity:0; transform: translateY(8px); transition: opacity .22s ease, transform .22s ease; }
   [data-anim].is-inview{ opacity:1; transform:none; }
 }
+
+/* Outcomes motif: soften + tuck to the corner */
+.nb-outcomes .nb-motif--tr{
+  opacity: .06;            /* lighter than global .08 */
+  right: -12px;
+  top:   -12px;
+  width: clamp(160px, 24vw, 280px);
+}
+
+@media (max-width: 900px){
+  .nb-outcomes .nb-motif--tr{
+    width: 180px;          /* slightly smaller on mobile */
+  }
+}
