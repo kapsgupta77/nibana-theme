@@ -9,15 +9,16 @@
  */
 {
   "sections": {
-    "about_who": {
+    "about_who_mbCg3U": {
       "type": "about-who",
+      "name": "About — Who we help",
       "settings": {
         "heading": "Who we help",
         "intro": "<p>We partner with ambitious people who want a steadier nervous system, clearer choices, and more aliveness.</p>",
         "columns": "3",
         "items_text": "Founders | Scale without burning out\nExecutives | Lead with clarity and calm\nCouples | Rekindle intimacy and play\nCreators | Ship boldly without self-sabotage\nHigh-performers | Sustainable drive without the crash",
-        "cta_label": "",
-        "cta_link": "/pages/book-a-call",
+        "cta_label": "Book a 20-min free call",
+        "cta_link": "shopify://pages/book-a-call",
         "panel": true
       }
     },
@@ -40,6 +41,7 @@
         "heading": "What our clients say",
         "limit": 6,
         "carousel": true,
+        "service": "",
         "mo_list": [
           "tanuj-kalia",
           "christopher-thomas",
@@ -99,7 +101,7 @@
     }
   },
   "order": [
-    "about_who",
+    "about_who_mbCg3U",
     "trustbelt",
     "about_testimonials",
     "faq"
