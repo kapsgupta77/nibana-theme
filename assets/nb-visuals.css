@@ -247,3 +247,75 @@
   .nb-motif-top-right,
   .nb-motif-bottom-left{ display:none; }
 }
+
+/* === A12 — Luxe accents & a11y === */
+
+/* Subtle inner gradient on panels (barely-there depth) */
+.nb-about-who > .nb-shell,
+.nb-about-diff > .nb-shell,
+.nb-about-how .nb-how__wrap,
+.nb-about-phil .nb-phil__wrap,
+.nb-about-founder .nb-founder__wrap,
+.nb-about-testimonials .nb-service-tbelt__panel,
+.nb-about-final-cta .nb-fcta__wrap{
+  position: relative;
+  isolation: isolate;
+}
+
+.nb-about-who > .nb-shell::before,
+.nb-about-diff > .nb-shell::before,
+.nb-about-how .nb-how__wrap::before,
+.nb-about-phil .nb-phil__wrap::before,
+.nb-about-founder .nb-founder__wrap::before,
+.nb-about-testimonials .nb-service-tbelt__panel::before,
+.nb-about-final-cta .nb-fcta__wrap::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  /* whisper-faint top highlight; keep ultra subtle */
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.00) 24%
+  );
+  z-index: -1;
+}
+
+/* Branded, visible focus ring for links & buttons */
+a.nb-cta,
+a.nb-link,
+button,
+[role="button"],
+.nb-tcarousel__btn{
+  outline: none;
+}
+a.nb-cta:focus-visible,
+a.nb-link:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+.nb-tcarousel__btn:focus-visible{
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px rgba(12,138,123,.55);
+  border-radius: 12px;
+}
+
+/* Hover lift stays classy */
+@media (hover:hover) and (pointer:fine){
+  .nb-about-diff__card:hover,
+  .nb-about-how .nb-how__item:hover,
+  .nb-about-phil .nb-phil__item:hover{
+    transform: translateY(-1px);
+  }
+}
+
+/* Reduced motion: pause marquee belt, tame smooth scroll */
+@media (prefers-reduced-motion: reduce){
+  .nb-trustbelt__track{ animation-play-state: paused !important; }
+  html:focus-within{ scroll-behavior: auto; }
+}
+
+/* Tighten kicker–title spacing a touch for consistency */
+.nb-kicker{ margin-bottom: 6px; }
