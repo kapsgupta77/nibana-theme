@@ -13,19 +13,14 @@ About — Who we help
   assign _cta_label = section.settings.cta_label
   assign _cta_link  = section.settings.cta_link  | default: '/pages/book-a-call'
 
-  # Make textarea newlines consistent and split robustly
   assign raw_txt = section.settings.items_text | default: ''
   assign norm = raw_txt | replace: '\r\n', '\n'
-  assign norm = norm | replace: '&#13;', ''     # CR
-  assign norm = norm | replace: '&#10;', '\n'   # LF
-
-  # Convert to <br> and then swap <br> tags for a delimiter
+  assign norm = norm | replace: '&#13;', ''
+  assign norm = norm | replace: '&#10;', '\n'
   assign as_html = norm | newline_to_br
-  assign with_delims = as_html
-    | replace: '<br />', '|||'
-    | replace: '<br/>',  '|||'
-    | replace: '<br>',   '|||'
-
+  assign with_delims = as_html | replace: '<br />', '|||'
+  assign with_delims = with_delims | replace: '<br/>',  '|||'
+  assign with_delims = with_delims | replace: '<br>',   '|||'
   assign lines = with_delims | split: '|||'
 %}
 
