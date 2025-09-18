@@ -15,6 +15,8 @@
 .nb-motif--tr{ top: -12px; right: -12px; width: 160px; height: auto; }
 @media (min-width: 900px){
   .nb-motif--tr{ top: -18px; right: -18px; width: 220px; }
+  /* Lift motif above soft gradients/panels */
+.nb-motif--front{ z-index: 3; }
 }
 
 /* Mint panel (soft, luxe) */
