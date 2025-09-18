@@ -591,39 +591,8 @@
     assign sp_layout = service.social_proof_layout | downcase | strip
   -%}
 
-  {%- if sp_filled > 0 -%}
-    {%- if sp_layout == 'grid' or sp_layout == 'cards' -%}
-      <!-- GRID variant -->
-      <section class="nb-trustgrid">
-        <div class="nb-trustgrid__inner nb-shell">
-          <ul class="nb-trustgrid__list">
-            {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
-              <li class="nb-trustgrid__chip">
-                <span class="nb-trustgrid__tick" aria-hidden="true"></span>{{ sv }}
-              </li>
-            {% endif %}{%- endfor -%}
-          </ul>
-        </div>
-      </section>
-    {%- else -%}
-      <!-- BELT (marquee) variant -->
-      <section class="nb-trustbelt">
-        <div class="nb-trustbelt__inner nb-shell">
-          <div class="nb-trustbelt__viewport">
-            <div class="nb-trustbelt__track">
-              {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
-                <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
-              {% endif %}{%- endfor -%}
-              {%- comment -%} duplicate for seamless loop {%- endcomment -%}
-              {%- for s in sp -%}{%- assign sv = s | strip -%}{% if sv != '' %}
-                <span class="nb-trustbelt__chip"><i aria-hidden="true"></i>{{ sv }}</span>
-              {% endif %}{%- endfor -%}
-            </div>
-          </div>
-        </div>
-      </section>
-    {%- endif -%}
-  {%- endif -%}
+  {%- assign _layout = sp_layout | default: 'belt' -%}
+{%- render 'nb-trustbelt-core', items: sp, layout: _layout, speed: 22 -%}
 
 {%- comment -%} ---------- OUTCOMES (Impact Cards — toned tray) ---------- {%- endcomment -%}
 <style>
@@ -1581,6 +1550,7 @@
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
+
 
 
 
