@@ -34,10 +34,11 @@ Usage:
     .nb-trustbelt{ --nb-marquee-speed: {{ _speed }}s; }
     .nb-trustbelt__viewport{ overflow: hidden; }
     .nb-trustbelt__track{
-      display:flex; gap:14px; padding:12px 18px;
-      animation: nb-marquee var(--nb-marquee-speed, 22s) linear infinite;
-      will-change: transform;
-    }
+  display:flex; gap:14px; padding:12px 18px;
+  width: max-content;                 /* added */
+  animation: nb-marquee var(--nb-marquee-speed, 22s) linear infinite;
+  will-change: transform;
+}
     @keyframes nb-marquee{ from{ transform: translateX(0) } to{ transform: translateX(-50%) } }
     @media (prefers-reduced-motion: reduce){ .nb-trustbelt__track{ animation:none } }
 
@@ -70,7 +71,7 @@ Usage:
         <div class="nb-trustbelt__viewport">
           <div class="nb-trustbelt__track">
             {{ _chips }}
-            {{ _chips }} {# duplicate for seamless loop #}
+            {{ _chips }} {{ _chips }}
           </div>
         </div>
       {%- endif -%}
