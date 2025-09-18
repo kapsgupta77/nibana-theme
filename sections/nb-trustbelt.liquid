@@ -20,8 +20,9 @@ Source can be:
 if _source == 'service_metaobject' and section.settings.service
   assign svc = section.settings.service
 
-  assign sp_clean = svc.social_proof | append: '' | replace: '\r\n', '\n' | replace: '\r', '\n' | replace: '<br />', '\n' | replace: '<br/>', '\n' | replace: '<br>', '\n' | replace: '</p><p>', '\n' | replace: '<p>', '' | replace: '</p>', ''
-  assign _items = sp_clean | split: '\n'
+  assign sp_html = svc.social_proof | append: '' | newline_to_br
+  assign sp_pipe = sp_html | replace: '<br />', '|||' | replace: '<br/>', '|||' | replace: '<br>', '|||' | replace: '</p><p>', '|||' | replace: '<p>', '' | replace: '</p>', ''
+  assign _items  = sp_pipe | split: '|||'
 
   if _layout_choice == 'inherit' and svc.social_proof_layout
     assign _layout = svc.social_proof_layout | downcase | strip
