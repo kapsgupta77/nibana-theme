@@ -13,8 +13,8 @@
       "type": "nb-trustbelt",
       "settings": {
         "heading": "",
-        "source": "text",
-        "service": "",
+        "source": "service_metaobject",
+        "service": "transformational-life-coaching-helps-you-change-from-the-inside-out",
         "layout": "belt",
         "speed": 22,
         "items_text": "Trusted by founders\nLoved by couples\nUsed by executives",
