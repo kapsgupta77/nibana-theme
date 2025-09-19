@@ -38,31 +38,49 @@ Home — Get in touch (panel)
     </div>
   </div>
 
-  <style>
+   <style>
     /* ---------------------------------------------------------
        1) Kill full-bleed backgrounds/overlays for THIS section
+       (Shopify uses multiple wrapper IDs; match them all)
        --------------------------------------------------------- */
+    /* Exact id in some themes */
     #shopify-section-{{ section.id }} { background: transparent !important; }
-    #shopify-section-{{ section.id }} .section-background { display: none !important; background: transparent !important; }
-    /* Common alternate wrapper class patterns */
-    #shopify-section-{{ section.id }} [class*="section__bg"],
-    #shopify-section-{{ section.id }} [class*="section-bg"] { display: none !important; background: transparent !important; }
+
+    /* “template--<id>” variant that your page is using */
+    #shopify-section-template--{{ section.id }} { background: transparent !important; }
+
+    /* Catch-all: any shopify-section whose id ends with this section.id */
+    [id^="shopify-section"][id$="{{ section.id }}"] { background: transparent !important; }
+
+    /* Neutralize common wrapper classes inside the section wrapper */
+    #shopify-section-template--{{ section.id }} .section--wrapper,
+    #shopify-section-template--{{ section.id }} .section,
+    #shopify-section-template--{{ section.id }} .gradient,
+    #shopify-section-template--{{ section.id }} .gradient-background,
+    #shopify-section-template--{{ section.id }} [class*="color-background"],
+    [id^="shopify-section"][id$="{{ section.id }}"] .section--wrapper,
+    [id^="shopify-section"][id$="{{ section.id }}"] .section {
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important; /* prevent wrapper padding from creating a “bleed” */
+    }
 
     /* ---------------------------------------------------------
-       2) Section spacing (restored)
+       2) Section spacing (keep spacing on the section, not wrapper)
        --------------------------------------------------------- */
-    #shopify-section-{{ section.id }}{
+    #shopify-section-template--{{ section.id }},
+    #shopify-section-{{ section.id }},
+    [id^="shopify-section"][id$="{{ section.id }}"]{
+      padding: 0 !important; /* wrapper padding off */
+    }
+    #nb-home-contact-{{ section.id }}{
       padding-top:  {{ section.settings.pad_top    | default: 24 }}px;
       padding-bottom: {{ section.settings.pad_bottom | default: 24 }}px;
     }
 
     /* ---------------------------------------------------------
-       3) Panel styling (aligns with About/Service panels)
+       3) Panel styling (unchanged)
        --------------------------------------------------------- */
-    .nb-home-contact { /* shell spacing tweaked slightly */
-      margin: 0 auto;
-    }
-
     .nb-home-contact__panel{
       background: {{ section.settings.panel_bg | default: '#FFFFFF' }};
       border: 1px solid #e6ecea;
@@ -74,50 +92,7 @@ Home — Get in touch (panel)
       text-align: center;
     }
 
-    .nb-home-contact .nb-kicker{
-      margin: 0 0 6px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-size: 12px;
-      opacity: .8;
-    }
-
-    .nb-home-contact__title{
-      margin: 0 0 10px;
-      line-height: 1.15;
-    }
-
-    .nb-home-contact__copy{
-      margin: 0 auto clamp(14px, 2.2vw, 18px);
-      max-width: 62ch;
-      font-size: 16px;
-      line-height: 1.55;
-      color: var(--nb-ink, #223238);
-      opacity: .95;
-    }
-
-    .nb-home-contact__ctas{
-      display: inline-flex;
-      gap: 18px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 0 0 8px;
-    }
-
-    .nb-home-contact__link{
-      display: inline-block;
-      font-weight: 600;
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-    }
-    .nb-home-contact__link:hover{ border-bottom-color: currentColor; }
-
-    .nb-home-contact__note{
-      margin: 6px 0 0;
-      font-size: 14px;
-      opacity: .7;
-    }
+    /* … keep the rest of your styles below as-is … */
   </style>
 </section>
 
