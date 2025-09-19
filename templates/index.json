@@ -1425,12 +1425,13 @@
       "settings": {
         "kicker": "Get in touch",
         "heading": "Ready to talk?",
-        "copy": "If you're exploring coaching, start with a free 20-min call. Prefer to write? Use the Contact Us option to send us a note",
-        "btn_label": "Book a free 20-min call",
-        "btn_link": "/pages/book-a-call",
-        "contact_label": "Contact us",
-        "contact_link": "/pages/contact",
+        "copy_rich": "<p>If you’re exploring coaching, start with a free 20-min call. Prefer to write? We reply within 1–2 business days.</p>",
+        "cta_label": "Book a free 20-min call",
+        "cta_link": "/pages/book-a-call",
+        "alt_label": "Contact us",
+        "alt_link": "/pages/contact",
         "note": "We reply within 1–2 business days.",
+        "panel_bg": "#eef1ea",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
