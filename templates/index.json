@@ -1434,7 +1434,7 @@
         "panel_bg": "#eef1ea",
         "color_scheme": "",
         "pad_top": 30,
-        "pad_bottom": 0
+        "pad_bottom": 30
       }
     },
     "1753527043e61b2ee8": {
@@ -1493,6 +1493,7 @@
       "block_order": [
         "ai_gen_block_dd3e966_q4h9Lh"
       ],
+      "disabled": true,
       "custom_css": [
         "h2.ai-contact-form-title-aotrdsw1otgm4rljvvaigenblockdd3e966q4h9lh {color: #10636c;}",
         "button.ai-contact-form-button-aotrdsw1otgm4rljvvaigenblockdd3e966q4h9lh {background: #12656c; border-radius: 0;}",
