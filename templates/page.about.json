@@ -203,8 +203,8 @@
         "item_KBCjTy": {
           "type": "item",
           "settings": {
-            "q": "Your question here",
-            "a": "<p>Your answer text goes here.</p>",
+            "q": "Is the approach the same for Men’s, Relationship, and Executive Coaching?",
+            "a": "<p>The <strong>framework is shared</strong> (identity work, inner skills, repeatable practices, Life as Play) but <strong>application is bespoke</strong>: e.g., conflict repair and polarity for couples, boundaries and desire-lead life for leaders, or masculine-feminine dynamics and core-beliefs for men’s work.<br/></p><p></p>",
             "open": false
           }
         }
