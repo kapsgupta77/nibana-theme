@@ -23,7 +23,7 @@
         "cta_link": "/pages/book-a-call",
         "full_bleed": true,
         "panel_on": true,
-        "panel_color": "#dfdfdf",
+        "panel_color": "#eef1ea",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -94,7 +94,7 @@
       "settings": {
         "kicker": "Founder",
         "heading": "Why I do this",
-        "story_rich": "<p>I believe transformation sticks when it is embodied, playful and honest. My work is about helping you find that steadier system so clarity and aliveness become your norm.</p><p>Following a 15 year corporate career and an MBA from the University of Edinburgh, Kapil co-founded TurnON Britain, a company dedicated to personal growth. He spent 6 years living a very spiritually monastic lifestyle, full of practices based in connection and relating.</p><p>Kapil is a TEDx Speaker (‘<a href=\"https://youtu.be/sdTy9IZR87k\"><em><strong>Dare to be Sensitive</strong></em></a>”) and a co-author of the <span style=\"text-decoration:underline\">book</span>, <em><strong>“Being Fine: The other ‘F’ word men use”</strong></em>.</p><p>Brought up in an environment that valued “education, success, achievement, a good career, wealth, and family,” Kapil says he spent 15 years successfully striving towards them all, including a MBA and an 11 year relationship that ended in divorce, only to discover that he was “only happy on the surface while disconnected underneath.” </p>",
+        "story_rich": "<p>I believe transformation sticks when it is embodied, playful and honest. My work is about helping you find that steadier system so clarity and aliveness become your norm.</p><p>Following a 15 year corporate career and an MBA from the University of Edinburgh, I co-founded TurnON Britain, a company dedicated to personal growth. I spent 6 years living a very spiritually monastic lifestyle, full of practices based in connection and relating.</p><p>I am a TEDx Speaker (‘<a href=\"https://youtu.be/sdTy9IZR87k\"><em><strong>Dare to be Sensitive</strong></em></a>”) and a co-author of the <span style=\"text-decoration:underline\">book</span>, <em><strong>“Being Fine: The other ‘F’ word men use”</strong></em>.</p><p>Brought up in an environment that valued “education, success, achievement, a good career, wealth, and family,” I spent 15 years successfully striving towards them all, including a MBA and an 11 year relationship that ended in divorce, only to discover that I was only happy on the surface while disconnected underneath.<br/><br/>I committed myself to mastery of a new paradigm of relationships, which included how to be authentic, vulnerable, and in approval of the so-called negative aspects of my personality. </p><p>I love working with people on becoming self-aware, working with their shadow, creating ever-evolving relationships and lives fuelled by connection and desire.</p>",
         "name": "Kapil",
         "role": "Founder & Coach",
         "quote": "We go at the pace of truth—no fluff; with respect, play and real change.",
@@ -103,7 +103,7 @@
         "cta_label": "",
         "cta_link": "/pages/book-a-call",
         "mint_bg": true,
-        "panel_color": "#fafafa",
+        "panel_color": "#eef1ea",
         "color_scheme": "scheme-3",
         "pad_top": 0,
         "pad_bottom": 0
@@ -145,7 +145,8 @@
           "sandipan",
           "pallavi-s"
         ],
-        "tag_filter": ""
+        "tag_filter": "",
+        "color_scheme": ""
       }
     },
     "about_final_cta_tBWmz6": {
