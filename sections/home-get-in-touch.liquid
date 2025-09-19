@@ -1,52 +1,70 @@
 {% comment %}
-Home — Get in touch
-Panelized, non–full-bleed “ready to talk?” with primary CTA + secondary contact link.
-Uses nb-shell for page width, and a soft mint panel to match About/Service sections.
+Home — Get in touch (panel)
+- Stops full-bleed background for this section only
+- Panel with editable background color
+- Consistent with About/Service panel styling
 {% endcomment %}
 
-<section class="nb-home-contact {{ section.settings.color_scheme }}">
-  <div class="nb-shell">
+<section id="nb-home-contact-{{ section.id }}" class="nb-home-contact-wrap {{ section.settings.color_scheme }}">
+  <div class="nb-shell nb-home-contact">
     <div class="nb-home-contact__panel">
       {% if section.settings.kicker != blank %}
         <p class="nb-kicker">{{ section.settings.kicker }}</p>
       {% endif %}
 
-      <h2 class="nb-h2 nb-home-contact__title">{{ section.settings.heading }}</h2>
+      {% if section.settings.heading != blank %}
+        <h2 class="nb-h2 nb-home-contact__title">{{ section.settings.heading }}</h2>
+      {% endif %}
 
-      {% if section.settings.copy != blank %}
-        <p class="nb-home-contact__copy">{{ section.settings.copy }}</p>
+      {% if section.settings.copy_rich != blank %}
+        <div class="nb-home-contact__copy nb-rte">
+          {{ section.settings.copy_rich }}
+        </div>
       {% endif %}
 
       <div class="nb-home-contact__ctas">
-        {% if section.settings.btn_label != blank and section.settings.btn_link != blank %}
-          <a class="nb-cta nb-cta--xl" href="{{ section.settings.btn_link }}" data-cta="home-get-in-touch-primary">
-            {{ section.settings.btn_label }}
-          </a>
+        {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+          <a class="nb-cta" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>
         {% endif %}
-
-        {% if section.settings.contact_label != blank and section.settings.contact_link != blank %}
-          <a class="nb-home-contact__link" href="{{ section.settings.contact_link }}">
-            {{ section.settings.contact_label }}
-          </a>
+        {% if section.settings.alt_label != blank and section.settings.alt_link != blank %}
+          <a class="nb-home-contact__link" href="{{ section.settings.alt_link }}">{{ section.settings.alt_label }}</a>
         {% endif %}
       </div>
 
       {% if section.settings.note != blank %}
-        <p class="nb-home-contact__note">{{ section.settings.note }}</p>
+        <div class="nb-home-contact__note">{{ section.settings.note }}</div>
       {% endif %}
     </div>
   </div>
 
   <style>
-    /* Kill the wrapper's full-bleed background for this section only */
-    #shopify-section-{{ section.id }}{ background: transparent !important; }
-    #shopify-section-{{ section.id }} > .section-background{ display:none !important; }
+    /* =========================================================
+       Neutralize full-bleed wrapper ONLY for this section
+       (covers common wrapper patterns in OS 2.0 themes)
+       ========================================================= */
+    #shopify-section-{{ section.id }},
+    #shopify-section-{{ section.id }}.section-wrapper{
+      background: transparent !important;
+    }
+    #shopify-section-{{ section.id }} .section-background{
+      display: none !important;
+      background: transparent !important;
+    }
 
-    .nb-home-contact { padding-block: clamp(20px, 4vw, 36px); }
+    /* If some themes inject .section-background as a sibling before/after,
+       ensure our content isn’t overlapped by it. */
+    #shopify-section-{{ section.id }} > .section-background + *,
+    #shopify-section-{{ section.id }} > * + .section-background{
+      position: relative;
+    }
 
-    /* Panel matches About/Service vibe */
+    /* =========================================================
+       Panel styling (aligns with About/Service)
+       ========================================================= */
+    .nb-home-contact{ padding-block: clamp(20px, 4vw, 36px); }
+
     .nb-home-contact__panel{
-      background: var(--nb-mist, #F3FAF8);
+      background: {{ section.settings.panel_bg | default: '#F3FAF8' }};
       border: 1px solid #e6ecea;
       border-radius: 20px;
       box-shadow:
@@ -65,7 +83,7 @@ Uses nb-shell for page width, and a soft mint panel to match About/Service secti
     }
 
     .nb-home-contact__title{
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       line-height: 1.15;
     }
 
@@ -100,29 +118,34 @@ Uses nb-shell for page width, and a soft mint panel to match About/Service secti
       font-size: 14px;
       opacity: .7;
     }
+
+    /* Optional spacing controls (if the theme applies padding via section wrapper) */
+    #shopify-section-{{ section.id }}{ padding-top: {{ section.settings.pad_top | default: 0 }}px; padding-bottom: {{ section.settings.pad_bottom | default: 0 }}px; }
   </style>
 </section>
 
 {% schema %}
 {
   "name": "Home — Get in touch",
-  "class": "section-wrapper nb-home-contact-wrap",
+  "class": "section-wrapper nb-home-contact-outer",
   "settings": [
-    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Get in touch" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Ready to talk?" },
-    { "type": "textarea", "id": "copy", "label": "Intro", "default": "If you're exploring coaching, start with a free 20-min call. Prefer to write? We reply within 1–2 business days." },
+    { "type": "text",      "id": "kicker",     "label": "Kicker", "default": "Get in touch" },
+    { "type": "text",      "id": "heading",    "label": "Heading", "default": "Ready to talk?" },
+    { "type": "richtext",  "id": "copy_rich",  "label": "Intro", "default": "<p>If you’re exploring coaching, start with a free 20-min call. Prefer to write? We reply within 1–2 business days.</p>" },
 
-    { "type": "text", "id": "btn_label", "label": "Primary CTA label", "default": "Book a free 20-min call" },
-    { "type": "text", "id": "btn_link",  "label": "Primary CTA link",  "default": "/pages/book-a-call" },
+    { "type": "text",      "id": "cta_label",  "label": "Primary CTA label", "default": "Book a free 20-min call" },
+    { "type": "text",      "id": "cta_link",   "label": "Primary CTA link",  "default": "/pages/book-a-call" },
 
-    { "type": "text", "id": "contact_label", "label": "Secondary link label", "default": "Contact us" },
-    { "type": "text", "id": "contact_link",  "label": "Secondary link URL",  "default": "/pages/contact" },
+    { "type": "text",      "id": "alt_label",  "label": "Secondary link label", "default": "Contact us" },
+    { "type": "text",      "id": "alt_link",   "label": "Secondary link URL",  "default": "/pages/contact" },
 
-    { "type": "text", "id": "note", "label": "Response note", "default": "We reply within 1–2 business days." },
+    { "type": "text",      "id": "note",       "label": "Small note (optional)", "default": "We reply within 1–2 business days." },
 
+    { "type": "color",     "id": "panel_bg",   "label": "Panel background color", "default": "#F3FAF8" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
-    { "type": "range", "id": "pad_top", "label": "Top padding (px)", "min": 0, "max": 100, "step": 1, "default": 0, "unit": "px" },
-    { "type": "range", "id": "pad_bottom", "label": "Bottom padding (px)", "min": 0, "max": 100, "step": 1, "default": 0, "unit": "px" }
+
+    { "type": "range", "id": "pad_top",    "label": "Top padding",    "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
   ],
   "presets": [
     { "name": "Home — Get in touch" }
