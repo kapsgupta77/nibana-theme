@@ -38,6 +38,10 @@ Uses nb-shell for page width, and a soft mint panel to match About/Service secti
   </div>
 
   <style>
+    /* Kill the wrapper's full-bleed background for this section only */
+    #shopify-section-{{ section.id }}{ background: transparent !important; }
+    #shopify-section-{{ section.id }} > .section-background{ display:none !important; }
+
     .nb-home-contact { padding-block: clamp(20px, 4vw, 36px); }
 
     /* Panel matches About/Service vibe */
