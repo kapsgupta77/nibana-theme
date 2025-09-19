@@ -1,25 +1,20 @@
 {% comment %}
-Home — Get in touch (panel)
-- Neutralizes full-bleed wrapper/background for THIS section only
-- Centered panel (border + shadow) inside .nb-shell
-- Panel background color is editable (panel_bg)
-- Sensible default padding restored
+Home — Get in touch
+Card panel inside shell (not full bleed) with two CTAs.
 {% endcomment %}
 
-<section id="nb-home-contact-{{ section.id }}" class="nb-home-contact-wrap">
+<section id="nb-home-contact-{{ section.id }}" class="nb-home-contact-wrap {{ section.settings.color_scheme }}">
   <div class="nb-shell nb-home-contact">
     <div class="nb-home-contact__panel">
       {% if section.settings.kicker != blank %}
         <p class="nb-kicker">{{ section.settings.kicker }}</p>
       {% endif %}
 
-      {% if section.settings.heading != blank %}
-        <h2 class="nb-h2 nb-home-contact__title">{{ section.settings.heading }}</h2>
-      {% endif %}
+      <h2 class="nb-h2 nb-home-contact__title">{{ section.settings.title }}</h2>
 
-      {% if section.settings.copy_rich != blank %}
+      {% if section.settings.copy != blank %}
         <div class="nb-home-contact__copy nb-rte">
-          {{ section.settings.copy_rich }}
+          {{ section.settings.copy }}
         </div>
       {% endif %}
 
@@ -28,7 +23,7 @@ Home — Get in touch (panel)
           <a class="nb-cta" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>
         {% endif %}
         {% if section.settings.alt_label != blank and section.settings.alt_link != blank %}
-          <a class="nb-home-contact__link" href="{{ section.settings.alt_link }}">{{ section.settings.alt_label }}</a>
+          <a class="nb-link" href="{{ section.settings.alt_link }}">{{ section.settings.alt_label }}</a>
         {% endif %}
       </div>
 
@@ -38,49 +33,38 @@ Home — Get in touch (panel)
     </div>
   </div>
 
-   <style>
+  <style>
     /* ---------------------------------------------------------
-       1) Kill full-bleed backgrounds/overlays for THIS section
-       (Shopify uses multiple wrapper IDs; match them all)
+       Neutralize Shopify wrapper backgrounds for THIS section
+       (handles both wrapper id variants + common inner wrappers)
        --------------------------------------------------------- */
-    /* Exact id in some themes */
-    #shopify-section-{{ section.id }} { background: transparent !important; }
-
-    /* “template--<id>” variant that your page is using */
-    #shopify-section-template--{{ section.id }} { background: transparent !important; }
-
-    /* Catch-all: any shopify-section whose id ends with this section.id */
-    [id^="shopify-section"][id$="{{ section.id }}"] { background: transparent !important; }
-
-    /* Neutralize common wrapper classes inside the section wrapper */
+    #shopify-section-{{ section.id }},
+    #shopify-section-template--{{ section.id }},
+    [id^="shopify-section"][id$="{{ section.id }}"]{
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    #shopify-section-{{ section.id }} .section--wrapper,
     #shopify-section-template--{{ section.id }} .section--wrapper,
+    [id^="shopify-section"][id$="{{ section.id }}"] .section--wrapper,
+    #shopify-section-{{ section.id }} .section,
     #shopify-section-template--{{ section.id }} .section,
+    [id^="shopify-section"][id$="{{ section.id }}"] .section,
     #shopify-section-template--{{ section.id }} .gradient,
     #shopify-section-template--{{ section.id }} .gradient-background,
-    #shopify-section-template--{{ section.id }} [class*="color-background"],
-    [id^="shopify-section"][id$="{{ section.id }}"] .section--wrapper,
-    [id^="shopify-section"][id$="{{ section.id }}"] .section {
+    [id^="shopify-section"][id$="{{ section.id }}"] .gradient,
+    [id^="shopify-section"][id$="{{ section.id }}"] .gradient-background{
       background: transparent !important;
       box-shadow: none !important;
-      padding: 0 !important; /* prevent wrapper padding from creating a “bleed” */
     }
 
-    /* ---------------------------------------------------------
-       2) Section spacing (keep spacing on the section, not wrapper)
-       --------------------------------------------------------- */
-    #shopify-section-template--{{ section.id }},
-    #shopify-section-{{ section.id }},
-    [id^="shopify-section"][id$="{{ section.id }}"]{
-      padding: 0 !important; /* wrapper padding off */
-    }
+    /* Section spacing lives on the section itself */
     #nb-home-contact-{{ section.id }}{
-      padding-top:  {{ section.settings.pad_top    | default: 24 }}px;
+      padding-top:    {{ section.settings.pad_top    | default: 24 }}px;
       padding-bottom: {{ section.settings.pad_bottom | default: 24 }}px;
     }
 
-    /* ---------------------------------------------------------
-       3) Panel styling (unchanged)
-       --------------------------------------------------------- */
+    /* Panel card */
     .nb-home-contact__panel{
       background: {{ section.settings.panel_bg | default: '#FFFFFF' }};
       border: 1px solid #e6ecea;
@@ -92,32 +76,49 @@ Home — Get in touch (panel)
       text-align: center;
     }
 
-    /* … keep the rest of your styles below as-is … */
+    .nb-home-contact__title{ margin: 0 0 8px; }
+    .nb-home-contact__copy{ margin: 0 0 12px; }
+
+    .nb-home-contact__ctas{
+      display:flex; gap: 14px; justify-content:center; align-items:center;
+      flex-wrap: wrap; margin: 8px 0 6px;
+    }
+    .nb-home-contact__note{ opacity:.75; font-size:.92rem; }
+
+    /* Ensure the shell actually constrains width */
+    .nb-home-contact.nb-shell{
+      max-width: var(--narrow-page-width, 1120px);
+      margin-inline: auto;
+      padding-inline: 20px;
+    }
   </style>
 </section>
 
 {% schema %}
 {
   "name": "Home — Get in touch",
-  "class": "section-wrapper nb-home-contact-outer",
+  "class": "section-wrapper nb-home-contact-wrap",
   "settings": [
-    { "type": "text",     "id": "kicker",    "label": "Kicker",  "default": "Get in touch" },
-    { "type": "text",     "id": "heading",   "label": "Heading", "default": "Ready to talk?" },
-    { "type": "richtext", "id": "copy_rich", "label": "Intro",   "default": "<p>If you’re exploring coaching, start with a free 20-min call. Prefer to write? We reply within 1–2 business days.</p>" },
+    { "type": "text",     "id": "kicker",     "label": "Kicker", "default": "Get in touch" },
+    { "type": "text",     "id": "title",      "label": "Heading", "default": "Ready to talk?" },
+    { "type": "richtext", "id": "copy",       "label": "Copy", "default": "<p>If you’re exploring coaching, start with a free 20-min call. Prefer to write? We reply within 1–2 business days.</p>" },
 
-    { "type": "text",     "id": "cta_label", "label": "Primary CTA label", "default": "Book a free 20-min call" },
-    { "type": "text",     "id": "cta_link",  "label": "Primary CTA link",  "default": "/pages/book-a-call" },
+    { "type": "text", "id": "cta_label", "label": "Primary CTA label", "default": "Book a free 20-min call" },
+    { "type": "text", "id": "cta_link",  "label": "Primary CTA link",  "default": "/pages/book-a-call" },
 
-    { "type": "text",     "id": "alt_label", "label": "Secondary link label", "default": "Contact us" },
-    { "type": "text",     "id": "alt_link",  "label": "Secondary link URL",   "default": "/pages/contact" },
+    { "type": "text", "id": "alt_label", "label": "Secondary link label", "default": "Contact us" },
+    { "type": "text", "id": "alt_link",  "label": "Secondary link",       "default": "/pages/contact" },
 
-    { "type": "text",     "id": "note",      "label": "Small note (optional)", "default": "We reply within 1–2 business days." },
+    { "type": "text", "id": "note", "label": "Small note", "default": "We reply within 1–2 business days." },
 
-    { "type": "color",    "id": "panel_bg",  "label": "Panel background color", "default": "#FFFFFF" },
+    { "type": "color", "id": "panel_bg", "label": "Panel background", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
 
     { "type": "range", "id": "pad_top",    "label": "Top padding",    "min": 0, "max": 100, "step": 1, "unit": "px", "default": 24 },
     { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 24 }
   ],
-  "presets": [{ "name": "Home — Get in touch" }]
+  "presets": [
+    { "name": "Home — Get in touch" }
+  ]
 }
 {% endschema %}
