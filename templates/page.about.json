@@ -195,8 +195,8 @@
         "item_arPx9N": {
           "type": "item",
           "settings": {
-            "q": "Your question here",
-            "a": "<p>Your answer text goes here.</p>",
+            "q": "How do we measure progress?",
+            "a": "<p>We define outcomes up front and track them with short check-ins and specific behaviours. Expect qualitative shifts in weeks and compounding results over a few months.<br/></p><p></p>",
             "open": false
           }
         },
