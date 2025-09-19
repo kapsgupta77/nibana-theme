@@ -215,6 +215,14 @@
             "a": "<p>You’ll work directly with Kapil (Founder & Coach). We keep a small, high-touch roster; at times there’s a short waitlist. If timing matters, <strong>contact us</strong> and we’ll share current availability.<br/></p><p></p>",
             "open": false
           }
+        },
+        "item_XKE4M9": {
+          "type": "item",
+          "settings": {
+            "q": "Do you run workshops for teams or private groups?",
+            "a": "<p>Yes. We deliver focused workshops (attention & energy management, difficult conversations, embodied leadership) and private intensives for couples or founders. <strong>Get in touch</strong> with your context and desired outcome.<br/></p><p></p>",
+            "open": false
+          }
         }
       },
       "block_order": [
@@ -223,7 +231,8 @@
         "item_naELRc",
         "item_arPx9N",
         "item_KBCjTy",
-        "item_7y6eDq"
+        "item_7y6eDq",
+        "item_XKE4M9"
       ],
       "settings": {
         "title": "Frequently asked questions",
