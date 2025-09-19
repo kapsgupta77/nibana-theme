@@ -179,8 +179,8 @@
         "item_rniacN": {
           "type": "item",
           "settings": {
-            "q": "Your question here",
-            "a": "<p>Your answer text goes here.</p>",
+            "q": "Who is Nibana a great fit for - and who isn’t?",
+            "a": "<p>Great fit: founders, leaders, managers, creatives, and couples who are ready to do real work, try practices between sessions, and want change that lasts.<br/>Not a fit: if you want quick hacks without personal responsibility, or you’re seeking clinical treatment (we’ll refer you to the right support). If you’re unsure, <strong>book a free 20-min call</strong> to check fit.<br/></p><p></p>",
             "open": false
           }
         },
