@@ -1,0 +1,124 @@
+{% comment %}
+Home — Get in touch
+Card panel inside shell (not full bleed) with two CTAs.
+{% endcomment %}
+
+<section id="nb-home-contact-{{ section.id }}" class="nb-home-contact-wrap {{ section.settings.color_scheme }}">
+  <div class="nb-shell nb-home-contact">
+    <div class="nb-home-contact__panel">
+      {% if section.settings.kicker != blank %}
+        <p class="nb-kicker">{{ section.settings.kicker }}</p>
+      {% endif %}
+
+      <h2 class="nb-h2 nb-home-contact__title">{{ section.settings.title }}</h2>
+
+      {% if section.settings.copy != blank %}
+        <div class="nb-home-contact__copy nb-rte">
+          {{ section.settings.copy }}
+        </div>
+      {% endif %}
+
+      <div class="nb-home-contact__ctas">
+        {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+          <a class="nb-cta" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>
+        {% endif %}
+        {% if section.settings.alt_label != blank and section.settings.alt_link != blank %}
+          <a class="nb-link" href="{{ section.settings.alt_link }}">{{ section.settings.alt_label }}</a>
+        {% endif %}
+      </div>
+
+      {% if section.settings.note != blank %}
+        <div class="nb-home-contact__note">{{ section.settings.note }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    /* ---------------------------------------------------------
+       Neutralize Shopify wrapper backgrounds for THIS section
+       (handles both wrapper id variants + common inner wrappers)
+       --------------------------------------------------------- */
+    #shopify-section-{{ section.id }},
+    #shopify-section-template--{{ section.id }},
+    [id^="shopify-section"][id$="{{ section.id }}"]{
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    #shopify-section-{{ section.id }} .section--wrapper,
+    #shopify-section-template--{{ section.id }} .section--wrapper,
+    [id^="shopify-section"][id$="{{ section.id }}"] .section--wrapper,
+    #shopify-section-{{ section.id }} .section,
+    #shopify-section-template--{{ section.id }} .section,
+    [id^="shopify-section"][id$="{{ section.id }}"] .section,
+    #shopify-section-template--{{ section.id }} .gradient,
+    #shopify-section-template--{{ section.id }} .gradient-background,
+    [id^="shopify-section"][id$="{{ section.id }}"] .gradient,
+    [id^="shopify-section"][id$="{{ section.id }}"] .gradient-background{
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* Section spacing lives on the section itself */
+    #nb-home-contact-{{ section.id }}{
+      padding-top:    {{ section.settings.pad_top    | default: 24 }}px;
+      padding-bottom: {{ section.settings.pad_bottom | default: 24 }}px;
+    }
+
+    /* Panel card */
+    .nb-home-contact__panel{
+      background: {{ section.settings.panel_bg | default: '#FFFFFF' }};
+      border: 1px solid #e6ecea;
+      border-radius: 20px;
+      box-shadow:
+        0 10px 28px rgba(12,138,123,.08),
+        0 1px 0 rgba(255,255,255,.8) inset;
+      padding: clamp(18px, 3vw, 28px);
+      text-align: center;
+    }
+
+    .nb-home-contact__title{ margin: 0 0 8px; }
+    .nb-home-contact__copy{ margin: 0 0 12px; }
+
+    .nb-home-contact__ctas{
+      display:flex; gap: 14px; justify-content:center; align-items:center;
+      flex-wrap: wrap; margin: 8px 0 6px;
+    }
+    .nb-home-contact__note{ opacity:.75; font-size:.92rem; }
+
+    /* Ensure the shell actually constrains width */
+    .nb-home-contact.nb-shell{
+      max-width: var(--narrow-page-width, 1120px);
+      margin-inline: auto;
+      padding-inline: 20px;
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Home — Get in touch",
+  "class": "section-wrapper nb-home-contact-wrap",
+  "settings": [
+    { "type": "text",     "id": "kicker",     "label": "Kicker", "default": "Get in touch" },
+    { "type": "text",     "id": "title",      "label": "Heading", "default": "Ready to talk?" },
+    { "type": "richtext", "id": "copy",       "label": "Copy", "default": "<p>If you’re exploring coaching, start with a free 20-min call. Prefer to write? We reply within 1–2 business days.</p>" },
+
+    { "type": "text", "id": "cta_label", "label": "Primary CTA label", "default": "Book a free 20-min call" },
+    { "type": "text", "id": "cta_link",  "label": "Primary CTA link",  "default": "/pages/book-a-call" },
+
+    { "type": "text", "id": "alt_label", "label": "Secondary link label", "default": "Contact us" },
+    { "type": "text", "id": "alt_link",  "label": "Secondary link",       "default": "/pages/contact" },
+
+    { "type": "text", "id": "note", "label": "Small note", "default": "We reply within 1–2 business days." },
+
+    { "type": "color", "id": "panel_bg", "label": "Panel background", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "range", "id": "pad_top",    "label": "Top padding",    "min": 0, "max": 100, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 24 }
+  ],
+  "presets": [
+    { "name": "Home — Get in touch" }
+  ]
+}
+{% endschema %}

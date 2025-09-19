@@ -1419,6 +1419,24 @@
         "padding-block-end": 0
       }
     },
+    "home_get_in_touch_UfkN7V": {
+      "type": "home-get-in-touch",
+      "name": "Home — Get in Touch",
+      "settings": {
+        "kicker": "Get in touch",
+        "title": "Ready to talk?",
+        "copy": "<p>If you’re exploring coaching, start with a free 20-min call. Prefer to write? Use the Contact Us option below to drop us a note.</p>",
+        "cta_label": "Book a free 20-min call",
+        "cta_link": "/pages/book-a-call",
+        "alt_label": "Contact us",
+        "alt_link": "/pages/contact",
+        "note": "We reply within 1–2 business days.",
+        "panel_bg": "#eaf5f4",
+        "color_scheme": "",
+        "pad_top": 30,
+        "pad_bottom": 30
+      }
+    },
     "1753527043e61b2ee8": {
       "type": "_blocks",
       "blocks": {
@@ -1475,6 +1493,7 @@
       "block_order": [
         "ai_gen_block_dd3e966_q4h9Lh"
       ],
+      "disabled": true,
       "custom_css": [
         "h2.ai-contact-form-title-aotrdsw1otgm4rljvvaigenblockdd3e966q4h9lh {color: #10636c;}",
         "button.ai-contact-form-button-aotrdsw1otgm4rljvvaigenblockdd3e966q4h9lh {background: #12656c; border-radius: 0;}",
@@ -2042,6 +2061,7 @@
           "ariane-cole"
         ],
         "limit": 8,
+        "tag_filter": "All",
         "show_filter": false,
         "carousel": true,
         "per_view": 3,
@@ -2531,6 +2551,7 @@
     "1755606495da0d3cf5",
     "section_Nrd8zU",
     "17533784057e45a3fe",
+    "home_get_in_touch_UfkN7V",
     "1753527043e61b2ee8",
     "1753979999d0c4759e",
     "slideshow_tcyyT7",
