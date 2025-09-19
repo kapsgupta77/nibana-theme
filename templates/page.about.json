@@ -187,6 +187,22 @@
         "item_naELRc": {
           "type": "item",
           "settings": {
+            "q": "Do you work online, in person, or both?",
+            "a": "<p>Most coaching is on Zoom with clients across the UK, Europe, US and Asia. Limited in-person intensives and workshops are available by request. If time zones are tricky, we’ll find a cadence that works.<br/></p><p></p>",
+            "open": false
+          }
+        },
+        "item_arPx9N": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        },
+        "item_KBCjTy": {
+          "type": "item",
+          "settings": {
             "q": "Your question here",
             "a": "<p>Your answer text goes here.</p>",
             "open": false
@@ -196,7 +212,9 @@
       "block_order": [
         "item_keEX39",
         "item_rniacN",
-        "item_naELRc"
+        "item_naELRc",
+        "item_arPx9N",
+        "item_KBCjTy"
       ],
       "settings": {
         "title": "Frequently asked questions",
