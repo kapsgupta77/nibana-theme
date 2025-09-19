@@ -207,6 +207,14 @@
             "a": "<p>The <strong>framework is shared</strong> (identity work, inner skills, repeatable practices, Life as Play) but <strong>application is bespoke</strong>: e.g., conflict repair and polarity for couples, boundaries and desire-lead life for leaders, or masculine-feminine dynamics and core-beliefs for men’s work.<br/></p><p></p>",
             "open": false
           }
+        },
+        "item_7y6eDq": {
+          "type": "item",
+          "settings": {
+            "q": "Who will I work with? Is there a waitlist?",
+            "a": "<p>You’ll work directly with Kapil (Founder & Coach). We keep a small, high-touch roster; at times there’s a short waitlist. If timing matters, <strong>contact us</strong> and we’ll share current availability.<br/></p><p></p>",
+            "open": false
+          }
         }
       },
       "block_order": [
@@ -214,7 +222,8 @@
         "item_rniacN",
         "item_naELRc",
         "item_arPx9N",
-        "item_KBCjTy"
+        "item_KBCjTy",
+        "item_7y6eDq"
       ],
       "settings": {
         "title": "Frequently asked questions",
