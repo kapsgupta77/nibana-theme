@@ -5361,9 +5361,9 @@ body.nb-typography{
 
 /* ========== Explainer + Challenges ========== */
 .nb-explainer{
-  padding: clamp(48px,6vw,96px) 0;
+  padding: clamp(48px,6vw,96px) clamp(18px,6vw,96px);
   border-radius: 18px;
-  background: var(--tone-bg, transparent);
+  background: var(--tone-bg, var(--nb-sage, #eaf4f3));
 }
 .nb-explainer.tone-white{ --tone-bg: var(--nb-white, #ffffff); }
 .nb-explainer.tone-pebble{ --tone-bg: var(--nb-pebble, #f5f6f4); }
@@ -5376,6 +5376,12 @@ body.nb-typography{
 .nb-explainer__hd{
   margin: 0 0 clamp(14px,2vw,18px);
   font-weight: 700;
+}
+.nb-explainer__panel{
+  background: var(--nb-white, #ffffff);
+  border-radius: var(--nb-radius-lg);
+  box-shadow: var(--nb-shadow-1);
+  padding: clamp(24px,3vw,40px);
 }
 .nb-explainer__grid{
   display: grid;
