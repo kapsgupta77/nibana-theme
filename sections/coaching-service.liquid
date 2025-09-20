@@ -718,7 +718,8 @@
       <h2 class="nb-explainer__hd">{{ ex_title }}</h2>
     {%- endif -%}
 
-    <div class="nb-explainer__grid {% if has_points %}nb-explainer--two{% else %}nb-explainer--one{% endif %}">
+    <div class="nb-explainer__panel">
+      <div class="nb-explainer__grid {% if has_points %}nb-explainer--two{% else %}nb-explainer--one{% endif %}">
       <div class="nb-explainer__col nb-explainer__col--left">
         {%- if ex_rich != blank -%}
           <div class="nb-explainer__body rte">
@@ -746,6 +747,7 @@
         {%- endif -%}
       </aside>
       {%- endif -%}
+      </div>
     </div>
   </div>
 </section>
