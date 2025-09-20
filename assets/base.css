@@ -5382,7 +5382,7 @@ body.nb-typography{
 
 /* shell + heading */
 .nb-explainer__wrap{
-  max-width: var(--nb-shell, 1180px);
+  max-width: min(var(--nb-shell, 1180px), var(--nb-shell-w, 94vw));
   margin: 0 auto;
   padding: 0 clamp(16px,2vw,28px);
 }
