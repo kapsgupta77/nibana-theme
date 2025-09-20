@@ -742,7 +742,7 @@
           {%- endfor -%}
         </ul>
 
-        {%- if ex_points.size >= 4 -%}
+        {%- if section.settings.show_loop_diagram and ex_points.size >= 4 -%}
           {%- render 'nb-loop-diagram' -%}
         {%- endif -%}
       </aside>
@@ -1465,6 +1465,12 @@
       "label": "Challenges heading",
       "default": "Common challenges this addresses"
     },
+    {
+      "type": "checkbox",
+      "id": "show_loop_diagram",
+      "label": "Show loop diagram",
+      "default": false
+    }
   ],
   "blocks": [],
   "presets": [
