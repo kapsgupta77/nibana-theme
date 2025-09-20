@@ -5359,45 +5359,66 @@ body.nb-typography{
   padding-top: 12px;
 }
 
-/* ========== Explainer + Challenges ========== */
+/* ========== Explainer + Challenges (V2 polish) ========== */
 .nb-explainer{
-  padding: clamp(48px,6vw,96px) clamp(18px,6vw,96px);
-  border-radius: 18px;
+  /* bigger outer air, consistent with service hero rhythm */
+  padding: clamp(56px,7vw,112px) clamp(18px,6vw,96px);
+  border-radius: 22px;
   background: var(--tone-bg, var(--nb-sage, #eaf4f3));
+  position: relative;
 }
+
+/* optional tones (explicit) */
 .nb-explainer.tone-white{ --tone-bg: var(--nb-white, #ffffff); }
 .nb-explainer.tone-pebble{ --tone-bg: var(--nb-pebble, #f5f6f4); }
 .nb-explainer.tone-sage{ --tone-bg: var(--nb-sage, #eaf4f3); }
+
+/* shell + heading */
 .nb-explainer__wrap{
   max-width: var(--nb-shell, 1180px);
   margin: 0 auto;
   padding: 0 clamp(16px,2vw,28px);
 }
 .nb-explainer__hd{
-  margin: 0 0 clamp(14px,2vw,18px);
-  font-weight: 700;
+  margin: 0 0 clamp(16px,2.4vw,22px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--nb-ink, #2f3e48);
 }
+
+/* inner card panel */
 .nb-explainer__panel{
   background: var(--nb-white, #ffffff);
-  border-radius: var(--nb-radius-lg);
-  box-shadow: var(--nb-shadow-1);
-  padding: clamp(24px,3vw,40px);
+  border: 1px solid color-mix(in oklab, var(--nb-ink, #2f3e48), #fff 90%);
+  border-radius: var(--nb-radius-lg, 20px);
+  box-shadow: var(--nb-shadow-1, 0 10px 28px rgba(0,0,0,.06));
+  padding: clamp(22px,2.8vw,34px);
 }
+
+/* grid */
 .nb-explainer__grid{
   display: grid;
   gap: clamp(18px,2.2vw,28px);
 }
 .nb-explainer--two{ grid-template-columns: 1.25fr 0.75fr; }
 .nb-explainer--one{ grid-template-columns: 1fr; }
-@media (max-width: 860px){
+@media (max-width: 1024px){
   .nb-explainer--two{ grid-template-columns: 1fr; }
 }
+
+/* copy */
 .nb-explainer__body p{ margin: 0 0 12px; }
+.nb-explainer__body p:last-child{ margin-bottom: 0; }
+
+/* right column header */
 .nb-explainer__subhd{
-  font-size: clamp(16px,1.5vw,18px);
+  font-size: clamp(15px,1.5vw,18px);
   margin: 2px 0 10px;
   font-weight: 700;
+  color: var(--nb-ink, #2f3e48);
 }
+
+/* list */
 .nb-explainer__list{
   display: grid;
   gap: 10px;
@@ -5405,18 +5426,35 @@ body.nb-typography{
   padding: 0;
   list-style: none;
 }
+
+/* bullet → refined “tick-dot” with better alignment */
 .nb-explainer__item{
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: start;
+  gap: 10px;
 }
 .nb-explainer__icon{
-  width: 18px; height: 18px; flex: 0 0 18px;
+  width: 18px; height: 18px;
   border-radius: 6px;
-  background: color-mix(in oklab, var(--nb-ink), transparent 70%);
-  margin-right: 10px; margin-top: 3px;
+  background: color-mix(in oklab, var(--nb-ink, #2f3e48), transparent 75%);
+  position: relative;
+  margin-top: 2px;
 }
+.nb-explainer__icon::after{
+  content: "";
+  position: absolute; inset: 0;
+  -webkit-mask: radial-gradient(circle at 50% 50%, #000 52%, transparent 53%);
+          mask: radial-gradient(circle at 50% 50%, #000 52%, transparent 53%);
+  background: #fff;
+  opacity: .9;
+}
+.nb-explainer__text{ color: var(--nb-ink, #2f3e48); }
+
+/* optional loop diagram spacing */
 .nb-explainer__col--right .nb-loop{
   margin-top: clamp(12px,2vw,18px);
   opacity: .9;
+  max-width: 360px;
 }
 
