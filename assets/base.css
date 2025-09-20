@@ -5369,6 +5369,12 @@ body.nb-typography{
   position: relative;
 }
 
+@media (max-width: 600px){
+  .nb-explainer{ padding-inline: 12px; }
+  .nb-explainer__wrap{ padding-inline: 12px; }
+  .nb-explainer__col{ padding-inline: 14px; }
+}
+
 /* optional tones (explicit) */
 .nb-explainer.tone-white{ --tone-bg: var(--nb-white, #ffffff); }
 .nb-explainer.tone-pebble{ --tone-bg: var(--nb-pebble, #f5f6f4); }
