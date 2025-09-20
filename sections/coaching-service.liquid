@@ -704,7 +704,13 @@
 
 {%- assign ex_points_raw = service.explainer_points | newline_to_br -%}
 {%- assign ex_points = ex_points_raw | split: '<br />' | compact -%}
-{%- assign has_points = ex_points.size > 0 and ex_points[0] != '' -%}
+{%- assign has_points = false -%}
+{%- if ex_points.size > 0 -%}
+  {%- assign first_point = ex_points[0] | strip -%}
+  {%- if first_point != '' -%}
+    {%- assign has_points = true -%}
+  {%- endif -%}
+{%- endif -%}
 
 <section class="nb-explainer tone-pebble" id="nb-explainer-{{ section.id }}">
   <div class="nb-explainer__wrap">
