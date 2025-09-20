@@ -1,0 +1,66 @@
+/* Nibana coaching: mobile-safe shell + grid hard-resets */
+:root{
+  --nb-shell-pad: 16px;
+  --nb-shell-max: 1200px;
+  --nb-gap: 16px;
+}
+
+.nb-shell{
+  max-width: var(--nb-shell-max);
+  margin-inline: auto;
+  padding-inline: var(--nb-shell-pad);
+}
+
+.nb-grid{
+  display: grid;
+  gap: var(--nb-gap);
+}
+
+/* Mobile: force 1-col and kill leftover desktop widths */
+@media (max-width: 749.98px){
+  .nb-grid,
+  .nb-grid *{
+    box-sizing: border-box;
+  }
+
+  .grid,
+  .nb-grid{
+    grid-template-columns: 1fr !important;
+  }
+  .grid__item,
+  .nb-grid > *{
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  img, video, iframe{
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent 100vw overflow inside padded wrappers */
+  .full-bleed-media,
+  .nb-hero-media{
+    width: 100%;
+  }
+
+  html, body{
+    overflow-x: hidden;
+  }
+}
+
+/* Desktop upgrades */
+@media (min-width: 750px){
+  .nb-grid.cols-2{ grid-template-columns: repeat(2, 1fr); }
+  .nb-grid.cols-3{ grid-template-columns: repeat(3, 1fr); }
+  .nb-grid.cols-4{ grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Optional: slider safety if present on these sections */
+@media (max-width: 749.98px){
+  .nb-slider,
+  .nb-slider .slide{
+    min-width: 100% !important;
+  }
+}
