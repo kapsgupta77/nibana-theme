@@ -5389,21 +5389,34 @@ body.nb-typography{
 
 /* inner card panel */
 .nb-explainer__panel{
-  background: var(--nb-white, #ffffff);
-  border: 1px solid color-mix(in oklab, var(--nb-ink, #2f3e48), #fff 90%);
-  padding: clamp(22px,2.8vw,34px);
+  background: transparent;
+  border: 0;
+  padding: clamp(22px,2.8vw,34px) 0 0;
 }
 
 /* grid */
 .nb-explainer__grid{
   display: grid;
-  gap: clamp(18px,2.2vw,28px);
+  gap: clamp(20px,2.6vw,34px);
 }
 .nb-explainer--two{ grid-template-columns: 1.25fr 0.75fr; }
 .nb-explainer--one{ grid-template-columns: 1fr; }
 @media (max-width: 1024px){
   .nb-explainer--two{ grid-template-columns: 1fr; }
 }
+
+.nb-explainer__col{
+  background: var(--nb-white, #ffffff);
+  border-radius: clamp(18px, 2vw, 28px);
+  border: 1px solid color-mix(in oklab, var(--nb-ink, #2f3e48), #fff 88%);
+  box-shadow: 0 14px 34px rgba(16, 24, 40, 0.08);
+  padding: clamp(22px,2.6vw,32px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px,2vw,20px);
+}
+
+.nb-explainer__col--right{ align-self: start; }
 
 /* copy */
 .nb-explainer__body p{ margin: 0 0 12px; }
@@ -5412,7 +5425,7 @@ body.nb-typography{
 /* right column header */
 .nb-explainer__subhd{
   font-size: clamp(15px,1.5vw,18px);
-  margin: 2px 0 10px;
+  margin: 0;
   font-weight: 700;
   color: var(--nb-ink, #2f3e48);
 }
@@ -5420,7 +5433,7 @@ body.nb-typography{
 /* list */
 .nb-explainer__list{
   display: grid;
-  gap: 10px;
+  gap: clamp(10px,1.6vw,16px);
   margin: 0;
   padding: 0;
   list-style: none;
