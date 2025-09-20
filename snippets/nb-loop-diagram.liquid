@@ -1,0 +1,35 @@
+{%- comment -%} Slim loop diagram: Pressure → Perform → Numb → Repeat {%- endcomment -%}
+<svg class="nb-loop" viewBox="0 0 360 520" role="img" aria-label="Loop: Pressure, Perform, Numb, Repeat">
+  <defs>
+    <style>
+      .nbl-s { stroke: currentColor; stroke-width: 1; fill: none; }
+      .nbl-t { fill: currentColor; font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; opacity:.85; }
+    </style>
+  </defs>
+
+  <!-- Nodes -->
+  <circle class="nbl-s" cx="180" cy="60"  r="26"></circle>
+  <text class="nbl-t" x="180" y="60" text-anchor="middle" dominant-baseline="middle">Pressure</text>
+
+  <circle class="nbl-s" cx="300" cy="200" r="26"></circle>
+  <text class="nbl-t" x="300" y="200" text-anchor="middle" dominant-baseline="middle">Perform</text>
+
+  <circle class="nbl-s" cx="180" cy="340" r="26"></circle>
+  <text class="nbl-t" x="180" y="340" text-anchor="middle" dominant-baseline="middle">Numb</text>
+
+  <circle class="nbl-s" cx="60"  cy="200" r="26"></circle>
+  <text class="nbl-t" x="60"  y="200" text-anchor="middle" dominant-baseline="middle">Repeat</text>
+
+  <!-- Arrows -->
+  <path class="nbl-s" d="M200 78 C245 110, 270 140, 290 174"></path>
+  <polygon fill="currentColor" points="296,180 286,176 291,171"></polygon>
+
+  <path class="nbl-s" d="M282 220 C250 262, 220 300, 196 320"></path>
+  <polygon fill="currentColor" points="188,326 193,316 198,321"></polygon>
+
+  <path class="nbl-s" d="M160 322 C120 290, 95 260, 70 226"></path>
+  <polygon fill="currentColor" points="64,218 74,222 69,227"></polygon>
+
+  <path class="nbl-s" d="M78 182 C108 140, 140 110, 164 90"></path>
+  <polygon fill="currentColor" points="172,84 167,94 162,89"></polygon>
+</svg>
