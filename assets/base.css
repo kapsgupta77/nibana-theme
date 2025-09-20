@@ -5362,7 +5362,9 @@ body.nb-typography{
 /* ========== Explainer + Challenges (V2 polish) ========== */
 .nb-explainer{
   /* bigger outer air, consistent with service hero rhythm */
-  padding: clamp(56px,7vw,112px) clamp(18px,6vw,96px);
+  padding: clamp(56px,7vw,112px) 0;
+  max-width: min(var(--nb-shell, 1180px), var(--nb-shell-w, 94vw));
+  margin-inline: auto;
   border-radius: 18px;
   box-shadow: 0 10px 26px rgba(0,0,0,.06);
   background: var(--tone-bg, var(--nb-sage, #eaf4f3));
@@ -5370,8 +5372,6 @@ body.nb-typography{
 }
 
 @media (max-width: 600px){
-  .nb-explainer{ padding-inline: 12px; }
-  .nb-explainer__wrap{ padding-inline: 12px; }
   .nb-explainer__col{ padding-inline: 14px; }
 }
 
@@ -5382,8 +5382,6 @@ body.nb-typography{
 
 /* shell + heading */
 .nb-explainer__wrap{
-  max-width: min(var(--nb-shell, 1180px), var(--nb-shell-w, 94vw));
-  margin: 0 auto;
   padding: 0 clamp(16px,2vw,28px);
 }
 .nb-explainer__hd{
