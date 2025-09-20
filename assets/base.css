@@ -5363,7 +5363,8 @@ body.nb-typography{
 .nb-explainer{
   /* bigger outer air, consistent with service hero rhythm */
   padding: clamp(56px,7vw,112px) clamp(18px,6vw,96px);
-  border-radius: 22px;
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(0,0,0,.06);
   background: var(--tone-bg, var(--nb-sage, #eaf4f3));
   position: relative;
 }
