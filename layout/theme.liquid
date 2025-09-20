@@ -54,6 +54,8 @@ DNS prefetch is cheap site-wide; preconnect opens TLS early where it matters.
     {{ content_for_header }}
   <meta name="google-site-verification" content="svWEU0CU65jKsUVlQILttsbFdiql4KZBKACoNfSB8gY" />
 
+{{ 'nb-coaching.css' | asset_url | stylesheet_tag }}
+
 {%- comment -%}
 NIBANA — Book-a-call JSON-LD (WebPage + Breadcrumb + FAQ)
 Place this block in theme.liquid before </head>.

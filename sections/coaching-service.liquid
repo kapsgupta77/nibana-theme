@@ -62,9 +62,6 @@
   color: var(--nb-deep);
 }
 
-  .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
-  .nb-grid{display:grid;gap:22px}
-
   .nb-h1,.nb-h2,.nb-h3{font-family:var(--font-heading-family,inherit);color:var(--nb-ink)}
   .nb-h1{font-size:clamp(30px,4.4vw,48px);line-height:1.1;margin:0 0 10px;font-weight:800}
   .nb-h2{font-size:clamp(22px,2.8vw,28px);font-weight:800;margin:0 0 6px}
@@ -486,38 +483,40 @@
 -%}
 
 <section class="{{ hero_classes }}" data-hero-flags="{{ flags_raw | strip }}">
-  <div class="nb-skit__inner">
-    <div class="nb-skit__copy">
-      {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
-      <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
-      {%- if service.hero_subheading != blank -%}<p class="nb-sub">{{ service.hero_subheading }}</p>{%- endif -%}
-      <div class="nb-skit__cta">
-  <a class="nb-cta nb-cta--xl"
-     href="{{ service.cta_link | default: '/pages/book-a-call' }}"
-     data-cta="service-hero-cta">
-    {{ service.cta_label | default: 'Book a free 20-min call' }}
-  </a>
-</div>
-    </div>
+  <div class="nb-shell">
+    <div class="nb-skit__inner">
+      <div class="nb-skit__copy">
+        {%- if service.kicker != blank -%}<p class="nb-eyebrow">{{ service.kicker }}</p>{%- endif -%}
+        <h1 class="nb-h1">{{ service.hero_heading | default: service.title | default: 'Transformational life coaching helps you change from the inside out.' }}</h1>
+        {%- if service.hero_subheading != blank -%}<p class="nb-sub">{{ service.hero_subheading }}</p>{%- endif -%}
+        <div class="nb-skit__cta">
+          <a class="nb-cta nb-cta--xl"
+             href="{{ service.cta_link | default: '/pages/book-a-call' }}"
+             data-cta="service-hero-cta">
+            {{ service.cta_label | default: 'Book a free 20-min call' }}
+          </a>
+        </div>
+      </div>
 
-    <div class="nb-skit__media">
-      <div class="nb-skit__frame">
-        <div class="nb-skit__mat">
-          {%- if vid_id != '' -%}
-            <button type="button" class="nb-video nb-video--lite" data-video="{{ vid_id }}" style="--poster:url('https://i.ytimg.com/vi/{{ vid_id }}/hqdefault.jpg')" aria-label="Play intro video">
-              <span class="nb-video__play" aria-hidden="true"></span>
-            </button>
-          {%- elsif service.hero_image -%}
-            {{ service.hero_image
-              | image_url: width: 1400
-              | image_tag:
-                alt: service.hero_heading | default: service.title,
-                sizes: "(max-width: 990px) 100vw, 640px",
-                widths: "700,1000,1400",
-                class: "nb-media-img" }}
-          {%- else -%}
-            <div class="nb-media-ph"></div>
-          {%- endif -%}
+      <div class="nb-skit__media">
+        <div class="nb-skit__frame">
+          <div class="nb-skit__mat">
+            {%- if vid_id != '' -%}
+              <button type="button" class="nb-video nb-video--lite" data-video="{{ vid_id }}" style="--poster:url('https://i.ytimg.com/vi/{{ vid_id }}/hqdefault.jpg')" aria-label="Play intro video">
+                <span class="nb-video__play" aria-hidden="true"></span>
+              </button>
+            {%- elsif service.hero_image -%}
+              {{ service.hero_image
+                | image_url: width: 1400
+                | image_tag:
+                  alt: service.hero_heading | default: service.title,
+                  sizes: "(max-width: 990px) 100vw, 640px",
+                  widths: "700,1000,1400",
+                  class: "nb-media-img" }}
+            {%- else -%}
+              <div class="nb-media-ph"></div>
+            {%- endif -%}
+          </div>
         </div>
       </div>
     </div>
@@ -562,7 +561,10 @@
 </script>
 
 {%- comment -%} ========= MAIN PAGE CONTENT ========= {%- endcomment -%}
-<section class="nb-shell nb-grid" data-coaching-service="{{ service.id | default: service.title | escape }}">
+<section data-coaching-service="{{ service.id | default: service.title | escape }}">
+
+  <div class="nb-shell">
+    <div class="nb-grid">
 
   {%- liquid
     assign btn_label = service.cta_label | default: 'Book a free 20-min call'
@@ -663,10 +665,10 @@
   /* ---- RHYTHM FIX: rely on the grid gap, not extra margins/padding ---- */
 
   /* remove outer margins on custom sections that sit inside .nb-grid */
-  .nb-shell.nb-grid > .nb-outcomes,
-  .nb-shell.nb-grid > .nb-if,
-  .nb-shell.nb-grid > .nb-method-lite,
-  .nb-shell.nb-grid > .nb-compare{
+  .nb-grid > .nb-outcomes,
+  .nb-grid > .nb-if,
+  .nb-grid > .nb-method-lite,
+  .nb-grid > .nb-compare{
     margin-top: 0 !important;
     margin-bottom: 0 !important;
   }
@@ -713,40 +715,42 @@
 {%- endif -%}
 
 <section class="nb-explainer tone-sage" id="nb-explainer-{{ section.id }}">
-  <div class="nb-explainer__wrap">
-    {%- if ex_title != blank -%}
-      <h2 class="nb-explainer__hd">{{ ex_title }}</h2>
-    {%- endif -%}
+  <div class="nb-shell">
+    <div class="nb-explainer__wrap">
+      {%- if ex_title != blank -%}
+        <h2 class="nb-explainer__hd">{{ ex_title }}</h2>
+      {%- endif -%}
 
-    <div class="nb-explainer__panel">
-      <div class="nb-explainer__grid {% if has_points %}nb-explainer--two{% else %}nb-explainer--one{% endif %}">
-        <div class="nb-explainer__col nb-explainer__col--left">
-          {%- if ex_rich != blank -%}
-            <div class="nb-explainer__body rte">
-              {{ ex_rich | metafield_tag }}
-            </div>
+      <div class="nb-explainer__panel">
+        <div class="nb-explainer__grid nb-grid{% if has_points %} cols-2{% endif %} {% if has_points %}nb-explainer--two{% else %}nb-explainer--one{% endif %}">
+          <div class="nb-explainer__col nb-explainer__col--left">
+            {%- if ex_rich != blank -%}
+              <div class="nb-explainer__body rte">
+                {{ ex_rich | metafield_tag }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- if has_points -%}
+            <aside class="nb-explainer__col nb-explainer__col--right" aria-label="Common challenges this addresses">
+              <h3 class="nb-explainer__subhd">{{ section.settings.explainer_points_heading }}</h3>
+              <ul class="nb-explainer__list" role="list">
+                {%- for p in ex_points -%}
+                  {%- if p != blank -%}
+                    <li class="nb-explainer__item">
+                      <span class="nb-explainer__icon" aria-hidden="true"></span>
+                      {{ p | strip }}
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+
+              {%- if section.settings.show_loop_diagram and ex_points.size >= 4 -%}
+                {%- render 'nb-loop-diagram' -%}
+              {%- endif -%}
+            </aside>
           {%- endif -%}
         </div>
-
-        {%- if has_points -%}
-          <aside class="nb-explainer__col nb-explainer__col--right" aria-label="Common challenges this addresses">
-            <h3 class="nb-explainer__subhd">{{ section.settings.explainer_points_heading }}</h3>
-            <ul class="nb-explainer__list" role="list">
-              {%- for p in ex_points -%}
-                {%- if p != blank -%}
-                  <li class="nb-explainer__item">
-                    <span class="nb-explainer__icon" aria-hidden="true"></span>
-                    {{ p | strip }}
-                  </li>
-                {%- endif -%}
-              {%- endfor -%}
-            </ul>
-
-            {%- if section.settings.show_loop_diagram and ex_points.size >= 4 -%}
-              {%- render 'nb-loop-diagram' -%}
-            {%- endif -%}
-          </aside>
-        {%- endif -%}
       </div>
     </div>
   </div>
@@ -784,15 +788,15 @@
 
     <div class="nb-outcomes__wrap">
       <h2 class="nb-h2 nb-outcomes__title">What you’ll get</h2>
-      <div class="nb-outcomes__grid" data-anim>
+      <div class="nb-outcomes__grid nb-grid cols-2" data-anim>
         {%- for item in outcomes -%}
           {%- assign it = item | strip -%}
           {%- if it != '' -%}<div class="nb-outcome">{{ it }}</div>{%- endif -%}
         {%- endfor -%}
       </div>
     </div>
-  </div>
-</section>
+    </div>
+  </section>
 {%- endif -%}
 
 {%- comment -%} IS THIS FOR YOU (Lux Text+Image) — parentheses-free conditions {%- endcomment -%}
@@ -940,7 +944,7 @@
 <section class="nb-if {{ if_tone_class }} {% if is_left_layout %}nb-if--left{% else %}nb-if--right{% endif %}">
   <div class="nb-shell">
     <div class="nb-if__wrap">
-      <div class="nb-if__grid">
+      <div class="nb-if__grid nb-grid cols-2">
         {%- if if_img and is_left_layout -%}
           <div class="nb-if__media">
             <div class="nb-if__frame">
@@ -1119,17 +1123,18 @@
 </style>
 
 <section class="nb-method-lite {{ method_tone_class }}">
-  <div class="nb-method__wrap">
-    <h2 class="nb-h2 nb-method__title">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
+  <div class="nb-shell">
+    <div class="nb-method__wrap">
+      <h2 class="nb-h2 nb-method__title">{{ service.method_title | default: 'Nibana Self-Mastery Framework' }}</h2>
 
-    {%- if service.method_richtext -%}
-      <div class="nb-rte nb-method__rte">
-        {{ service.method_richtext | metafield_tag }}
-      </div>
-    {%- else -%}
-      {#-- Simple fallback if richtext is empty --#}
-      <div class="nb-method__rte">
-        <ul class="nb-list nb-list--icons" data-anim>
+      {%- if service.method_richtext -%}
+        <div class="nb-rte nb-method__rte">
+          {{ service.method_richtext | metafield_tag }}
+        </div>
+      {%- else -%}
+        {#-- Simple fallback if richtext is empty --#}
+        <div class="nb-method__rte">
+          <ul class="nb-list nb-list--icons" data-anim>
   <li>
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;"><path d="M20 6L9 17l-5-5" fill="none" stroke="#0C8A7B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <strong>Identity work</strong> — clarify who you are beneath roles and expectations.
@@ -1147,20 +1152,21 @@
     <strong>Life as Play</strong> — principles for a life that is meaningful and alive.
   </li>
 </ul>
-        <h3>How change becomes durable</h3>
-        <p>We pair insight with <em>embodied practices</em>—simple daily reps that re-train attention, emotion, and energy. Over weeks, these compound into a steadier nervous system and visible results at work and in relationships.</p>
-        <h3>Our vibe</h3>
-        <p>Straight, respectful conversations. No fluff. We go at the pace of truth—and we make room for play and mystery along the way.</p>
+          <h3>How change becomes durable</h3>
+          <p>We pair insight with <em>embodied practices</em>—simple daily reps that re-train attention, emotion, and energy. Over weeks, these compound into a steadier nervous system and visible results at work and in relationships.</p>
+          <h3>Our vibe</h3>
+          <p>Straight, respectful conversations. No fluff. We go at the pace of truth—and we make room for play and mystery along the way.</p>
+        </div>
+      {%- endif -%}
+
+      <!-- Mid-page CTA (below Method tray) -->
+      <div class="nb-midcta nb-midcta--method">
+        <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-mid-cta-method">
+          {{ btn_label }}
+        </a>
       </div>
-    {%- endif -%}
 
-    <!-- Mid-page CTA (below Method tray) -->
-    <div class="nb-midcta nb-midcta--method">
-      <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="service-mid-cta-method">
-        {{ btn_label }}
-      </a>
     </div>
-
   </div>
 </section>
 
@@ -1297,7 +1303,8 @@
 </style>
 
 <section class="nb-compare">
-  <div class="nb-compare__tray">
+  <div class="nb-shell">
+    <div class="nb-compare__tray">
     <h3 class="nb-h3 nb-compare__title">Common myths → What’s actually true</h3>
 
     {%- if pair_count > 0 -%}
@@ -1330,6 +1337,7 @@
         </div>
       </div>
     {%- endif -%}
+    </div>
   </div>
 </section>
 {%- endif -%}
@@ -1448,6 +1456,9 @@
 <div style="padding:10px 0 24px; display:flex; justify-content:center;">
   <a class="nb-cta nb-cta--xl" href="{{ btn_href }}" data-cta="book-call">{{ btn_label }}</a>
 </div>
+
+    </div>
+  </div>
 
 </section>
 
