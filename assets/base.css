@@ -5407,6 +5407,9 @@ body.nb-typography{
 }
 .nb-explainer--two{ grid-template-columns: 1.25fr 0.75fr; }
 .nb-explainer--one{ grid-template-columns: 1fr; }
+@media (max-width: 600px){
+  .nb-explainer__grid{ row-gap: clamp(32px,6vw,44px); }
+}
 @media (max-width: 1024px){
   .nb-explainer--two{ grid-template-columns: 1fr; }
 }
