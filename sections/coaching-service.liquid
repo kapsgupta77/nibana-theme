@@ -720,33 +720,33 @@
 
     <div class="nb-explainer__panel">
       <div class="nb-explainer__grid {% if has_points %}nb-explainer--two{% else %}nb-explainer--one{% endif %}">
-      <div class="nb-explainer__col nb-explainer__col--left">
-        {%- if ex_rich != blank -%}
-          <div class="nb-explainer__body rte">
-            {{ ex_rich | metafield_tag }}
-          </div>
-        {%- endif -%}
-      </div>
+        <div class="nb-explainer__col nb-explainer__col--left">
+          {%- if ex_rich != blank -%}
+            <div class="nb-explainer__body rte">
+              {{ ex_rich | metafield_tag }}
+            </div>
+          {%- endif -%}
+        </div>
 
-      {%- if has_points -%}
-      <aside class="nb-explainer__col nb-explainer__col--right" aria-label="Common challenges this addresses">
-        <h3 class="nb-explainer__subhd">{{ section.settings.explainer_points_heading }}</h3>
-        <ul class="nb-explainer__list" role="list">
-          {%- for p in ex_points -%}
-            {%- if p != blank -%}
-              <li class="nb-explainer__item">
-                <span class="nb-explainer__icon" aria-hidden="true"></span>
-                {{ p | strip }}
-              </li>
+        {%- if has_points -%}
+          <aside class="nb-explainer__col nb-explainer__col--right" aria-label="Common challenges this addresses">
+            <h3 class="nb-explainer__subhd">{{ section.settings.explainer_points_heading }}</h3>
+            <ul class="nb-explainer__list" role="list">
+              {%- for p in ex_points -%}
+                {%- if p != blank -%}
+                  <li class="nb-explainer__item">
+                    <span class="nb-explainer__icon" aria-hidden="true"></span>
+                    {{ p | strip }}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+
+            {%- if section.settings.show_loop_diagram and ex_points.size >= 4 -%}
+              {%- render 'nb-loop-diagram' -%}
             {%- endif -%}
-          {%- endfor -%}
-        </ul>
-
-        {%- if section.settings.show_loop_diagram and ex_points.size >= 4 -%}
-          {%- render 'nb-loop-diagram' -%}
+          </aside>
         {%- endif -%}
-      </aside>
-      {%- endif -%}
       </div>
     </div>
   </div>
