@@ -722,7 +722,7 @@
       <div class="nb-explainer__col nb-explainer__col--left">
         {%- if ex_rich != blank -%}
           <div class="nb-explainer__body rte">
-            {{ ex_rich }}
+            {{ ex_rich | metafield_tag }}
           </div>
         {%- endif -%}
       </div>
