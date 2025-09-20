@@ -1270,6 +1270,65 @@
   {%- endif -%}
 {%- endfor -%}
 
+{%- liquid
+  assign challenge_raw = service.challenge_points | append: ''
+  assign challenge_clean = challenge_raw | replace: '\r', ''
+  assign challenge_lines = challenge_clean | split: '\n'
+  assign challenge_count = 0
+-%}
+{%- capture challenge_items -%}
+  {%- for line in challenge_lines -%}
+    {%- assign entry = line | strip -%}
+    {%- if entry != '' -%}
+      {%- assign heading = entry -%}
+      {%- assign body = '' -%}
+
+      {%- if entry contains ' — ' -%}
+        {%- assign heading = entry | split: ' — ' | first | strip -%}
+        {%- assign body = entry | remove_first: heading -%}
+        {%- assign body = body | remove_first: ' — ' | strip -%}
+      {%- elsif entry contains '—' -%}
+        {%- assign heading = entry | split: '—' | first | strip -%}
+        {%- assign body = entry | remove_first: heading -%}
+        {%- assign body = body | remove_first: '—' | strip -%}
+      {%- elsif entry contains ' - ' -%}
+        {%- assign heading = entry | split: ' - ' | first | strip -%}
+        {%- assign body = entry | remove_first: heading -%}
+        {%- assign body = body | remove_first: ' - ' | strip -%}
+      {%- elsif entry contains '-' -%}
+        {%- assign heading = entry | split: '-' | first | strip -%}
+        {%- assign body = entry | remove_first: heading -%}
+        {%- assign body = body | remove_first: '-' | strip -%}
+      {%- endif -%}
+
+      {%- if heading != '' -%}
+        {%- assign challenge_count = challenge_count | plus: 1 -%}
+        <div class="nb-ch__item">
+          <div class="nb-ch__hd">{{ heading | escape }}</div>
+          {%- if body != '' -%}
+            <div class="nb-ch__bd">{{ body | escape }}</div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if challenge_count > 0 -%}
+  <section class="nb-ch">
+    <div class="nb-ch__wrap">
+      <div class="nb-ch__grid">
+        <div class="nb-ch__list">
+          {{ challenge_items }}
+        </div>
+        <div class="nb-ch__viz">
+          {% render 'nb-loop-diagram' %}
+        </div>
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
 {%- endif -%}
 
  {%- comment -%} MYTHS / TRUTHS — Before → After compare rows {%- endcomment -%}
