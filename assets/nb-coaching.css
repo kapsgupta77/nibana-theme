@@ -64,3 +64,85 @@
     min-width: 100% !important;
   }
 }
+
+/* ===== Coaching template: nuclear anti-bleed (scoped) ===== */
+@media (max-width: 749.98px){
+  /* 1) Ensure every box participates in the same sizing model */
+  .nb-coaching, .nb-coaching *{
+    box-sizing: border-box;
+  }
+
+  /* 2) Kill Dawn's negative grid margins & padding that can stack with shells */
+  .nb-coaching .grid{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    grid-template-columns: 1fr !important; /* single column on mobile */
+  }
+  .nb-coaching .grid__item{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    min-width: 0 !important; /* crucial in flex/grids to prevent overflow */
+  }
+
+  /* 3) Any custom nb-grids: force 1-col and clamp children */
+  .nb-coaching .nb-grid{
+    grid-template-columns: 1fr !important;
+  }
+  .nb-coaching .nb-grid > *{
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* 4) Media safety: never exceed shell width */
+  .nb-coaching img,
+  .nb-coaching video,
+  .nb-coaching iframe,
+  .nb-coaching svg,
+  .nb-coaching .media,
+  .nb-coaching .media > *{
+    display: block;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto;
+  }
+
+  /* 5) Common culprit: 100vw or oversized calc() on inner wrappers */
+  .nb-coaching [style*="100vw"],
+  .nb-coaching .full-bleed-media,
+  .nb-coaching .nb-hero-media{
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* 6) Sliders/tracks: neutralise translate widths that overflow */
+  .nb-coaching .slider,
+  .nb-coaching .slider__track,
+  .nb-coaching .slider__slide{
+    width: 100% !important;
+    min-width: 100% !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+
+  /* 7) RTE content (lists, quotes) sometimes add extra indent that overflows in nested shells */
+  .nb-coaching .rte ul,
+  .nb-coaching .rte ol{
+    padding-left: 1.25rem;
+  }
+  .nb-coaching blockquote{
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* 8) Last resort: if anything still slips, clip-x for this template only */
+  .nb-coaching{
+    overflow-x: clip; /* modern safe alternative to hidden */
+  }
+}

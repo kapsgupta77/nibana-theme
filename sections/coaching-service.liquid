@@ -11,6 +11,7 @@
 
 {%- if service_ref and service_ref.value -%}
 {%- assign service = service_ref.value -%}
+<div class="nb-coaching">
 {%- comment -%} Gate for emitting FAQ JSON-LD (defaults to true) {%- endcomment -%}
 {%- assign emit_faq_json_ld = true -%}
 {%- if service.emit_faq_json_ld != nil -%}
@@ -1462,6 +1463,7 @@
 
 </section>
 
+</div>
 {%- else -%}
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
