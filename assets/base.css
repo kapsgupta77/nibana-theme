@@ -5359,3 +5359,55 @@ body.nb-typography{
   padding-top: 12px;
 }
 
+/* ========== Explainer + Challenges ========== */
+.nb-explainer{
+  padding: clamp(48px,6vw,96px) 0;
+  border-radius: 18px;
+  background: var(--nb-pebble);
+}
+.nb-explainer__wrap{
+  max-width: var(--nb-shell, 1180px);
+  margin: 0 auto;
+  padding: 0 clamp(16px,2vw,28px);
+}
+.nb-explainer__hd{
+  margin: 0 0 clamp(14px,2vw,18px);
+  font-weight: 700;
+}
+.nb-explainer__grid{
+  display: grid;
+  gap: clamp(18px,2.2vw,28px);
+}
+.nb-explainer--two{ grid-template-columns: 1.25fr 0.75fr; }
+.nb-explainer--one{ grid-template-columns: 1fr; }
+@media (max-width: 860px){
+  .nb-explainer--two{ grid-template-columns: 1fr; }
+}
+.nb-explainer__body p{ margin: 0 0 12px; }
+.nb-explainer__subhd{
+  font-size: clamp(16px,1.5vw,18px);
+  margin: 2px 0 10px;
+  font-weight: 700;
+}
+.nb-explainer__list{
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nb-explainer__item{
+  display: flex;
+  align-items: flex-start;
+}
+.nb-explainer__icon{
+  width: 18px; height: 18px; flex: 0 0 18px;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--nb-ink), transparent 70%);
+  margin-right: 10px; margin-top: 3px;
+}
+.nb-explainer__col--right .nb-loop{
+  margin-top: clamp(12px,2vw,18px);
+  opacity: .9;
+}
+
