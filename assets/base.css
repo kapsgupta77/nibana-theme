@@ -5359,3 +5359,121 @@ body.nb-typography{
   padding-top: 12px;
 }
 
+/* ========== Explainer + Challenges (V2 polish) ========== */
+.nb-explainer{
+  /* bigger outer air, consistent with service hero rhythm */
+  padding: clamp(56px,7vw,112px) 0;
+  max-width: min(var(--nb-shell, 1180px), var(--nb-shell-w, 94vw));
+  margin-inline: auto;
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(0,0,0,.06);
+  background: var(--tone-bg, var(--nb-sage, #eaf4f3));
+  position: relative;
+}
+
+@media (max-width: 600px){
+  .nb-explainer__col{ padding-inline: 14px; }
+}
+
+/* optional tones (explicit) */
+.nb-explainer.tone-white{ --tone-bg: var(--nb-white, #ffffff); }
+.nb-explainer.tone-pebble{ --tone-bg: var(--nb-pebble, #f5f6f4); }
+.nb-explainer.tone-sage{ --tone-bg: var(--nb-sage, #eaf4f3); }
+
+/* shell + heading */
+.nb-explainer__wrap{
+  padding: 0 clamp(16px,2vw,28px);
+}
+.nb-explainer__hd{
+  margin: 0 0 clamp(16px,2.4vw,22px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--nb-ink, #2f3e48);
+}
+
+/* inner card panel */
+.nb-explainer__panel{
+  background: transparent;
+  border: 0;
+  padding: clamp(22px,2.8vw,34px) 0 0;
+}
+
+/* grid */
+.nb-explainer__grid{
+  display: grid;
+  gap: clamp(20px,2.6vw,34px);
+}
+.nb-explainer--two{ grid-template-columns: 1.25fr 0.75fr; }
+.nb-explainer--one{ grid-template-columns: 1fr; }
+@media (max-width: 600px){
+  .nb-explainer__grid{ row-gap: clamp(32px,6vw,44px); }
+}
+@media (max-width: 1024px){
+  .nb-explainer--two{ grid-template-columns: 1fr; }
+}
+
+.nb-explainer__col{
+  background: var(--nb-white, #ffffff);
+  border-radius: clamp(18px, 2vw, 28px);
+  border: 1px solid color-mix(in oklab, var(--nb-ink, #2f3e48), #fff 88%);
+  box-shadow: 0 14px 34px rgba(16, 24, 40, 0.08);
+  padding: clamp(22px,2.6vw,32px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px,2vw,20px);
+}
+
+.nb-explainer__col--right{ align-self: start; }
+
+/* copy */
+.nb-explainer__body p{ margin: 0 0 12px; }
+.nb-explainer__body p:last-child{ margin-bottom: 0; }
+
+/* right column header */
+.nb-explainer__subhd{
+  font-size: clamp(15px,1.5vw,18px);
+  margin: 0;
+  font-weight: 700;
+  color: var(--nb-ink, #2f3e48);
+}
+
+/* list */
+.nb-explainer__list{
+  display: grid;
+  gap: clamp(10px,1.6vw,16px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* bullet → refined “tick-dot” with better alignment */
+.nb-explainer__item{
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: start;
+  gap: 10px;
+}
+.nb-explainer__icon{
+  width: 18px; height: 18px;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--nb-ink, #2f3e48), transparent 75%);
+  position: relative;
+  margin-top: 2px;
+}
+.nb-explainer__icon::after{
+  content: "";
+  position: absolute; inset: 0;
+  -webkit-mask: radial-gradient(circle at 50% 50%, #000 52%, transparent 53%);
+          mask: radial-gradient(circle at 50% 50%, #000 52%, transparent 53%);
+  background: #fff;
+  opacity: .9;
+}
+.nb-explainer__text{ color: var(--nb-ink, #2f3e48); }
+
+/* optional loop diagram spacing */
+.nb-explainer__col--right .nb-loop{
+  margin-top: clamp(12px,2vw,18px);
+  opacity: .9;
+  max-width: 360px;
+}
+
