@@ -62,7 +62,12 @@
   color: var(--nb-deep);
 }
 
-  .nb-shell{max-width:min(1160px,94vw);margin-inline:auto}
+  .nb-shell{
+    width:min(100%,1160px);
+    padding-inline:clamp(16px,4vw,24px);
+    box-sizing:border-box;
+    margin-inline:auto;
+  }
   .nb-grid{display:grid;gap:22px}
 
   .nb-h1,.nb-h2,.nb-h3{font-family:var(--font-heading-family,inherit);color:var(--nb-ink)}
@@ -679,8 +684,20 @@
 
   /* tighten mobile tray padding a bit */
   @media (max-width: 740px){
-    .nb-outcomes__wrap{ padding: 12px 12px !important; }
-    .nb-if .nb-if__wrap{ padding: 14px !important; }
+    .nb-outcomes__wrap{
+      padding-block:12px !important;
+      padding-inline:clamp(8px,3vw,12px) !important;
+    }
+    .nb-if .nb-if__wrap{
+      padding-block:14px !important;
+      padding-inline:clamp(8px,3vw,12px) !important;
+    }
+    .nb-explainer__wrap,
+    .nb-method-lite,
+    .nb-compare__tray,
+    .nb-faq--wrap{
+      padding-inline:clamp(8px,3vw,12px) !important;
+    }
   }
 
   /* slightly trim the trustbelt below the hero so rhythm matches */
