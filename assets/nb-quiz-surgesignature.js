@@ -51,29 +51,104 @@
         dl('quiz_result', { quiz: cfg.gaNamespace, style: style });
 
         const s = quiz.styles[style];
+
+        // ---- BEGIN Mailchimp Group IDs (REAL) ----
+        // Mailchimp Group Category "Lead Source" (checkboxes)
+        const MC_CAT_ID    = '78632';
+        const MC_INT_SURGE = '1'; // Surge Signature Quiz
+        const MC_INT_ACCEL = '2'; // Accelerator
+        const MC_INT_STABL = '4'; // Stabiliser
+        const MC_INT_DEFUS = '8'; // Defuser
+        // Map computed style -> interest ID
+        let styleInterest = '';
+        if (style === 'accelerator') styleInterest = MC_INT_ACCEL;
+        else if (style === 'stabilizer' || style === 'stabiliser') styleInterest = MC_INT_STABL;
+        else if (style === 'defuser') styleInterest = MC_INT_DEFUS;
+        // ---- END Mailchimp Group IDs ----
+
+        // Parse u & id from the Mailchimp action URL
+        const act = document.createElement('a');
+        act.href = cfg.mailchimpAction;
+        const params = new URLSearchParams(act.search);
+        const mc_u = params.get('u') || '';
+        const mc_id = params.get('id') || '';
+
+        // Build action URL with tag appended for redundancy
+        if (!params.has('tags')) {
+          params.append('tags', 'Surge Signature Quiz');
+        }
+        const actionWithParams = act.origin + act.pathname + '?' + params.toString();
+
         const emailForm = `
-          <form id="nb-quiz-sub" action="${cfg.mailchimpAction}" method="post" novalidate>
+          <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
             <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
             <h3 class="nb-quiz__result-title">${s.title}</h3>
             <p class="nb-quiz__summary">${s.summary}</p>
             <div class="nb-quiz__free-insight">Try this: ${s.practice_preview}</div>
+
             <div class="nb-quiz__gate">
-              <label for="nb-email">Get your full 2-page playbook by email:</label>
+              <label for="nb-fname">First name *</label>
+              <input id="nb-fname" type="text" name="FNAME" required placeholder="First">
+
+              <label for="nb-lname" style="margin-top:8px;">Last name *</label>
+              <input id="nb-lname" type="text" name="LNAME" required placeholder="Last">
+
+              <label for="nb-email" style="margin-top:8px;">Email *</label>
               <input id="nb-email" type="email" name="EMAIL" required placeholder="you@domain.com">
-              <input type="hidden" name="tags" value="Quiz: Surge Signature, Source: /surge-signature, Style: ${s.title}">
+
+              <label for="nb-phone" style="margin-top:8px;">Phone (optional)</label>
+              <input id="nb-phone" type="tel" name="PHONE" placeholder="+44 7700 900123">
+
+              <!-- Audience keys -->
+              <input type="hidden" name="u" value="${mc_u}">
+              <input type="hidden" name="id" value="${mc_id}">
+
+              <!-- Mailchimp Interest Group: always check "Surge Signature Quiz" -->
+              <input type="checkbox" name="group[${MC_CAT_ID}][${MC_INT_SURGE}]" value="1" checked hidden>
+
+              <!-- Mailchimp Interest Group: style-specific interest -->
+              ${styleInterest ? `<input type="checkbox" name="group[${MC_CAT_ID}][${styleInterest}]" value="1" checked hidden>` : ''}
+
+              <!-- Style merge field (text) -->
               <input type="hidden" name="STYLE" value="${style}">
+
               ${cfg.enableGdpr ? `<div class="nb-quiz__gdpr"><label><input type="checkbox" name="gdpr[CONSENT]" required> I consent to receive emails. See Privacy.</label></div>` : ``}
-              <button type="submit" class="nb-btn nb-btn--primary">Email me the full playbook</button>
+
+              <button type="submit" class="nb-btn nb-btn--primary" style="margin-top:8px;">Email me the full playbook</button>
             </div>
-          </form>`;
+          </form>
+
+          <div class="nb-quiz__thanks nb-card" data-nb-quiz-thanks hidden>
+            <h3>Check your inbox ✉️</h3>
+            <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
+            <p>Want help applying it? <a href="/pages/book-a-call">Book a 20-min Clarity Call</a>.</p>
+          </div>
+        `;
+
         appEl.hidden = true;
         resultEl.hidden = false;
         resultEl.innerHTML = `<div class="nb-card nb-quiz__result-card">${emailForm}</div>`;
 
         const sub = resultEl.querySelector('#nb-quiz-sub');
+        const thanks = resultEl.querySelector('[data-nb-quiz-thanks]');
+        sub.setAttribute('target', `mc-target-${section.dataset.sectionId}`);
+
+        // Fire GA event; HTML5 "required" handles validation for FNAME/LNAME/EMAIL
         sub.addEventListener('submit', function(){
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
+
+        // When Mailchimp responds in the hidden iframe, show on-site thank-you
+        const iframe = document.querySelector(`iframe[name="mc-target-${section.dataset.sectionId}"]`);
+        if (iframe) {
+          iframe.addEventListener('load', function(){
+            const card = resultEl.querySelector('.nb-quiz__result-card');
+            if (card && thanks) {
+              card.style.display = 'none';
+              thanks.hidden = false;
+            }
+          });
+        }
       }
 
       startBtn.addEventListener('click', async function(){
