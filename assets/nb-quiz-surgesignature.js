@@ -9,6 +9,21 @@
       const resultEl = section.querySelector('[data-nb-quiz-result]');
       let quiz = null, state = { index: 0, answers: [] }, startedAt = 0;
 
+      // --- Microcopy / A11y hint ---
+      (function(){
+        const shell = section.querySelector('.nb-shell');
+        if (!shell) return;
+        // Add a visually-hidden hint once
+        if (!section.querySelector('[data-nb-quiz-a11y]')) {
+          const hint = document.createElement('div');
+          hint.setAttribute('data-nb-quiz-a11y','');
+          hint.setAttribute('aria-hidden','true');
+          hint.style.position = 'absolute'; hint.style.left = '-9999px';
+          hint.textContent = 'Hint: Use arrow keys to move, Enter to select.';
+          shell.prepend(hint);
+        }
+      })();
+
       try {
         const memStyle = localStorage.getItem('nb_surge_style');
         if (memStyle && ['accelerator','stabilizer','defuser'].includes(memStyle)) {
@@ -43,18 +58,24 @@
         return res.json();
       }
 
+      function setProgressLabel(index, total){
+        const pill = section.querySelector('.nb-quiz__progress');
+        if (pill) pill.textContent = `Question ${index} of ${total}`;
+      }
+
       function renderQuestion(){
         const q = quiz.questions[state.index];
         appEl.innerHTML = `
           <div class="nb-card">
             <div class="nb-quiz__progress" role="progressbar" aria-valuemin="0" aria-valuemax="${quiz.questions.length}" aria-valuenow="${state.index+1}">
-              ${state.index+1}/${quiz.questions.length}
+              Question ${state.index+1} of ${quiz.questions.length}
             </div>
             <h3 class="nb-quiz__prompt" aria-live="polite">${q.prompt}</h3>
             <div class="nb-quiz__options">
               ${q.options.map((o,i)=>`<button class="nb-btn nb-btn--option" data-value="${o.value}" data-i="${i}">${o.label}</button>`).join('')}
             </div>
           </div>`;
+        setProgressLabel(state.index+1, quiz.questions.length);
         dl('quiz_question_view', { index: state.index+1, quiz: cfg.gaNamespace });
         appEl.querySelectorAll('.nb-btn--option').forEach(b=>{
           b.addEventListener('click', ()=>{
@@ -229,6 +250,7 @@
         dl('quiz_start', { quiz: cfg.gaNamespace });
         appEl.hidden = false;
         renderQuestion();
+        setProgressLabel(state.index+1, quiz.questions.length);
         const header = section.querySelector('.nb-quiz__header');
         if (header) header.style.display = 'none';
       });
