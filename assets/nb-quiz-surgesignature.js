@@ -124,7 +124,9 @@
       <h3>Check your inbox ✉️</h3>
       <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
       <p><a href="/pages/surge-signature-result?style=${style}">View your result on Nibana →</a></p>
-      <p>Want help applying it? <a href="/pages/book-a-call">Book a 20-min Clarity Call</a>.</p>
+      <div class="nb-quiz__thanks-cta">
+        <a class="nb-btn nb-btn--primary" href="/pages/book-a-call">Book a 20-min Clarity Call</a>
+      </div>
     </div>
   `;
 
