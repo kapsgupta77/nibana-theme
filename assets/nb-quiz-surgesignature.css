@@ -28,7 +28,7 @@
 
 .nb-quiz.nb-quiz--surgesignature .nb-shell,
 .nb-result.nb-result--surgesignature .nb-shell{
-  padding-block-start:clamp(80px,10vw,140px);
+  padding:clamp(80px,10vw,140px) clamp(12px,3vw,24px) clamp(24px,6vw,72px);
 }
 
 /* Panel / card */
