@@ -26,6 +26,11 @@
 /* Layout shell */
 .nb-shell{max-width:var(--nb-shell-w);margin:0 auto;padding:clamp(24px,6vw,72px) clamp(12px,3vw,24px);}
 
+.nb-quiz.nb-quiz--surgesignature .nb-shell,
+.nb-result.nb-result--surgesignature .nb-shell{
+  padding-block-start:clamp(80px,10vw,140px);
+}
+
 /* Panel / card */
 .nb-card{
   background:var(--nb-panel-bg);
