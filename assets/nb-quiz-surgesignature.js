@@ -121,7 +121,8 @@
           <div class="nb-quiz__thanks nb-card" data-nb-quiz-thanks hidden>
             <h3>Check your inbox ✉️</h3>
             <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
-            <p>Want help applying it? <a href="/pages/book-a-call">Book a 20-min Clarity Call</a>.</p>
+            <p>Want help applying it?</p>
+            <a class="nb-btn nb-btn--primary" href="/pages/book-a-call">Book a 20-min Clarity Call</a>
           </div>
         `;
 
