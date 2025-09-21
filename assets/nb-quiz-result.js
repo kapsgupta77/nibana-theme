@@ -51,6 +51,7 @@
       <div class="nb-card nb-result">
         <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
         <h1 class="nb-quiz__result-title">${s.title}</h1>
+        <p class="nb-quiz__summary">Here’s how your energy moves when the stakes rise—and how to turn it into an edge.</p>
         <p class="nb-quiz__summary">${s.summary}</p>
 
         ${s.exalted ? `<div class="nb-result__block"><h3>Exalted form</h3><p>${s.exalted}</p></div>` : ''}
