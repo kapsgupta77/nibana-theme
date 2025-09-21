@@ -59,8 +59,14 @@
         const mc_u = params.get('u') || '';
         const mc_id = params.get('id') || '';
 
+        // Build action URL with tag appended for redundancy
+        if (!params.has('tags')) {
+          params.append('tags', 'Surge Signature Quiz');
+        }
+        const actionWithTags = act.origin + act.pathname + '?' + params.toString();
+
         const emailForm = `
-          <form id="nb-quiz-sub" action="${cfg.mailchimpAction}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
+          <form id="nb-quiz-sub" action="${actionWithTags}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
             <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
             <h3 class="nb-quiz__result-title">${s.title}</h3>
             <p class="nb-quiz__summary">${s.summary}</p>
@@ -88,6 +94,10 @@
               <input type="hidden" name="tags[]" value="Quiz: Surge Signature">
               <input type="hidden" name="tags[]" value="Source: /surge-signature">
               <input type="hidden" name="tags[]" value="Style: ${s.title}">
+
+              <!-- Redundant tag fields to ensure Mailchimp tagging -->
+              <input type="hidden" name="tags" value="Surge Signature Quiz">
+              <input type="hidden" name="tags[]" value="Surge Signature Quiz">
 
               <!-- Style merge field -->
               <input type="hidden" name="STYLE" value="${style}">
