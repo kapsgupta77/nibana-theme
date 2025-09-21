@@ -7,7 +7,8 @@
     <div data-nb-result-app
          data-json="{{ 'nb-quiz-surgesignature.json' | asset_url }}"
          data-call-href="{{ section.settings.call_href }}"
-         data-retake-href="{{ section.settings.retake_href }}"></div>
+         data-retake-href="{{ section.settings.retake_href }}"
+         data-force-style="{{ section.settings.force_style }}"></div>
   </div>
   <script src="{{ 'nb-quiz-result.js' | asset_url }}" defer></script>
   <link rel="stylesheet" href="{{ 'nb-quiz-surgesignature.css' | asset_url }}" media="all">
@@ -18,7 +19,13 @@
   "name": "Surge Result",
   "settings": [
     { "type": "text", "id": "call_href", "label": "Book a call URL", "default": "/pages/book-a-call" },
-    { "type": "text", "id": "retake_href", "label": "Retake quiz URL", "default": "/pages/surge-signature" }
+    { "type": "text", "id": "retake_href", "label": "Retake quiz URL", "default": "/pages/surge-signature" },
+    { "type": "select", "id": "force_style", "label": "Force style", "default": "", "options": [
+      { "value": "", "label": "Detect from URL" },
+      { "value": "accelerator", "label": "Accelerator" },
+      { "value": "stabilizer", "label": "Stabilizer" },
+      { "value": "defuser", "label": "Defuser" }
+    ] }
   ],
   "blocks": [],
   "presets": [{ "name": "Surge Result" }]

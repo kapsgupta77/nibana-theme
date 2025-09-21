@@ -1,0 +1,32 @@
+{% liquid
+  assign is_surge_page = false
+  assign og_title = ''
+  assign og_desc = 'Your Surge Signature™ result. Quiet strength, clear action.'
+  assign og_img = ''
+  if request.page_type == 'page'
+    if page.handle == 'surge-accelerator'
+      assign is_surge_page = true
+      assign og_title = 'Your Surge Signature™: Accelerator'
+      assign og_img = 'og-surge-accelerator.jpg' | asset_url
+    elsif page.handle == 'surge-stabiliser'
+      assign is_surge_page = true
+      assign og_title = 'Your Surge Signature™: Stabiliser'
+      assign og_img = 'og-surge-stabiliser.jpg' | asset_url
+    elsif page.handle == 'surge-defuser'
+      assign is_surge_page = true
+      assign og_title = 'Your Surge Signature™: Defuser'
+      assign og_img = 'og-surge-defuser.jpg' | asset_url
+    endif
+  endif
+%}
+{% if is_surge_page %}
+  <meta property="og:title" content="{{ og_title | escape }}">
+  <meta property="og:description" content="{{ og_desc | escape }}">
+  <meta property="og:image" content="{{ og_img }}">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ og_title | escape }}">
+  <meta name="twitter:description" content="{{ og_desc | escape }}">
+  <meta name="twitter:image" content="{{ og_img }}">
+  <link rel="canonical" href="{{ request.origin }}{{ request.path }}">
+{% endif %}
