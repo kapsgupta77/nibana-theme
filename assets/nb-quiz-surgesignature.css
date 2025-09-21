@@ -138,6 +138,11 @@
 .nb-quiz__thanks h3{margin:0 0 var(--nb-space-2); font-size:clamp(22px,3vw,28px);}
 .nb-quiz__thanks p{margin:6px 0; color:var(--nb-text-muted);}
 .nb-quiz__thanks a{ text-decoration:underline; }
+.nb-quiz__thanks a.nb-btn{ text-decoration:none; }
+.nb-quiz__thanks .nb-btn{
+  margin:var(--nb-space-4) auto 0;
+  max-width:320px;
+}
 
 /* Result page (page.surge-signature-result) */
 .nb-result .nb-quiz__result-title{font-size:clamp(32px,4.5vw,52px); margin:0 0 var(--nb-space-2);}
