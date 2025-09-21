@@ -1,0 +1,26 @@
+{% comment %}
+  Surge Signature™ Result (reads ?style=accelerator|stabilizer|defuser)
+  Uses assets/nb-quiz-surgesignature.json as content source.
+{% endcomment %}
+<section id="nb-result-{{ section.id }}" class="nb-result nb-result--surgesignature">
+  <div class="nb-shell">
+    <div data-nb-result-app
+         data-json="{{ 'nb-quiz-surgesignature.json' | asset_url }}"
+         data-call-href="{{ section.settings.call_href }}"
+         data-retake-href="{{ section.settings.retake_href }}"></div>
+  </div>
+  <script src="{{ 'nb-quiz-result.js' | asset_url }}" defer></script>
+  <link rel="stylesheet" href="{{ 'nb-quiz-surgesignature.css' | asset_url }}" media="all">
+</section>
+
+{% schema %}
+{
+  "name": "Surge Result",
+  "settings": [
+    { "type": "text", "id": "call_href", "label": "Book a call URL", "default": "/pages/book-a-call" },
+    { "type": "text", "id": "retake_href", "label": "Retake quiz URL", "default": "/pages/surge-signature" }
+  ],
+  "blocks": [],
+  "presets": [{ "name": "Surge Result" }]
+}
+{% endschema %}
