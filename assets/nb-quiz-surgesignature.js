@@ -121,6 +121,7 @@
           <div class="nb-quiz__thanks nb-card" data-nb-quiz-thanks hidden>
             <h3>Check your inbox ✉️</h3>
             <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
+            <p><a href="/pages/surge-signature-result?style=${style}">View your result on Nibana →</a></p>
             <p>Want help applying it? <a href="/pages/book-a-call">Book a 20-min Clarity Call</a>.</p>
           </div>
         `;
@@ -138,17 +139,33 @@
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
 
-        // When Mailchimp responds in the hidden iframe, show on-site thank-you
-        const iframe = document.querySelector(`iframe[name="mc-target-${section.dataset.sectionId}"]`);
-        if (iframe) {
-          iframe.addEventListener('load', function(){
-            const card = resultEl.querySelector('.nb-quiz__result-card');
-            if (card && thanks) {
-              card.style.display = 'none';
-              thanks.hidden = false;
-            }
-          });
+        // Ensure a hidden iframe exists (create if Liquid was missed)
+        let iframe = document.querySelector(`iframe[name="mc-target-${section.dataset.sectionId}"]`);
+        if (!iframe) {
+          iframe = document.createElement('iframe');
+          iframe.name = `mc-target-${section.dataset.sectionId}`;
+          iframe.style.display = 'none';
+          section.querySelector('.nb-shell').appendChild(iframe);
         }
+
+        // Swap to thank-you when MC responds; also add a fallback timer in case load is slow
+        function showThanks(){
+          const card = resultEl.querySelector('.nb-quiz__result-card');
+          if (card && thanks && thanks.hidden) {
+            card.style.display = 'none';
+            thanks.hidden = false;
+          }
+        }
+
+        // Primary: when the iframe loads the Mailchimp response
+        iframe.addEventListener('load', showThanks);
+
+        // Fallback: reveal after 1500ms post-submit in case the load event is delayed/suppressed
+        let thanksTimer = null;
+        sub.addEventListener('submit', function(){
+          if (thanksTimer) clearTimeout(thanksTimer);
+          thanksTimer = setTimeout(showThanks, 1500);
+        });
       }
 
       startBtn.addEventListener('click', async function(){
