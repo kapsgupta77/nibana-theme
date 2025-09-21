@@ -7,7 +7,8 @@
     const root = document.querySelector('[data-nb-result-app]');
     if(!root) return;
 
-    const style = qs('style'); // accelerator | stabilizer | defuser
+    const forced = (root.getAttribute('data-force-style') || '').toLowerCase();
+    const style = forced || qs('style'); // accelerator | stabilizer | defuser
     const jsonUrl = root.getAttribute('data-json');
     const callHref = root.getAttribute('data-call-href') || '/pages/book-a-call';
     const retakeHref = root.getAttribute('data-retake-href') || '/pages/surge-signature';
@@ -38,6 +39,14 @@
 
     dl('quiz_result_view', { quiz: 'surge_signature', style: style });
 
+    const shareBaseMap = {
+      accelerator: '/pages/surge-accelerator',
+      stabilizer: '/pages/surge-stabiliser',
+      defuser: '/pages/surge-defuser'
+    };
+    const shareUrl = shareBaseMap[style] || location.pathname + location.search;
+    const fullShare = location.origin + shareUrl;
+
     const card = `
       <div class="nb-card nb-result">
         <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
@@ -64,8 +73,35 @@
           <a class="nb-btn nb-btn--primary" href="${callHref}">Book a 20-min Clarity Call</a>
           <a class="nb-btn nb-btn--ghost" href="${retakeHref}">Retake the quiz</a>
         </div>
+        <div class="nb-result__block">
+          <h3>Share or save</h3>
+          <div class="nb-result__share">
+            <button class="nb-btn nb-btn--ghost" type="button" data-nb-copy="${fullShare}">Copy link</button>
+            <a class="nb-btn nb-btn--ghost" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(fullShare)}" target="_blank" rel="noopener">Share on LinkedIn</a>
+            <a class="nb-btn nb-btn--ghost" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(fullShare)}&text=${encodeURIComponent('My Surge Signature™ result')}" target="_blank" rel="noopener">Share on X</a>
+            <a class="nb-btn nb-btn--ghost" href="https://api.whatsapp.com/send?text=${encodeURIComponent(fullShare)}" target="_blank" rel="noopener">Share on WhatsApp</a>
+          </div>
+        </div>
       </div>
     `;
     root.innerHTML = card;
+    const copyBtn = root.querySelector('[data-nb-copy]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(){
+        const v = copyBtn.getAttribute('data-nb-copy');
+        if (navigator.clipboard && v) navigator.clipboard.writeText(v).catch(()=>{});
+        window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:'result_share_click', platform:'copy', quiz_style: style});
+      });
+    }
+    root.querySelectorAll('.nb-result__share a').forEach(a=>{
+      a.addEventListener('click', ()=>{
+        const platform = a.textContent.trim().toLowerCase();
+        window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:'result_share_click', platform, quiz_style: style});
+      });
+    });
+    const callCta = root.querySelector('.nb-result__cta .nb-btn--primary');
+    if (callCta) callCta.addEventListener('click', ()=>{
+      window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:'cta_book_call_click', quiz_style: style});
+    });
   });
 })();

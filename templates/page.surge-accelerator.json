@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "nb-quiz-result",
+      "settings": {
+        "call_href": "/pages/book-a-call",
+        "retake_href": "/pages/surge-signature",
+        "force_style": "accelerator"
+      }
+    }
+  },
+  "order": ["main"]
+}

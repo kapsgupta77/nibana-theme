@@ -236,3 +236,7 @@
 .nb-quiz__kicker{opacity:.85}
 
 /* End of lux styling */
+.nb-result__share{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width: 640px){ .nb-result__share{grid-template-columns:repeat(4,1fr);} }
+.nb-quiz__mem{display:flex;flex-direction:column;gap:12px}
+.nb-quiz__mem-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}

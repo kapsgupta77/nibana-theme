@@ -9,6 +9,35 @@
       const resultEl = section.querySelector('[data-nb-quiz-result]');
       let quiz = null, state = { index: 0, answers: [] }, startedAt = 0;
 
+      try {
+        const memStyle = localStorage.getItem('nb_surge_style');
+        if (memStyle && ['accelerator','stabilizer','defuser'].includes(memStyle)) {
+          const dismissed = localStorage.getItem('nb_quiz_banner_dismissed') === '1';
+          if (!dismissed) {
+            const banner = document.createElement('div');
+            banner.className = 'nb-card';
+            banner.style.marginBottom = '16px';
+            banner.innerHTML = `
+              <div class="nb-quiz__mem">
+                <strong>Last time you were ${memStyle.charAt(0).toUpperCase()+memStyle.slice(1)}.</strong>
+                <div class="nb-quiz__mem-actions">
+                  <a class="nb-btn nb-btn--ghost" href="/pages/surge-signature-result?style=${memStyle}" data-mem-view>View result</a>
+                  <button class="nb-btn nb-btn--primary" type="button" data-mem-retake>Retake</button>
+                  <button class="nb-btn nb-btn--ghost" type="button" data-mem-dismiss aria-label="Dismiss">Dismiss</button>
+                </div>
+              </div>`;
+            section.querySelector('.nb-shell').prepend(banner);
+            window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:'memory_banner_view', quiz_style: memStyle});
+            banner.querySelector('[data-mem-view]').addEventListener('click', ()=>{ window.dataLayer.push({event:'memory_view_result_click', quiz_style: memStyle}); });
+            banner.querySelector('[data-mem-retake]').addEventListener('click', ()=>{ window.dataLayer.push({event:'memory_retake_click', quiz_style: memStyle}); });
+            banner.querySelector('[data-mem-dismiss]').addEventListener('click', ()=>{
+              try { localStorage.setItem('nb_quiz_banner_dismissed','1'); } catch(e){}
+              banner.remove();
+            });
+          }
+        }
+      } catch(e){}
+
       async function loadQuiz(){
         const res = await fetch(cfg.jsonUrl, { credentials: 'same-origin' });
         return res.json();
@@ -46,8 +75,9 @@
 
       function onComplete(){
         const elapsed = Date.now() - startedAt;
-        dl('quiz_complete', { quiz: cfg.gaNamespace, time_to_complete_ms: elapsed });
         const style = tally();
+        dl('quiz_complete', { quiz: cfg.gaNamespace, time_to_complete_ms: elapsed, quiz_style: style });
+        try { localStorage.setItem('nb_surge_style', style); localStorage.removeItem('nb_quiz_banner_dismissed'); } catch(e){}
         dl('quiz_result', { quiz: cfg.gaNamespace, style: style });
 
         const s = quiz.styles[style];
@@ -137,9 +167,28 @@
         const sub = resultEl.querySelector('#nb-quiz-sub');
         const thanks = resultEl.querySelector('[data-nb-quiz-thanks]');
         sub.setAttribute('target', `mc-target-${section.dataset.sectionId}`);
+        try {
+          const saved = JSON.parse(localStorage.getItem('nb_surge_user') || '{}');
+          ['FNAME','LNAME','EMAIL','PHONE'].forEach(k=>{
+            const el = sub.querySelector(`[name="${k}"]`);
+            if (el && saved[k]) el.value = saved[k];
+          });
+          if (saved.FNAME || saved.EMAIL) {
+            window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:'prefill_used', quiz_style: style});
+          }
+        } catch(e){}
 
         // Fire GA event; HTML5 "required" handles validation for FNAME/LNAME/EMAIL
         sub.addEventListener('submit', function(){
+          try {
+            const payload = {
+              FNAME: sub.querySelector('[name="FNAME"]')?.value || '',
+              LNAME: sub.querySelector('[name="LNAME"]')?.value || '',
+              EMAIL: sub.querySelector('[name="EMAIL"]')?.value || '',
+              PHONE: sub.querySelector('[name="PHONE"]')?.value || ''
+            };
+            localStorage.setItem('nb_surge_user', JSON.stringify(payload));
+          } catch(e){}
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
 
