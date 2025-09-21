@@ -2,20 +2,137 @@
   "questions": [
     {
       "id": "q1",
-      "prompt": "A big opportunity drops in a meeting and no one owns it yet.",
+      "prompt": "A friend texts a 10/10 urgent ask.",
       "options": [
-        { "label": "I volunteer immediately — we’ll figure it out live.", "value": "A" },
-        { "label": "I go a bit blank and hope someone else grabs it.", "value": "B" },
-        { "label": "I ask two clarifying questions and suggest next steps.", "value": "C" }
+        { "label": "I drop everything to help.", "value": "A" },
+        { "label": "I delay replying until it feels less intense.", "value": "B" },
+        { "label": "I acknowledge, set a boundary, propose a time.", "value": "C" }
       ]
     },
     {
       "id": "q2",
-      "prompt": "A teammate misses a deadline that affects your delivery.",
+      "prompt": "You’re introduced to a “room-moves-when-they-talk” person.",
       "options": [
-        { "label": "I jump in and take it over to keep momentum.", "value": "A" },
-        { "label": "I let it cool off and suggest we push the milestone.", "value": "B" },
-        { "label": "I reset scope and define the minimum viable delivery.", "value": "C" }
+        { "label": "I turn the charm up and drive the convo.", "value": "A" },
+        { "label": "I feel self-conscious and hang back.", "value": "B" },
+        { "label": "I stay steady, ask thoughtful questions.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "Breaking news shakes your industry.",
+      "options": [
+        { "label": "I brainstorm plays and message stakeholders now.", "value": "A" },
+        { "label": "I binge more news and feel scattered.", "value": "B" },
+        { "label": "I map risks, gate decisions, and brief the team.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q4",
+      "prompt": "Someone interrupts you repeatedly.",
+      "options": [
+        { "label": "I snap, then regret the tone.", "value": "A" },
+        { "label": "I smile it off and shut down inside.", "value": "B" },
+        { "label": "I name it and reset norms.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q5",
+      "prompt": "A workshop gets dull.",
+      "options": [
+        { "label": "I jump in to energize the room.", "value": "A" },
+        { "label": "I drift into daydreams.", "value": "B" },
+        { "label": "I suggest a process tweak.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q6",
+      "prompt": "Notifications go wild while you’re deep in work.",
+      "options": [
+        { "label": "I start rapid-fire replying.", "value": "A" },
+        { "label": "I mute everything and forget to return later.", "value": "B" },
+        { "label": "I batch them for a set window.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q7",
+      "prompt": "Team conflict spikes.",
+      "options": [
+        { "label": "I confront it head-on, strong stance.", "value": "A" },
+        { "label": "I steer to a lighter topic.", "value": "B" },
+        { "label": "I facilitate a structured resolution.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q8",
+      "prompt": "You get public praise.",
+      "options": [
+        { "label": "I ride the high and take on more.", "value": "A" },
+        { "label": "I deflect and change the subject.", "value": "B" },
+        { "label": "I thank them and capture what worked.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q9",
+      "prompt": "You make a visible mistake.",
+      "options": [
+        { "label": "I overcorrect aggressively.", "value": "A" },
+        { "label": "I hide and hope it blows over.", "value": "B" },
+        { "label": "I own it, fix it, add a check.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q10",
+      "prompt": "A risky, brilliant idea hits you.",
+      "options": [
+        { "label": "I pitch it immediately.", "value": "A" },
+        { "label": "I shelve it “for later” and it fades.", "value": "B" },
+        { "label": "I run a quick test before sharing.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q11",
+      "prompt": "A close colleague cancels last minute.",
+      "options": [
+        { "label": "I feel irritated and fire off a sharp reply.", "value": "A" },
+        { "label": "I say “no worries” but lose steam for the day.", "value": "B" },
+        { "label": "I reset expectations and re-plan my time.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q12",
+      "prompt": "You’re learning something hard and keep failing.",
+      "options": [
+        { "label": "I push harder and force a breakthrough.", "value": "A" },
+        { "label": "I bounce to something easier.", "value": "B" },
+        { "label": "I slow down, follow the steps, try again.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q13",
+      "prompt": "You’re asked an unexpected question on stage.",
+      "options": [
+        { "label": "I answer boldly, even if half-formed.", "value": "A" },
+        { "label": "I dodge to another point.", "value": "B" },
+        { "label": "I pause, reframe, then respond.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q14",
+      "prompt": "End of a long day, one important task remains.",
+      "options": [
+        { "label": "I power through on will alone.", "value": "A" },
+        { "label": "I procrastinate with “just one video.”", "value": "B" },
+        { "label": "I take 5 minutes to reset, then complete.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q15",
+      "prompt": "A friend shares a strong opposing view.",
+      "options": [
+        { "label": "I debate vigorously.", "value": "A" },
+        { "label": "I keep the peace and move on.", "value": "B" },
+        { "label": "I get curious and set a container for the convo.", "value": "C" }
       ]
     }
   ],
