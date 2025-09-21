@@ -13,3 +13,7 @@
 .nb-quiz__thanks h3{margin-top:0;margin-bottom:8px}
 .nb-quiz__thanks p{margin:6px 0}
 .nb-quiz__result-card{transition:opacity .2s ease}
+.nb-quiz__gate label{display:block}
+.nb-quiz__gate input[type="text"],
+.nb-quiz__gate input[type="email"],
+.nb-quiz__gate input[type="tel"]{width:100%}
