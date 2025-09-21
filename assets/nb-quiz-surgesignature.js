@@ -80,50 +80,53 @@
         const actionWithParams = act.origin + act.pathname + '?' + params.toString();
 
         const emailForm = `
-          <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
-            <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
-            <h3 class="nb-quiz__result-title">${s.title}</h3>
-            <p class="nb-quiz__summary">${s.summary}</p>
-            <div class="nb-quiz__free-insight">Try this: ${s.practice_preview}</div>
+    <div data-nb-quiz-form>
+      <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}">
+        <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
+        <h3 class="nb-quiz__result-title">${s.title}</h3>
+        <p class="nb-quiz__summary">${s.summary}</p>
+        <div class="nb-quiz__free-insight">Try this: ${s.practice_preview}</div>
 
-            <div class="nb-quiz__gate">
-              <label for="nb-fname">First name *</label>
-              <input id="nb-fname" type="text" name="FNAME" required placeholder="First">
+        <div class="nb-quiz__gate">
+          <label for="nb-fname">First name *</label>
+          <input id="nb-fname" type="text" name="FNAME" required placeholder="First">
 
-              <label for="nb-lname" style="margin-top:8px;">Last name *</label>
-              <input id="nb-lname" type="text" name="LNAME" required placeholder="Last">
+          <label for="nb-lname" style="margin-top:8px;">Last name *</label>
+          <input id="nb-lname" type="text" name="LNAME" required placeholder="Last">
 
-              <label for="nb-email" style="margin-top:8px;">Email *</label>
-              <input id="nb-email" type="email" name="EMAIL" required placeholder="you@domain.com">
+          <label for="nb-email" style="margin-top:8px;">Email *</label>
+          <input id="nb-email" type="email" name="EMAIL" required placeholder="you@domain.com">
 
-              <label for="nb-phone" style="margin-top:8px;">Phone (optional)</label>
-              <input id="nb-phone" type="tel" name="PHONE" placeholder="+44 7700 900123">
+          <label for="nb-phone" style="margin-top:8px;">Phone (optional)</label>
+          <input id="nb-phone" type="tel" name="PHONE" placeholder="+44 7700 900123">
 
-              <!-- Audience keys -->
-              <input type="hidden" name="u" value="${mc_u}">
-              <input type="hidden" name="id" value="${mc_id}">
+          <!-- Audience keys -->
+          <input type="hidden" name="u" value="${mc_u}">
+          <input type="hidden" name="id" value="${mc_id}">
 
-              <!-- Mailchimp Interest Group: always check "Surge Signature Quiz" -->
-              <input type="checkbox" name="group[${MC_CAT_ID}][${MC_INT_SURGE}]" value="1" checked hidden>
+          <!-- Mailchimp Interest Group: always check "Surge Signature Quiz" -->
+          <input type="checkbox" name="group[${MC_CAT_ID}][${MC_INT_SURGE}]" value="1" checked hidden>
 
-              <!-- Mailchimp Interest Group: style-specific interest -->
-              ${styleInterest ? `<input type="checkbox" name="group[${MC_CAT_ID}][${styleInterest}]" value="1" checked hidden>` : ''}
+          <!-- Mailchimp Interest Group: style-specific interest -->
+          ${styleInterest ? `<input type="checkbox" name="group[${MC_CAT_ID}][${styleInterest}]" value="1" checked hidden>` : ''}
 
-              <!-- Style merge field (text) -->
-              <input type="hidden" name="STYLE" value="${style}">
+          <!-- Style merge field (text) -->
+          <input type="hidden" name="STYLE" value="${style}">
 
-              ${cfg.enableGdpr ? `<div class="nb-quiz__gdpr"><label><input type="checkbox" name="gdpr[CONSENT]" required> I consent to receive emails. See Privacy.</label></div>` : ``}
+          ${cfg.enableGdpr ? `<div class="nb-quiz__gdpr"><label><input type="checkbox" name="gdpr[CONSENT]" required> I consent to receive emails. See Privacy.</label></div>` : ``}
 
-              <button type="submit" class="nb-btn nb-btn--primary" style="margin-top:8px;">Email me the full playbook</button>
-            </div>
-          </form>
+          <button type="submit" class="nb-btn nb-btn--primary" style="margin-top:8px;">Email me the full playbook</button>
+        </div>
+      </form>
+    </div>
 
-          <div class="nb-quiz__thanks nb-card" data-nb-quiz-thanks hidden>
-            <h3>Check your inbox ✉️</h3>
-            <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
-            <p>Want help applying it? <a href="/pages/book-a-call">Book a 20-min Clarity Call</a>.</p>
-          </div>
-        `;
+    <div class="nb-quiz__thanks nb-card" data-nb-quiz-thanks hidden>
+      <h3>Check your inbox ✉️</h3>
+      <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
+      <p><a href="/pages/surge-signature-result?style=${style}">View your result on Nibana →</a></p>
+      <p>Want help applying it? <a href="/pages/book-a-call">Book a 20-min Clarity Call</a>.</p>
+    </div>
+  `;
 
         appEl.hidden = true;
         resultEl.hidden = false;
@@ -138,17 +141,35 @@
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
 
-        // When Mailchimp responds in the hidden iframe, show on-site thank-you
-        const iframe = document.querySelector(`iframe[name="mc-target-${section.dataset.sectionId}"]`);
-        if (iframe) {
-          iframe.addEventListener('load', function(){
-            const card = resultEl.querySelector('.nb-quiz__result-card');
-            if (card && thanks) {
-              card.style.display = 'none';
-              thanks.hidden = false;
-            }
-          });
+        // Ensure a hidden iframe exists (create if Liquid was missed)
+        let iframe = document.querySelector(`iframe[name="mc-target-${section.dataset.sectionId}"]`);
+        if (!iframe) {
+          iframe = document.createElement('iframe');
+          iframe.name = `mc-target-${section.dataset.sectionId}`;
+          iframe.style.display = 'none';
+          section.querySelector('.nb-shell').appendChild(iframe);
         }
+
+        // Target elements
+        const formWrap = resultEl.querySelector('[data-nb-quiz-form]');
+        function showThanks(){
+          if (formWrap) formWrap.style.display = 'none';
+          if (thanks && thanks.hidden) thanks.hidden = false;
+        }
+
+        // Primary: when the iframe loads the Mailchimp response
+        iframe.addEventListener('load', showThanks);
+
+        // Fallback: reveal after 1500ms post-submit in case load is slow
+        let thanksTimer = null;
+        sub.addEventListener('submit', function(event){
+          if (!sub.reportValidity()) {
+            event.preventDefault();
+            return;
+          }
+          if (thanksTimer) clearTimeout(thanksTimer);
+          thanksTimer = setTimeout(showThanks, 1500);
+        });
       }
 
       startBtn.addEventListener('click', async function(){

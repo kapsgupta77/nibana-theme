@@ -3,9 +3,9 @@
   - Client-side quiz with soft gate and Mailchimp POST.
   - GA4 events: quiz_start, quiz_question_view, quiz_complete, quiz_result, email_submit.
 {% endcomment %}
-<section id="nb-quiz-{{ section.id }}" class="nb-quiz nb-quiz--surgesignature" data-section-id="{{ section.id }}">
+<section id="nb-quiz-{{ section.id }}" class="nb-quiz nb-quiz--surgesignature" data-section-id="{{ section.id }}" style="padding-block-start: clamp(80px, 10vw, 140px); padding-block-end: clamp(24px, 6vw, 72px); padding-inline: clamp(12px, 3vw, 24px);">
   <div class="nb-shell">
-    <div class="nb-quiz__header">
+    <div class="nb-quiz__header nb-card">
       <h2 class="nb-quiz__title">{{ section.settings.title | escape }}</h2>
       <p class="nb-quiz__kicker">{{ section.settings.kicker | escape }}</p>
       <button class="nb-btn nb-btn--primary" data-nb-quiz-start>
