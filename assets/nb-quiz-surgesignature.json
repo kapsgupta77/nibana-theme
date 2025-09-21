@@ -140,24 +140,24 @@
   "styles": {
     "accelerator": {
       "title": "Accelerator",
-      "summary": "You surge toward intensity and create forward motion.",
+      "summary": "When intensity spikes, you move. You take ground fast, create momentum, and rally people through bold action. Under pressure, your creativity and courage shine—yet the same drive can overshoot: impulsive commitments, overpromising, or emotional spillover. The shift is from raw speed to directed power: fast, clean, reliable. With a few containment rituals, you keep your edge without burning cycles.",
+      "exalted": "Directed power—decisive and steady under pressure.",
       "pitfalls": ["Impulsivity", "Overpromising", "Emotional spillover"],
-      "exalted": "Directed power: fast, clean, reliable under pressure.",
-      "practice_preview": "Use the 6-second gap before big moves."
+      "practice_preview": "Pause 6 seconds before committing. State one-sentence goal. Single-thread the next block."
     },
     "stabilizer": {
-      "title": "Stabilizer",
-      "summary": "You hold intensity with standards and structure.",
-      "pitfalls": ["Rigidity", "Gold-plating"],
+      "title": "Stabiliser",
+      "summary": "When intensity rises, you bring order. You create standards, structure, and deep reliability so things ship with quality. That steadiness is gold—until it hardens into rigidity, perfectionism, or slow pivots. The move is to keep your craftsmanship and add range: tiny experiments, time-boxed sprints, and clearer ‘good-enough’ thresholds. That’s stability on tap—dependable and adaptive.",
       "exalted": "Deep reliability with adaptive range.",
-      "practice_preview": "Define 'good-enough' upfront, then ship."
+      "pitfalls": ["Rigidity", "Perfectionism", "Slow to adapt / gold-plating"],
+      "practice_preview": "Run a 2% experiment. Define ‘good-enough’ before you start. Sprint for 50 minutes, then write one next step."
     },
     "defuser": {
       "title": "Defuser",
-      "summary": "You diffuse intensity and de-escalate the field.",
-      "pitfalls": ["Drift", "Avoidance"],
+      "summary": "When things heat up, you diffuse. You keep perspective, calm the room, and de-escalate tension so people can breathe. The shadow? Drifting, avoidance, or loops left open. Your edge emerges when calmness meets choice: micro-anchors to stay present, small visible wins, and a simple next action. Then your spaciousness becomes grounded leadership.",
       "exalted": "Grounded spaciousness that chooses.",
-      "practice_preview": "Set a 25/5 box and do the next tiny action."
+      "pitfalls": ["Drift", "Avoidance", "Unfinished loops"],
+      "practice_preview": "Micro-anchor (feel your feet, one breath, one detail). Set a 25/5 box. Do the very next tiny action."
     }
   }
 }

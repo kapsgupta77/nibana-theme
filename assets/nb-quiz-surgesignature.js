@@ -115,6 +115,7 @@
         <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
         <h3 class="nb-quiz__result-title">${s.title}</h3>
         <p class="nb-quiz__summary">${s.summary}</p>
+        <p class="nb-quiz__trust">We’ll email the full 2-page playbook with tailored practices. GDPR-friendly—no spam.</p>
         <div class="nb-quiz__free-insight">Try this: ${s.practice_preview}</div>
 
         <div class="nb-quiz__gate">
@@ -154,9 +155,7 @@
       <h3>Check your inbox ✉️</h3>
       <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
       <p><a href="/pages/surge-signature-result?style=${style}">View your result on Nibana →</a></p>
-      <div class="nb-quiz__thanks-cta">
-        <a class="nb-btn nb-btn--primary" href="/pages/book-a-call">Book a 20-min Clarity Call</a>
-      </div>
+      <p>Want help applying it? Book a 20-min Clarity Call—come with one situation; leave with a clear next step.</p>
     </div>
   `;
 
