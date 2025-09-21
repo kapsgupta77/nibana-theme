@@ -52,6 +52,20 @@
 
         const s = quiz.styles[style];
 
+        // ---- BEGIN Mailchimp Group IDs (REAL) ----
+        // Mailchimp Group Category "Lead Source" (checkboxes)
+        const MC_CAT_ID    = '78632';
+        const MC_INT_SURGE = '1'; // Surge Signature Quiz
+        const MC_INT_ACCEL = '2'; // Accelerator
+        const MC_INT_STABL = '4'; // Stabiliser
+        const MC_INT_DEFUS = '8'; // Defuser
+        // Map computed style -> interest ID
+        let styleInterest = '';
+        if (style === 'accelerator') styleInterest = MC_INT_ACCEL;
+        else if (style === 'stabilizer' || style === 'stabiliser') styleInterest = MC_INT_STABL;
+        else if (style === 'defuser') styleInterest = MC_INT_DEFUS;
+        // ---- END Mailchimp Group IDs ----
+
         // Parse u & id from the Mailchimp action URL
         const act = document.createElement('a');
         act.href = cfg.mailchimpAction;
@@ -94,6 +108,9 @@
               <input type="hidden" name="tags[]" value="Quiz: Surge Signature">
               <input type="hidden" name="tags[]" value="Source: /surge-signature">
               <input type="hidden" name="tags[]" value="Style: ${s.title}">
+
+              <input type="checkbox" name="group[${MC_CAT_ID}][${MC_INT_SURGE}]" value="1" checked hidden>
+              ${styleInterest ? `<input type="checkbox" name="group[${MC_CAT_ID}][${styleInterest}]" value="1" checked hidden>` : ''}
 
               <!-- Redundant tag fields to ensure Mailchimp tagging -->
               <input type="hidden" name="tags" value="Surge Signature Quiz">
