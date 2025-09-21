@@ -29,7 +29,10 @@
 .nb-quiz.nb-quiz--surgesignature .nb-shell,
 .nb-result.nb-result--surgesignature .nb-shell{
   /* Override base top padding while preserving horizontal and bottom spacing */
-  padding:clamp(80px,10vw,140px) clamp(12px,3vw,24px) clamp(24px,6vw,72px);
+  padding:
+    clamp(80px,10vw,140px)
+    clamp(12px,3vw,24px)
+    clamp(24px,6vw,72px);
 }
 
 /* Panel / card */
