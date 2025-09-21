@@ -24,6 +24,15 @@
 }
 
 /* Layout shell */
+.nb-quiz.nb-quiz--surgesignature,
+.nb-result--surgesignature{
+  position:relative;
+  min-height:100vh;
+  background:
+    radial-gradient(120% 120% at 20% 0%, rgba(255,255,255,.92) 0%, rgba(234,244,243,.88) 48%, rgba(200,224,223,.82) 100%),
+    linear-gradient(180deg, #f5fbfa 0%, #e0efee 100%);
+  background-repeat:no-repeat;
+}
 .nb-shell{max-width:var(--nb-shell-w);margin:0 auto;padding-inline:clamp(12px,3vw,24px);}
 
 /* Panel / card */
