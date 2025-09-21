@@ -9,3 +9,7 @@
 .nb-quiz__result-title{font-size:24px;margin:0 0 8px}
 .nb-quiz__gate{margin-top:16px}
 .nb-quiz__gdpr{font-size:13px;margin:8px 0}
+
+.nb-quiz__thanks h3{margin-top:0;margin-bottom:8px}
+.nb-quiz__thanks p{margin:6px 0}
+.nb-quiz__result-card{transition:opacity .2s ease}
