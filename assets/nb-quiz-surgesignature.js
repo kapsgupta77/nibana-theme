@@ -81,7 +81,7 @@
 
         const emailForm = `
     <div data-nb-quiz-form>
-      <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
+      <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}">
         <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
         <h3 class="nb-quiz__result-title">${s.title}</h3>
         <p class="nb-quiz__summary">${s.summary}</p>
@@ -162,7 +162,11 @@
 
         // Fallback: reveal after 1500ms post-submit in case load is slow
         let thanksTimer = null;
-        sub.addEventListener('submit', function(){
+        sub.addEventListener('submit', function(event){
+          if (!sub.reportValidity()) {
+            event.preventDefault();
+            return;
+          }
           if (thanksTimer) clearTimeout(thanksTimer);
           thanksTimer = setTimeout(showThanks, 1500);
         });
