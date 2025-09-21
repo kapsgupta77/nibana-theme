@@ -9,6 +9,13 @@
          data-call-href="{{ section.settings.call_href }}"
          data-retake-href="{{ section.settings.retake_href }}"
          data-force-style="{{ section.settings.force_style }}"></div>
+    {% if section.settings.about_blurb != blank %}
+      <div class="nb-card" style="margin-top:16px">
+        <div class="prose" style="color: rgba(0,0,0,.70);">
+          {{ section.settings.about_blurb }}
+        </div>
+      </div>
+    {% endif %}
   </div>
   <script src="{{ 'nb-quiz-result.js' | asset_url }}" defer></script>
   <link rel="stylesheet" href="{{ 'nb-quiz-surgesignature.css' | asset_url }}" media="all">
@@ -25,7 +32,8 @@
       { "value": "accelerator", "label": "Accelerator" },
       { "value": "stabilizer", "label": "Stabilizer" },
       { "value": "defuser", "label": "Defuser" }
-    ] }
+    ] },
+    { "type": "richtext", "id": "about_blurb", "label": "About the model", "default": "<p>Surge Signature™ maps how your energy moves when the stakes rise. It’s built to be practical: a short reflection, three watch-outs, and simple practices you can use today. Use it with curiosity; retake in a month and notice what shifts.</p>" }
   ],
   "blocks": [],
   "presets": [{ "name": "Surge Result" }]
