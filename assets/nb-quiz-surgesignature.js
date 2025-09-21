@@ -77,18 +77,21 @@
         if (!params.has('tags')) {
           params.append('tags', 'Surge Signature Quiz');
         }
-        const actionWithTags = act.origin + act.pathname + '?' + params.toString();
+        const actionWithParams = act.origin + act.pathname + '?' + params.toString();
 
         const emailForm = `
-          <form id="nb-quiz-sub" action="${actionWithTags}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
+          <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}" novalidate>
             <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
             <h3 class="nb-quiz__result-title">${s.title}</h3>
             <p class="nb-quiz__summary">${s.summary}</p>
             <div class="nb-quiz__free-insight">Try this: ${s.practice_preview}</div>
 
             <div class="nb-quiz__gate">
-              <label for="nb-fullname">Full name *</label>
-              <input id="nb-fullname" type="text" name="FULLNAME" required placeholder="First Last">
+              <label for="nb-fname">First name *</label>
+              <input id="nb-fname" type="text" name="FNAME" required placeholder="First">
+
+              <label for="nb-lname" style="margin-top:8px;">Last name *</label>
+              <input id="nb-lname" type="text" name="LNAME" required placeholder="Last">
 
               <label for="nb-email" style="margin-top:8px;">Email *</label>
               <input id="nb-email" type="email" name="EMAIL" required placeholder="you@domain.com">
@@ -96,27 +99,17 @@
               <label for="nb-phone" style="margin-top:8px;">Phone (optional)</label>
               <input id="nb-phone" type="tel" name="PHONE" placeholder="+44 7700 900123">
 
-              <!-- Hidden merge fields derived from FULLNAME -->
-              <input type="hidden" name="FNAME" value="">
-              <input type="hidden" name="LNAME" value="">
-
-              <!-- Mailchimp audience keys -->
+              <!-- Audience keys -->
               <input type="hidden" name="u" value="${mc_u}">
               <input type="hidden" name="id" value="${mc_id}">
 
-              <!-- Tags as array fields -->
-              <input type="hidden" name="tags[]" value="Quiz: Surge Signature">
-              <input type="hidden" name="tags[]" value="Source: /surge-signature">
-              <input type="hidden" name="tags[]" value="Style: ${s.title}">
-
+              <!-- Mailchimp Interest Group: always check "Surge Signature Quiz" -->
               <input type="checkbox" name="group[${MC_CAT_ID}][${MC_INT_SURGE}]" value="1" checked hidden>
+
+              <!-- Mailchimp Interest Group: style-specific interest -->
               ${styleInterest ? `<input type="checkbox" name="group[${MC_CAT_ID}][${styleInterest}]" value="1" checked hidden>` : ''}
 
-              <!-- Redundant tag fields to ensure Mailchimp tagging -->
-              <input type="hidden" name="tags" value="Surge Signature Quiz">
-              <input type="hidden" name="tags[]" value="Surge Signature Quiz">
-
-              <!-- Style merge field -->
+              <!-- Style merge field (text) -->
               <input type="hidden" name="STYLE" value="${style}">
 
               ${cfg.enableGdpr ? `<div class="nb-quiz__gdpr"><label><input type="checkbox" name="gdpr[CONSENT]" required> I consent to receive emails. See Privacy.</label></div>` : ``}
@@ -137,19 +130,11 @@
         resultEl.innerHTML = `<div class="nb-card nb-quiz__result-card">${emailForm}</div>`;
 
         const sub = resultEl.querySelector('#nb-quiz-sub');
-        const fullNameInput = sub.querySelector('input[name="FULLNAME"]');
-        const fnameHidden = sub.querySelector('input[name="FNAME"]');
-        const lnameHidden = sub.querySelector('input[name="LNAME"]');
         const thanks = resultEl.querySelector('[data-nb-quiz-thanks]');
-
-        // Ensure the form targets the section's iframe (created in Liquid)
         sub.setAttribute('target', `mc-target-${section.dataset.sectionId}`);
 
-        // Before submit, split Full name -> FNAME/LNAME
+        // Fire GA event; HTML5 "required" handles validation for FNAME/LNAME/EMAIL
         sub.addEventListener('submit', function(){
-          const parts = (fullNameInput.value || '').trim().split(/\s+/);
-          fnameHidden.value = parts[0] || '';
-          lnameHidden.value = parts.slice(1).join(' ') || '';
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
 
