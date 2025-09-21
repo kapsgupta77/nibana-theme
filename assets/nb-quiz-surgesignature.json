@@ -1,0 +1,46 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "A big opportunity drops in a meeting and no one owns it yet.",
+      "options": [
+        { "label": "I volunteer immediately — we’ll figure it out live.", "value": "A" },
+        { "label": "I go a bit blank and hope someone else grabs it.", "value": "B" },
+        { "label": "I ask two clarifying questions and suggest next steps.", "value": "C" }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "A teammate misses a deadline that affects your delivery.",
+      "options": [
+        { "label": "I jump in and take it over to keep momentum.", "value": "A" },
+        { "label": "I let it cool off and suggest we push the milestone.", "value": "B" },
+        { "label": "I reset scope and define the minimum viable delivery.", "value": "C" }
+      ]
+    }
+  ],
+  "scoring": { "A": "accelerator", "B": "defuser", "C": "stabilizer" },
+  "styles": {
+    "accelerator": {
+      "title": "Accelerator",
+      "summary": "You surge toward intensity and create forward motion.",
+      "pitfalls": ["Impulsivity", "Overpromising", "Emotional spillover"],
+      "exalted": "Directed power: fast, clean, reliable under pressure.",
+      "practice_preview": "Use the 6-second gap before big moves."
+    },
+    "stabilizer": {
+      "title": "Stabilizer",
+      "summary": "You hold intensity with standards and structure.",
+      "pitfalls": ["Rigidity", "Gold-plating"],
+      "exalted": "Deep reliability with adaptive range.",
+      "practice_preview": "Define 'good-enough' upfront, then ship."
+    },
+    "defuser": {
+      "title": "Defuser",
+      "summary": "You diffuse intensity and de-escalate the field.",
+      "pitfalls": ["Drift", "Avoidance"],
+      "exalted": "Grounded spaciousness that chooses.",
+      "practice_preview": "Set a 25/5 box and do the next tiny action."
+    }
+  }
+}
