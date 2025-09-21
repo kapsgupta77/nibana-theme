@@ -1,0 +1,56 @@
+{% comment %}
+  Surge Signature™ Quiz (MVP)
+  - Client-side quiz with soft gate and Mailchimp POST.
+  - GA4 events: quiz_start, quiz_question_view, quiz_complete, quiz_result, email_submit.
+{% endcomment %}
+<section id="nb-quiz-{{ section.id }}" class="nb-quiz nb-quiz--surgesignature" data-section-id="{{ section.id }}">
+  <div class="nb-shell">
+    <div class="nb-quiz__header">
+      <h2 class="nb-quiz__title">{{ section.settings.title | escape }}</h2>
+      <p class="nb-quiz__kicker">{{ section.settings.kicker | escape }}</p>
+      <button class="nb-btn nb-btn--primary" data-nb-quiz-start>
+        {{ section.settings.cta_label | default: 'Start the Quiz' }}
+      </button>
+      <p class="nb-quiz__trust">{{ section.settings.trust_microcopy }}</p>
+    </div>
+    <div class="nb-quiz__app" data-nb-quiz-app hidden></div>
+    <div class="nb-quiz__result" data-nb-quiz-result hidden></div>
+  </div>
+
+  <script src="{{ 'nb-quiz-surgesignature.js' | asset_url }}" defer></script>
+  <link rel="stylesheet" href="{{ 'nb-quiz-surgesignature.css' | asset_url }}" media="all">
+  <script>
+    window.NB_QUIZ = window.NB_QUIZ || {};
+    window.NB_QUIZ['{{ section.id }}'] = {
+      jsonUrl: {{ 'nb-quiz-surgesignature.json' | asset_url | json }},
+      mailchimpAction: {{ section.settings.mailchimp_action | json }},
+      enableGdpr: {{ section.settings.enable_gdpr | json }},
+      gateMode: {{ section.settings.gate_mode | json }},
+      palette: {{ section.settings.palette | json }},
+      gaNamespace: 'surge_signature'
+    };
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Surge Signature Quiz",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Meet your Surge Signature™" },
+    { "type": "text", "id": "kicker", "label": "Subheading", "default": "Accelerator, Stabilizer, or Defuser? ~3 minutes." },
+    { "type": "text", "id": "cta_label", "label": "Start button label", "default": "Start the Quiz" },
+    { "type": "text", "id": "trust_microcopy", "label": "Trust microcopy", "default": "No fluff. Actionable results." },
+    { "type": "text", "id": "mailchimp_action", "label": "Mailchimp action URL (…/subscribe/post?u=…&id=…)", "default": "https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&id=d3d64ba831" },
+    { "type": "select", "id": "gate_mode", "label": "Gate mode", "default": "soft_gate",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "soft_gate", "label": "Soft gate on result" }
+      ]
+    },
+    { "type": "checkbox", "id": "enable_gdpr", "label": "Show GDPR consent block", "default": true },
+    { "type": "text", "id": "palette", "label": "Palette token (optional)", "default": "nibana" }
+  ],
+  "blocks": [],
+  "presets": [{ "name": "Surge Signature Quiz" }]
+}
+{% endschema %}

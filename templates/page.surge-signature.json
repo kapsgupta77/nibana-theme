@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "nb-quiz-surgesignature",
+      "settings": {
+        "title": "Meet your Surge Signature™",
+        "kicker": "Accelerator, Stabilizer, or Defuser? ~3 minutes.",
+        "cta_label": "Start the Quiz",
+        "trust_microcopy": "No fluff. Actionable results.",
+        "mailchimp_action": "https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&id=d3d64ba831",
+        "gate_mode": "soft_gate",
+        "enable_gdpr": true,
+        "palette": "nibana"
+      }
+    }
+  },
+  "order": ["main"]
+}
