@@ -1,5 +1,44 @@
 (function(){
-  let show = function(){};
+  const global = window;
+  let dbg = null;
+
+  let debugState = global.nbShopifyDebug;
+  if (!debugState || typeof debugState !== 'object') {
+    debugState = { enabled: false, log: [] };
+    global.nbShopifyDebug = debugState;
+  } else {
+    if (!Array.isArray(debugState.log)) debugState.log = [];
+    debugState.log = debugState.log.slice(-50);
+  }
+
+  function recordDebug(message, details){
+    const entry = {
+      message: String(message || ''),
+      details: details || null,
+      timestamp: Date.now()
+    };
+    if (!Array.isArray(debugState.log)) debugState.log = [];
+    debugState.log.push(entry);
+    if (debugState.log.length > 50) debugState.log.shift();
+    debugState.last = entry;
+    debugState.latest = entry;
+    debugState.updatedAt = entry.timestamp;
+    global.nbShopifyDebug = debugState;
+    return entry;
+  }
+
+  let show = function(message, details){
+    const entry = recordDebug(message, details);
+    if (!debugState.enabled) return;
+    if (!dbg){
+      dbg = document.createElement('div');
+      dbg.style.cssText = 'position:fixed;right:10px;bottom:10px;background:#111;color:#0f0;padding:8px 10px;border-radius:8px;font:12px/1.4 system-ui;z-index:99999';
+      dbg.textContent = 'Mailchimp debug: init';
+      document.body.appendChild(dbg);
+    }
+    const stage = entry.details && entry.details.stage ? ' [' + entry.details.stage + ']' : '';
+    dbg.textContent = 'Mailchimp debug: ' + entry.message + stage;
+  };
 
   function normaliseTags(tagList, acceptsMarketing){
     const tags = Array.isArray(tagList) ? tagList.filter(Boolean).map(tag => String(tag)) : [];
@@ -71,11 +110,15 @@
         if (frameLoadTimer) clearTimeout(frameLoadTimer);
         cleanup();
         if (ok) {
-          show('Shopify contact helper resolved');
+          show('Shopify contact helper resolved', { stage: 'complete', success: true, payload });
           resolve(payload);
         } else {
           const err = payload instanceof Error ? payload : new Error(String(payload || 'Shopify contact failed'));
-          show('Shopify contact helper failed: ' + (err && err.message ? err.message : 'unknown'));
+          show('Shopify contact helper failed: ' + (err && err.message ? err.message : 'unknown'), {
+            stage: 'complete',
+            success: false,
+            error: err && err.message ? err.message : String(err)
+          });
           reject(err);
         }
       }
@@ -126,7 +169,20 @@
       function onFrameLoad(){
         if (!submitted || !iframe) return;
         const analysis = analyseShopifyFrame(iframe);
-        show('Shopify frame load: ' + analysis.state);
+        let frameUrl = '';
+        let frameError = null;
+        try {
+          frameUrl = iframe?.contentWindow?.location?.href || iframe?.src || '';
+        } catch(err) {
+          frameUrl = iframe?.src || '';
+          frameError = err && err.message ? err.message : String(err || 'unavailable');
+        }
+        show('Shopify frame load: ' + analysis.state, {
+          stage: 'iframe',
+          state: analysis.state,
+          url: frameUrl,
+          error: frameError
+        });
         if (analysis.state === 'captcha') {
           showOverlay();
           return;
@@ -147,7 +203,7 @@
       try {
         hiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
         if (!hiddenForm) {
-          show('Hidden Shopify form missing');
+          show('Hidden Shopify form missing', { stage: 'setup', error: 'form_missing' });
           finish(false, new Error('Hidden Shopify form missing'));
           return;
         }
@@ -161,7 +217,7 @@
               || (usingCustomerForm ? document.getElementById('HiddenNewsletterFrame') : document.getElementById('HiddenContactFrame'))
               || null;
         if (!iframe) {
-          show('Hidden Shopify frame missing');
+          show('Hidden Shopify frame missing', { stage: 'setup', error: 'frame_missing' });
           finish(false, new Error('Hidden Shopify frame missing'));
           return;
         }
@@ -218,22 +274,62 @@
             fd.forEach(function(value, key){ params.append(key, value); });
             const encoded = params.toString();
             const blob = new Blob([encoded], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
-            if (navigator.sendBeacon(url, blob)) {
-              show('Shopify beacon sent');
-            }
+            const beaconResult = navigator.sendBeacon(url, blob);
+            show('Shopify beacon ' + (beaconResult ? 'accepted' : 'rejected'), {
+              stage: 'beacon',
+              success: !!beaconResult,
+              url,
+              payload: encoded
+            });
+          } else {
+            show('Shopify beacon unavailable', {
+              stage: 'beacon',
+              success: false,
+              url,
+              error: 'unsupported'
+            });
           }
-        } catch(_) {}
+        } catch(err) {
+          show('Shopify beacon error', {
+            stage: 'beacon',
+            success: false,
+            url,
+            error: err && err.message ? err.message : String(err)
+          });
+        }
 
         try {
           fetch(url, { method: 'POST', body: fd, credentials: 'same-origin', keepalive: true })
-            .then(function(){ show('Shopify fetch keepalive complete'); })
-            .catch(function(){});
-        } catch(_) {}
+            .then(function(response){
+              return response.text().catch(function(){ return ''; }).then(function(body){
+                show('Shopify fetch keepalive status ' + response.status, {
+                  stage: 'fetch',
+                  status: response.status,
+                  ok: response.ok,
+                  url,
+                  body
+                });
+              });
+            })
+            .catch(function(error){
+              show('Shopify fetch keepalive error', {
+                stage: 'fetch',
+                url,
+                error: error && error.message ? error.message : String(error)
+              });
+            });
+        } catch(err) {
+          show('Shopify fetch keepalive exception', {
+            stage: 'fetch',
+            url,
+            error: err && err.message ? err.message : String(err)
+          });
+        }
 
         try {
           hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
           submitted = true;
-          show('Shopify iframe submit fired');
+          show('Shopify iframe submit fired', { stage: 'submit', url });
         } catch(err) {
           finish(false, err);
           return;
@@ -241,11 +337,12 @@
 
         frameLoadTimer = setTimeout(function(){
           if (!settled) {
-            show('Shopify contact timeout');
+            show('Shopify contact timeout', { stage: 'timeout', url });
             finish(false, new Error('Shopify contact timeout'));
           }
         }, 25000);
       } catch(error) {
+        show('Shopify contact setup error', { stage: 'setup', error: error && error.message ? error.message : String(error) });
         finish(false, error);
       }
     });
@@ -265,25 +362,19 @@
     const mcAction  = sectionEl.getAttribute('data-mc-action') || '';
     const scEnabled = String(sectionEl.getAttribute('data-shopify-customer-enabled')) === 'true';
 
-    let dbg;
-    show = function(msg){
-      if (!debugOn) return;
-      if (!dbg){
-        dbg = document.createElement('div');
-        dbg.style.cssText = 'position:fixed;right:10px;bottom:10px;background:#111;color:#0f0;padding:8px 10px;border-radius:8px;font:12px/1.4 system-ui;z-index:99999';
-        dbg.textContent = 'Mailchimp debug: init';
-        document.body.appendChild(dbg);
-      }
-      dbg.textContent = 'Mailchimp debug: ' + msg;
-    };
-    show('ready');
+    debugState.enabled = debugOn;
+    if (!debugOn && dbg) {
+      try { dbg.remove(); } catch(_) {}
+      dbg = null;
+    }
+    show('ready', { stage: 'init' });
 
     document.addEventListener('submit', async function(e){
       const form = e.target;
       if (!form || form.id !== 'NibanaContactForm') return;
 
       const join = document.getElementById('JoinEmails');
-      if (!join || !join.checked) { show('opt-in unchecked'); return; }
+      if (!join || !join.checked) { show('opt-in unchecked', { stage: 'validation' }); return; }
 
       const email   = document.getElementById('ContactEmail')?.value || '';
       const name    = document.getElementById('ContactName')?.value || '';
@@ -309,7 +400,7 @@
             });
           } catch(_) {}
         } else {
-          show('Shopify contact helper missing');
+          show('Shopify contact helper missing', { stage: 'helper' });
         }
       }
 
@@ -326,10 +417,10 @@
 
           try {
             mcForm.requestSubmit ? mcForm.requestSubmit() : mcForm.submit();
-            show('Mailchimp submit fired');
+            show('Mailchimp submit fired', { stage: 'mailchimp', action: mcAction });
           } catch(_) {}
         } else {
-          show('Mailchimp form not found');
+          show('Mailchimp form not found', { stage: 'mailchimp', error: 'form_missing' });
         }
       }
     }, true);

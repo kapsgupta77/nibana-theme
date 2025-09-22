@@ -6,6 +6,20 @@
 
   function val(sel){ const el = mc.querySelector(sel); return el ? (el.value || '').trim() : ''; }
 
+  function debugEnabled(){
+    return !!(window.nbShopifyDebug && window.nbShopifyDebug.enabled);
+  }
+
+  function debugLog(type, message, data){
+    if (!debugEnabled()) return;
+    const payload = Object.assign({ message }, data || {});
+    if (type === 'error') {
+      console.error('[nb-contact-dualpost]', payload);
+    } else {
+      console.debug('[nb-contact-dualpost]', payload);
+    }
+  }
+
   function postEncodedShopifyContact(payload){
     try {
       const url = '/contact#contact_form';
@@ -32,8 +46,31 @@
         credentials: 'same-origin',
         keepalive: true,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
-      }).catch(() => {});
-    } catch(_) {
+      }).then(function(response){
+        return response.text().catch(function(){ return ''; }).then(function(body){
+          debugLog('debug', 'Fallback Shopify contact response', {
+            stage: 'fallback-fetch',
+            status: response.status,
+            ok: response.ok,
+            url,
+            body,
+            encoded
+          });
+          return response;
+        });
+      }).catch(function(error){
+        debugLog('error', 'Fallback Shopify contact error', {
+          stage: 'fallback-fetch',
+          url,
+          error: error && error.message ? error.message : String(error),
+          encoded
+        });
+      });
+    } catch(err) {
+      debugLog('error', 'Fallback Shopify contact exception', {
+        stage: 'fallback-build',
+        error: err && err.message ? err.message : String(err)
+      });
       return Promise.resolve();
     }
   }
@@ -67,6 +104,7 @@
         await window.nbSubmitShopifyContact(payload);
       } catch(_) {}
     } else {
+      debugLog('debug', 'Shared Shopify helper missing, using encoded fallback', { stage: 'fallback', payload });
       postEncodedShopifyContact(payload);
     }
   }

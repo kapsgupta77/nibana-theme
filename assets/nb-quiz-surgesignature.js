@@ -3,6 +3,36 @@
 
   const SHOPIFY_CONTACT_URL = '/contact#contact_form';
 
+  function debugEnabled(){
+    return !!(window.nbShopifyDebug && window.nbShopifyDebug.enabled);
+  }
+
+  function debugLog(type, message, data){
+    if (!debugEnabled()) return;
+    const payload = Object.assign({ message }, data || {});
+    if (type === 'error') {
+      console.error('[nb-quiz-surgesignature]', payload);
+    } else {
+      console.debug('[nb-quiz-surgesignature]', payload);
+    }
+  }
+
+  function monitorFallbackFrame(frame){
+    if (!frame || !debugEnabled()) return;
+    const handler = function(){
+      let url = '';
+      let error = null;
+      try {
+        url = frame.contentWindow?.location?.href || frame.src || '';
+      } catch(err) {
+        url = frame.src || '';
+        error = err && err.message ? err.message : String(err);
+      }
+      debugLog('debug', 'Fallback iframe load', { stage: 'fallback-iframe', url, error });
+    };
+    frame.addEventListener('load', handler, { once: true });
+  }
+
   function fallbackShopifyContact(payload){
     try {
       const params = new URLSearchParams();
@@ -38,8 +68,32 @@
         credentials: 'same-origin',
         keepalive: true,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
-      }).catch(function(){});
-    } catch(_) {}
+      }).then(function(response){
+        return response.text().catch(function(){ return ''; }).then(function(body){
+          debugLog('debug', 'Fallback Shopify contact response', {
+            stage: 'fallback-fetch',
+            status: response.status,
+            ok: response.ok,
+            url: SHOPIFY_CONTACT_URL,
+            body,
+            encoded
+          });
+          return response;
+        });
+      }).catch(function(error){
+        debugLog('error', 'Fallback Shopify contact error', {
+          stage: 'fallback-fetch',
+          url: SHOPIFY_CONTACT_URL,
+          error: error && error.message ? error.message : String(error),
+          encoded
+        });
+      });
+    } catch(err) {
+      debugLog('error', 'Fallback Shopify contact exception', {
+        stage: 'fallback-build',
+        error: err && err.message ? err.message : String(err)
+      });
+    }
   }
 
   function populateHiddenShopifyForm(payload){
@@ -350,6 +404,12 @@
 
             if (!helperAvailable && hiddenForm && !submitted) {
               try {
+                debugLog('debug', 'Shared Shopify helper missing, submitting hidden fallback form', {
+                  stage: 'fallback-form',
+                  action: hiddenForm.getAttribute('action') || '',
+                  target: hiddenForm.getAttribute('target') || ''
+                });
+                monitorFallbackFrame(helperFrame);
                 hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
                 submitted = true;
               } catch(_) {
@@ -358,6 +418,10 @@
             }
 
             if (!helperAvailable && !submitted) {
+              debugLog('debug', 'Shared Shopify helper missing, using encoded fallback fetch', {
+                stage: 'fallback-fetch',
+                payload
+              });
               fallbackShopifyContact(payload);
             }
           }, { capture:true });
