@@ -22,9 +22,74 @@
         "palette": "nibana",
         "intro_richtext": "<p>When intensity goes up, we all have a go-to pattern. This quiz mirrors yours in work and life - without jargon - and gives you a simple playbook to use today. You’ll see your style, key watch-outs, and one practice to try now.</p><p>15 quick questions to mirror how your energy moves when the stakes rise.</p><p></p>"
       }
+    },
+    "nb_faq_qkkrei": {
+      "type": "nb-faq",
+      "blocks": {
+        "item_LKwa4n": {
+          "type": "item",
+          "settings": {
+            "q": "How long does it take?",
+            "a": "<p>About <strong>3 minutes</strong>—15 quick scenario prompts.</p>",
+            "open": true
+          }
+        },
+        "item_iTCHDK": {
+          "type": "item",
+          "settings": {
+            "q": "What will I get at the end?",
+            "a": "<p>Your <strong>Surge Signature™</strong> (Accelerator, Stabiliser, or Defuser) with <strong>strengths, watch-outs, and one practice to use today</strong>. Enter your email to get the <strong>2-page playbook</strong>.</p>",
+            "open": false
+          }
+        },
+        "item_hChLM9": {
+          "type": "item",
+          "settings": {
+            "q": "How accurate is it?",
+            "a": "<p>It mirrors your <strong>go-to pattern when intensity rises</strong>. Treat it as a mirror and a starting point - your range can grow with practice.</p>",
+            "open": false
+          }
+        },
+        "item_g86pre": {
+          "type": "item",
+          "settings": {
+            "q": "What about privacy and data?",
+            "a": "<p>We use Mailchimp to deliver the playbook and may tag your style to improve content. We <strong>don’t sell data</strong>. Everything is <strong>GDPR-friendly</strong> and you control your preferences.</p>",
+            "open": false
+          }
+        },
+        "item_N6M6fq": {
+          "type": "item",
+          "settings": {
+            "q": "Can my team use this?",
+            "a": "<p>Yes. It gives teams a shared language for how we respond under pressure. Take it individually, then compare results and practices in a retro or stand-up.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "item_LKwa4n",
+        "item_iTCHDK",
+        "item_hChLM9",
+        "item_g86pre",
+        "item_N6M6fq"
+      ],
+      "name": "NB — FAQ (Global)",
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#223238",
+        "teal": "#0F5B59",
+        "shell_col": "#E5E8E1",
+        "answer": "#EAF4F3",
+        "emit_jsonld": true
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "nb_faq_qkkrei"
   ]
 }
