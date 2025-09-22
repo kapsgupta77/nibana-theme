@@ -9,19 +9,29 @@ Also mirrors to:
   <div class="nb-grid nb-grid--2">
     <!-- Left column -->
     <div class="nb-panel">
-      <h1 class="nb-h1">Contact Us</h1>
-      <p class="nb-kicker">Feel free to ask us anything. We're here to help.</p>
+      <h1 class="nb-h1">{{ section.settings.heading | default: 'Contact Us' | escape }}</h1>
+      <p class="nb-kicker">{{ section.settings.subheading | default: "Feel free to ask us anything. We're here to help." | escape }}</p>
 
       <div class="nb-card">
-        <h2 class="nb-h3">Contact Details</h2>
-        <p>info@nibana.life<br>+44 20 7173 5775</p>
-        <p>We usually reply within 1 business day.</p>
+        <h2 class="nb-h3">{{ section.settings.details_heading | default: 'Contact Details' | escape }}</h2>
+        <p>
+          {{ section.settings.details_email | default: 'info@nibana.life' | escape }}<br>
+          {{ section.settings.details_phone | default: '+44 20 7173 5775' | escape }}
+        </p>
+        <p>{{ section.settings.details_note | default: 'We usually reply within 1 business day.' | escape }}</p>
       </div>
 
       <div class="nb-card">
-        <h2 class="nb-h3">Prefer to talk?</h2>
-        <p>Book a free 20-minute discovery call.</p>
-        <p><a class="nb-btn nb-btn--primary" href="/pages/contact">Book a Free 20-min Call</a></p>
+        <h2 class="nb-h3">{{ section.settings.call_heading | default: 'Prefer to talk?' | escape }}</h2>
+        <p>{{ section.settings.call_sub | default: 'Book a free 20-minute discovery call.' | escape }}</p>
+        <p>
+          <a
+            class="nb-btn nb-btn--primary"
+            href="{{ section.settings.call_link | default: '/pages/contact' | escape }}"
+          >
+            {{ section.settings.call_label | default: 'Book a Free 20-min Call' | escape }}
+          </a>
+        </p>
       </div>
     </div>
 
@@ -31,24 +41,24 @@ Also mirrors to:
       {% form 'contact', id: 'nb-contact-form', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
         <div class="nb-form-grid">
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-name">Name <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-name">{{ section.settings.label_name | default: 'Name' | escape }} <span aria-hidden="true">*</span></label>
             <input class="nb-input" id="nbc-name" name="contact[name]" type="text" required>
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-email">Email <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-email">{{ section.settings.label_email | default: 'Email' | escape }} <span aria-hidden="true">*</span></label>
             <input class="nb-input" id="nbc-email" name="contact[email]" type="email" required>
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-phone">Phone</label>
+            <label class="nb-label" for="nbc-phone">{{ section.settings.label_phone | default: 'Phone' | escape }}</label>
             <input class="nb-input" id="nbc-phone" name="contact[phone]" type="tel">
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-reason">Inquiry Purpose <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-reason">{{ section.settings.label_purpose | default: 'Inquiry Purpose' | escape }} <span aria-hidden="true">*</span></label>
             <select class="nb-input" id="nbc-reason" name="contact[reason]" required>
-              <option value="" selected>Choose one…</option>
+              <option value="" selected>{{ section.settings.purpose_placeholder | default: 'Choose one…' | escape }}</option>
               <option value="Coaching enquiry">Coaching enquiry</option>
               <option value="Speaking">Speaking</option>
               <option value="Corporate workshop">Corporate workshop</option>
@@ -59,7 +69,7 @@ Also mirrors to:
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-message">Message <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-message">{{ section.settings.label_message | default: 'Message' | escape }} <span aria-hidden="true">*</span></label>
             <textarea class="nb-input" id="nbc-message" name="contact[body]" rows="6" placeholder="How can we help?" required></textarea>
           </div>
         </div>
@@ -67,22 +77,25 @@ Also mirrors to:
         <div class="nb-consent">
           <label class="nb-checkbox">
             <input id="nbc-consent" type="checkbox">
-            <span>Also send me occasional tips &amp; updates</span>
+            <span>{{ section.settings.optin_label | default: 'Also send me occasional tips & updates' | escape }}</span>
           </label>
-          <p class="nb-form-help">We’ll only email with useful insights. Unsubscribe anytime. No Spam here.</p>
+          <p class="nb-form-help">{{ section.settings.optin_help | default: "We’ll only email with useful insights. Unsubscribe anytime. No Spam here." | escape }}</p>
         </div>
 
         <!-- Hidden helper for mirroring tags -->
         <input type="hidden" id="nbc-tags" value="Source: /contact">
 
-        <button type="submit" class="nb-btn nb-btn--primary">Submit</button>
+        <button type="submit" class="nb-btn nb-btn--primary">{{ section.settings.submit_label | default: 'Submit' | escape }}</button>
 
         {% if form.errors %}
-          <div class="form__message" role="alert">{{ form.errors | default_errors }}</div>
+          <div class="form__message" role="alert">
+            <p>{{ section.settings.error_text | default: 'Please check the highlighted fields and try again.' | escape }}</p>
+            {{ form.errors | default_errors }}
+          </div>
         {% endif %}
         {% if form.posted_successfully? %}
           <div class="nb-card nb-card--soft" role="status">
-            <p>Thanks — your message has been sent. We’ll reply as soon as we can.</p>
+            <p>{{ section.settings.success_text | default: 'Thanks — your message has been sent. We’ll reply as soon as we can.' | escape }}</p>
           </div>
         {% endif %}
       {% endform %}
