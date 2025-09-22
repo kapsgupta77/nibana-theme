@@ -1,5 +1,5 @@
 (function(){
-  const cf = document.getElementById('nb-contact-form');
+  const cf = document.getElementById('nb-contact-shopify');
   if (!cf) return;
 
   const setValue = function (id, value) {
@@ -13,32 +13,46 @@
     const lname = document.getElementById('nbc-last')?.value || '';
     const email = document.getElementById('nbc-email')?.value || '';
     const phone = document.getElementById('nbc-phone')?.value || '';
+    const reason = document.getElementById('nbc-reason')?.value || '';
+    const message = document.getElementById('nbc-message')?.value || '';
     const consent = !!document.getElementById('nbc-consent')?.checked;
     const fullname = `${fname} ${lname}`.trim();
 
     setValue('nbc-name', fullname);
 
-    // ----- Shopify Customer mirror (fire-and-forget)
-    const sf = document.getElementById('nb-contact-customer');
-    if (sf) {
-      setValue('nbc-cust-email', email);
-      setValue('nbc-cust-f', fname);
-      setValue('nbc-cust-l', lname);
-      setValue('nbc-cust-name', fullname);
-      setValue('nbc-cust-phone', phone);
-      setValue('nbc-cust-acc', consent ? 'true' : 'false');
-
-      // add newsletter to tags if consented
-      const t = document.getElementById('nbc-cust-tags');
-      if (t && consent && !/(\b|,)\s*newsletter\s*(,|$)/i.test(t.value)) {
-        t.value = t.value ? (t.value + ', newsletter') : 'newsletter';
+    const tagsInput = document.getElementById('nbc-tags');
+    if (tagsInput) {
+      const base = tagsInput.getAttribute('data-base') || tagsInput.defaultValue || '';
+      const tags = [];
+      if (base) tags.push(base);
+      if (reason) tags.push(`Inquiry: ${reason}`);
+      let tagString = tags.join(', ');
+      if (consent) {
+        if (!/(^|,\s*)newsletter(\s*|,|$)/i.test(tagString)) {
+          tagString = tagString ? `${tagString}, newsletter` : 'newsletter';
+        }
       }
-      if (sf.requestSubmit) sf.requestSubmit(); else sf.submit();
+      tagsInput.value = tagString;
+    }
+
+    setValue('nbc-accepts', consent ? 'true' : 'false');
+
+    // ----- Shopify contact email mirror (fire-and-forget)
+    const emailForm = document.getElementById('nb-contact-email');
+    if (emailForm) {
+      setValue('nbc-email-first', fname);
+      setValue('nbc-email-last', lname);
+      setValue('nbc-email-name', fullname);
+      setValue('nbc-email-email', email);
+      setValue('nbc-email-phone', phone);
+      setValue('nbc-email-reason', reason);
+      setValue('nbc-email-body', message);
+      if (emailForm.requestSubmit) emailForm.requestSubmit(); else emailForm.submit();
     }
 
     // ----- Mailchimp mirror (parallel)
     const mc = document.getElementById('nbc-mc');
-    if (mc) {
+    if (mc && consent) {
       setValue('nbc-mc-fname', fname);
       setValue('nbc-mc-lname', lname);
       setValue('nbc-mc-email', email);
@@ -47,7 +61,7 @@
       if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
     }
 
-    // IMPORTANT: do not preventDefault(); Shopify CONTACT form will submit
-    // and send the store email (includes reason + message).
+    // IMPORTANT: do not preventDefault(); Shopify customer form will submit
+    // and keep the on-page success UI while mirrors handle messaging.
   }, { capture: true });
 })();

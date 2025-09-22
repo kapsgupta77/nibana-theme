@@ -1,7 +1,7 @@
 {%- comment -%}
-Contact page: visible Shopify CONTACT form (fires store email) with Nibana styling.
+Contact page: visible Shopify CUSTOMER form (creates/updates customer record) with Nibana styling.
 Also mirrors to:
-- Hidden Shopify CUSTOMER form (creates/updates Customer, tags, consent)
+- Hidden Shopify CONTACT form (fires store email)
 - Hidden Mailchimp form (parallel subscribe)
 {%- endcomment -%}
 
@@ -64,8 +64,8 @@ Also mirrors to:
 
     <!-- Right column -->
     <div class="nb-panel">
-      {%- comment -%} VISIBLE: Shopify CONTACT form (sends email to store) {%- endcomment -%}
-      {% form 'contact', id: 'nb-contact-form', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
+      {%- comment -%} VISIBLE: Shopify CUSTOMER form (creates/updates customer) {%- endcomment -%}
+      {% form 'customer', id: 'nb-contact-shopify', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
         <div class="nb-form-grid">
           <div class="nb-field nb-field--full">
             <label class="nb-label" for="nbc-first">First name <span aria-hidden="true">*</span></label>
@@ -137,7 +137,13 @@ Also mirrors to:
         </div>
 
         <!-- Hidden helper for mirroring tags -->
-        <input type="hidden" id="nbc-tags" value="Source: /contact">
+        <input type="hidden" id="nbc-tags" name="contact[tags]" value="Source: /contact" data-base="Source: /contact">
+        <input
+          type="hidden"
+          id="nbc-accepts"
+          name="contact[accepts_marketing]"
+          value="{% if section.settings.optin_checked %}true{% else %}false{% endif %}"
+        >
 
         <button type="submit" class="nb-btn nb-btn--primary">{{ section.settings.submit_label | default: 'Submit' | escape }}</button>
 
@@ -154,24 +160,19 @@ Also mirrors to:
         {% endif %}
       {% endform %}
 
-      {%- comment -%} HIDDEN: Shopify CUSTOMER mirror (creates/updates Customer) {%- endcomment -%}
+      {%- comment -%} HIDDEN: Shopify CONTACT mirror (sends store email) {%- endcomment -%}
       <div aria-hidden="true" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
-        {% form 'customer', id: 'nb-contact-customer', target: 'nbc-shopify-target', novalidate: 'novalidate' %}
-          <input type="email"  id="nbc-cust-email"  name="contact[email]">
-          <input type="text"   id="nbc-cust-f"      name="contact[first_name]">
-          <input type="text"   id="nbc-cust-l"      name="contact[last_name]">
-          <input type="text"   id="nbc-cust-name"   name="contact[name]">
-          <input type="tel"    id="nbc-cust-phone" name="contact[phone]">
-          <input type="hidden" id="nbc-cust-tags"  name="contact[tags]" value="Source: /contact">
-          <input
-            type="hidden"
-            id="nbc-cust-acc"
-            name="contact[accepts_marketing]"
-            value="{% if section.settings.optin_checked %}true{% else %}false{% endif %}"
-          >
+        {% form 'contact', id: 'nb-contact-email', target: 'nbc-email-target', novalidate: 'novalidate' %}
+          <input type="text"   id="nbc-email-first"  name="contact[first_name]">
+          <input type="text"   id="nbc-email-last"   name="contact[last_name]">
+          <input type="text"   id="nbc-email-name"   name="contact[name]">
+          <input type="email"  id="nbc-email-email"  name="contact[email]">
+          <input type="tel"    id="nbc-email-phone"  name="contact[phone]">
+          <input type="text"   id="nbc-email-reason" name="contact[reason]">
+          <textarea id="nbc-email-body" name="contact[body]"></textarea>
           <button type="submit">Submit</button>
         {% endform %}
-        <iframe id="nbc-shopify-target" name="nbc-shopify-target" title="Shopify submit"></iframe>
+        <iframe id="nbc-email-target" name="nbc-email-target" title="Shopify contact submit"></iframe>
       </div>
 
       {%- comment -%} HIDDEN: Mailchimp mirror (parallel subscribe) {%- endcomment -%}
