@@ -8,30 +8,28 @@
 
   function nbPostShopifyCustomerFallback(payload){
     try{
-      const body = new URLSearchParams();
+      const params = new URLSearchParams();
       const url = '/contact#contact_form';
       const contentType = 'application/x-www-form-urlencoded;charset=UTF-8';
-      const headers = { 'Content-Type': contentType };
 
-      body.set('form_type','customer');
-      body.set('utf8','✓');
-      body.set('contact[email]', payload.email || '');
-      if (payload.fname) body.set('contact[first_name]', payload.fname);
-      if (payload.lname) body.set('contact[last_name]', payload.lname);
-      if (payload.phone) body.set('contact[phone]', payload.phone);
+      params.set('form_type','customer');
+      params.set('utf8','✓');
+      params.set('contact[email]', payload.email || '');
+      if (payload.fname) params.set('contact[first_name]', payload.fname);
+      if (payload.lname) params.set('contact[last_name]', payload.lname);
+      if (payload.phone) params.set('contact[phone]', payload.phone);
 
       const tags = [];
-      if (payload.consent) { body.set('contact[accepts_marketing]','true'); tags.push('newsletter'); }
+      if (payload.consent) { params.set('contact[accepts_marketing]','true'); tags.push('newsletter'); }
       if (Array.isArray(payload.tags) && payload.tags.length) {
         tags.push.apply(tags, payload.tags);
       }
-      body.set('contact[tags]', tags.join(', '));
+      params.set('contact[tags]', tags.join(', '));
 
-      const encoded = body.toString();
+      const encoded = params.toString();
       if (navigator.sendBeacon) {
         const blob = new Blob([encoded], { type: contentType });
-        navigator.sendBeacon(url, blob);
-        return Promise.resolve();
+        if (navigator.sendBeacon(url, blob)) return Promise.resolve();
       }
 
       return fetch(url, {
@@ -39,7 +37,7 @@
         body: encoded,
         credentials:'same-origin',
         keepalive: true,
-        headers
+        headers: { 'Content-Type': contentType }
       });
     }catch(e){ /* noop */ }
   }
