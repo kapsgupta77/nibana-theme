@@ -1,0 +1,42 @@
+<div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+  <iframe name="HiddenNewsletterFrame" id="HiddenNewsletterFrame" title="HiddenNewsletterFrame"></iframe>
+  {% form 'customer', id: 'NibanaHiddenNewsletter', target: 'HiddenNewsletterFrame', novalidate: 'novalidate' %}
+    <input type="email" name="contact[email]" id="NlEmail">
+    <input type="text"  name="contact[first_name]" id="NlFname">
+    <input type="text"  name="contact[last_name]"  id="NlLname">
+    <input type="tel"   name="contact[phone]"      id="NlPhone">
+    <input type="hidden" name="contact[tags]" id="NlTags" value="">
+    <input type="hidden" name="contact[accepts_marketing]" id="NlAccepts" value="false">
+  {% endform %}
+</div>
+
+<script>
+  // Programmatic submit of the hidden Shopify customer form.
+  // payload: { email, fname, lname, phone, consent (bool), tags: string[] }
+  window.nbSubmitShopifyContact = function(payload){
+    try {
+      var f  = document.getElementById('NibanaHiddenNewsletter'); if(!f) return Promise.resolve(false);
+      var e  = document.getElementById('NlEmail');
+      var fn = document.getElementById('NlFname');
+      var ln = document.getElementById('NlLname');
+      var ph = document.getElementById('NlPhone');
+      var tg = document.getElementById('NlTags');
+      var am = document.getElementById('NlAccepts');
+
+      if (e)  e.value  = (payload.email || '').trim();
+      if (fn) fn.value = (payload.fname || '').trim();
+      if (ln) ln.value = (payload.lname || '').trim();
+      if (ph) ph.value = (payload.phone || '').trim();
+      if (am) am.value = payload.consent ? 'true' : 'false';
+
+      var tags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
+      if (payload.consent && !tags.some(function(t){ return String(t).toLowerCase()==='newsletter'; })) {
+        tags.unshift('newsletter');
+      }
+      if (tg) tg.value = tags.join(', ');
+
+      if (f.requestSubmit) f.requestSubmit(); else f.submit();
+      return Promise.resolve(true);
+    } catch(_) { return Promise.resolve(false); }
+  };
+</script>

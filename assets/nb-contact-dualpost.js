@@ -24,20 +24,20 @@
     try {
       const url = '/contact#contact_form';
       const params = new URLSearchParams();
-      params.set('form_type', 'contact');
+      params.set('form_type', 'customer');
       params.set('utf8', '✓');
       params.set('contact[email]', payload.email || '');
       params.set('contact[first_name]', payload.fname || '');
-      params.set('contact[last_name]', payload.lname || '');
-      params.set('contact[phone]', payload.phone || '');
+      params.set('contact[last_name]',  payload.lname || '');
       params.set('contact[name]', [payload.fname, payload.lname].filter(Boolean).join(' '));
+      if (payload.phone) params.set('contact[phone]', payload.phone);
 
       const tags = Array.isArray(payload.tags) ? payload.tags.slice() : [];
-      if (payload.consent && !tags.some(tag => String(tag).toLowerCase() === 'newsletter')) {
+      if (payload.consent && !tags.some(t => String(t).toLowerCase()==='newsletter')) {
         tags.unshift('newsletter');
       }
       params.set('contact[tags]', tags.join(', '));
-      params.set('accepts_marketing', payload.consent ? 'true' : 'false');
+      params.set('contact[accepts_marketing]', payload.consent ? 'true' : 'false');
 
       const encoded = params.toString();
       return fetch(url, {
@@ -46,33 +46,8 @@
         credentials: 'same-origin',
         keepalive: true,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
-      }).then(function(response){
-        return response.text().catch(function(){ return ''; }).then(function(body){
-          debugLog('debug', 'Fallback Shopify contact response', {
-            stage: 'fallback-fetch',
-            status: response.status,
-            ok: response.ok,
-            url,
-            body,
-            encoded
-          });
-          return response;
-        });
-      }).catch(function(error){
-        debugLog('error', 'Fallback Shopify contact error', {
-          stage: 'fallback-fetch',
-          url,
-          error: error && error.message ? error.message : String(error),
-          encoded
-        });
       });
-    } catch(err) {
-      debugLog('error', 'Fallback Shopify contact exception', {
-        stage: 'fallback-build',
-        error: err && err.message ? err.message : String(err)
-      });
-      return Promise.resolve();
-    }
+    } catch(_) {}
   }
 
   async function postShopify(){
@@ -95,17 +70,29 @@
       consent: acceptsMarketing
     };
 
-    const hiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
-    const helperFrame = document.getElementById('HiddenNewsletterFrame') || document.getElementById('HiddenContactFrame');
-    const hasHelper = typeof window.nbSubmitShopifyContact === 'function' && hiddenForm && helperFrame;
+    const hasHelper = typeof window.nbSubmitShopifyContact === 'function';
 
     if (hasHelper) {
       try {
-        await window.nbSubmitShopifyContact(payload);
+        await window.nbSubmitShopifyContact({
+          email,
+          fname: firstName,
+          lname: lastName,
+          phone,
+          consent: acceptsMarketing,
+          tags: ['Source: /contact']
+        });
       } catch(_) {}
     } else {
       debugLog('debug', 'Shared Shopify helper missing, using encoded fallback', { stage: 'fallback', payload });
-      postEncodedShopifyContact(payload);
+      postEncodedShopifyContact({
+        email,
+        fname: firstName,
+        lname: lastName,
+        phone,
+        consent: acceptsMarketing,
+        tags: ['Source: /contact']
+      });
     }
   }
 
