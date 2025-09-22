@@ -43,6 +43,7 @@
       setValue('nbc-mc-lname', lname);
       setValue('nbc-mc-email', email);
       setValue('nbc-mc-phone', phone);
+      setValue('nbc-mc-consent', consent ? '1' : '0');
       if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
     }
 
