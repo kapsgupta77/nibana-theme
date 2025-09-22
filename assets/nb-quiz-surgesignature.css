@@ -28,9 +28,12 @@
 .nb-quiz.nb-quiz--surgesignature,
 .nb-result--surgesignature{
   position:relative;
-  min-height:100vh;
   background:var(--nb-pebble, #f5f6f4);
   background-repeat:no-repeat;
+}
+
+.nb-quiz.nb-quiz--surgesignature{
+  min-height:auto;
 }
 .nb-shell{max-width:var(--nb-shell-w);margin:0 auto;padding-inline:clamp(12px,3vw,24px);}
 
