@@ -29,7 +29,7 @@ Also mirrors to:
     --nb-contact-card-shadow: {{ nb_card_shadow }};
   "
 >
-  <div class="nb-grid cols-2">
+  <div class="nb-grid nb-grid--2">
     <!-- Left column -->
     <div class="nb-panel">
       <h1 class="nb-h1">{{ section.settings.heading | default: 'Contact Us' | escape }}</h1>
@@ -64,8 +64,8 @@ Also mirrors to:
 
     <!-- Right column -->
     <div class="nb-panel">
-      {%- comment -%} VISIBLE: Shopify CUSTOMER form (creates/updates customer) {%- endcomment -%}
-      {% form 'customer', id: 'nb-contact-shopify', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
+      {%- comment -%} VISIBLE: Shopify CONTACT form (creates/updates customer) {%- endcomment -%}
+      {% form 'contact', id: 'nb-contact-form', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
         <div class="nb-form-grid">
           <div class="nb-field nb-field--full">
             <label class="nb-label" for="nbc-first">First name <span aria-hidden="true">*</span></label>
@@ -80,17 +80,17 @@ Also mirrors to:
           <input type="hidden" id="nbc-name" name="contact[name]">
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-email">{{ section.settings.label_email | default: 'Email' | escape }} <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-email">Email <span aria-hidden="true">*</span></label>
             <input class="nb-input" id="nbc-email" name="contact[email]" type="email" required>
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-phone">{{ section.settings.label_phone | default: 'Phone' | escape }}</label>
+            <label class="nb-label" for="nbc-phone">Phone</label>
             <input class="nb-input" id="nbc-phone" name="contact[phone]" type="tel">
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-reason">{{ section.settings.label_purpose | default: 'Inquiry Purpose' | escape }} <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-reason">Reason <span aria-hidden="true">*</span></label>
             {% liquid
               assign purpose_blocks = section.blocks | where: 'type', 'purpose_option'
             %}
@@ -119,21 +119,17 @@ Also mirrors to:
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-message">{{ section.settings.label_message | default: 'Message' | escape }} <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-message">Message <span aria-hidden="true">*</span></label>
             <textarea class="nb-input" id="nbc-message" name="contact[body]" rows="6" placeholder="How can we help?" required></textarea>
           </div>
         </div>
 
         <div class="nb-consent">
           <label class="nb-checkbox">
-            <input
-              id="nbc-consent"
-              type="checkbox"
-              {% if section.settings.optin_checked %}checked{% endif %}
-            >
-            <span>{{ section.settings.optin_label | default: 'Also send me occasional tips & updates' | escape }}</span>
+            <input id="nbc-consent" type="checkbox" {% if section.settings.optin_checked %}checked{% endif %}>
+            <span>Also send me occasional tips &amp; updates</span>
           </label>
-          <p class="nb-form-help">{{ section.settings.optin_help | default: "We’ll only email with useful insights. Unsubscribe anytime. No Spam here." | escape }}</p>
+          <p class="nb-form-help">We’ll only email with useful insights. Unsubscribe anytime. No Spam here.</p>
         </div>
 
         <!-- Hidden helper for mirroring tags -->
@@ -145,7 +141,16 @@ Also mirrors to:
           value="{% if section.settings.optin_checked %}true{% else %}false{% endif %}"
         >
 
-        <button type="submit" class="nb-btn nb-btn--primary">{{ section.settings.submit_label | default: 'Submit' | escape }}</button>
+        <button type="submit" class="nb-btn nb-btn--primary">Submit</button>
+
+        <style>
+          .nb-contact__form .nb-field { margin-bottom: 12px; }
+          .nb-contact__form .nb-input { border-radius: 12px; }
+          .nb-contact__form select.nb-input { appearance: none; }
+          .nb-consent { display: grid; grid-template-columns: 24px 1fr; gap: 8px 12px; align-items: start; margin-top: 8px; }
+          .nb-form-help { color:#5b6a72; font-size: 13px; margin: 4px 0 0 0; grid-column: 1 / -1; }
+          .nb-contact__form .nb-btn { width: 100%; border-radius: 999px; }
+        </style>
 
         {% if form.errors %}
           <div class="form__message" role="alert">
