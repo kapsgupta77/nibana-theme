@@ -188,54 +188,58 @@
         const sub = resultEl.querySelector('#nb-quiz-sub');
         const thanks = resultEl.querySelector('[data-nb-quiz-thanks]');
 
-        function buildStyleLabel(){
-          const slug = (window.NB_QUIZ_STYLE || document.querySelector('[data-nb-style]')?.getAttribute('data-nb-style') || '').toLowerCase();
-          const map = { accelerator: 'Accelerator', stabilizer: 'Stabiliser', stabiliser: 'Stabiliser', defuser: 'Defuser' };
-          return map[slug] || '';
-        }
-
-        async function submitShopifyTags(when){
-          if (!sub) return;
-          const sf = document.getElementById('nb-shopify-form');
-          const fEmail = document.getElementById('nb-sf-email');
-          const fF = document.getElementById('nb-sf-fname');
-          const fL = document.getElementById('nb-sf-lname');
-          const fP = document.getElementById('nb-sf-phone');
-          const fTags = document.getElementById('nb-sf-tags');
-          if (!sf || !fEmail || !fTags) return;
-
-          const email = sub.querySelector('[name="EMAIL"]')?.value || '';
-          const fname = sub.querySelector('[name="FNAME"]')?.value || '';
-          const lname = sub.querySelector('[name="LNAME"]')?.value || '';
-          const phone = sub.querySelector('[name="PHONE"]')?.value || '';
-          const styleLabel = buildStyleLabel();
-
-          fEmail.value = email;
-          if (fF) fF.value = fname;
-          if (fL) fL.value = lname;
-          if (fP) fP.value = phone;
-
-          const baseTags = sf.dataset.baseTags || fTags.value || '';
-          sf.dataset.baseTags = baseTags;
-
-          const extra = [
-            'Quiz: Surge Signature',
-            styleLabel ? `Style: ${styleLabel}` : '',
-            'Source: /surge-signature'
-          ].filter(Boolean).join(', ');
-          fTags.value = [baseTags, extra].filter(Boolean).join(', ');
-
+        (function(){
           try {
-            const fd = new FormData(sf);
-            const res = await fetch(sf.action || '/contact#contact_form', { method: 'POST', body: fd, credentials: 'same-origin' });
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ event: 'shopify_customer_submit', attempt: when, status: res.ok ? 'ok' : 'http_error', quiz_style: styleLabel });
-          } catch (e) {
-            sf.submit();
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ event: 'shopify_customer_submit', attempt: when, status: 'iframe', quiz_style: styleLabel });
-          }
-        }
+            const sub = document.querySelector('[data-nb-quiz-sub]');
+            if (!sub) return;
+
+            function styleLabelFromSlug(slug){
+              slug = (slug||'').toLowerCase();
+              return slug === 'accelerator' ? 'Accelerator'
+                   : slug === 'stabilizer' ? 'Stabiliser'
+                   : slug === 'defuser' ? 'Defuser' : '';
+            }
+
+            function submitShopifyNow(){
+              const sf = document.getElementById('nb-shopify-form');
+              const fEmail = document.getElementById('nb-sf-email');
+              const fF = document.getElementById('nb-sf-fname');
+              const fL = document.getElementById('nb-sf-lname');
+              const fP = document.getElementById('nb-sf-phone');
+              const fTags = document.getElementById('nb-sf-tags');
+              if (!sf || !fEmail || !fTags) return;
+
+              const email = sub.querySelector('[name="EMAIL"]')?.value || '';
+              const fname = sub.querySelector('[name="FNAME"]')?.value || '';
+              const lname = sub.querySelector('[name="LNAME"]')?.value || '';
+              const phone = sub.querySelector('[name="PHONE"]')?.value || '';
+              const styleLabel = styleLabelFromSlug(window.NB_QUIZ_STYLE || '');
+
+              fEmail.value = email;
+              if (fF) fF.value = fname;
+              if (fL) fL.value = lname;
+              if (fP) fP.value = phone;
+
+              // Tag set (newsletter only if consent checked — we control by gating the call)
+              const tags = [
+                'newsletter',
+                'Quiz: Surge Signature',
+                styleLabel ? `Style: ${styleLabel}` : '',
+                'Source: /surge-signature'
+              ].filter(Boolean).join(', ');
+              fTags.value = tags;
+
+              sf.submit(); // fire once, immediate, to our iframe target
+            }
+
+            sub.addEventListener('submit', function(){
+              // respect consent; only create a marketing subscriber if opted in
+              const consent = sub.querySelector('input[name="gdpr[CONSENT]"]');
+              if (consent && consent.checked) submitShopifyNow();
+            }, { capture: true });
+
+          } catch(e) { console.warn('quiz dualpost cleanup warn', e); }
+        })();
         sub.setAttribute('target', `mc-target-${section.dataset.sectionId}`);
         try {
           const saved = JSON.parse(localStorage.getItem('nb_surge_user') || '{}');
@@ -256,35 +260,9 @@
             EMAIL: sub.querySelector('[name="EMAIL"]')?.value || '',
             PHONE: sub.querySelector('[name="PHONE"]')?.value || ''
           };
-          const consentField = sub.querySelector('input[name="gdpr[CONSENT]"]');
-          const consentChecked = !consentField || consentField.checked;
-
-          if (payload.EMAIL && consentChecked && window.NBTagWorker) {
-            const styleLabel = buildStyleLabel();
-            window.NBTagWorker.enqueue({
-              email: payload.EMAIL,
-              fname: payload.FNAME,
-              lname: payload.LNAME,
-              phone: payload.PHONE,
-              styleLabel: styleLabel,
-              source: '/surge-signature'
-            });
-            window.NBTagWorker.tick && window.NBTagWorker.tick();
-          }
-
           try {
             localStorage.setItem('nb_surge_user', JSON.stringify(payload));
           } catch(e){}
-
-          try {
-            if (consentChecked) {
-              submitShopifyTags('now');
-              setTimeout(()=>submitShopifyTags('retry_2500ms'), 2500);
-              setTimeout(()=>submitShopifyTags('retry_6000ms'), 6000);
-            }
-          } catch(e) {
-            console.warn('NB QUIZ dual-post retry warn:', e);
-          }
 
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
