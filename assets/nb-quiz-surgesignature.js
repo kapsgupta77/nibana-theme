@@ -303,7 +303,7 @@
           const form = resultEl.querySelector('[data-nb-quiz-sub]');
           if(!form) return;
 
-          form.addEventListener('submit', function(){
+          form.addEventListener('submit', async function(){
             const email = form.querySelector('[name="EMAIL"]')?.value || '';
             const firstName = (form.querySelector('[name="FNAME"]')?.value || '').trim();
             const lastName = (form.querySelector('[name="LNAME"]')?.value || '').trim();
@@ -327,23 +327,28 @@
             };
 
             const hiddenForm = populateHiddenShopifyForm(payload);
+            const helperHiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
+            const helperFrame = document.getElementById('HiddenNewsletterFrame') || document.getElementById('HiddenContactFrame');
+            const helperAvailable = typeof window.nbSubmitShopifyContact === 'function' && helperHiddenForm && helperFrame;
+
             let submitted = false;
-            if (typeof window.nbSubmitShopifyContact === 'function') {
+            if (helperAvailable) {
               try {
-                submitted = window.nbSubmitShopifyContact({
+                await window.nbSubmitShopifyContact({
                   email: payload.email,
                   fname: payload.firstName,
                   lname: payload.lastName,
                   phone: payload.phone,
                   tags: payload.tags,
                   consent: payload.acceptsMarketing
-                }) === true;
+                });
+                submitted = true;
               } catch(_) {
                 submitted = false;
               }
             }
 
-            if (!submitted && hiddenForm) {
+            if (!helperAvailable && hiddenForm && !submitted) {
               try {
                 hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
                 submitted = true;
@@ -352,7 +357,7 @@
               }
             }
 
-            if (!submitted) {
+            if (!helperAvailable && !submitted) {
               fallbackShopifyContact(payload);
             }
           }, { capture:true });
