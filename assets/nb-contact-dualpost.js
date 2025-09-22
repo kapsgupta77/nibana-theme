@@ -53,7 +53,9 @@
     const fname = val('[name="FNAME"], [name="first_name"]');
     const lname = val('[name="LNAME"], [name="last_name"]');
     const phone = val('[name="PHONE"], [type="tel"], [name="phone"]');
-    const consent = !!mc.querySelector('input[name="gdpr[CONSENT]"]')?.checked;
+    const gdprConsent = !!mc.querySelector('input[name="gdpr[CONSENT]"]')?.checked;
+    const formConsent = !!document.querySelector('#JoinEmails')?.checked;
+    const consent = gdprConsent || formConsent;
 
     postCustomer({ email, fname, lname, phone, consent, tags: ['Source: /contact'] });
   }
