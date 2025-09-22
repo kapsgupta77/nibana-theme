@@ -19,8 +19,84 @@
       <p class="nb-quiz__trust">{{ section.settings.trust_microcopy }}</p>
     </div>
     <div class="nb-quiz__app" data-nb-quiz-app hidden></div>
-    <div class="nb-quiz__result" data-nb-quiz-result hidden></div>
-    <iframe name="mc-target-{{ section.id }}" class="nb-quiz__mc-frame" style="display:none;"></iframe>
+    <div class="nb-quiz__result" data-nb-quiz-result hidden>
+      <div class="nb-card nb-quiz__result-card">
+        <div class="nb-quiz__result-copy" data-nb-quiz-form>
+          <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
+          <h3 class="nb-quiz__result-title" data-nb-quiz-title></h3>
+          <p class="nb-quiz__summary" data-nb-quiz-summary></p>
+          <p class="nb-quiz__trust">We’ll email the full 2-page playbook with tailored practices. GDPR-friendly—no spam.</p>
+          <div class="nb-quiz__free-insight" data-nb-quiz-practice></div>
+        </div>
+
+{% comment %} Quiz soft-gate — Shopify primary + Mailchimp parallel {% endcomment %}
+{% form 'customer', id: 'nb-quiz-shopify', class: 'nb-quiz__form', novalidate: 'novalidate' %}
+  <div class="nb-form-grid">
+    <div class="nb-field">
+      <label for="nbq-fname">First name</label>
+      <input id="nbq-fname" name="contact[first_name]" type="text" required>
+    </div>
+    <div class="nb-field">
+      <label for="nbq-lname">Last name</label>
+      <input id="nbq-lname" name="contact[last_name]" type="text" required>
+    </div>
+    <div class="nb-field">
+      <label for="nbq-email">Email</label>
+      <input id="nbq-email" name="contact[email]" type="email" required>
+    </div>
+    <div class="nb-field">
+      <label for="nbq-phone">Phone (optional)</label>
+      <input id="nbq-phone" name="contact[phone]" type="tel">
+    </div>
+  </div>
+
+  <!-- Hidden fields we fill via JS just before submit -->
+  <input type="hidden" id="nbq-tags" name="contact[tags]" value="">
+  <input type="hidden" id="nbq-accepts" name="contact[accepts_marketing]" value="false">
+
+  <div class="nb-consent">
+    <label>
+      <input id="nbq-consent" type="checkbox"> Email me the 2-page playbook and follow-ups (unsubscribe anytime)
+    </label>
+  </div>
+
+  <button type="submit" class="nb-btn nb-btn--primary">Email me my playbook</button>
+
+  {% if form.errors %}
+    <div class="form__message" role="alert">
+      {{ form.errors | default_errors }}
+    </div>
+  {% endif %}
+  {% if form.posted_successfully? %}
+    <div class="nb-quiz__thanks nb-card" data-nb-quiz-thanks>
+      <h3>Check your inbox ✉️</h3>
+      <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
+      <p><a href="/pages/surge-signature-result">View your result on Nibana →</a></p>
+    </div>
+  {% endif %}
+{% endform %}
+
+<!-- Hidden Mailchimp mirror — submitted in parallel via JS -->
+<form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+      method="post" target="nbq-mc-target" id="nbq-mc" aria-hidden="true"
+      style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+  <input type="text"   name="FNAME" id="nbq-mc-fname">
+  <input type="text"   name="LNAME" id="nbq-mc-lname">
+  <input type="email"  name="EMAIL" id="nbq-mc-email">
+  <input type="text"   name="PHONE" id="nbq-mc-phone">
+  <!-- Lead Source group -->
+  <input type="hidden" name="group[78632][1]" value="1">
+  <!-- Style interests — we tick one via JS by setting checked=true -->
+  <input type="checkbox" name="group[78632][2]" id="nbq-mc-acc" value="1">
+  <input type="checkbox" name="group[78632][4]" id="nbq-mc-stab" value="1">
+  <input type="checkbox" name="group[78632][8]" id="nbq-mc-def" value="1">
+  <!-- Optional: STYLE merge field -->
+  <input type="hidden" name="STYLE" id="nbq-mc-style">
+  <input type="submit" value="Subscribe">
+</form>
+<iframe name="nbq-mc-target" id="nbq-mc-target" title="Mailchimp submit" hidden></iframe>
+      </div>
+    </div>
   </div>
 
   <script src="{{ 'nb-quiz-surgesignature.js' | asset_url }}" defer></script>
