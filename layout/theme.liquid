@@ -506,9 +506,7 @@ It:
 </script>
 {% render 'nb-sticky-cta-controller' %}
 {% render 'nb-anim-init' %}
-{% if request.path contains '/pages/contact' %}
-  <script src="{{ 'nb-contact-dualpost.js' | asset_url }}" defer></script>
-{% endif %}
 {% render 'nb-newsletter-proxy' %}
+{% render 'nb-customer-intake' %}
   </body>
 </html>

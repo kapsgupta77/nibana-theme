@@ -38,18 +38,6 @@
     };
   </script>
 
-  <div class="nb-hidden" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
-    <iframe name="nb-shopify-target" id="nb-shopify-target" title="nb-shopify-target"></iframe>
-    {% form 'customer', id: 'nb-shopify-form', class: 'nb-shopify-form', target: 'nb-shopify-target', novalidate: 'novalidate' %}
-      <input type="email" name="contact[email]" id="nb-sf-email">
-      <input type="text" name="contact[first_name]" id="nb-sf-fname">
-      <input type="text" name="contact[last_name]" id="nb-sf-lname">
-      <input type="tel" name="contact[phone]" id="nb-sf-phone">
-      <input type="hidden" name="contact[tags]" id="nb-sf-tags" value="">
-      <input type="hidden" name="contact[accepts_marketing]" id="nb-sf-accepts" value="false">
-      <!-- accepts_marketing will be implied by submitting only when consent is checked -->
-    {% endform %}
-  </div>
 </section>
 
 {% schema %}
