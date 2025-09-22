@@ -68,9 +68,16 @@ Also mirrors to:
       {% form 'contact', id: 'nb-contact-form', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
         <div class="nb-form-grid">
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-name">{{ section.settings.label_name | default: 'Name' | escape }} <span aria-hidden="true">*</span></label>
-            <input class="nb-input" id="nbc-name" name="contact[name]" type="text" required>
+            <label class="nb-label" for="nbc-first">First name <span aria-hidden="true">*</span></label>
+            <input class="nb-input" id="nbc-first" name="contact[first_name]" type="text" required>
           </div>
+
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-last">Last name <span aria-hidden="true">*</span></label>
+            <input class="nb-input" id="nbc-last" name="contact[last_name]" type="text" required>
+          </div>
+
+          <input type="hidden" id="nbc-name" name="contact[name]">
 
           <div class="nb-field nb-field--full">
             <label class="nb-label" for="nbc-email">{{ section.settings.label_email | default: 'Email' | escape }} <span aria-hidden="true">*</span></label>
@@ -131,7 +138,9 @@ Also mirrors to:
       <div aria-hidden="true" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
         {% form 'customer', id: 'nb-contact-customer', target: 'nbc-shopify-target', novalidate: 'novalidate' %}
           <input type="email"  id="nbc-cust-email"  name="contact[email]">
-          <input type="text"   id="nbc-cust-name"  name="contact[name]">
+          <input type="text"   id="nbc-cust-f"      name="contact[first_name]">
+          <input type="text"   id="nbc-cust-l"      name="contact[last_name]">
+          <input type="text"   id="nbc-cust-name"   name="contact[name]">
           <input type="tel"    id="nbc-cust-phone" name="contact[phone]">
           <input type="hidden" id="nbc-cust-tags"  name="contact[tags]" value="Source: /contact">
           <input type="hidden" id="nbc-cust-acc"   name="contact[accepts_marketing]" value="false">
