@@ -1,4 +1,87 @@
 (function(){
+  let show = function(){};
+
+  function nbSubmitShopifyContact(options = {}){
+    try {
+      const hiddenForm = document.getElementById('NibanaHiddenContact');
+      if (!hiddenForm) {
+        show('Hidden Shopify contact form missing');
+        return false;
+      }
+
+      const frame = document.getElementById('HiddenContactFrame');
+      if (frame) {
+        hiddenForm.setAttribute('target', frame.getAttribute('name') || 'HiddenContactFrame');
+      }
+
+      const email = (options.email || '').trim();
+      const firstName = (options.firstName || '').trim();
+      const lastName = (options.lastName || '').trim();
+      const phone = (options.phone || '').trim();
+      const acceptsMarketing = !!options.acceptsMarketing;
+      const tags = Array.isArray(options.tags) ? options.tags.filter(Boolean) : [];
+      if (acceptsMarketing && !tags.some(tag => String(tag).toLowerCase() === 'newsletter')) {
+        tags.unshift('newsletter');
+      }
+      const tagString = tags.join(', ');
+      const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+
+      const assign = (id, value) => {
+        const input = document.getElementById(id);
+        if (input) input.value = value;
+      };
+      assign('HiddenContactEmail', email);
+      assign('HiddenContactFirstName', firstName);
+      assign('HiddenContactLastName', lastName);
+      assign('HiddenContactPhone', phone);
+      assign('HiddenContactTags', tagString);
+      assign('HiddenContactAcceptsMarketing', acceptsMarketing ? 'true' : 'false');
+      assign('HiddenContactName', fullName);
+
+      const fd = new FormData(hiddenForm);
+      fd.set('contact[email]', email);
+      fd.set('contact[first_name]', firstName);
+      fd.set('contact[last_name]', lastName);
+      fd.set('contact[phone]', phone);
+      fd.set('contact[tags]', tagString);
+      fd.set('accepts_marketing', acceptsMarketing ? 'true' : 'false');
+      fd.set('contact[name]', fullName);
+
+      const url = hiddenForm.getAttribute('action') || '/contact#contact_form';
+
+      try {
+        if (typeof navigator.sendBeacon === 'function') {
+          const params = new URLSearchParams();
+          for (const [key, value] of fd.entries()) {
+            params.append(key, value);
+          }
+          const encoded = params.toString();
+          const blob = new Blob([encoded], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
+          if (navigator.sendBeacon(url, blob)) {
+            show('Shopify beacon sent');
+          }
+        }
+      } catch(_) {}
+
+      try {
+        fetch(url, { method: 'POST', body: fd, credentials: 'same-origin', keepalive: true })
+          .then(() => show('Shopify fetch keepalive complete'))
+          .catch(() => {});
+      } catch(_) {}
+
+      try {
+        hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
+        show('Shopify iframe submit fired');
+      } catch(_) {}
+
+      return true;
+    } catch(_) {
+      return false;
+    }
+  }
+
+  window.nbSubmitShopifyContact = nbSubmitShopifyContact;
+
   function init(){
     if (window.__nbContactBound) return;
     window.__nbContactBound = true;
@@ -11,9 +94,8 @@
     const mcAction  = sectionEl.getAttribute('data-mc-action') || '';
     const scEnabled = String(sectionEl.getAttribute('data-shopify-customer-enabled')) === 'true';
 
-    // tiny debug badge
     let dbg;
-    function show(msg){
+    show = function(msg){
       if (!debugOn) return;
       if (!dbg){
         dbg = document.createElement('div');
@@ -22,10 +104,9 @@
         document.body.appendChild(dbg);
       }
       dbg.textContent = 'Mailchimp debug: ' + msg;
-    }
+    };
     show('ready');
 
-    // Capture-phase listener so it fires even during fast navigations
     document.addEventListener('submit', function(e){
       const form = e.target;
       if (!form || form.id !== 'NibanaContactForm') return;
@@ -40,13 +121,11 @@
       const tags    = ['Contact Form'];
       if (purpose) tags.push('Purpose: ' + purpose);
 
-      // --- Mailchimp path (recommended, not blocked by hCaptcha) ---
       if (mcEnabled && mcAction) {
         const mcForm   = document.getElementById('NibanaMailchimp');
         const mcFrame  = document.getElementById('MailchimpFrame');
         if (mcForm && mcFrame) {
           mcForm.setAttribute('action', mcAction);
-          // Basic fields; FNAME = first name only
           const first = (name || '').trim().split(/\s+/)[0] || '';
           document.getElementById('MC_EMAIL').value = email;
           document.getElementById('MC_FNAME').value = first;
@@ -62,38 +141,22 @@
         }
       }
 
-      // --- Optional Shopify customer path (can be blocked by hCaptcha) ---
       if (scEnabled) {
-        const hiddenForm  = document.getElementById('NibanaHiddenNewsletter');
-        const hiddenFrame = document.getElementById('NewsletterFrame');
-        if (hiddenForm && hiddenFrame) hiddenForm.setAttribute('target','NewsletterFrame');
-        if (hiddenForm) {
-          const emailInput = document.getElementById('HiddenCustomerEmail');
-          const tagInput   = document.getElementById('HiddenCustomerTags');
-          if (emailInput) emailInput.value = email;
-          if (tagInput)   tagInput.value   = ['newsletter'].concat(tags).join(', ');
-
-          const fd = new FormData(hiddenForm);
-          fd.set('contact[email]', email);
-          fd.set('contact[tags]', ['newsletter'].concat(tags).join(', '));
-          const url = hiddenForm.getAttribute('action') || '/contact#newsletter';
-
-          try {
-            const params = new URLSearchParams();
-            for (const [k,v] of fd.entries()) params.append(k,v);
-            navigator.sendBeacon(url, new Blob([params.toString()], {type:'application/x-www-form-urlencoded;charset=UTF-8'}));
-            show('Shopify beacon sent');
-          } catch(_) {}
-
-          try {
-            fetch(url,{method:'POST', body:fd, credentials:'same-origin', keepalive:true})
-              .then(()=>show('Shopify fetch keepalive complete')).catch(()=>{});
-          } catch(_) {}
-
-          try {
-            hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
-            show('Shopify iframe submit fired');
-          } catch(_) {}
+        const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+        const firstName = parts.shift() || '';
+        const lastName = parts.join(' ');
+        if (typeof window.nbSubmitShopifyContact === 'function') {
+          const ok = window.nbSubmitShopifyContact({
+            email,
+            firstName,
+            lastName,
+            phone,
+            tags,
+            acceptsMarketing: !!join.checked
+          });
+          if (!ok) show('Shopify contact helper failed');
+        } else {
+          show('Shopify contact helper missing');
         }
       }
     }, true);
