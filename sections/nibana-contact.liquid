@@ -91,14 +91,30 @@ Also mirrors to:
 
           <div class="nb-field nb-field--full">
             <label class="nb-label" for="nbc-reason">{{ section.settings.label_purpose | default: 'Inquiry Purpose' | escape }} <span aria-hidden="true">*</span></label>
+            {% liquid
+              assign purpose_blocks = section.blocks | where: 'type', 'purpose_option'
+            %}
+            {% capture purpose_option_markup %}
+              {% for block in purpose_blocks %}
+                {% assign option_label = block.settings.option_label | strip %}
+                {% if option_label != blank %}
+                  <option value="{{ option_label | escape }}">{{ option_label | escape }}</option>
+                {% endif %}
+              {% endfor %}
+            {% endcapture %}
+            {% assign purpose_option_markup = purpose_option_markup | strip %}
             <select class="nb-input" id="nbc-reason" name="contact[reason]" required>
               <option value="" selected>{{ section.settings.purpose_placeholder | default: 'Choose one…' | escape }}</option>
-              <option value="Coaching enquiry">Coaching enquiry</option>
-              <option value="Speaking">Speaking</option>
-              <option value="Corporate workshop">Corporate workshop</option>
-              <option value="Partnership">Partnership</option>
-              <option value="Press">Press</option>
-              <option value="Other">Other</option>
+              {% if purpose_option_markup != blank %}
+                {{ purpose_option_markup }}
+              {% else %}
+                <option value="Coaching enquiry">Coaching enquiry</option>
+                <option value="Speaking">Speaking</option>
+                <option value="Corporate workshop">Corporate workshop</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Press">Press</option>
+                <option value="Other">Other</option>
+              {% endif %}
             </select>
           </div>
 
