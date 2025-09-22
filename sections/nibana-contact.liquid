@@ -210,11 +210,16 @@
 {%- endcomment -%}
 {% if section.settings.use_shopify_customer_flow %}
   <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-    <iframe id="NewsletterFrame" name="NewsletterFrame" tabindex="-1"></iframe>
-    {% form 'customer', id: 'NibanaHiddenNewsletter' %}
-      <input type="email" name="contact[email]" id="HiddenCustomerEmail">
-      <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="newsletter, Contact Form">
-      <button id="HiddenSubmit" type="submit">Submit</button>
+    <iframe id="HiddenContactFrame" name="HiddenContactFrame" tabindex="-1"></iframe>
+    {% form 'contact', id: 'NibanaHiddenContact', target: 'HiddenContactFrame' %}
+      <input type="email"   name="contact[email]"          id="HiddenContactEmail">
+      <input type="text"    name="contact[name]"           id="HiddenContactName">
+      <input type="text"    name="contact[first_name]"     id="HiddenContactFirstName">
+      <input type="text"    name="contact[last_name]"      id="HiddenContactLastName">
+      <input type="tel"     name="contact[phone]"          id="HiddenContactPhone">
+      <input type="hidden"  name="contact[tags]"           id="HiddenContactTags" value="">
+      <input type="hidden"  name="accepts_marketing"       id="HiddenContactAcceptsMarketing" value="false">
+      <button id="HiddenContactSubmit" type="submit">Submit</button>
     {% endform %}
   </div>
 {% endif %}
