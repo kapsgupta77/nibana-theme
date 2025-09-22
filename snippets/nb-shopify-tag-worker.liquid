@@ -23,7 +23,7 @@
   }
 
   async function postToShopify(job){
-    // Build the same payload Shopify’s {% form 'customer' %} would send
+    // Build the same payload Shopify’s customer form would send
     var fd = new FormData();
     fd.set('form_type', 'customer');
     fd.set('utf8', '✓');
