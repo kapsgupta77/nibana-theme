@@ -198,17 +198,29 @@
     // Submit Mailchimp in parallel
     const mc = document.getElementById('nbq-mc');
     if (mc) {
-      document.getElementById('nbq-mc-fname').value = fname;
-      document.getElementById('nbq-mc-lname').value = lname;
-      document.getElementById('nbq-mc-email').value = email;
-      document.getElementById('nbq-mc-phone').value = phone;
-      document.getElementById('nbq-mc-style').value = styleLabel;
+      if (consent) {
+        document.getElementById('nbq-mc-fname').value = fname;
+        document.getElementById('nbq-mc-lname').value = lname;
+        document.getElementById('nbq-mc-email').value = email;
+        document.getElementById('nbq-mc-phone').value = phone;
+        document.getElementById('nbq-mc-style').value = styleLabel;
 
-      document.getElementById('nbq-mc-acc').checked  = (styleLabel === 'Accelerator');
-      document.getElementById('nbq-mc-stab').checked = (styleLabel === 'Stabiliser');
-      document.getElementById('nbq-mc-def').checked  = (styleLabel === 'Defuser');
+        document.getElementById('nbq-mc-acc').checked  = (styleLabel === 'Accelerator');
+        document.getElementById('nbq-mc-stab').checked = (styleLabel === 'Stabiliser');
+        document.getElementById('nbq-mc-def').checked  = (styleLabel === 'Defuser');
 
-      if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
+        if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
+      } else {
+        document.getElementById('nbq-mc-fname').value = '';
+        document.getElementById('nbq-mc-lname').value = '';
+        document.getElementById('nbq-mc-email').value = '';
+        document.getElementById('nbq-mc-phone').value = '';
+        document.getElementById('nbq-mc-style').value = '';
+
+        document.getElementById('nbq-mc-acc').checked  = false;
+        document.getElementById('nbq-mc-stab').checked = false;
+        document.getElementById('nbq-mc-def').checked  = false;
+      }
     }
 
     // Persist for thank-you / rehydration
