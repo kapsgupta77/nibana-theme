@@ -30,17 +30,72 @@
         </div>
 
         <div class="nb-card nb-quiz__gate">
-          {% if form and form.posted_successfully? %}
-            <meta id="nbq-posted" data-posted="true">
-            <div class="nb-quiz__thanks nb-card nb-card--soft" data-nb-quiz-thanks>
-              <h3>Check your inbox ✉️</h3>
-              <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
-              <p><a class="nb-link" href="/pages/surge-signature-result">View your result on Nibana →</a></p>
-            </div>
-          {% else %}
-            {% comment %} Quiz soft-gate — Shopify primary + Mailchimp parallel {% endcomment %}
-            {% form 'customer', id: 'nb-quiz-shopify', class: 'nb-quiz__form', novalidate: 'novalidate' %}
-              <div class="nb-form-grid">
+          <style>
+            /* ---- scoped, only within this section ---- */
+            #nb-quiz-shopify.nb-quiz__form { padding: 20px; }
+            .nb-quiz__fieldset { display: grid; gap: 14px; }
+            .nb-quiz__form .nb-field { display: grid; gap: 6px; }
+            .nb-quiz__form label { font-size: 14px; line-height: 1.3; color: #1f2b33; }
+
+            /* Inputs */
+            .nb-quiz__form input[type="text"],
+            .nb-quiz__form input[type="email"],
+            .nb-quiz__form input[type="tel"]{
+              width: 100%;
+              padding: 14px 16px;
+              border: 1px solid #dbe1e6;
+              border-radius: 12px;
+              background: #fff;
+              box-shadow: 0 1px 0 rgba(15,23,42,.02);
+              font-size: 16px;
+            }
+
+            /* Consent row: checkbox left, copy wraps nicely */
+            .nb-quiz__consent{
+              display: grid;
+              grid-template-columns: 20px 1fr;
+              align-items: start;
+              gap: 10px;
+              margin-top: 4px;
+              color: #31424b;
+              font-size: 14px;
+              line-height: 1.45;
+            }
+            .nb-quiz__consent input[type="checkbox"]{ margin-top: 3px; }
+
+            /* CTA — TEAL (not orange) */
+            .nb-quiz__submit .nb-btn{
+              width: 100%;
+              padding: 14px 18px;
+              border-radius: 14px;
+              border: 1px solid transparent;
+              background: #10636c;           /* Nibana teal */
+              color: #fff;
+              box-shadow: 0 6px 18px rgba(16,99,108,.16);
+              font-weight: 600;
+              font-size: 16px;
+            }
+            .nb-quiz__submit .nb-btn:hover{ background:#0b4f57; }
+
+            /* Thank-you card */
+            .nb-quiz__thanks{
+              padding: 18px 20px;
+              border-radius: 14px;
+              background: rgba(16,99,108,.06);
+              box-shadow: 0 1px 0 rgba(15,23,42,.02) inset;
+            }
+            .nb-quiz__thanks h3{ margin: 0 0 8px; }
+          </style>
+
+          {% form 'customer', id: 'nb-quiz-shopify', class: 'nb-quiz__form', novalidate: 'novalidate' %}
+            {% if form.posted_successfully? %}
+              <div class="nb-quiz__thanks" id="nb-quiz-thanks">
+                <h3>Check your inbox ✉️</h3>
+                <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
+                <p><a class="nb-link" href="/pages/surge-signature-result">View your result on Nibana →</a></p>
+              </div>
+            {% else %}
+              <div class="nb-quiz__fieldset">
                 <div class="nb-field">
                   <label for="nbq-fname">First name</label>
                   <input id="nbq-fname" name="contact[first_name]" type="text" required>
@@ -57,26 +112,27 @@
                   <label for="nbq-phone">Phone (optional)</label>
                   <input id="nbq-phone" name="contact[phone]" type="tel">
                 </div>
-              </div>
 
-              <!-- Hidden fields we fill via JS just before submit -->
-              <input type="hidden" id="nbq-tags" name="contact[tags]" value="">
-              <input type="hidden" id="nbq-accepts" name="contact[accepts_marketing]" value="false">
+                <!-- hidden fields filled by JS just before submit -->
+                <input type="hidden" id="nbq-tags" name="contact[tags]" value="">
+                <input type="hidden" id="nbq-accepts" name="contact[accepts_marketing]" value="false">
 
-              <div class="nb-consent">
-                <label>
-                  <input id="nbq-consent" type="checkbox"> Email me the 2-page playbook and follow-ups (unsubscribe anytime)
-                </label>
-              </div>
-
-              <button type="submit" class="nb-btn nb-btn--primary">Email me my playbook</button>
-
-              {% if form.errors %}
-                <div class="form__message" role="alert">
-                  {{ form.errors | default_errors }}
+                <div class="nb-quiz__consent">
+                  <input id="nbq-consent" type="checkbox">
+                  <label for="nbq-consent">Email me the 2-page playbook and follow-ups (unsubscribe anytime)</label>
                 </div>
-              {% endif %}
-            {% endform %}
+
+                <div class="nb-quiz__submit">
+                  <button type="submit" class="nb-btn">Email me my playbook</button>
+                </div>
+
+                {% if form.errors %}
+                  <div class="form__message" role="alert">{{ form.errors | default_errors }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endform %}
+        </div>
 
             <!-- Hidden Mailchimp mirror — submitted in parallel via JS -->
             <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
