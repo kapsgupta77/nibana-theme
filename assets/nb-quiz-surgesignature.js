@@ -3,27 +3,48 @@
 
   function nbPostShopifyCustomer(payload){
     try{
-      const fd = new FormData();
+      const body = new URLSearchParams();
+      const url = '/contact#contact_form';
+      const contentType = 'application/x-www-form-urlencoded;charset=UTF-8';
+      const headers = { 'Content-Type': contentType };
       // Required fields for Shopify newsletter endpoint
-      fd.set('form_type','customer');
-      fd.set('utf8','✓');
-      fd.set('contact[email]', payload.email || '');
-      if (payload.fname) fd.set('contact[first_name]', payload.fname);
-      if (payload.lname) fd.set('contact[last_name]', payload.lname);
-      if (payload.phone) fd.set('contact[phone]', payload.phone);
+      body.set('form_type','customer');
+      body.set('utf8','✓');
+      body.set('contact[email]', payload.email || '');
+      if (payload.fname) body.set('contact[first_name]', payload.fname);
+      if (payload.lname) body.set('contact[last_name]', payload.lname);
+      if (payload.phone) body.set('contact[phone]', payload.phone);
 
       // Consent + tags
       const tags = [];
-      if (payload.consent) { fd.set('contact[accepts_marketing]','true'); tags.push('newsletter'); }
-      tags.push('Quiz: Surge Signature');
-      if (payload.styleLabel) tags.push('Style: ' + payload.styleLabel);
-      tags.push('Source: /surge-signature');
-      fd.set('contact[tags]', tags.join(', '));
+      if (payload.consent) { body.set('contact[accepts_marketing]','true'); tags.push('newsletter'); }
+      if (Array.isArray(payload.tags) && payload.tags.length) {
+        tags.push.apply(tags, payload.tags);
+      } else {
+        tags.push('Quiz: Surge Signature');
+        if (payload.styleLabel) tags.push('Style: ' + payload.styleLabel);
+        tags.push('Source: /surge-signature');
+      }
+      body.set('contact[tags]', tags.join(', '));
 
-      // POST to Shopify (same-origin)
-      return fetch('/contact#contact_form', { method:'POST', body: fd, credentials:'same-origin' });
+      const encoded = body.toString();
+      if (navigator.sendBeacon) {
+        const blob = new Blob([encoded], { type: contentType });
+        navigator.sendBeacon(url, blob);
+        return Promise.resolve();
+      }
+
+      return fetch(url, {
+        method:'POST',
+        body: encoded,
+        credentials:'same-origin',
+        keepalive: true,
+        headers
+      });
     }catch(e){ /* swallow */ }
   }
+
+  if (!window.nbPostShopifyCustomer) window.nbPostShopifyCustomer = nbPostShopifyCustomer;
 
   function nbStyleLabelFromSlug(slug){
     slug = (slug||'').toLowerCase();
