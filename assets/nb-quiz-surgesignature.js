@@ -256,14 +256,28 @@
             EMAIL: sub.querySelector('[name="EMAIL"]')?.value || '',
             PHONE: sub.querySelector('[name="PHONE"]')?.value || ''
           };
+          const consentField = sub.querySelector('input[name="gdpr[CONSENT]"]');
+          const consentChecked = !consentField || consentField.checked;
+
+          if (payload.EMAIL && consentChecked && window.NBTagWorker) {
+            const styleLabel = buildStyleLabel();
+            window.NBTagWorker.enqueue({
+              email: payload.EMAIL,
+              fname: payload.FNAME,
+              lname: payload.LNAME,
+              phone: payload.PHONE,
+              styleLabel: styleLabel,
+              source: '/surge-signature'
+            });
+            window.NBTagWorker.tick && window.NBTagWorker.tick();
+          }
 
           try {
             localStorage.setItem('nb_surge_user', JSON.stringify(payload));
           } catch(e){}
 
           try {
-            const consent = sub.querySelector('input[name="gdpr[CONSENT]"]');
-            if (!consent || consent.checked) {
+            if (consentChecked) {
               submitShopifyTags('now');
               setTimeout(()=>submitShopifyTags('retry_2500ms'), 2500);
               setTimeout(()=>submitShopifyTags('retry_6000ms'), 6000);
