@@ -28,7 +28,7 @@
 .nb-quiz.nb-quiz--surgesignature,
 .nb-result--surgesignature{
   position:relative;
-  background:var(--nb-pebble, #f5f6f4);
+  background:#fff;
   background-repeat:no-repeat;
 }
 
