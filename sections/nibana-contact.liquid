@@ -24,10 +24,14 @@ Also mirrors to:
       <div class="nb-card">
         <h2 class="nb-h3">{{ section.settings.call_heading | default: 'Prefer to talk?' | escape }}</h2>
         <p>{{ section.settings.call_sub | default: 'Book a free 20-minute discovery call.' | escape }}</p>
+        {% assign call_cta_link = section.settings.call_link %}
+        {% if call_cta_link == blank %}
+          {% assign call_cta_link = '/pages/contact' %}
+        {% endif %}
         <p>
           <a
             class="nb-btn nb-btn--primary"
-            href="{{ section.settings.call_link | default: '/pages/contact' | escape }}"
+            href="{{ call_cta_link | escape }}"
           >
             {{ section.settings.call_label | default: 'Book a Free 20-min Call' | escape }}
           </a>
