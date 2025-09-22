@@ -133,7 +133,7 @@
 
         const emailForm = `
     <div data-nb-quiz-form>
-      <form id="nb-quiz-sub" action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}">
+      <form id="nb-quiz-sub" data-nb-quiz-sub action="${actionWithParams}" method="post" target="mc-target-${section.dataset.sectionId}">
         <p class="nb-quiz__result-kicker">Your Surge Signature™</p>
         <h3 class="nb-quiz__result-title">${s.title}</h3>
         <p class="nb-quiz__summary">${s.summary}</p>
@@ -187,6 +187,55 @@
 
         const sub = resultEl.querySelector('#nb-quiz-sub');
         const thanks = resultEl.querySelector('[data-nb-quiz-thanks]');
+
+        function buildStyleLabel(){
+          const slug = (window.NB_QUIZ_STYLE || document.querySelector('[data-nb-style]')?.getAttribute('data-nb-style') || '').toLowerCase();
+          const map = { accelerator: 'Accelerator', stabilizer: 'Stabiliser', stabiliser: 'Stabiliser', defuser: 'Defuser' };
+          return map[slug] || '';
+        }
+
+        async function submitShopifyTags(when){
+          if (!sub) return;
+          const sf = document.getElementById('nb-shopify-form');
+          const fEmail = document.getElementById('nb-sf-email');
+          const fF = document.getElementById('nb-sf-fname');
+          const fL = document.getElementById('nb-sf-lname');
+          const fP = document.getElementById('nb-sf-phone');
+          const fTags = document.getElementById('nb-sf-tags');
+          if (!sf || !fEmail || !fTags) return;
+
+          const email = sub.querySelector('[name="EMAIL"]')?.value || '';
+          const fname = sub.querySelector('[name="FNAME"]')?.value || '';
+          const lname = sub.querySelector('[name="LNAME"]')?.value || '';
+          const phone = sub.querySelector('[name="PHONE"]')?.value || '';
+          const styleLabel = buildStyleLabel();
+
+          fEmail.value = email;
+          if (fF) fF.value = fname;
+          if (fL) fL.value = lname;
+          if (fP) fP.value = phone;
+
+          const baseTags = sf.dataset.baseTags || fTags.value || '';
+          sf.dataset.baseTags = baseTags;
+
+          const extra = [
+            'Quiz: Surge Signature',
+            styleLabel ? `Style: ${styleLabel}` : '',
+            'Source: /surge-signature'
+          ].filter(Boolean).join(', ');
+          fTags.value = [baseTags, extra].filter(Boolean).join(', ');
+
+          try {
+            const fd = new FormData(sf);
+            const res = await fetch(sf.action || '/contact#contact_form', { method: 'POST', body: fd, credentials: 'same-origin' });
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'shopify_customer_submit', attempt: when, status: res.ok ? 'ok' : 'http_error', quiz_style: styleLabel });
+          } catch (e) {
+            sf.submit();
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'shopify_customer_submit', attempt: when, status: 'iframe', quiz_style: styleLabel });
+          }
+        }
         sub.setAttribute('target', `mc-target-${section.dataset.sectionId}`);
         try {
           const saved = JSON.parse(localStorage.getItem('nb_surge_user') || '{}');
@@ -212,47 +261,16 @@
             localStorage.setItem('nb_surge_user', JSON.stringify(payload));
           } catch(e){}
 
-          (function(){
-            try {
-              const consent = sub.querySelector('input[name="gdpr[CONSENT]"]');
-              if (consent && !consent.checked) return;
-
-              const styleMap = { accelerator: 'Accelerator', stabilizer: 'Stabiliser', stabiliser: 'Stabiliser', defuser: 'Defuser' };
-              let styleSlug = (window.NB_QUIZ_STYLE || '').toLowerCase();
-              if (!styleSlug) {
-                const badge = document.querySelector('[data-nb-style]')?.getAttribute('data-nb-style') || '';
-                styleSlug = (badge || '').toLowerCase();
-              }
-              const styleLabel = styleMap[styleSlug] || '';
-
-              const sf = document.getElementById('nb-shopify-form');
-              const fEmail = document.getElementById('nb-sf-email');
-              const fF = document.getElementById('nb-sf-fname');
-              const fL = document.getElementById('nb-sf-lname');
-              const fP = document.getElementById('nb-sf-phone');
-              const fTags = document.getElementById('nb-sf-tags');
-
-              if (sf && fEmail && fTags) {
-                fEmail.value = payload.EMAIL;
-                if (fF) fF.value = payload.FNAME;
-                if (fL) fL.value = payload.LNAME;
-                if (fP) fP.value = payload.PHONE;
-
-                const extra = [
-                  'Quiz: Surge Signature',
-                  styleLabel ? `Style: ${styleLabel}` : '',
-                  'Source: /surge-signature'
-                ].filter(Boolean).join(', ');
-
-                fTags.value = [fTags.value, extra].filter(Boolean).join(', ');
-
-                sf.submit();
-                window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'shopify_customer_submit', quiz_style: styleLabel});
-              }
-            } catch(e) {
-              console.warn('NB QUIZ dual-post warn:', e);
+          try {
+            const consent = sub.querySelector('input[name="gdpr[CONSENT]"]');
+            if (!consent || consent.checked) {
+              submitShopifyTags('now');
+              setTimeout(()=>submitShopifyTags('retry_2500ms'), 2500);
+              setTimeout(()=>submitShopifyTags('retry_6000ms'), 6000);
             }
-          })();
+          } catch(e) {
+            console.warn('NB QUIZ dual-post retry warn:', e);
+          }
 
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
