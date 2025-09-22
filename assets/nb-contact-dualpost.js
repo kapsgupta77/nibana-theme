@@ -58,7 +58,8 @@
       consent: acceptsMarketing
     };
 
-    if (typeof window.nbSubmitShopifyContact === 'function') {
+    const hiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
+    if (typeof window.nbSubmitShopifyContact === 'function' && hiddenForm) {
       window.nbSubmitShopifyContact(payload);
     } else {
       postEncodedShopifyContact(payload);
