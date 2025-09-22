@@ -240,3 +240,6 @@
 @media (min-width: 640px){ .nb-result__share{grid-template-columns:repeat(4,1fr);} }
 .nb-quiz__mem{display:flex;flex-direction:column;gap:12px}
 .nb-quiz__mem-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+
+.nb-quiz__intro{ margin:12px 0 16px; color:var(--nb-text-muted); }
+.nb-quiz__intro p{ margin:0; }
