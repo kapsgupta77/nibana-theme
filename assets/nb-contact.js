@@ -52,13 +52,21 @@
 
     // ----- Mailchimp mirror (parallel)
     const mc = document.getElementById('nbc-mc');
-    if (mc && consent) {
-      setValue('nbc-mc-fname', fname);
-      setValue('nbc-mc-lname', lname);
-      setValue('nbc-mc-email', email);
-      setValue('nbc-mc-phone', phone);
-      setValue('nbc-mc-consent', consent ? '1' : '0');
-      if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
+    if (mc) {
+      if (consent) {
+        setValue('nbc-mc-fname', fname);
+        setValue('nbc-mc-lname', lname);
+        setValue('nbc-mc-email', email);
+        setValue('nbc-mc-phone', phone);
+        setValue('nbc-mc-consent', '1');
+        if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
+      } else {
+        setValue('nbc-mc-fname', '');
+        setValue('nbc-mc-lname', '');
+        setValue('nbc-mc-email', '');
+        setValue('nbc-mc-phone', '');
+        setValue('nbc-mc-consent', '0');
+      }
     }
 
     // IMPORTANT: do not preventDefault(); Shopify customer form will submit
