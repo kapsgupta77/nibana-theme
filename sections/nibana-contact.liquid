@@ -126,7 +126,11 @@ Also mirrors to:
 
         <div class="nb-consent">
           <label class="nb-checkbox">
-            <input id="nbc-consent" type="checkbox">
+            <input
+              id="nbc-consent"
+              type="checkbox"
+              {% if section.settings.optin_checked %}checked{% endif %}
+            >
             <span>{{ section.settings.optin_label | default: 'Also send me occasional tips & updates' | escape }}</span>
           </label>
           <p class="nb-form-help">{{ section.settings.optin_help | default: "We’ll only email with useful insights. Unsubscribe anytime. No Spam here." | escape }}</p>
@@ -159,7 +163,12 @@ Also mirrors to:
           <input type="text"   id="nbc-cust-name"   name="contact[name]">
           <input type="tel"    id="nbc-cust-phone" name="contact[phone]">
           <input type="hidden" id="nbc-cust-tags"  name="contact[tags]" value="Source: /contact">
-          <input type="hidden" id="nbc-cust-acc"   name="contact[accepts_marketing]" value="false">
+          <input
+            type="hidden"
+            id="nbc-cust-acc"
+            name="contact[accepts_marketing]"
+            value="{% if section.settings.optin_checked %}true{% else %}false{% endif %}"
+          >
           <button type="submit">Submit</button>
         {% endform %}
         <iframe id="nbc-shopify-target" name="nbc-shopify-target" title="Shopify submit"></iframe>
@@ -173,7 +182,12 @@ Also mirrors to:
         <input type="text"   name="LNAME" id="nbc-mc-lname">
         <input type="email"  name="EMAIL" id="nbc-mc-email">
         <input type="text"   name="PHONE" id="nbc-mc-phone">
-        <input type="hidden" name="group[78632][1]" value="1">
+        <input
+          type="hidden"
+          name="group[78632][1]"
+          id="nbc-mc-consent"
+          value="{% if section.settings.optin_checked %}1{% else %}0{% endif %}"
+        >
         <input type="submit" value="Subscribe">
       </form>
       <iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
