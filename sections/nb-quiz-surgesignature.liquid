@@ -8,6 +8,11 @@
     <div class="nb-quiz__header nb-card">
       <h2 class="nb-quiz__title">{{ section.settings.title | escape }}</h2>
       <p class="nb-quiz__kicker">{{ section.settings.kicker | escape }}</p>
+      {% if section.settings.intro_richtext != blank %}
+        <div class="nb-quiz__intro rte">
+          {{ section.settings.intro_richtext }}
+        </div>
+      {% endif %}
       <button class="nb-btn nb-btn--primary" data-nb-quiz-start>
         {{ section.settings.cta_label | default: 'Start the Quiz' }}
       </button>
@@ -49,7 +54,12 @@
       ]
     },
     { "type": "checkbox", "id": "enable_gdpr", "label": "Show GDPR consent block", "default": true },
-    { "type": "text", "id": "palette", "label": "Palette token (optional)", "default": "nibana" }
+    { "type": "text", "id": "palette", "label": "Palette token (optional)", "default": "nibana" },
+    { "type": "richtext",
+      "id": "intro_richtext",
+      "label": "Intro (short)",
+      "default": "<p>15 quick questions to mirror how your energy moves when the stakes rise. You\u2019ll see your style with strengths, watch-outs, and a practice to try now; we\u2019ll email the full 2\u2011page playbook.</p>"
+    }
   ],
   "blocks": [],
   "presets": [{ "name": "Surge Signature Quiz" }]
