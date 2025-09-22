@@ -206,184 +206,62 @@
 
     <!-- RIGHT PANEL: Contact Form -->
     <div class="nib-card nib-panel">
-      {% form 'contact', id: 'NibanaContactForm', class: 'contact-form' %}
-        {% if form.posted_successfully? %}
-          <div role="status" class="nib-card nib-panel" style="padding:12px; background:#f6fff6; border-color:#d9ead3;">
-            {{ section.settings.success_text }}
-          </div>
-        {% endif %}
-        {% if form.errors %}
-          <div role="alert" class="nib-card nib-panel" style="padding:12px; background:#fff5f5; border-color:#f3c2c2;">
-            {{ section.settings.error_text }}
-          </div>
-        {% endif %}
-
-        <div class="nib-form-grid">
-          <!-- Name (required) -->
-          <div>
-            <label for="ContactName" class="nib-label">
-  {{ section.settings.label_name }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-            <input id="ContactName" type="text" name="contact[name]"
-                   required aria-required="true" autocapitalize="words" autocomplete="name"
-                   value="{{ form.name | default: customer.name }}" class="nib-input">
-          </div>
-
-          <!-- Email (required) -->
-          <div>
-            <label for="ContactEmail" class="nib-label">
-  {{ section.settings.label_email }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-            <input id="ContactEmail" type="email" name="contact[email]"
-                   required aria-required="true" autocomplete="email"
-                   value="{{ form.email | default: customer.email }}" class="nib-input">
-          </div>
-
-          <!-- Phone -->
-          <div>
-            <label for="ContactPhone" class="nib-label">{{ section.settings.label_phone }}</label>
-            <input id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" class="nib-input">
-          </div>
-
-          <!-- Inquiry Purpose (required) -->
-          <div>
-            <label for="InquiryPurpose" class="nib-label">
-  {{ section.settings.label_purpose }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-{% comment %} Fallback options if no blocks exist {% endcomment %}
-{% assign has_purpose_blocks = false %}
-{% for block in section.blocks %}
-  {% if block.type == 'purpose_option' %}
-    {% assign has_purpose_blocks = true %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-
-<select id="InquiryPurpose" name="contact[Inquiry Purpose]" required aria-required="true" class="nib-select">
-  <option value="" disabled selected>{{ section.settings.purpose_placeholder }}</option>
-
-  {% if has_purpose_blocks %}
-    {% for block in section.blocks %}
-      {% if block.type == 'purpose_option' %}
-        <option value="{{ block.settings.option_label }}">{{ block.settings.option_label }}</option>
-      {% endif %}
-    {% endfor %}
-  {% else %}
-    {% assign defaults = "Discovery Call|Transformatioanal Life Coaching|Relationship Coaching|Executive Coaching|Speaking / Workshops|Media / Press|Other" | split: "|" %}
-    {% for label in defaults %}
-      <option value="{{ label }}">{{ label }}</option>
-    {% endfor %}
-  {% endif %}
-</select>
-          </div>
-
-          <!-- Message (required) -->
-          <div>
-            <label for="ContactMessage" class="nib-label">
-  {{ section.settings.label_message }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-            <textarea id="ContactMessage" name="contact[body]" rows="6" required aria-required="true" class="nib-textarea"></textarea>
-          </div>
-
-          <!-- Opt-in (checked by default; editable) -->
-          <div>
-            <label style="display:flex; gap:8px; align-items:center;">
-              <input id="JoinEmails" type="checkbox" {% if section.settings.optin_checked %}checked{% endif %}>
-              <span>{{ section.settings.optin_label }}</span>
-            </label>
-            <div class="nib-help">{{ section.settings.optin_help }}</div>
-          </div>
-
-          <!-- Submit -->
-          <div class="nib-actions" style="margin-top: 6px;">
-            <button type="submit"
-        class="{{ section.settings.cta_submit_class }}"
-        style="width:100%; background: var(--nb-teal, #10636c); color:#fff;">
-  {{ section.settings.submit_label }}
-</button>
-          </div>
-        </div>
-      {% endform %}
-
-  {%- comment -%}
-  Hidden customer/newsletter form (creates/updates Shopify Customer) and overlay
-  to surface Shopify's captcha when required.
-  {%- endcomment -%}
-{% if section.settings.use_shopify_customer_flow %}
-  <div
-    id="ShopifyCaptchaOverlay"
-    class="nb-captcha-overlay"
-    data-nb-captcha-overlay
-    hidden
-    aria-hidden="true"
-  >
-    <div class="nb-captcha-overlay__backdrop" data-nb-captcha-close></div>
-    <div
-      class="nb-captcha-overlay__dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="{{ secid }}-captcha-title"
-    >
-      <div class="nb-captcha-overlay__header">
-        <h2 id="{{ secid }}-captcha-title" class="nb-captcha-overlay__title" data-nb-captcha-focus tabindex="-1">
-          {{ section.settings.captcha_heading | default: 'Almost there…' }}
-        </h2>
-        <button type="button" class="nb-captcha-overlay__icon-close" data-nb-captcha-close aria-label="Close verification">
-          &times;
-        </button>
-      </div>
-      <p class="nb-captcha-overlay__copy">
-        {{ section.settings.captcha_copy | default: "Shopify sometimes asks for a quick captcha. Complete the prompt below to finish sending your message." }}
-      </p>
-      <div class="nb-captcha-overlay__frame" data-nb-captcha-frame>
-        <iframe
-          id="HiddenNewsletterFrame"
-          name="HiddenNewsletterFrame"
-          title="Shopify verification"
-          tabindex="0"
-        ></iframe>
-      </div>
-      <div class="nb-captcha-overlay__actions">
-        <button type="button" class="nb-captcha-overlay__close" data-nb-captcha-close>
-          {{ section.settings.captcha_close_label | default: 'Close' }}
-        </button>
-      </div>
-      <div class="nb-captcha-overlay__form" aria-hidden="true">
-        {% form 'customer', id: 'NibanaHiddenNewsletter', target: 'HiddenNewsletterFrame' %}
-          <input type="email"   name="contact[email]"           id="HiddenCustomerEmail">
-          <input type="text"    name="contact[name]"            id="HiddenCustomerName">
-          <input type="text"    name="contact[first_name]"      id="HiddenCustomerFirstName">
-          <input type="text"    name="contact[last_name]"       id="HiddenCustomerLastName">
-          <input type="tel"     name="contact[phone]"           id="HiddenCustomerPhone">
-          <input type="hidden"  name="contact[tags]"            id="HiddenCustomerTags" value="">
-          <input type="hidden"  name="contact[accepts_marketing]" id="HiddenCustomerAcceptsMarketing" value="false">
-          <button id="HiddenCustomerSubmit" type="submit">Submit</button>
-        {% endform %}
-      </div>
+{% comment %} Contact opt-in — Shopify primary + Mailchimp parallel {% endcomment %}
+{% form 'customer', id: 'nb-contact-shopify', class: 'nb-contact__form', novalidate: 'novalidate' %}
+  <div class="nb-form-grid">
+    <div class="nb-field">
+      <label for="nbc-fname">First name</label>
+      <input id="nbc-fname" name="contact[first_name]" type="text" required>
     </div>
-  </div>
-{% endif %}
+    <div class="nb-field">
+      <label for="nbc-lname">Last name</label>
+      <input id="nbc-lname" name="contact[last_name]" type="text" required>
+    </div>
+    <div class="nb-field">
+      <label for="nbc-email">Email</label>
+      <input id="nbc-email" name="contact[email]" type="email" required>
+    </div>
+    <div class="nb-field">
+      <label for="nbc-phone">Phone (optional)</label>
+      <input id="nbc-phone" name="contact[phone]" type="tel">
     </div>
   </div>
 
-{%- comment -%}
-  Hidden Mailchimp embed form (posts to your Mailchimp audience in the background).
-  Requires "mailchimp_action" setting (subscribe/post?... URL from Mailchimp Embedded form).
-{%- endcomment -%}
-<div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-  <iframe id="MailchimpFrame" name="MailchimpFrame" tabindex="-1"></iframe>
-  <form id="NibanaMailchimp" method="post" target="MailchimpFrame" action="{{ section.settings.mailchimp_action }}">
-    <input type="email" name="EMAIL" id="MC_EMAIL">
-    <input type="text"  name="FNAME" id="MC_FNAME">
-    <input type="text"  name="PHONE" id="MC_PHONE">
-    <!-- Mailchimp accepts a comma-separated "tags" field -->
-    <input type="hidden" name="tags"  id="MC_TAGS"  value="Contact Form">
-    <!-- Honeypot fields Mailchimp expects (keeps it happy even when empty) -->
-    <input type="text" name="b_" tabindex="-1" value="">
-  </form>
-</div>
+  <input type="hidden" id="nbc-tags" name="contact[tags]" value="Source: /contact">
+  <input type="hidden" id="nbc-accepts" name="contact[accepts_marketing]" value="false">
 
-<script src="{{ 'nb-contact.js' | asset_url }}" defer></script>
+  <div class="nb-consent">
+    <label>
+      <input id="nbc-consent" type="checkbox"> Join the Nibana list (occasional notes; unsubscribe anytime)
+    </label>
+  </div>
+
+  <button type="submit" class="nb-btn nb-btn--primary">Send</button>
+
+  {% if form.errors %}
+    <div class="form__message" role="alert">{{ form.errors | default_errors }}</div>
+  {% endif %}
+  {% if form.posted_successfully? %}
+    <div class="nb-card" role="status">
+      <p>Thanks — we’ve got your details.</p>
+    </div>
+  {% endif %}
+{% endform %}
+
+<!-- Hidden Mailchimp mirror — parallel submit -->
+<form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+      method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
+      style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+  <input type="text"   name="FNAME" id="nbc-mc-fname">
+  <input type="text"   name="LNAME" id="nbc-mc-lname">
+  <input type="email"  name="EMAIL" id="nbc-mc-email">
+  <input type="text"   name="PHONE" id="nbc-mc-phone">
+  <input type="hidden" name="group[78632][1]" value="1">
+  <input type="submit" value="Subscribe">
+</form>
+<iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
+    </div>
+  </div>
 </section>
 
 {% schema %}
