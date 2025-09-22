@@ -29,9 +29,21 @@
     if (hasConsent) { fd.set('contact[accepts_marketing]', 'true'); tags.unshift('newsletter'); }
     fd.set('contact[tags]', tags.join(', '));
 
-    fetch('/contact#contact_form', { method: 'POST', body: fd, credentials: 'same-origin' }).catch(()=>{});
+    const url = '/contact#contact_form';
+    const beaconSent = typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function'
+      ? navigator.sendBeacon(url, fd)
+      : false;
+
+    if (!beaconSent) {
+      fetch(url, {
+        method: 'POST',
+        body: fd,
+        credentials: 'same-origin',
+        keepalive: true
+      }).catch(()=>{});
+    }
   }
 
   // Hook the Mailchimp submit; fire Shopify in parallel (non-blocking)
-  mc.addEventListener('submit', function(){ setTimeout(postShopify, 0); }, { capture: true });
+  mc.addEventListener('submit', function(){ postShopify(); }, { capture: true });
 })();
