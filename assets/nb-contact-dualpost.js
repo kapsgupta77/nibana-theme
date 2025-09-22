@@ -38,7 +38,7 @@
     }
   }
 
-  function postShopify(){
+  async function postShopify(){
     const email = val('[name="EMAIL"], input[type="email"]');
     if (!email) return;
 
@@ -59,8 +59,13 @@
     };
 
     const hiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
-    if (typeof window.nbSubmitShopifyContact === 'function' && hiddenForm) {
-      window.nbSubmitShopifyContact(payload);
+    const helperFrame = document.getElementById('HiddenNewsletterFrame') || document.getElementById('HiddenContactFrame');
+    const hasHelper = typeof window.nbSubmitShopifyContact === 'function' && hiddenForm && helperFrame;
+
+    if (hasHelper) {
+      try {
+        await window.nbSubmitShopifyContact(payload);
+      } catch(_) {}
     } else {
       postEncodedShopifyContact(payload);
     }

@@ -36,7 +36,7 @@
         align-items: start;
       }
     }
-    #{{ secid }} .nib-card {
+    #{{ secid }} .nib-card { 
   background: {{ section.settings.card_bg }};
   border: 1px solid {{ section.settings.card_border }};
   border-radius: {{ section.settings.card_radius }};
@@ -64,6 +64,107 @@
   box-shadow: 0 14px 36px rgba(0,0,0,.14);
   transition: box-shadow .2s ease, transform .12s ease;
 }
+
+    #{{ secid }} [data-nb-captcha-overlay] {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 5vw, 40px);
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 9999;
+    }
+    #{{ secid }} [data-nb-captcha-overlay][hidden] {
+      display: none !important;
+    }
+    #{{ secid }} .nb-captcha-overlay__dialog {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      color: #0f172a;
+      width: min(640px, 100%);
+      border-radius: 20px;
+      box-shadow: 0 28px 64px rgba(15, 23, 42, 0.24);
+      padding: clamp(20px, 4vw, 32px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #{{ secid }} .nb-captcha-overlay__backdrop {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+    #{{ secid }} .nb-captcha-overlay__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    #{{ secid }} .nb-captcha-overlay__title {
+      margin: 0;
+      font-size: clamp(20px, 3vw, 26px);
+      line-height: 1.3;
+    }
+    #{{ secid }} .nb-captcha-overlay__icon-close {
+      background: none;
+      border: 0;
+      color: rgba(15, 23, 42, 0.55);
+      font-size: 28px;
+      line-height: 1;
+      padding: 4px;
+      cursor: pointer;
+    }
+    #{{ secid }} .nb-captcha-overlay__icon-close:hover,
+    #{{ secid }} .nb-captcha-overlay__icon-close:focus-visible {
+      color: rgba(15, 23, 42, 0.9);
+      outline: none;
+    }
+    #{{ secid }} .nb-captcha-overlay__copy {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(15, 23, 42, 0.82);
+    }
+    #{{ secid }} .nb-captcha-overlay__frame {
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 10px;
+      background: #f8fafc;
+    }
+    #{{ secid }} .nb-captcha-overlay__frame iframe {
+      width: 100%;
+      min-height: 420px;
+      border: 0;
+      border-radius: 12px;
+      background: #ffffff;
+    }
+    #{{ secid }} .nb-captcha-overlay__actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    #{{ secid }} .nb-captcha-overlay__close {
+      border: none;
+      background: none;
+      font: inherit;
+      color: #0f172a;
+      cursor: pointer;
+      padding: 8px 2px;
+    }
+    #{{ secid }} .nb-captcha-overlay__close:hover,
+    #{{ secid }} .nb-captcha-overlay__close:focus-visible {
+      text-decoration: underline;
+      outline: none;
+    }
+    #{{ secid }} .nb-captcha-overlay__form {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
 
   </style>
 
@@ -204,23 +305,62 @@
         </div>
       {% endform %}
 
-      {%- comment -%}
-  Hidden customer/newsletter form (creates/updates Shopify Customer).
-  We also include a hidden iframe for a last-resort synchronous POST.
-{%- endcomment -%}
+  {%- comment -%}
+  Hidden customer/newsletter form (creates/updates Shopify Customer) and overlay
+  to surface Shopify's captcha when required.
+  {%- endcomment -%}
 {% if section.settings.use_shopify_customer_flow %}
-  <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-    <iframe id="HiddenNewsletterFrame" name="HiddenNewsletterFrame" tabindex="-1"></iframe>
-    {% form 'customer', id: 'NibanaHiddenNewsletter', target: 'HiddenNewsletterFrame' %}
-      <input type="email"   name="contact[email]"           id="HiddenCustomerEmail">
-      <input type="text"    name="contact[name]"            id="HiddenCustomerName">
-      <input type="text"    name="contact[first_name]"      id="HiddenCustomerFirstName">
-      <input type="text"    name="contact[last_name]"       id="HiddenCustomerLastName">
-      <input type="tel"     name="contact[phone]"           id="HiddenCustomerPhone">
-      <input type="hidden"  name="contact[tags]"            id="HiddenCustomerTags" value="">
-      <input type="hidden"  name="contact[accepts_marketing]" id="HiddenCustomerAcceptsMarketing" value="false">
-      <button id="HiddenCustomerSubmit" type="submit">Submit</button>
-    {% endform %}
+  <div
+    id="ShopifyCaptchaOverlay"
+    class="nb-captcha-overlay"
+    data-nb-captcha-overlay
+    hidden
+    aria-hidden="true"
+  >
+    <div class="nb-captcha-overlay__backdrop" data-nb-captcha-close></div>
+    <div
+      class="nb-captcha-overlay__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="{{ secid }}-captcha-title"
+    >
+      <div class="nb-captcha-overlay__header">
+        <h2 id="{{ secid }}-captcha-title" class="nb-captcha-overlay__title" data-nb-captcha-focus tabindex="-1">
+          {{ section.settings.captcha_heading | default: 'Almost there…' }}
+        </h2>
+        <button type="button" class="nb-captcha-overlay__icon-close" data-nb-captcha-close aria-label="Close verification">
+          &times;
+        </button>
+      </div>
+      <p class="nb-captcha-overlay__copy">
+        {{ section.settings.captcha_copy | default: "Shopify sometimes asks for a quick captcha. Complete the prompt below to finish sending your message." }}
+      </p>
+      <div class="nb-captcha-overlay__frame" data-nb-captcha-frame>
+        <iframe
+          id="HiddenNewsletterFrame"
+          name="HiddenNewsletterFrame"
+          title="Shopify verification"
+          tabindex="0"
+        ></iframe>
+      </div>
+      <div class="nb-captcha-overlay__actions">
+        <button type="button" class="nb-captcha-overlay__close" data-nb-captcha-close>
+          {{ section.settings.captcha_close_label | default: 'Close' }}
+        </button>
+      </div>
+      <div class="nb-captcha-overlay__form" aria-hidden="true">
+        {% form 'customer', id: 'NibanaHiddenNewsletter', target: 'HiddenNewsletterFrame' %}
+          <input type="email"   name="contact[email]"           id="HiddenCustomerEmail">
+          <input type="text"    name="contact[name]"            id="HiddenCustomerName">
+          <input type="text"    name="contact[first_name]"      id="HiddenCustomerFirstName">
+          <input type="text"    name="contact[last_name]"       id="HiddenCustomerLastName">
+          <input type="tel"     name="contact[phone]"           id="HiddenCustomerPhone">
+          <input type="hidden"  name="contact[tags]"            id="HiddenCustomerTags" value="">
+          <input type="hidden"  name="contact[accepts_marketing]" id="HiddenCustomerAcceptsMarketing" value="false">
+          <button id="HiddenCustomerSubmit" type="submit">Submit</button>
+        {% endform %}
+      </div>
+    </div>
   </div>
 {% endif %}
     </div>
@@ -281,6 +421,10 @@
     { "type": "text", "id": "submit_label", "label": "Submit button label", "default": "Submit" },
     { "type": "text", "id": "success_text", "label": "Success message", "default": "Thanks for reaching out — we’ll get back within 1 business day." },
     { "type": "text", "id": "error_text", "label": "Error message", "default": "Please check the highlighted fields and try again." },
+
+    { "type": "text", "id": "captcha_heading", "label": "Captcha overlay heading", "default": "Almost there…" },
+    { "type": "textarea", "id": "captcha_copy", "label": "Captcha overlay copy", "default": "Shopify sometimes asks for a quick captcha. Complete the prompt below to finish sending your message." },
+    { "type": "text", "id": "captcha_close_label", "label": "Captcha overlay close label", "default": "Close" },
 
     { "type": "text", "id": "cta_submit_class", "label": "Submit button class (non-call CTA)", "default": "button" },
     { "type": "text", "id": "cta_call_class", "label": "Book-a-call button class (call CTA)", "default": "nb-cta" },
