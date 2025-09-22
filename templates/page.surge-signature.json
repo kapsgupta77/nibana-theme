@@ -1,18 +1,30 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "nb-quiz-surgesignature",
       "settings": {
         "title": "Meet your Surge Signature™",
-        "kicker": "Accelerator, Stabilizer, or Defuser? ~3 minutes.",
+        "kicker": "Are you an Accelerator, Stabiliser, or Defuser? Find out in ~3 minutes and turn that pattern into an edge when the stakes rise.",
         "cta_label": "Start the Quiz",
-        "trust_microcopy": "No fluff. Actionable results.",
+        "trust_microcopy": "No fluff. Actionable results. Quiet strength, clear action.",
         "mailchimp_action": "https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&id=d3d64ba831",
         "gate_mode": "soft_gate",
         "enable_gdpr": true,
-        "palette": "nibana"
+        "palette": "nibana",
+        "intro_richtext": "<p>When intensity goes up, we all have a go-to pattern. This quiz mirrors yours in work and life - without jargon - and gives you a simple playbook to use today. You’ll see your style, key watch-outs, and one practice to try now.</p><p>15 quick questions to mirror how your energy moves when the stakes rise.</p><p></p>"
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
