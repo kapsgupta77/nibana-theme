@@ -1,0 +1,99 @@
+<script>
+(function(){
+  var KEY = 'nb_shopify_tag_queue_v1';
+
+  function now(){ return Date.now(); }
+
+  function loadQ(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e){ return []; }
+  }
+  function saveQ(q){
+    try { localStorage.setItem(KEY, JSON.stringify(q)); } catch(e){}
+  }
+
+  function enqueueJob(job){
+    var q = loadQ();
+    q.push(Object.assign({
+      id: String(now()) + '_' + Math.random().toString(36).slice(2),
+      attempts: 0,
+      nextAt: now(),
+      status: 'queued'
+    }, job));
+    saveQ(q);
+  }
+
+  async function postToShopify(job){
+    // Build the same payload Shopify’s {% form 'customer' %} would send
+    var fd = new FormData();
+    fd.set('form_type', 'customer');
+    fd.set('utf8', '✓');
+    fd.set('contact[email]', job.email || '');
+    if (job.fname) fd.set('contact[first_name]', job.fname);
+    if (job.lname) fd.set('contact[last_name]', job.lname);
+    if (job.phone) fd.set('contact[phone]', job.phone);
+    fd.set('contact[accepts_marketing]', 'true');
+
+    // Tags: newsletter + our tags
+    var tags = ['newsletter', 'Quiz: Surge Signature'];
+    if (job.styleLabel) tags.push('Style: ' + job.styleLabel);
+    if (job.source) tags.push('Source: ' + job.source);
+    fd.set('contact[tags]', tags.join(', '));
+
+    // POST to /contact (newsletter)
+    var res = await fetch('/contact#contact_form', { method: 'POST', body: fd, credentials: 'same-origin' });
+    if (!res.ok) throw new Error('http '+res.status);
+  }
+
+  function backoffDelay(attempts){
+    // 0s, 5s, 15s, 30s, 60s (max)
+    return [0, 5000, 15000, 30000, 60000][Math.min(attempts, 4)];
+  }
+
+  var running = false;
+  async function tick(){
+    if (running) return;
+    running = true;
+    try {
+      var q = loadQ();
+      var changed = false;
+      var nowTs = now();
+      for (var i=0; i<q.length; i++){
+        var job = q[i];
+        if (!job) continue;
+        if (job.status === 'done') continue;
+        if (job.nextAt > nowTs) continue;
+
+        try {
+          await postToShopify(job);
+          job.status = 'done';
+          changed = true;
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({event:'shopify_tag_worker', state:'done', attempts:job.attempts, style: job.styleLabel || ''});
+        } catch(e){
+          job.attempts = (job.attempts || 0) + 1;
+          // Give it more time in case Mailchimp hasn't created/merged yet
+          job.nextAt = nowTs + backoffDelay(job.attempts);
+          job.status = 'retry';
+          changed = true;
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({event:'shopify_tag_worker', state:'retry', attempts:job.attempts, style: job.styleLabel || ''});
+          // Stop retrying after 6 tries (~2 minutes total)
+          if (job.attempts >= 6){ job.status = 'failed'; }
+        }
+      }
+      if (changed) saveQ(q);
+    } finally {
+      running = false;
+    }
+  }
+
+  // Run worker periodically and on important lifecycle events
+  setInterval(tick, 4000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) tick(); });
+  window.addEventListener('focus', tick);
+  window.addEventListener('pageshow', tick);
+
+  // Expose enqueue for our quiz code
+  window.NBTagWorker = { enqueue: enqueueJob, tick: tick };
+})();
+</script>
