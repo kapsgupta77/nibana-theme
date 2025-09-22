@@ -3,59 +3,6 @@
 
   const SHOPIFY_CONTACT_URL = '/contact#contact_form';
 
-  function ensureHiddenShopifyContact(section){
-    if (document.getElementById('NibanaHiddenContact')) return;
-    const host = section.querySelector('.nb-shell') || section;
-    if (!host) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.setAttribute('aria-hidden', 'true');
-    wrapper.style.position = 'absolute';
-    wrapper.style.width = '1px';
-    wrapper.style.height = '1px';
-    wrapper.style.overflow = 'hidden';
-    wrapper.style.left = '-9999px';
-
-    const frame = document.createElement('iframe');
-    frame.id = 'HiddenContactFrame';
-    frame.name = 'HiddenContactFrame';
-    frame.tabIndex = -1;
-
-    const form = document.createElement('form');
-    form.id = 'NibanaHiddenContact';
-    form.method = 'post';
-    form.action = SHOPIFY_CONTACT_URL;
-    form.target = frame.name;
-    form.setAttribute('accept-charset', 'UTF-8');
-
-    function addInput(attrs){
-      const input = document.createElement('input');
-      Object.keys(attrs).forEach(function(key){ input.setAttribute(key, attrs[key]); });
-      form.appendChild(input);
-      return input;
-    }
-
-    addInput({ type: 'hidden', name: 'form_type', value: 'contact' });
-    addInput({ type: 'hidden', name: 'utf8', value: '✓' });
-    addInput({ type: 'email', name: 'contact[email]', id: 'HiddenContactEmail' });
-    addInput({ type: 'text', name: 'contact[name]', id: 'HiddenContactName' });
-    addInput({ type: 'text', name: 'contact[first_name]', id: 'HiddenContactFirstName' });
-    addInput({ type: 'text', name: 'contact[last_name]', id: 'HiddenContactLastName' });
-    addInput({ type: 'tel', name: 'contact[phone]', id: 'HiddenContactPhone' });
-    addInput({ type: 'hidden', name: 'contact[tags]', id: 'HiddenContactTags', value: '' });
-    addInput({ type: 'hidden', name: 'accepts_marketing', id: 'HiddenContactAcceptsMarketing', value: 'false' });
-
-    const submit = document.createElement('button');
-    submit.id = 'HiddenContactSubmit';
-    submit.type = 'submit';
-    submit.textContent = 'Submit';
-    form.appendChild(submit);
-
-    wrapper.appendChild(frame);
-    wrapper.appendChild(form);
-    host.appendChild(wrapper);
-  }
-
   function fallbackShopifyContact(payload){
     try {
       const params = new URLSearchParams();
@@ -68,7 +15,8 @@
       params.set('contact[first_name]', first);
       params.set('contact[last_name]', last);
       params.set('contact[name]', fullName);
-      if (payload.phone) params.set('contact[phone]', payload.phone);
+      const phone = (payload.phone || '').trim();
+      if (phone) params.set('contact[phone]', phone);
 
       const tags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
       if (payload.acceptsMarketing && !tags.some(function(tag){ return String(tag).toLowerCase() === 'newsletter'; })) {
@@ -94,6 +42,42 @@
     } catch(_) {}
   }
 
+  function populateHiddenShopifyForm(payload){
+    try {
+      const hiddenForm = document.getElementById('nb-shopify-form');
+      if (!hiddenForm) return null;
+
+      const emailInput = hiddenForm.querySelector('#nb-sf-email');
+      const firstNameInput = hiddenForm.querySelector('#nb-sf-fname');
+      const lastNameInput = hiddenForm.querySelector('#nb-sf-lname');
+      const phoneInput = hiddenForm.querySelector('#nb-sf-phone');
+      const tagsInput = hiddenForm.querySelector('#nb-sf-tags');
+      const acceptsInput = hiddenForm.querySelector('#nb-sf-accepts');
+
+      const trimmedEmail = (payload.email || '').trim();
+      const trimmedFirst = (payload.firstName || '').trim();
+      const trimmedLast = (payload.lastName || '').trim();
+      const trimmedPhone = (payload.phone || '').trim();
+      const marketingValue = payload.acceptsMarketing ? 'true' : 'false';
+      const rawTags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
+      if (payload.acceptsMarketing && !rawTags.some(function(tag){ return String(tag).toLowerCase() === 'newsletter'; })) {
+        rawTags.unshift('newsletter');
+      }
+      const tagString = rawTags.join(', ');
+
+      if (emailInput) emailInput.value = trimmedEmail;
+      if (firstNameInput) firstNameInput.value = trimmedFirst;
+      if (lastNameInput) lastNameInput.value = trimmedLast;
+      if (phoneInput) phoneInput.value = trimmedPhone;
+      if (tagsInput) tagsInput.value = tagString;
+      if (acceptsInput) acceptsInput.value = marketingValue;
+
+      return hiddenForm;
+    } catch(_) {
+      return null;
+    }
+  }
+
   function nbStyleLabelFromSlug(slug){
     slug = (slug||'').toLowerCase();
     return slug === 'accelerator' ? 'Accelerator'
@@ -107,7 +91,6 @@
       const startBtn = section.querySelector('[data-nb-quiz-start]');
       const appEl = section.querySelector('[data-nb-quiz-app]');
       const resultEl = section.querySelector('[data-nb-quiz-result]');
-      ensureHiddenShopifyContact(section);
       let quiz = null, state = { index: 0, answers: [] }, startedAt = 0;
 
       // --- Microcopy / A11y hint ---
@@ -343,9 +326,33 @@
               acceptsMarketing: consent
             };
 
+            const hiddenForm = populateHiddenShopifyForm(payload);
+            let submitted = false;
             if (typeof window.nbSubmitShopifyContact === 'function') {
-              window.nbSubmitShopifyContact(payload);
-            } else {
+              try {
+                submitted = window.nbSubmitShopifyContact({
+                  email: payload.email,
+                  fname: payload.firstName,
+                  lname: payload.lastName,
+                  phone: payload.phone,
+                  tags: payload.tags,
+                  consent: payload.acceptsMarketing
+                }) === true;
+              } catch(_) {
+                submitted = false;
+              }
+            }
+
+            if (!submitted && hiddenForm) {
+              try {
+                hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
+                submitted = true;
+              } catch(_) {
+                submitted = false;
+              }
+            }
+
+            if (!submitted) {
               fallbackShopifyContact(payload);
             }
           }, { capture:true });
