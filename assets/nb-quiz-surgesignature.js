@@ -36,64 +36,34 @@
   function fallbackShopifyContact(payload){
     try {
       const params = new URLSearchParams();
-      params.set('form_type', 'contact');
+      params.set('form_type', 'customer');
       params.set('utf8', '✓');
       params.set('contact[email]', payload.email || '');
+
       const first = (payload.firstName || '').trim();
-      const last = (payload.lastName || '').trim();
-      const fullName = [first, last].filter(Boolean).join(' ');
+      const last  = (payload.lastName  || '').trim();
+      const phone = (payload.phone     || '').trim();
       params.set('contact[first_name]', first);
-      params.set('contact[last_name]', last);
-      params.set('contact[name]', fullName);
-      const phone = (payload.phone || '').trim();
+      params.set('contact[last_name]',  last);
+      params.set('contact[name]', [first, last].filter(Boolean).join(' '));
       if (phone) params.set('contact[phone]', phone);
 
       const tags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
-      if (payload.acceptsMarketing && !tags.some(function(tag){ return String(tag).toLowerCase() === 'newsletter'; })) {
+      if (payload.acceptsMarketing && !tags.some(t => String(t).toLowerCase()==='newsletter')) {
         tags.unshift('newsletter');
       }
       params.set('contact[tags]', tags.join(', '));
-      if (payload.acceptsMarketing) {
-        params.set('contact[accepts_marketing]', 'true');
-        params.set('accepts_marketing', 'true');
-      } else {
-        params.set('contact[accepts_marketing]', 'false');
-        params.set('accepts_marketing', 'false');
-      }
+      params.set('contact[accepts_marketing]', payload.acceptsMarketing ? 'true' : 'false');
 
       const encoded = params.toString();
-      return fetch(SHOPIFY_CONTACT_URL, {
+      return fetch('/contact#contact_form', {
         method: 'POST',
         body: encoded,
         credentials: 'same-origin',
         keepalive: true,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
-      }).then(function(response){
-        return response.text().catch(function(){ return ''; }).then(function(body){
-          debugLog('debug', 'Fallback Shopify contact response', {
-            stage: 'fallback-fetch',
-            status: response.status,
-            ok: response.ok,
-            url: SHOPIFY_CONTACT_URL,
-            body,
-            encoded
-          });
-          return response;
-        });
-      }).catch(function(error){
-        debugLog('error', 'Fallback Shopify contact error', {
-          stage: 'fallback-fetch',
-          url: SHOPIFY_CONTACT_URL,
-          error: error && error.message ? error.message : String(error),
-          encoded
-        });
       });
-    } catch(err) {
-      debugLog('error', 'Fallback Shopify contact exception', {
-        stage: 'fallback-build',
-        error: err && err.message ? err.message : String(err)
-      });
-    }
+    } catch(_) {}
   }
 
   function populateHiddenShopifyForm(payload){
@@ -367,62 +337,35 @@
             const styleSlug = String(window.NB_QUIZ_STYLE || style || '').toLowerCase();
             const styleLabel = nbStyleLabelFromSlug(styleSlug);
 
-            const tags = ['Quiz: Surge Signature'];
-            if (styleLabel) tags.push('Style: ' + styleLabel);
-            tags.push('Source: /surge-signature');
+            const acceptsMarketing = consent;
+            const helperAvailable = typeof window.nbSubmitShopifyContact === 'function';
 
-            const payload = {
-              email,
-              firstName,
-              lastName,
-              phone,
-              tags,
-              acceptsMarketing: consent
-            };
-
-            const hiddenForm = populateHiddenShopifyForm(payload);
-            const helperHiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
-            const helperFrame = document.getElementById('HiddenNewsletterFrame') || document.getElementById('HiddenContactFrame');
-            const helperAvailable = typeof window.nbSubmitShopifyContact === 'function' && helperHiddenForm && helperFrame;
-
-            let submitted = false;
             if (helperAvailable) {
-              try {
-                await window.nbSubmitShopifyContact({
-                  email: payload.email,
-                  fname: payload.firstName,
-                  lname: payload.lastName,
-                  phone: payload.phone,
-                  tags: payload.tags,
-                  consent: payload.acceptsMarketing
-                });
-                submitted = true;
-              } catch(_) {
-                submitted = false;
-              }
-            }
-
-            if (!helperAvailable && hiddenForm && !submitted) {
-              try {
-                debugLog('debug', 'Shared Shopify helper missing, submitting hidden fallback form', {
-                  stage: 'fallback-form',
-                  action: hiddenForm.getAttribute('action') || '',
-                  target: hiddenForm.getAttribute('target') || ''
-                });
-                monitorFallbackFrame(helperFrame);
-                hiddenForm.requestSubmit ? hiddenForm.requestSubmit() : hiddenForm.submit();
-                submitted = true;
-              } catch(_) {
-                submitted = false;
-              }
-            }
-
-            if (!helperAvailable && !submitted) {
-              debugLog('debug', 'Shared Shopify helper missing, using encoded fallback fetch', {
-                stage: 'fallback-fetch',
-                payload
+              window.nbSubmitShopifyContact({
+                email: email,
+                fname: firstName,
+                lname: lastName,
+                phone: phone,
+                consent: acceptsMarketing,
+                tags: [
+                  'Quiz: Surge Signature',
+                  styleLabel ? ('Style: ' + styleLabel) : '',
+                  'Source: /surge-signature'
+                ].filter(Boolean)
               });
-              fallbackShopifyContact(payload);
+            } else {
+              fallbackShopifyContact({
+                email: email,
+                firstName,
+                lastName,
+                phone,
+                acceptsMarketing,
+                tags: [
+                  'Quiz: Surge Signature',
+                  styleLabel ? ('Style: ' + styleLabel) : '',
+                  'Source: /surge-signature'
+                ].filter(Boolean)
+              });
             }
           }, { capture:true });
         })();

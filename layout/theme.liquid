@@ -509,5 +509,6 @@ It:
 {% if request.path contains '/pages/contact' %}
   <script src="{{ 'nb-contact-dualpost.js' | asset_url }}" defer></script>
 {% endif %}
+{% render 'nb-newsletter-proxy' %}
   </body>
 </html>
