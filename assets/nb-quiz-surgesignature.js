@@ -256,3 +256,11 @@
     // window.location.href = '/pages/surge-signature-result';
   }
 })();
+
+(function(){
+  var thanks = document.getElementById('nb-quiz-thanks');
+  if (!thanks) return;
+  try {
+    thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch(_) {}
+})();
