@@ -236,3 +236,11 @@
     });
   });
 })();
+
+(function(){
+  const posted = document.getElementById('nbq-posted');
+  if (posted && posted.dataset.posted === 'true') {
+    // Optional: redirect to a clean page after success
+    // window.location.href = '/pages/surge-signature-result';
+  }
+})();

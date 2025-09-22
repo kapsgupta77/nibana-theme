@@ -1,265 +1,107 @@
-{% comment %}
-  Nibana – Contact Section (v2.1)
-  - 2-panel layout: Info (left) + Form (right)
-  - Uses global tokens from base.css:
-      • Call CTA: .nb-cta (optionally add .nb-cta--xl)
-      • Non-call CTA: .button
-      • Panels: .nib-panel
-  - Required: Name, Inquiry Purpose, Message
-  - Opt-in checkbox checked by default (Theme Editor toggle)
-  - Hidden customer form creates/updates Customer with tags for Mailchimp sync
-{% endcomment %}
+<section class="nb-contact nb-shell">
+  <div class="nb-grid nb-grid--2">
+    <div class="nb-panel">
+      <h1 class="nb-h1">Contact Us</h1>
+      <p class="nb-kicker">Feel free to ask us anything. We're here to help.</p>
 
-{% assign secid = 'nibana-contact--' | append: section.id %}
+      <div class="nb-card">
+        <h2 class="nb-h3">Contact Details</h2>
+        <p>info@nibana.life<br>+44 20 7173 5775</p>
+        <p>We usually reply within 1 business day.</p>
+      </div>
 
-<section
-  id="{{ secid }}"
-  class="page-width color-{{ section.settings.color_scheme }}"
-  style="max-width: {{ section.settings.max_width }}; margin: 0 auto; padding: {{ section.settings.section_padding }};"
-  data-nb-contact="true"
-  data-nb-debug="{{ section.settings.enable_debug }}"
-  data-mc-enabled="{{ section.settings.use_mailchimp_flow }}"
-  data-mc-action="{{ section.settings.mailchimp_action }}"
-  data-shopify-customer-enabled="{{ section.settings.use_shopify_customer_flow }}"
->
-<style>
-    /* Scoped to this section */
-    #{{ secid }} .nib-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 28px;
-    }
-    @media (min-width: 900px) {
-      #{{ secid }} .nib-grid {
-        grid-template-columns: 1.05fr 1fr;
-        gap: 32px;
-        align-items: start;
-      }
-    }
-    #{{ secid }} .nib-card { 
-  background: {{ section.settings.card_bg }};
-  border: 1px solid {{ section.settings.card_border }};
-  border-radius: {{ section.settings.card_radius }};
-  /* Upgrade to luxe/3D shadow using global token (falls back to section setting) */
-  box-shadow: var(--nb-shadow-2, {{ section.settings.card_shadow }});
-  padding: {{ section.settings.card_padding }};
-}
-/* Center the left column card relative to the taller right column */
-#{{ secid }} .left-panel { align-self: center; }
-
-/* Red star for all required labels */
-#{{ secid }} .nib-req { color:#b91c1c; margin-left:4px; }
-    #{{ secid }} .nib-muted { opacity: .8; }
-    #{{ secid }} .nib-label { display:block; margin:0 0 6px 0; font-weight: 500; }
-    #{{ secid }} .nib-input, #{{ secid }} .nib-select, #{{ secid }} .nib-textarea {
-      width:100%; padding:12px 14px; border:1px solid var(--color-input-border, #e5e7eb);
-      border-radius: 10px; background:#fff;
-    }
-    #{{ secid }} .nib-help { font-size: 12px; opacity:.7; margin-top: 6px; }
-    #{{ secid }} .nib-actions { display:flex; gap:12px; align-items:center; }
-    #{{ secid }} .nib-form-grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
-
-#{{ secid }} .nib-card.nib-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(0,0,0,.14);
-  transition: box-shadow .2s ease, transform .12s ease;
-}
-
-    #{{ secid }} [data-nb-captcha-overlay] {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: clamp(16px, 5vw, 40px);
-      background: rgba(15, 23, 42, 0.55);
-      z-index: 9999;
-    }
-    #{{ secid }} [data-nb-captcha-overlay][hidden] {
-      display: none !important;
-    }
-    #{{ secid }} .nb-captcha-overlay__dialog {
-      position: relative;
-      z-index: 1;
-      background: #ffffff;
-      color: #0f172a;
-      width: min(640px, 100%);
-      border-radius: 20px;
-      box-shadow: 0 28px 64px rgba(15, 23, 42, 0.24);
-      padding: clamp(20px, 4vw, 32px);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    #{{ secid }} .nb-captcha-overlay__backdrop {
-      position: absolute;
-      inset: 0;
-      background: transparent;
-    }
-    #{{ secid }} .nb-captcha-overlay__header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    #{{ secid }} .nb-captcha-overlay__title {
-      margin: 0;
-      font-size: clamp(20px, 3vw, 26px);
-      line-height: 1.3;
-    }
-    #{{ secid }} .nb-captcha-overlay__icon-close {
-      background: none;
-      border: 0;
-      color: rgba(15, 23, 42, 0.55);
-      font-size: 28px;
-      line-height: 1;
-      padding: 4px;
-      cursor: pointer;
-    }
-    #{{ secid }} .nb-captcha-overlay__icon-close:hover,
-    #{{ secid }} .nb-captcha-overlay__icon-close:focus-visible {
-      color: rgba(15, 23, 42, 0.9);
-      outline: none;
-    }
-    #{{ secid }} .nb-captcha-overlay__copy {
-      margin: 0;
-      font-size: 15px;
-      line-height: 1.6;
-      color: rgba(15, 23, 42, 0.82);
-    }
-    #{{ secid }} .nb-captcha-overlay__frame {
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 10px;
-      background: #f8fafc;
-    }
-    #{{ secid }} .nb-captcha-overlay__frame iframe {
-      width: 100%;
-      min-height: 420px;
-      border: 0;
-      border-radius: 12px;
-      background: #ffffff;
-    }
-    #{{ secid }} .nb-captcha-overlay__actions {
-      display: flex;
-      justify-content: flex-end;
-    }
-    #{{ secid }} .nb-captcha-overlay__close {
-      border: none;
-      background: none;
-      font: inherit;
-      color: #0f172a;
-      cursor: pointer;
-      padding: 8px 2px;
-    }
-    #{{ secid }} .nb-captcha-overlay__close:hover,
-    #{{ secid }} .nb-captcha-overlay__close:focus-visible {
-      text-decoration: underline;
-      outline: none;
-    }
-    #{{ secid }} .nb-captcha-overlay__form {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-    }
-
-  </style>
-
-  <div class="nib-grid">
-    <!-- LEFT PANEL: Info + Details + Book a Call -->
-   <div class="nib-card nib-panel left-panel">
-      <h1 class="{{ section.settings.heading_class }}" style="margin:0 0 6px 0;">
-        {{ section.settings.heading }}
-      </h1>
-      <p class="{{ section.settings.subheading_class }} nib-muted" style="margin:0 0 22px 0;">
-        {{ section.settings.subheading }}
-      </p>
-
-      <div style="display:grid; gap:18px;">
-        <!-- Contact Details -->
-        <div class="nib-card nib-panel" style="padding:16px;">
-          <h3 class="{{ section.settings.block_heading_class }}" style="margin:0 0 8px 0;">{{ section.settings.details_heading }}</h3>
-          <p style="margin:0;">
-            <a href="mailto:{{ section.settings.details_email }}">{{ section.settings.details_email }}</a><br>
-            <a href="tel:{{ section.settings.details_phone | replace: ' ', '' }}">{{ section.settings.details_phone }}</a>
-          </p>
-          {% if section.settings.details_note != blank %}
-            <p class="nib-muted" style="margin:8px 0 0 0;">{{ section.settings.details_note }}</p>
-          {% endif %}
-        </div>
-
-        <!-- Prefer to talk -->
-        <div class="nib-card nib-panel" style="padding:16px;">
-          <h3 class="{{ section.settings.block_heading_class }}" style="margin:0 0 8px 0;">{{ section.settings.call_heading }}</h3>
-          <p class="nib-muted" style="margin:0 0 12px 0;">{{ section.settings.call_sub }}</p>
-          <a href="{{ section.settings.call_link }}"
-             class="{{ section.settings.cta_call_class }}"
-             style="text-decoration:none;">
-             {{ section.settings.call_label }}
-          </a>
-        </div>
+      <div class="nb-card">
+        <h2 class="nb-h3">Prefer to talk?</h2>
+        <p>Book a free 20-minute discovery call.</p>
+        <p><a class="nb-btn nb-btn--primary" href="/pages/contact">Book a Free 20-min Call</a></p>
       </div>
     </div>
 
-    <!-- RIGHT PANEL: Contact Form -->
-    <div class="nib-card nib-panel">
-{% comment %} Contact opt-in — Shopify primary + Mailchimp parallel {% endcomment %}
-{% form 'customer', id: 'nb-contact-shopify', class: 'nb-contact__form', novalidate: 'novalidate' %}
-  <div class="nb-form-grid">
-    <div class="nb-field">
-      <label for="nbc-fname">First name</label>
-      <input id="nbc-fname" name="contact[first_name]" type="text" required>
-    </div>
-    <div class="nb-field">
-      <label for="nbc-lname">Last name</label>
-      <input id="nbc-lname" name="contact[last_name]" type="text" required>
-    </div>
-    <div class="nb-field">
-      <label for="nbc-email">Email</label>
-      <input id="nbc-email" name="contact[email]" type="email" required>
-    </div>
-    <div class="nb-field">
-      <label for="nbc-phone">Phone (optional)</label>
-      <input id="nbc-phone" name="contact[phone]" type="tel">
-    </div>
-  </div>
+    <div class="nb-panel">
+      {%- comment -%} VISIBLE: Shopify CONTACT form (fires store email) {%- endcomment -%}
+      {% form 'contact', id: 'nb-contact-form', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
+        <div class="nb-form-grid">
+          <div class="nb-field">
+            <label for="nbc-first">First name</label>
+            <input id="nbc-first" name="contact[first_name]" type="text" required>
+          </div>
+          <div class="nb-field">
+            <label for="nbc-last">Last name</label>
+            <input id="nbc-last" name="contact[last_name]" type="text" required>
+          </div>
+          <div class="nb-field">
+            <label for="nbc-email">Email</label>
+            <input id="nbc-email" name="contact[email]" type="email" required>
+          </div>
+          <div class="nb-field">
+            <label for="nbc-phone">Phone (optional)</label>
+            <input id="nbc-phone" name="contact[phone]" type="tel">
+          </div>
+          <div class="nb-field">
+            <label for="nbc-reason">Reason</label>
+            <select id="nbc-reason" name="contact[reason]" required>
+              <option value="" selected>Please choose…</option>
+              <option>Coaching enquiry</option>
+              <option>Speaking</option>
+              <option>Corporate workshop</option>
+              <option>Partnership</option>
+              <option>Press</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="nb-field nb-field--full">
+            <label for="nbc-message">Message</label>
+            <textarea id="nbc-message" name="contact[body]" rows="5" placeholder="How can we help?" required></textarea>
+          </div>
+        </div>
 
-  <input type="hidden" id="nbc-tags" name="contact[tags]" value="Source: /contact">
-  <input type="hidden" id="nbc-accepts" name="contact[accepts_marketing]" value="false">
+        <div class="nb-consent">
+          <label>
+            <input id="nbc-consent" type="checkbox"> Join the Nibana list (occasional notes; unsubscribe anytime)
+          </label>
+        </div>
 
-  <div class="nb-consent">
-    <label>
-      <input id="nbc-consent" type="checkbox"> Join the Nibana list (occasional notes; unsubscribe anytime)
-    </label>
-  </div>
+        {# hidden helpers for mirror submits #}
+        <input type="hidden" id="nbc-tags" value="Source: /contact">
 
-  <button type="submit" class="nb-btn nb-btn--primary">Send</button>
+        <button type="submit" class="nb-btn nb-btn--primary">Send</button>
 
-  {% if form.errors %}
-    <div class="form__message" role="alert">{{ form.errors | default_errors }}</div>
-  {% endif %}
-  {% if form.posted_successfully? %}
-    <div class="nb-card" role="status">
-      <p>Thanks — we’ve got your details.</p>
-    </div>
-  {% endif %}
-{% endform %}
+        {% if form.errors %}
+          <div class="form__message" role="alert">{{ form.errors | default_errors }}</div>
+        {% endif %}
+        {% if form.posted_successfully? %}
+          <div class="nb-card nb-card--soft" role="status">
+            <p>Thanks — your message has been sent. We’ll reply as soon as we can.</p>
+          </div>
+        {% endif %}
+      {% endform %}
 
-<!-- Hidden Mailchimp mirror — parallel submit -->
-<form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
-      method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
-      style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
-  <input type="text"   name="FNAME" id="nbc-mc-fname">
-  <input type="text"   name="LNAME" id="nbc-mc-lname">
-  <input type="email"  name="EMAIL" id="nbc-mc-email">
-  <input type="text"   name="PHONE" id="nbc-mc-phone">
-  <input type="hidden" name="group[78632][1]" value="1">
-  <input type="submit" value="Subscribe">
-</form>
-<iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
+      <!-- HIDDEN: Shopify CUSTOMER mirror (creates/updates Customer) -->
+      <div aria-hidden="true" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+        {% form 'customer', id: 'nb-contact-customer', target: 'nbc-shopify-target', novalidate: 'novalidate' %}
+          <input type="email"  id="nbc-cust-email"  name="contact[email]">
+          <input type="text"   id="nbc-cust-f"      name="contact[first_name]">
+          <input type="text"   id="nbc-cust-l"      name="contact[last_name]">
+          <input type="tel"    id="nbc-cust-phone"  name="contact[phone]">
+          <input type="hidden" id="nbc-cust-tags"   name="contact[tags]" value="Source: /contact">
+          <input type="hidden" id="nbc-cust-acc"    name="contact[accepts_marketing]" value="false">
+          <button type="submit">Submit</button>
+        {% endform %}
+        <iframe id="nbc-shopify-target" name="nbc-shopify-target" title="Shopify submit"></iframe>
+      </div>
+
+      <!-- HIDDEN: Mailchimp mirror (parallel submit) -->
+      <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+            method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
+            style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+        <input type="text"   name="FNAME" id="nbc-mc-fname">
+        <input type="text"   name="LNAME" id="nbc-mc-lname">
+        <input type="email"  name="EMAIL" id="nbc-mc-email">
+        <input type="text"   name="PHONE" id="nbc-mc-phone">
+        <input type="hidden" name="group[78632][1]" value="1">
+        <input type="submit" value="Subscribe">
+      </form>
+      <iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
     </div>
   </div>
 </section>
