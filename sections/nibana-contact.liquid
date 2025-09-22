@@ -210,16 +210,16 @@
 {%- endcomment -%}
 {% if section.settings.use_shopify_customer_flow %}
   <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-    <iframe id="HiddenContactFrame" name="HiddenContactFrame" tabindex="-1"></iframe>
-    {% form 'contact', id: 'NibanaHiddenContact', target: 'HiddenContactFrame' %}
-      <input type="email"   name="contact[email]"          id="HiddenContactEmail">
-      <input type="text"    name="contact[name]"           id="HiddenContactName">
-      <input type="text"    name="contact[first_name]"     id="HiddenContactFirstName">
-      <input type="text"    name="contact[last_name]"      id="HiddenContactLastName">
-      <input type="tel"     name="contact[phone]"          id="HiddenContactPhone">
-      <input type="hidden"  name="contact[tags]"           id="HiddenContactTags" value="">
-      <input type="hidden"  name="accepts_marketing"       id="HiddenContactAcceptsMarketing" value="false">
-      <button id="HiddenContactSubmit" type="submit">Submit</button>
+    <iframe id="HiddenNewsletterFrame" name="HiddenNewsletterFrame" tabindex="-1"></iframe>
+    {% form 'customer', id: 'NibanaHiddenNewsletter', target: 'HiddenNewsletterFrame' %}
+      <input type="email"   name="contact[email]"           id="HiddenCustomerEmail">
+      <input type="text"    name="contact[name]"            id="HiddenCustomerName">
+      <input type="text"    name="contact[first_name]"      id="HiddenCustomerFirstName">
+      <input type="text"    name="contact[last_name]"       id="HiddenCustomerLastName">
+      <input type="tel"     name="contact[phone]"           id="HiddenCustomerPhone">
+      <input type="hidden"  name="contact[tags]"            id="HiddenCustomerTags" value="">
+      <input type="hidden"  name="contact[accepts_marketing]" id="HiddenCustomerAcceptsMarketing" value="false">
+      <button id="HiddenCustomerSubmit" type="submit">Submit</button>
     {% endform %}
   </div>
 {% endif %}
@@ -292,7 +292,7 @@
 
     { "type": "checkbox", "id": "use_mailchimp_flow", "label": "Add contacts to Mailchimp directly on submit", "default": true },
     { "type": "url",      "id": "mailchimp_action",  "label": "Mailchimp embed form action (Hosted or Embed URL)" },
-    { "type": "checkbox", "id": "use_shopify_customer_flow", "label": "Also create a Shopify customer (may be blocked by hCaptcha)", "default": false },
+    { "type": "checkbox", "id": "use_shopify_customer_flow", "label": "Also create a Shopify customer (may be blocked by hCaptcha)", "default": true },
 
     { "type": "text", "id": "max_width", "label": "Max width", "default": "1100px" },
     { "type": "text", "id": "section_padding", "label": "Section padding", "default": "48px 16px" },

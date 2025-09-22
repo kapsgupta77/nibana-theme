@@ -1,47 +1,59 @@
 (function(){
   let show = function(){};
 
+  function normaliseTags(tagList, acceptsMarketing){
+    const tags = Array.isArray(tagList) ? tagList.filter(Boolean).map(tag => String(tag)) : [];
+    if (acceptsMarketing && !tags.some(tag => tag.toLowerCase() === 'newsletter')) {
+      tags.unshift('newsletter');
+    }
+    return tags;
+  }
+
+  function assignValue(ids, value){
+    [].concat(ids).forEach(function(id){
+      const input = typeof id === 'string' ? document.getElementById(id) : null;
+      if (input) input.value = value;
+    });
+  }
+
+  function ensureTarget(form, preferredFrameId){
+    if (!form) return;
+    const frame = preferredFrameId ? document.getElementById(preferredFrameId) : null;
+    if (frame) {
+      const frameName = frame.getAttribute('name') || preferredFrameId;
+      frame.setAttribute('name', frameName);
+      form.setAttribute('target', frameName);
+    }
+  }
+
   function nbSubmitShopifyContact({ email = '', fname = '', lname = '', phone = '', consent = false, tags = [] } = {}){
     try {
-      const hiddenForm = document.getElementById('NibanaHiddenContact');
+      const hiddenForm = document.getElementById('NibanaHiddenNewsletter') || document.getElementById('NibanaHiddenContact');
       if (!hiddenForm) {
-        show('Hidden Shopify contact form missing');
+        show('Hidden Shopify form missing');
         return false;
       }
 
-      const frame = document.getElementById('HiddenContactFrame');
-      if (frame) {
-        const frameName = frame.getAttribute('name') || 'HiddenContactFrame';
-        frame.setAttribute('name', frameName);
-        hiddenForm.setAttribute('target', frameName);
-      }
+      const usingCustomerForm = hiddenForm.id === 'NibanaHiddenNewsletter';
+      ensureTarget(hiddenForm, usingCustomerForm ? 'HiddenNewsletterFrame' : 'HiddenContactFrame');
 
       const trimmedEmail = (email || '').trim();
       const firstName = (fname || '').trim();
       const lastName = (lname || '').trim();
       const trimmedPhone = (phone || '').trim();
       const acceptsMarketing = !!consent;
-      const tagList = Array.isArray(tags) ? tags.filter(Boolean).map(tag => String(tag)) : [];
-      if (acceptsMarketing && !tagList.some(tag => tag.toLowerCase() === 'newsletter')) {
-        tagList.unshift('newsletter');
-      }
-      const tagString = tagList.join(', ');
       const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
       const marketingValue = acceptsMarketing ? 'true' : 'false';
+      const tagList = normaliseTags(tags, acceptsMarketing);
+      const tagString = tagList.join(', ');
 
-      const assign = (id, value) => {
-        const input = document.getElementById(id);
-        if (input) input.value = value;
-      };
-      assign('HiddenContactEmail', trimmedEmail);
-      assign('HiddenCustomerEmail', trimmedEmail);
-      assign('HiddenContactFirstName', firstName);
-      assign('HiddenContactLastName', lastName);
-      assign('HiddenContactPhone', trimmedPhone);
-      assign('HiddenContactTags', tagString);
-      assign('HiddenCustomerTags', tagString);
-      assign('HiddenContactAcceptsMarketing', marketingValue);
-      assign('HiddenContactName', fullName);
+      assignValue(['HiddenCustomerEmail', 'HiddenContactEmail'], trimmedEmail);
+      assignValue(['HiddenCustomerFirstName', 'HiddenContactFirstName'], firstName);
+      assignValue(['HiddenCustomerLastName', 'HiddenContactLastName'], lastName);
+      assignValue(['HiddenCustomerPhone', 'HiddenContactPhone'], trimmedPhone);
+      assignValue(['HiddenCustomerTags', 'HiddenContactTags'], tagString);
+      assignValue(['HiddenCustomerAcceptsMarketing', 'HiddenContactAcceptsMarketing'], marketingValue);
+      assignValue(['HiddenCustomerName', 'HiddenContactName'], fullName);
 
       const fd = new FormData(hiddenForm);
       fd.set('contact[email]', trimmedEmail);
@@ -49,8 +61,18 @@
       fd.set('contact[last_name]', lastName);
       fd.set('contact[phone]', trimmedPhone);
       fd.set('contact[tags]', tagString);
-      fd.set('accepts_marketing', marketingValue);
       fd.set('contact[name]', fullName);
+      fd.set('contact[accepts_marketing]', marketingValue);
+      if (usingCustomerForm) {
+        fd.set('customer[email]', trimmedEmail);
+        fd.set('customer[first_name]', firstName);
+        fd.set('customer[last_name]', lastName);
+        fd.set('customer[phone]', trimmedPhone);
+        fd.set('customer[tags]', tagString);
+        fd.set('customer[accepts_marketing]', marketingValue);
+      } else {
+        fd.set('accepts_marketing', marketingValue);
+      }
 
       const url = hiddenForm.getAttribute('action') || '/contact#contact_form';
 
