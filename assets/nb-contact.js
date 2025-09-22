@@ -1,7 +1,7 @@
 (function(){
   let show = function(){};
 
-  function nbSubmitShopifyContact(options = {}){
+  function nbSubmitShopifyContact({ email = '', fname = '', lname = '', phone = '', consent = false, tags = [] } = {}){
     try {
       const hiddenForm = document.getElementById('NibanaHiddenContact');
       if (!hiddenForm) {
@@ -11,40 +11,45 @@
 
       const frame = document.getElementById('HiddenContactFrame');
       if (frame) {
-        hiddenForm.setAttribute('target', frame.getAttribute('name') || 'HiddenContactFrame');
+        const frameName = frame.getAttribute('name') || 'HiddenContactFrame';
+        frame.setAttribute('name', frameName);
+        hiddenForm.setAttribute('target', frameName);
       }
 
-      const email = (options.email || '').trim();
-      const firstName = (options.firstName || '').trim();
-      const lastName = (options.lastName || '').trim();
-      const phone = (options.phone || '').trim();
-      const acceptsMarketing = !!options.acceptsMarketing;
-      const tags = Array.isArray(options.tags) ? options.tags.filter(Boolean) : [];
-      if (acceptsMarketing && !tags.some(tag => String(tag).toLowerCase() === 'newsletter')) {
-        tags.unshift('newsletter');
+      const trimmedEmail = (email || '').trim();
+      const firstName = (fname || '').trim();
+      const lastName = (lname || '').trim();
+      const trimmedPhone = (phone || '').trim();
+      const acceptsMarketing = !!consent;
+      const tagList = Array.isArray(tags) ? tags.filter(Boolean).map(tag => String(tag)) : [];
+      if (acceptsMarketing && !tagList.some(tag => tag.toLowerCase() === 'newsletter')) {
+        tagList.unshift('newsletter');
       }
-      const tagString = tags.join(', ');
+      const tagString = tagList.join(', ');
       const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+      const marketingValue = acceptsMarketing ? 'true' : 'false';
 
       const assign = (id, value) => {
         const input = document.getElementById(id);
         if (input) input.value = value;
       };
-      assign('HiddenContactEmail', email);
+      assign('HiddenContactEmail', trimmedEmail);
+      assign('HiddenCustomerEmail', trimmedEmail);
       assign('HiddenContactFirstName', firstName);
       assign('HiddenContactLastName', lastName);
-      assign('HiddenContactPhone', phone);
+      assign('HiddenContactPhone', trimmedPhone);
       assign('HiddenContactTags', tagString);
-      assign('HiddenContactAcceptsMarketing', acceptsMarketing ? 'true' : 'false');
+      assign('HiddenCustomerTags', tagString);
+      assign('HiddenContactAcceptsMarketing', marketingValue);
       assign('HiddenContactName', fullName);
 
       const fd = new FormData(hiddenForm);
-      fd.set('contact[email]', email);
+      fd.set('contact[email]', trimmedEmail);
       fd.set('contact[first_name]', firstName);
       fd.set('contact[last_name]', lastName);
-      fd.set('contact[phone]', phone);
+      fd.set('contact[phone]', trimmedPhone);
       fd.set('contact[tags]', tagString);
-      fd.set('accepts_marketing', acceptsMarketing ? 'true' : 'false');
+      fd.set('accepts_marketing', marketingValue);
       fd.set('contact[name]', fullName);
 
       const url = hiddenForm.getAttribute('action') || '/contact#contact_form';
@@ -121,12 +126,32 @@
       const tags    = ['Contact Form'];
       if (purpose) tags.push('Purpose: ' + purpose);
 
+      const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+      const firstName = parts.shift() || '';
+      const lastName = parts.join(' ');
+
+      if (scEnabled) {
+        if (typeof window.nbSubmitShopifyContact === 'function') {
+          const ok = window.nbSubmitShopifyContact({
+            email,
+            fname: firstName,
+            lname: lastName,
+            phone,
+            tags,
+            consent: !!join.checked
+          });
+          if (!ok) show('Shopify contact helper failed');
+        } else {
+          show('Shopify contact helper missing');
+        }
+      }
+
       if (mcEnabled && mcAction) {
         const mcForm   = document.getElementById('NibanaMailchimp');
         const mcFrame  = document.getElementById('MailchimpFrame');
         if (mcForm && mcFrame) {
           mcForm.setAttribute('action', mcAction);
-          const first = (name || '').trim().split(/\s+/)[0] || '';
+          const first = firstName || '';
           document.getElementById('MC_EMAIL').value = email;
           document.getElementById('MC_FNAME').value = first;
           document.getElementById('MC_PHONE').value = phone;
@@ -138,25 +163,6 @@
           } catch(_) {}
         } else {
           show('Mailchimp form not found');
-        }
-      }
-
-      if (scEnabled) {
-        const parts = (name || '').trim().split(/\s+/).filter(Boolean);
-        const firstName = parts.shift() || '';
-        const lastName = parts.join(' ');
-        if (typeof window.nbSubmitShopifyContact === 'function') {
-          const ok = window.nbSubmitShopifyContact({
-            email,
-            firstName,
-            lastName,
-            phone,
-            tags,
-            acceptsMarketing: !!join.checked
-          });
-          if (!ok) show('Shopify contact helper failed');
-        } else {
-          show('Shopify contact helper missing');
         }
       }
     }, true);
