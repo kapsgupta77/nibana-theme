@@ -5,8 +5,31 @@ Also mirrors to:
 - Hidden Mailchimp form (parallel subscribe)
 {%- endcomment -%}
 
-<section class="nb-shell nb-contact">
-  <div class="nb-grid nb-grid--2">
+{% liquid
+  assign nb_max_width = section.settings.max_width | default: '1100px'
+  assign nb_section_padding = section.settings.section_padding | default: '48px 16px'
+  assign nb_card_bg = section.settings.card_bg | default: '#ffffff'
+  assign nb_card_border = section.settings.card_border | default: '#E5E7EB'
+  assign nb_card_radius = section.settings.card_radius | default: '16px'
+  assign nb_card_padding = section.settings.card_padding | default: '22px'
+  assign nb_card_shadow = section.settings.card_shadow | default: '0 8px 24px rgba(0,0,0,.14)'
+  assign nb_card_soft_bg = nb_card_bg | color_lighten: 8
+%}
+
+<section
+  class="nb-shell nb-contact"
+  style="
+    --nb-contact-max-width: {{ nb_max_width }};
+    --nb-contact-section-padding: {{ nb_section_padding }};
+    --nb-contact-card-bg: {{ nb_card_bg }};
+    --nb-contact-card-soft-bg: {{ nb_card_soft_bg }};
+    --nb-contact-card-border: {{ nb_card_border }};
+    --nb-contact-card-radius: {{ nb_card_radius }};
+    --nb-contact-card-padding: {{ nb_card_padding }};
+    --nb-contact-card-shadow: {{ nb_card_shadow }};
+  "
+>
+  <div class="nb-grid cols-2">
     <!-- Left column -->
     <div class="nb-panel">
       <h1 class="nb-h1">{{ section.settings.heading | default: 'Contact Us' | escape }}</h1>
