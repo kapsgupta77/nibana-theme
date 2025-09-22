@@ -1,48 +1,98 @@
 (function(){
   function dl(event, params){ window.dataLayer = window.dataLayer || []; window.dataLayer.push(Object.assign({event}, params||{})); }
 
-  function nbPostShopifyCustomer(payload){
-    try{
-      const params = new URLSearchParams();
-      const url = '/contact#contact_form';
-      const contentType = 'application/x-www-form-urlencoded;charset=UTF-8';
-      // Required fields for Shopify newsletter endpoint
-      params.set('form_type','customer');
-      params.set('utf8','✓');
-      params.set('contact[email]', payload.email || '');
-      if (payload.fname) params.set('contact[first_name]', payload.fname);
-      if (payload.lname) params.set('contact[last_name]', payload.lname);
-      if (payload.phone) params.set('contact[phone]', payload.phone);
+  const SHOPIFY_CONTACT_URL = '/contact#contact_form';
 
-      // Consent + tags
-      const tags = [];
-      if (payload.consent) { params.set('contact[accepts_marketing]','true'); tags.push('newsletter'); }
-      if (Array.isArray(payload.tags) && payload.tags.length) {
-        tags.push.apply(tags, payload.tags);
-      } else {
-        tags.push('Quiz: Surge Signature');
-        if (payload.styleLabel) tags.push('Style: ' + payload.styleLabel);
-        tags.push('Source: /surge-signature');
-      }
-      params.set('contact[tags]', tags.join(', '));
+  function ensureHiddenShopifyContact(section){
+    if (document.getElementById('NibanaHiddenContact')) return;
+    const host = section.querySelector('.nb-shell') || section;
+    if (!host) return;
 
-      const encoded = params.toString();
-      if (navigator.sendBeacon) {
-        const blob = new Blob([encoded], { type: contentType });
-        if (navigator.sendBeacon(url, blob)) return Promise.resolve();
-      }
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('aria-hidden', 'true');
+    wrapper.style.position = 'absolute';
+    wrapper.style.width = '1px';
+    wrapper.style.height = '1px';
+    wrapper.style.overflow = 'hidden';
+    wrapper.style.left = '-9999px';
 
-      return fetch(url, {
-        method:'POST',
-        body: encoded,
-        credentials:'same-origin',
-        keepalive: true,
-        headers: { 'Content-Type': contentType }
-      });
-    }catch(e){ /* swallow */ }
+    const frame = document.createElement('iframe');
+    frame.id = 'HiddenContactFrame';
+    frame.name = 'HiddenContactFrame';
+    frame.tabIndex = -1;
+
+    const form = document.createElement('form');
+    form.id = 'NibanaHiddenContact';
+    form.method = 'post';
+    form.action = SHOPIFY_CONTACT_URL;
+    form.target = frame.name;
+    form.setAttribute('accept-charset', 'UTF-8');
+
+    function addInput(attrs){
+      const input = document.createElement('input');
+      Object.keys(attrs).forEach(function(key){ input.setAttribute(key, attrs[key]); });
+      form.appendChild(input);
+      return input;
+    }
+
+    addInput({ type: 'hidden', name: 'form_type', value: 'contact' });
+    addInput({ type: 'hidden', name: 'utf8', value: '✓' });
+    addInput({ type: 'email', name: 'contact[email]', id: 'HiddenContactEmail' });
+    addInput({ type: 'text', name: 'contact[name]', id: 'HiddenContactName' });
+    addInput({ type: 'text', name: 'contact[first_name]', id: 'HiddenContactFirstName' });
+    addInput({ type: 'text', name: 'contact[last_name]', id: 'HiddenContactLastName' });
+    addInput({ type: 'tel', name: 'contact[phone]', id: 'HiddenContactPhone' });
+    addInput({ type: 'hidden', name: 'contact[tags]', id: 'HiddenContactTags', value: '' });
+    addInput({ type: 'hidden', name: 'accepts_marketing', id: 'HiddenContactAcceptsMarketing', value: 'false' });
+
+    const submit = document.createElement('button');
+    submit.id = 'HiddenContactSubmit';
+    submit.type = 'submit';
+    submit.textContent = 'Submit';
+    form.appendChild(submit);
+
+    wrapper.appendChild(frame);
+    wrapper.appendChild(form);
+    host.appendChild(wrapper);
   }
 
-  if (!window.nbPostShopifyCustomer) window.nbPostShopifyCustomer = nbPostShopifyCustomer;
+  function fallbackShopifyContact(payload){
+    try {
+      const params = new URLSearchParams();
+      params.set('form_type', 'contact');
+      params.set('utf8', '✓');
+      params.set('contact[email]', payload.email || '');
+      const first = (payload.firstName || '').trim();
+      const last = (payload.lastName || '').trim();
+      const fullName = [first, last].filter(Boolean).join(' ');
+      params.set('contact[first_name]', first);
+      params.set('contact[last_name]', last);
+      params.set('contact[name]', fullName);
+      if (payload.phone) params.set('contact[phone]', payload.phone);
+
+      const tags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
+      if (payload.acceptsMarketing && !tags.some(function(tag){ return String(tag).toLowerCase() === 'newsletter'; })) {
+        tags.unshift('newsletter');
+      }
+      params.set('contact[tags]', tags.join(', '));
+      if (payload.acceptsMarketing) {
+        params.set('contact[accepts_marketing]', 'true');
+        params.set('accepts_marketing', 'true');
+      } else {
+        params.set('contact[accepts_marketing]', 'false');
+        params.set('accepts_marketing', 'false');
+      }
+
+      const encoded = params.toString();
+      return fetch(SHOPIFY_CONTACT_URL, {
+        method: 'POST',
+        body: encoded,
+        credentials: 'same-origin',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
+      }).catch(function(){});
+    } catch(_) {}
+  }
 
   function nbStyleLabelFromSlug(slug){
     slug = (slug||'').toLowerCase();
@@ -57,6 +107,7 @@
       const startBtn = section.querySelector('[data-nb-quiz-start]');
       const appEl = section.querySelector('[data-nb-quiz-app]');
       const resultEl = section.querySelector('[data-nb-quiz-result]');
+      ensureHiddenShopifyContact(section);
       let quiz = null, state = { index: 0, answers: [] }, startedAt = 0;
 
       // --- Microcopy / A11y hint ---
@@ -266,21 +317,37 @@
         });
 
         (function(){
-          const form = document.querySelector('[data-nb-quiz-sub]');
+          const form = resultEl.querySelector('[data-nb-quiz-sub]');
           if(!form) return;
 
           form.addEventListener('submit', function(){
             const email = form.querySelector('[name="EMAIL"]')?.value || '';
-            const fname = form.querySelector('[name="FNAME"]')?.value || '';
-            const lname = form.querySelector('[name="LNAME"]')?.value || '';
+            const firstName = (form.querySelector('[name="FNAME"]')?.value || '').trim();
+            const lastName = (form.querySelector('[name="LNAME"]')?.value || '').trim();
             const phone = form.querySelector('[name="PHONE"]')?.value || '';
             const consent = !!form.querySelector('input[name="gdpr[CONSENT]"]')?.checked;
 
-            // window.NB_QUIZ_STYLE should be set when you compute the result
-            const styleLabel = nbStyleLabelFromSlug(window.NB_QUIZ_STYLE || '');
+            const styleSlug = String(window.NB_QUIZ_STYLE || style || '').toLowerCase();
+            const styleLabel = nbStyleLabelFromSlug(styleSlug);
 
-            // Fire-and-forget – does not block the page or Mailchimp submit
-            nbPostShopifyCustomer({ email, fname, lname, phone, consent, styleLabel });
+            const tags = ['Quiz: Surge Signature'];
+            if (styleLabel) tags.push('Style: ' + styleLabel);
+            tags.push('Source: /surge-signature');
+
+            const payload = {
+              email,
+              firstName,
+              lastName,
+              phone,
+              tags,
+              acceptsMarketing: consent
+            };
+
+            if (typeof window.nbSubmitShopifyContact === 'function') {
+              window.nbSubmitShopifyContact(payload);
+            } else {
+              fallbackShopifyContact(payload);
+            }
           }, { capture:true });
         })();
 
