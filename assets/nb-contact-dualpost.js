@@ -6,24 +6,24 @@
 
   function val(sel){ const el = mc.querySelector(sel); return el ? (el.value || '').trim() : ''; }
 
-  function nbSubmitShopifyContactFallback(payload){
+  function postEncodedShopifyContact(payload){
     try {
       const url = '/contact#contact_form';
       const params = new URLSearchParams();
       params.set('form_type', 'contact');
       params.set('utf8', '✓');
       params.set('contact[email]', payload.email || '');
-      params.set('contact[first_name]', payload.firstName || '');
-      params.set('contact[last_name]', payload.lastName || '');
+      params.set('contact[first_name]', payload.fname || '');
+      params.set('contact[last_name]', payload.lname || '');
       params.set('contact[phone]', payload.phone || '');
-      params.set('contact[name]', [payload.firstName, payload.lastName].filter(Boolean).join(' '));
+      params.set('contact[name]', [payload.fname, payload.lname].filter(Boolean).join(' '));
 
       const tags = Array.isArray(payload.tags) ? payload.tags.slice() : [];
-      if (payload.acceptsMarketing && !tags.some(tag => String(tag).toLowerCase() === 'newsletter')) {
+      if (payload.consent && !tags.some(tag => String(tag).toLowerCase() === 'newsletter')) {
         tags.unshift('newsletter');
       }
       params.set('contact[tags]', tags.join(', '));
-      params.set('accepts_marketing', payload.acceptsMarketing ? 'true' : 'false');
+      params.set('accepts_marketing', payload.consent ? 'true' : 'false');
 
       const encoded = params.toString();
       return fetch(url, {
@@ -38,10 +38,6 @@
     }
   }
 
-  const submitContact = typeof window.nbSubmitShopifyContact === 'function'
-    ? window.nbSubmitShopifyContact
-    : nbSubmitShopifyContactFallback;
-
   function postShopify(){
     const email = val('[name="EMAIL"], input[type="email"]');
     if (!email) return;
@@ -53,14 +49,20 @@
     const formConsent = !!document.querySelector('#JoinEmails')?.checked;
     const acceptsMarketing = gdprConsent || formConsent;
 
-    submitContact({
+    const payload = {
       email,
-      firstName,
-      lastName,
+      fname: firstName,
+      lname: lastName,
       phone,
       tags: ['Source: /contact'],
-      acceptsMarketing
-    });
+      consent: acceptsMarketing
+    };
+
+    if (typeof window.nbSubmitShopifyContact === 'function') {
+      window.nbSubmitShopifyContact(payload);
+    } else {
+      postEncodedShopifyContact(payload);
+    }
   }
 
   mc.addEventListener('submit', function(){ postShopify(); }, { capture:true });
