@@ -39,29 +39,25 @@
       params.set('form_type', 'customer');
       params.set('utf8', '✓');
       params.set('contact[email]', payload.email || '');
-
       const first = (payload.firstName || '').trim();
       const last  = (payload.lastName  || '').trim();
-      const phone = (payload.phone     || '').trim();
+      const full  = [first, last].filter(Boolean).join(' ');
       params.set('contact[first_name]', first);
       params.set('contact[last_name]',  last);
-      params.set('contact[name]', [first, last].filter(Boolean).join(' '));
+      params.set('contact[name]', full);
+      const phone = (payload.phone || '').trim();
       if (phone) params.set('contact[phone]', phone);
-
       const tags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
-      if (payload.acceptsMarketing && !tags.some(t => String(t).toLowerCase()==='newsletter')) {
-        tags.unshift('newsletter');
-      }
+      if (payload.acceptsMarketing && !tags.some(t => String(t).toLowerCase()==='newsletter')) tags.unshift('newsletter');
       params.set('contact[tags]', tags.join(', '));
       params.set('contact[accepts_marketing]', payload.acceptsMarketing ? 'true' : 'false');
-
       const encoded = params.toString();
       return fetch('/contact#contact_form', {
         method: 'POST',
         body: encoded,
         credentials: 'same-origin',
         keepalive: true,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
+        headers: { 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' }
       });
     } catch(_) {}
   }
@@ -337,35 +333,40 @@
             const styleSlug = String(window.NB_QUIZ_STYLE || style || '').toLowerCase();
             const styleLabel = nbStyleLabelFromSlug(styleSlug);
 
-            const acceptsMarketing = consent;
             const helperAvailable = typeof window.nbSubmitShopifyContact === 'function';
+            const tags = [
+              'Quiz: Surge Signature',
+              styleLabel ? ('Style: ' + styleLabel) : '',
+              'Source: /surge-signature'
+            ].filter(Boolean);
 
             if (helperAvailable) {
-              window.nbSubmitShopifyContact({
-                email: email,
-                fname: firstName,
-                lname: lastName,
-                phone: phone,
-                consent: acceptsMarketing,
-                tags: [
-                  'Quiz: Surge Signature',
-                  styleLabel ? ('Style: ' + styleLabel) : '',
-                  'Source: /surge-signature'
-                ].filter(Boolean)
-              });
+              try {
+                await window.nbSubmitShopifyContact({
+                  email: email,
+                  fname: firstName,
+                  lname: lastName,
+                  phone: phone,
+                  consent,
+                  tags
+                });
+              } catch(error) {
+                debugLog('error', 'Shopify helper error', { stage: 'helper', error: error && error.message ? error.message : String(error) });
+              }
             } else {
-              fallbackShopifyContact({
-                email: email,
-                firstName,
-                lastName,
-                phone,
-                acceptsMarketing,
-                tags: [
-                  'Quiz: Surge Signature',
-                  styleLabel ? ('Style: ' + styleLabel) : '',
-                  'Source: /surge-signature'
-                ].filter(Boolean)
-              });
+              try {
+                await fallbackShopifyContact({
+                  email: email,
+                  firstName,
+                  lastName,
+                  phone,
+                  acceptsMarketing: consent,
+                  tags
+                });
+                debugLog('debug', 'Shopify fallback submit', { stage: 'helper', method: 'fallback' });
+              } catch(error) {
+                debugLog('error', 'Shopify fallback error', { stage: 'helper', error: error && error.message ? error.message : String(error) });
+              }
             }
           }, { capture:true });
         })();

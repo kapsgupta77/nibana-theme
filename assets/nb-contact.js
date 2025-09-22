@@ -96,6 +96,37 @@
     return { state: 'unknown', doc };
   }
 
+  function fallbackShopifyContact(payload){
+    try {
+      const params = new URLSearchParams();
+      params.set('form_type', 'customer');
+      params.set('utf8', '✓');
+      params.set('contact[email]', payload.email || '');
+      const first = (payload.firstName || '').trim();
+      const last  = (payload.lastName  || '').trim();
+      const full  = [first, last].filter(Boolean).join(' ');
+      params.set('contact[first_name]', first);
+      params.set('contact[last_name]',  last);
+      params.set('contact[name]', full);
+      const phone = (payload.phone || '').trim();
+      if (phone) params.set('contact[phone]', phone);
+      const tags = Array.isArray(payload.tags) ? payload.tags.filter(Boolean) : [];
+      if (payload.acceptsMarketing && !tags.some(function(tag){ return String(tag).toLowerCase() === 'newsletter'; })) {
+        tags.unshift('newsletter');
+      }
+      params.set('contact[tags]', tags.join(', '));
+      params.set('contact[accepts_marketing]', payload.acceptsMarketing ? 'true' : 'false');
+      const encoded = params.toString();
+      return fetch('/contact#contact_form', {
+        method: 'POST',
+        body: encoded,
+        credentials: 'same-origin',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
+      });
+    } catch(_) {}
+  }
+
   function nbSubmitShopifyContact({ email = '', fname = '', lname = '', phone = '', consent = false, tags = [] } = {}){
     return new Promise(function(resolve, reject){
       let settled = false;
@@ -374,13 +405,13 @@
       if (!form || form.id !== 'NibanaContactForm') return;
 
       const join = document.getElementById('JoinEmails');
-      if (!join || !join.checked) { show('opt-in unchecked', { stage: 'validation' }); return; }
+      const consent = !!(join && join.checked); // create customer either way; subscribe only if true
 
       const email   = document.getElementById('ContactEmail')?.value || '';
       const name    = document.getElementById('ContactName')?.value || '';
       const phone   = document.getElementById('ContactPhone')?.value || '';
       const purpose = document.getElementById('InquiryPurpose')?.value || '';
-      const tags    = ['Contact Form'];
+      const tags    = ['Source: /contact', 'Contact Form'];
       if (purpose) tags.push('Purpose: ' + purpose);
 
       const parts = (name || '').trim().split(/\s+/).filter(Boolean);
@@ -395,12 +426,32 @@
               fname: firstName,
               lname: lastName,
               phone,
-              tags,
-              consent: !!join.checked
+              consent,
+              tags
             });
-          } catch(_) {}
+          } catch(error) {
+            show('Shopify contact helper error', {
+              stage: 'helper',
+              error: error && error.message ? error.message : String(error)
+            });
+          }
         } else {
-          show('Shopify contact helper missing', { stage: 'helper' });
+          try {
+            await fallbackShopifyContact({
+              email,
+              firstName,
+              lastName,
+              phone,
+              tags,
+              acceptsMarketing: consent
+            });
+            show('Shopify fallback submit', { stage: 'helper', method: 'fallback' });
+          } catch(error) {
+            show('Shopify fallback error', {
+              stage: 'helper',
+              error: error && error.message ? error.message : String(error)
+            });
+          }
         }
       }
 
