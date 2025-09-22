@@ -207,6 +207,7 @@
               const fL = document.getElementById('nb-sf-lname');
               const fP = document.getElementById('nb-sf-phone');
               const fTags = document.getElementById('nb-sf-tags');
+              const fAccepts = document.getElementById('nb-sf-accepts');
               if (!sf || !fEmail || !fTags) return;
 
               const email = sub.querySelector('[name="EMAIL"]')?.value || '';
@@ -219,6 +220,7 @@
               if (fF) fF.value = fname;
               if (fL) fL.value = lname;
               if (fP) fP.value = phone;
+              if (fAccepts) fAccepts.value = 'true';
 
               // Tag set (newsletter only if consent checked — we control by gating the call)
               const tags = [
