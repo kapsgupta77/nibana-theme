@@ -97,6 +97,7 @@
       function onComplete(){
         const elapsed = Date.now() - startedAt;
         const style = tally();
+        window.NB_QUIZ_STYLE = style;
         dl('quiz_complete', { quiz: cfg.gaNamespace, time_to_complete_ms: elapsed, quiz_style: style });
         try { localStorage.setItem('nb_surge_style', style); localStorage.removeItem('nb_quiz_banner_dismissed'); } catch(e){}
         dl('quiz_result', { quiz: cfg.gaNamespace, style: style });
@@ -200,15 +201,59 @@
 
         // Fire GA event; HTML5 "required" handles validation for FNAME/LNAME/EMAIL
         sub.addEventListener('submit', function(){
+          const payload = {
+            FNAME: sub.querySelector('[name="FNAME"]')?.value || '',
+            LNAME: sub.querySelector('[name="LNAME"]')?.value || '',
+            EMAIL: sub.querySelector('[name="EMAIL"]')?.value || '',
+            PHONE: sub.querySelector('[name="PHONE"]')?.value || ''
+          };
+
           try {
-            const payload = {
-              FNAME: sub.querySelector('[name="FNAME"]')?.value || '',
-              LNAME: sub.querySelector('[name="LNAME"]')?.value || '',
-              EMAIL: sub.querySelector('[name="EMAIL"]')?.value || '',
-              PHONE: sub.querySelector('[name="PHONE"]')?.value || ''
-            };
             localStorage.setItem('nb_surge_user', JSON.stringify(payload));
           } catch(e){}
+
+          (function(){
+            try {
+              const consent = sub.querySelector('input[name="gdpr[CONSENT]"]');
+              if (consent && !consent.checked) return;
+
+              const styleMap = { accelerator: 'Accelerator', stabilizer: 'Stabiliser', stabiliser: 'Stabiliser', defuser: 'Defuser' };
+              let styleSlug = (window.NB_QUIZ_STYLE || '').toLowerCase();
+              if (!styleSlug) {
+                const badge = document.querySelector('[data-nb-style]')?.getAttribute('data-nb-style') || '';
+                styleSlug = (badge || '').toLowerCase();
+              }
+              const styleLabel = styleMap[styleSlug] || '';
+
+              const sf = document.getElementById('nb-shopify-form');
+              const fEmail = document.getElementById('nb-sf-email');
+              const fF = document.getElementById('nb-sf-fname');
+              const fL = document.getElementById('nb-sf-lname');
+              const fP = document.getElementById('nb-sf-phone');
+              const fTags = document.getElementById('nb-sf-tags');
+
+              if (sf && fEmail && fTags) {
+                fEmail.value = payload.EMAIL;
+                if (fF) fF.value = payload.FNAME;
+                if (fL) fL.value = payload.LNAME;
+                if (fP) fP.value = payload.PHONE;
+
+                const extra = [
+                  'Quiz: Surge Signature',
+                  styleLabel ? `Style: ${styleLabel}` : '',
+                  'Source: /surge-signature'
+                ].filter(Boolean).join(', ');
+
+                fTags.value = [fTags.value, extra].filter(Boolean).join(', ');
+
+                sf.submit();
+                window.dataLayer = window.dataLayer || []; window.dataLayer.push({event: 'shopify_customer_submit', quiz_style: styleLabel});
+              }
+            } catch(e) {
+              console.warn('NB QUIZ dual-post warn:', e);
+            }
+          })();
+
           dl('email_submit', { source: 'quiz_result_gate', quiz: cfg.gaNamespace, style: style });
         });
 
