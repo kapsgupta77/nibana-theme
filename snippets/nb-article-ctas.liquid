@@ -52,19 +52,27 @@
 
   if url_primary == ''
     case primary_type
-      when 'call' assign url_primary = url_call_default
-      when 'quiz' assign url_primary = url_quiz_default
-      when 'leadmagnet' assign url_primary = url_leadmagnet_default
-      else assign url_primary = url_call_default
+      when 'call'
+        assign url_primary = url_call_default
+      when 'quiz'
+        assign url_primary = url_quiz_default
+      when 'leadmagnet'
+        assign url_primary = url_leadmagnet_default
+      else
+        assign url_primary = url_call_default
     endcase
   endif
 
   if url_secondary == ''
     case secondary_type
-      when 'call' assign url_secondary = url_call_default
-      when 'quiz' assign url_secondary = url_quiz_default
-      when 'leadmagnet' assign url_secondary = url_leadmagnet_default
-      else assign url_secondary = url_call_default
+      when 'call'
+        assign url_secondary = url_call_default
+      when 'quiz'
+        assign url_secondary = url_quiz_default
+      when 'leadmagnet'
+        assign url_secondary = url_leadmagnet_default
+      else
+        assign url_secondary = url_call_default
     endcase
   endif
 
@@ -93,11 +101,16 @@
   if subtopics
     for st in subtopics
       case st
-        when 'Boundaries' assign nuance = "Includes a simple Boundaries practice you can try today."
-        when 'Repair' assign nuance = "Plus a 3-step micro-repair you can use after conflict."
-        when 'Desire' assign nuance = "Prompts to clarify your true desire—without shame."
-        when 'IFS' assign nuance = "Grounded in parts-work (IFS) to meet your inner dynamics."
-        when 'Shame' assign nuance = "Gentle, shame-aware language to keep your system safe."
+        when 'Boundaries'
+          assign nuance = "Includes a simple Boundaries practice you can try today."
+        when 'Repair'
+          assign nuance = "Plus a 3-step micro-repair you can use after conflict."
+        when 'Desire'
+          assign nuance = "Prompts to clarify your true desire—without shame."
+        when 'IFS'
+          assign nuance = "Grounded in parts-work (IFS) to meet your inner dynamics."
+        when 'Shame'
+          assign nuance = "Gentle, shame-aware language to keep your system safe."
       endcase
       if nuance != ''
         break
