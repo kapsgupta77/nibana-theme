@@ -73,14 +73,6 @@
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' -%}
     {%- render 'nb-article-ctas', mode: 'end' -%}
 
-    {%- comment -%}
-      Inline CTA (optional): rendered into a template and injected via JS
-      after the 3rd <h2> or, if not found, after the 8th paragraph.
-    {%- endcomment -%}
-    <template id="nb-cta-inline-template">
-      {% render 'nb-article-cta-inline' %}
-    </template>
-
     {% if article.tags.size > 0 %}
       <div class="nb-article-tags" role="list">
         {% for t in article.tags %}
@@ -99,12 +91,6 @@
          href="https://twitter.com/intent/tweet?url={{ _share }}&text={{ _text }}">X</a>
       <button class="nb-share__btn" type="button" data-copy="{{ article.url | absolute_url }}">Copy link</button>
     </div>
-
-    {% if nb_cta_label != blank and nb_cta_link != blank %}
-      <div class="nb-article-cta">
-        <a class="nb-cta nb-cta--md" href="{{ nb_cta_link }}">{{ nb_cta_label }}</a>
-      </div>
-    {% endif %}
 
     {%- comment -%} === Author box (uses blog post metafields if present) === {%- endcomment -%}
     {%- assign _author_photo = article.metafields.custom.author_photo -%}
@@ -127,7 +113,7 @@
       </div>
     </section>
 
-    {%- render 'nb-related-posts', limit: 4 -%}
+    {%- render 'nb-related-posts', limit: 3 -%}
 
     <nav class="nb-article-nav" aria-label="Article pagination">
       {% assign has_prev = article.previous %}
@@ -211,34 +197,6 @@
 </script>
 
 <script>
-/* Inline CTA injection */
-(function(){
-  var tpl = document.getElementById('nb-cta-inline-template');
-  if(!tpl) return;
-  var rte = document.querySelector('.rte');
-  if(!rte) return;
-
-  var target = null;
-  var h2s = rte.querySelectorAll('h2');
-  if(h2s.length >= 3) {
-    target = h2s[2];
-  } else {
-    var ps = rte.querySelectorAll('p');
-    if(ps.length >= 8) target = ps[7];
-  }
-  if(!target) return;
-
-  var frag = tpl.content ? tpl.content.cloneNode(true) : null;
-  if(!frag) return;
-
-  var wrap = document.createElement('div');
-  wrap.className = 'nb-cta-inline-wrap';
-  wrap.appendChild(frag);
-  target.parentNode.insertBefore(wrap, target.nextSibling);
-})();
-</script>
-
-<script>
 /* Share: copy link */
 (function(){
   document.addEventListener('click', function(e){
@@ -280,12 +238,6 @@
   .rte blockquote p{margin:0}
   .rte blockquote em{font-style:normal}
   .rte blockquote strong{letter-spacing:.01em}
-
-  /* Inline CTA wrap (spacing) */
-  .nb-cta-inline-wrap{margin:20px 0}
-
-  /* CTA under article */
-  .nb-article-cta{margin:20px 0 8px;text-align:center}
 
   /* Author box */
   .nb-author{display:grid;grid-template-columns:84px 1fr;gap:16px;align-items:center;margin:26px auto 10px;padding:16px;border:1px solid #e8ecef;border-radius:14px;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.06);max-width:var(--normal-content-width)}

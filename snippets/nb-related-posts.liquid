@@ -2,7 +2,7 @@
   assign current = article
   assign current_cat = article.metafields.custom.primary_category | default: ''
   assign current_topics = article.metafields.custom.subtopics | default: '' 
-  assign take = limit | default: 4
+  assign take = limit | default: 3
   assign picked_handles = '' 
   assign shown = 0
   assign nb_related_post_card_css_state = ''
