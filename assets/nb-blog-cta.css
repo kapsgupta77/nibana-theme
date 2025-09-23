@@ -1,0 +1,15 @@
+.nb-cta-wrap{ margin: clamp(24px, 5vw, 48px) 0; }
+.nb-cta{
+  background: var(--nb-mint, #e8fbf3);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+.nb-cta-wrap--end .nb-cta{ background: var(--nb-pebble, #eef3f3); }
+.nb-cta__inner{ padding: clamp(16px, 3.5vw, 28px); }
+.nb-cta__title{ margin: 0 0 8px; font-size: clamp(1.1rem, 2.2vw, 1.35rem); line-height: 1.2; }
+.nb-cta__body{ margin: 0 0 16px; opacity: .9; }
+.nb-cta__nuance{ display:inline; opacity:.9; }
+.nb-cta__btn{
+  display:inline-block; padding:10px 16px; border-radius:999px; text-decoration:none;
+  background: var(--color-teal, #0c8a7b); color:#fff; font-weight:600;
+}

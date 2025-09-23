@@ -5709,3 +5709,6 @@ body.nb-typography{
   box-shadow: 0 14px 32px rgba(16,99,108,.22);
 }
 
+
+.article-tags, .tag-list, .nb-article-tags { display: none !important; }
+.nb-related__grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:16px; }
