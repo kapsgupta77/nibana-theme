@@ -5311,8 +5311,6 @@ body.nb-typography{
 .nb-article-dek { font-size: clamp(18px, 1.9vw, 20px); line-height: 1.6;
   color: var(--nb-muted,#324247); margin: 6px 0 14px;
 }
-.nb-article-cta { display:flex; justify-content:center; margin: 18px 0 8px; }
-
 /* Blog index hero */
 .nb-blog-hero { --tone-bg:#fbf7f5; --tone-ring:rgba(34,50,56,.06);
   background: var(--tone-bg); border-radius: 22px; padding: clamp(16px,3vw,28px);
