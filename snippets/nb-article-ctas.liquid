@@ -1,0 +1,161 @@
+{%- liquid
+  assign mode = mode | default: 'mid'
+
+  assign category = article.metafields.custom.primary_category | default: 'Relationships'
+  assign subtopics = article.metafields.custom.subtopics | default: nil
+
+  assign primary_type = article.metafields.custom.cta_primary_type | default: ''
+  assign secondary_type = article.metafields.custom.cta_secondary_type | default: ''
+
+  if primary_type == '' or secondary_type == ''
+    case category
+      when "Men’s Work"
+        assign cat_primary = 'call'
+        assign cat_secondary = 'leadmagnet'
+      when "Relationships"
+        assign cat_primary = 'leadmagnet'
+        assign cat_secondary = 'call'
+      when "Emotional Intelligence"
+        assign cat_primary = 'quiz'
+        assign cat_secondary = 'leadmagnet'
+      when "Leadership"
+        assign cat_primary = 'call'
+        assign cat_secondary = 'quiz'
+      when "Embodiment"
+        assign cat_primary = 'leadmagnet'
+        assign cat_secondary = 'call'
+      when "Sexuality"
+        assign cat_primary = 'quiz'
+        assign cat_secondary = 'leadmagnet'
+      when "Self-Discovery"
+        assign cat_primary = 'quiz'
+        assign cat_secondary = 'call'
+      else
+        assign cat_primary = 'leadmagnet'
+        assign cat_secondary = 'call'
+    endcase
+  endif
+
+  if primary_type == '' and cat_primary != blank
+    assign primary_type = cat_primary
+  endif
+  if secondary_type == '' and cat_secondary != blank
+    assign secondary_type = cat_secondary
+  endif
+
+  assign url_call_default = '/pages/book-a-call'
+  assign url_quiz_default = '/quiz'
+  assign url_leadmagnet_default = ''
+
+  assign url_primary = article.metafields.custom.cta_link | default: article.metafields.custom.cta_primary_url | default: ''
+  assign url_secondary = article.metafields.custom.cta_secondary_url | default: ''
+
+  if url_primary == ''
+    case primary_type
+      when 'call' assign url_primary = url_call_default
+      when 'quiz' assign url_primary = url_quiz_default
+      when 'leadmagnet' assign url_primary = url_leadmagnet_default
+      else assign url_primary = url_call_default
+    endcase
+  endif
+
+  if url_secondary == ''
+    case secondary_type
+      when 'call' assign url_secondary = url_call_default
+      when 'quiz' assign url_secondary = url_quiz_default
+      when 'leadmagnet' assign url_secondary = url_leadmagnet_default
+      else assign url_secondary = url_call_default
+    endcase
+  endif
+
+  if primary_type == 'leadmagnet' and url_primary == ''
+    assign primary_type = 'quiz'
+    assign url_primary = url_quiz_default
+  endif
+  if secondary_type == 'leadmagnet' and url_secondary == ''
+    assign secondary_type = 'call'
+    assign url_secondary = url_call_default
+  endif
+
+  assign copy_heading_call = "Ready for your next chapter?"
+  assign copy_body_call = "Let’s map what you want—and the first moves to get there."
+  assign copy_button_call = article.metafields.custom.cta_label | default: "Book a free 20-min call"
+
+  assign copy_heading_quiz = "Take the quick quiz"
+  assign copy_body_quiz = "Get a fast signal on where your energy patterns help—or hinder—connection."
+  assign copy_button_quiz = "Start the quiz"
+
+  assign copy_heading_leadmagnet = "Free guide: Core Beliefs → Freedom"
+  assign copy_body_leadmagnet = "Spot and shift the beliefs that keep you stuck. Practical, concise."
+  assign copy_button_leadmagnet = "Get the guide"
+
+  assign nuance = ''
+  if subtopics
+    for st in subtopics
+      case st
+        when 'Boundaries' assign nuance = "Includes a simple Boundaries practice you can try today."
+        when 'Repair' assign nuance = "Plus a 3-step micro-repair you can use after conflict."
+        when 'Desire' assign nuance = "Prompts to clarify your true desire—without shame."
+        when 'IFS' assign nuance = "Grounded in parts-work (IFS) to meet your inner dynamics."
+        when 'Shame' assign nuance = "Gentle, shame-aware language to keep your system safe."
+      endcase
+      if nuance != ''
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- capture _cta_card -%}
+  <div class="nb-cta">
+    <div class="nb-cta__inner">
+      <h3 class="nb-cta__title">{{ heading }}</h3>
+      <p class="nb-cta__body">{{ body }}{% if nuance != '' %} <span class="nb-cta__nuance">{{ nuance }}</span>{% endif %}</p>
+      <a class="nb-cta__btn" href="{{ url }}">{{ button }}</a>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- if mode == 'mid' -%}
+  {%- liquid
+    case primary_type
+      when 'call'
+        assign heading = copy_heading_call
+        assign body = copy_body_call
+        assign button = copy_button_call
+        assign url = url_primary
+      when 'quiz'
+        assign heading = copy_heading_quiz
+        assign body = copy_body_quiz
+        assign button = copy_button_quiz
+        assign url = url_primary
+      else
+        assign heading = copy_heading_leadmagnet
+        assign body = copy_body_leadmagnet
+        assign button = copy_button_leadmagnet
+        assign url = url_primary
+    endcase
+  -%}
+  <div class="nb-cta-wrap nb-cta-wrap--mid">{{ _cta_card }}</div>
+{%- else -%}
+  {%- liquid
+    case secondary_type
+      when 'call'
+        assign heading = copy_heading_call
+        assign body = copy_body_call
+        assign button = copy_button_call
+        assign url = url_secondary
+      when 'quiz'
+        assign heading = copy_heading_quiz
+        assign body = copy_body_quiz
+        assign button = copy_button_quiz
+        assign url = url_secondary
+      else
+        assign heading = copy_heading_leadmagnet
+        assign body = copy_body_leadmagnet
+        assign button = copy_button_leadmagnet
+        assign url = url_secondary
+    endcase
+  -%}
+  <div class="nb-cta-wrap nb-cta-wrap--end">{{ _cta_card }}</div>
+{%- endif -%}

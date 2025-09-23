@@ -2,7 +2,21 @@
 
 <div class="blog-post-content rte">
   <rte-formatter>
-    {{ article.content }}
+    {%- liquid
+      assign raw = article.content
+      assign parts = raw | split: '</p>'
+      assign total = parts | size
+      assign mid_index = total | times: 6 | divided_by: 10
+    -%}
+    {%- for part in parts -%}
+      {%- if part != '' -%}{{ part }}</p>{%- endif -%}
+      {%- if forloop.index == mid_index -%}
+        {%- render 'nb-article-ctas', mode: 'mid' -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if total <= 1 -%}
+      {%- render 'nb-article-ctas', mode: 'mid' -%}
+    {%- endif -%}
   </rte-formatter>
 </div>
 

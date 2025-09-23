@@ -71,6 +71,7 @@
     {% endif %}
 
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' -%}
+    {%- render 'nb-article-ctas', mode: 'end' -%}
 
     {%- comment -%}
       Inline CTA (optional): rendered into a template and injected via JS
@@ -126,79 +127,7 @@
       </div>
     </section>
 
-   {%- comment -%} === Related posts (by shared tags; fallback to recent) === {%- endcomment -%}
-{%- assign _shown = 0 -%}
-{%- capture related_markup -%}
-  <div class="nb-related__grid">
-  {%- for a in blog.articles -%}
-    {%- if a.id != article.id and _shown < 3 -%}
-      {%- assign _overlap = false -%}
-      {%- for t in article.tags -%}
-        {%- if a.tags contains t -%}{%- assign _overlap = true -%}{%- endif -%}
-      {%- endfor -%}
-      {%- if _overlap -%}
-        {%- liquid
-          assign _wa = a.content | strip_html | split: ' ' | size
-          assign _ma = _wa | divided_by: 200
-          assign _ra = _wa | modulo: 200
-          if _ra > 0
-            assign _ma = _ma | plus: 1
-          endif
-          if _ma < 1
-            assign _ma = 1
-          endif
-        -%}
-        <article class="nb-related__card">
-          <a class="nb-related__link" href="{{ a.url }}">
-            {%- if a.image -%}
-              {{ a | image_url: width: 800 | image_tag: alt: a.title, class: 'nb-related__img', sizes: '(max-width: 740px) 100vw, 360px', widths: '360,540,720,800' }}
-            {%- endif -%}
-            <h4 class="nb-related__title">{{ a.title }}</h4>
-            <p class="nb-related__meta">{{ a.published_at | date: "%b %e, %Y" }} · {{ _ma }} min read</p>
-          </a>
-        </article>
-        {%- assign _shown = _shown | plus: 1 -%}
-      {%- endif -%}
-    {%- endif -%}
-  {%- endfor -%}
-  </div>
-{%- endcapture -%}
-
-    <section class="nb-related">
-  <h3 class="nb-related__heading">Related reading</h3>
-  {%- if _shown > 0 -%}
-    {{ related_markup }}
-  {%- else -%}
-    <div class="nb-related__grid">
-    {%- assign _fallback_shown = 0 -%}
-    {%- for a in blog.articles -%}
-      {%- if a.id != article.id and _fallback_shown < 3 -%}
-        {%- liquid
-          assign _wa = a.content | strip_html | split: ' ' | size
-          assign _ma = _wa | divided_by: 200
-          assign _ra = _wa | modulo: 200
-          if _ra > 0
-            assign _ma = _ma | plus: 1
-          endif
-          if _ma < 1
-            assign _ma = 1
-          endif
-        -%}
-        <article class="nb-related__card">
-          <a class="nb-related__link" href="{{ a.url }}">
-            {%- if a.image -%}
-              {{ a | image_url: width: 800 | image_tag: alt: a.title, class: 'nb-related__img', sizes: '(max-width: 740px) 100vw, 360px', widths: '360,540,720,800' }}
-            {%- endif -%}
-            <h4 class="nb-related__title">{{ a.title }}</h4>
-            <p class="nb-related__meta">{{ a.published_at | date: "%b %e, %Y" }} · {{ _ma }} min read</p>
-          </a>
-        </article>
-        {%- assign _fallback_shown = _fallback_shown | plus: 1 -%}
-      {%- endif -%}
-    {%- endfor -%}
-    </div>
-  {%- endif -%}
-</section>
+    {%- render 'nb-related-posts', limit: 4 -%}
 
     <nav class="nb-article-nav" aria-label="Article pagination">
       {% assign has_prev = article.previous %}

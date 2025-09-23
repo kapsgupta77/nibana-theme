@@ -1,0 +1,69 @@
+{%- liquid
+  assign current = article
+  assign current_cat = article.metafields.custom.primary_category | default: ''
+  assign current_topics = article.metafields.custom.subtopics | default: '' 
+  assign take = limit | default: 4
+  assign picked_handles = '' 
+  assign shown = 0
+-%}
+
+{%- if blog.articles_count > 1 -%}
+  <section class="nb-related">
+    <h2 class="h2" style="margin: 24px 0;">Related posts</h2>
+    <div class="nb-related__grid">
+      {%- comment -%} Pass 1: same primary category {%- endcomment -%}
+      {%- for a in blog.articles -%}
+        {%- if a.id != current.id and shown < take -%}
+          {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
+          {%- if a_cat != '' and a_cat == current_cat -%}
+            <div class="nb-related__item">
+              {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: a %}
+            </div>
+            {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
+            {%- assign shown = shown | plus: 1 -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Pass 2: share any subtopic {%- endcomment -%}
+      {%- if shown < take and current_topics != '' -%}
+        {%- assign topics_list = current_topics -%}
+        {%- for a in blog.articles -%}
+          {%- if a.id != current.id and shown < take -%}
+            {%- unless picked_handles contains a.handle -%}
+              {%- assign a_topics = a.metafields.custom.subtopics | default: '' -%}
+              {%- if a_topics != '' -%}
+                {%- assign match = false -%}
+                {%- for t in topics_list -%}
+                  {%- if a_topics contains t -%}{%- assign match = true -%}{%- break -%}{%- endif -%}
+                {%- endfor -%}
+                {%- if match -%}
+                  <div class="nb-related__item">
+                    {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: a %}
+                  </div>
+                  {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
+                  {%- assign shown = shown | plus: 1 -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Pass 3: recent fallback {%- endcomment -%}
+      {%- if shown < take -%}
+        {%- for a in blog.articles -%}
+          {%- if a.id != current.id and shown < take -%}
+            {%- unless picked_handles contains a.handle -%}
+              <div class="nb-related__item">
+                {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: a %}
+              </div>
+              {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
