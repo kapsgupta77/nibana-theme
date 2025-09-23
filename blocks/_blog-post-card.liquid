@@ -36,7 +36,8 @@
   {%- for t in article.tags -%}
     {%- assign t_down = t | downcase -%}
     {%- for k in known -%}
-      {%- if t_down == k | downcase -%}{%- assign cat_fallback = t -%}{%- break -%}{%- endif -%}
+      {%- assign k_down = k | downcase -%}
+      {%- if t_down == k_down -%}{%- assign cat_fallback = t -%}{%- break -%}{%- endif -%}
     {%- endfor -%}
     {%- if cat_fallback != '' -%}{%- break -%}{%- endif -%}
   {%- endfor -%}
