@@ -5,6 +5,7 @@
   assign take = limit | default: 4
   assign picked_handles = '' 
   assign shown = 0
+  assign nb_related_post_card_css_state = ''
 -%}
 
 {%- if blog.articles_count > 1 -%}
@@ -17,8 +18,9 @@
           {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
           {%- if a_cat != '' and a_cat == current_cat -%}
             <div class="nb-related__item">
-              {% render 'blog-post-card', article: a %}
+              {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
             </div>
+            {%- assign nb_related_post_card_css_state = 'set' -%}
             {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
             {%- assign shown = shown | plus: 1 -%}
           {%- endif -%}
@@ -39,8 +41,9 @@
                 {%- endfor -%}
                 {%- if match -%}
                   <div class="nb-related__item">
-                    {% render 'blog-post-card', article: a %}
+                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
                   </div>
+                  {%- assign nb_related_post_card_css_state = 'set' -%}
                   {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
                   {%- assign shown = shown | plus: 1 -%}
                 {%- endif -%}
@@ -56,8 +59,9 @@
           {%- if a.id != current.id and shown < take -%}
             {%- unless picked_handles contains a.handle -%}
               <div class="nb-related__item">
-                {% render 'blog-post-card', article: a %}
+                {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
               </div>
+              {%- assign nb_related_post_card_css_state = 'set' -%}
               {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
               {%- assign shown = shown | plus: 1 -%}
             {%- endunless -%}
