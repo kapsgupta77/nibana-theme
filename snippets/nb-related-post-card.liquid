@@ -1,140 +1,143 @@
 {%- liquid
   assign card_article = article
   assign card_alignment = alignment | default: 'left'
-  if card_article == blank
-    return
-  endif
+  assign render_card = card_article != blank
 
-  assign cat = card_article.metafields.custom.primary_category | default: ''
-  assign topics_metafield = card_article.metafields.custom.subtopics
-  assign topics = ''
-  if topics_metafield != blank
-    if topics_metafield.value
-      assign topics = topics_metafield.value
-    else
-      assign topics = topics_metafield
+  if render_card
+    assign cat = card_article.metafields.custom.primary_category | default: ''
+    assign topics_metafield = card_article.metafields.custom.subtopics
+    assign topics = ''
+    if topics_metafield != blank
+      if topics_metafield.value
+        assign topics = topics_metafield.value
+      else
+        assign topics = topics_metafield
+      endif
     endif
-  endif
 
-  assign cat_fallback = ''
-  if cat == '' and card_article.tags
-    assign known = "Men’s Work|Relationships|Emotional Intelligence|Leadership|Embodiment|Sexuality|Self-Discovery" | split: "|"
-    for t in card_article.tags
-      assign t_down = t | downcase
-      for k in known
-        assign k_down = k | downcase
-        if t_down == k_down
-          assign cat_fallback = t
+    assign cat_fallback = ''
+    if cat == '' and card_article.tags
+      assign known = "Men’s Work|Relationships|Emotional Intelligence|Leadership|Embodiment|Sexuality|Self-Discovery" | split: "|"
+      for t in card_article.tags
+        assign t_down = t | downcase
+        for k in known
+          assign k_down = k | downcase
+          if t_down == k_down
+            assign cat_fallback = t
+            break
+          endif
+        endfor
+        if cat_fallback != ''
           break
         endif
       endfor
-      if cat_fallback != ''
-        break
-      endif
-    endfor
+    endif
+
+    assign cat_final = cat | default: cat_fallback
+
+    assign topics_joined = ''
+    if topics != ''
+      assign topics_joined = topics | join: ','
+    else
+      assign topic_tags = ''
+      for t in card_article.tags
+        if t != cat_final and t != ''
+          if topic_tags == ''
+            assign topic_tags = t
+          else
+            assign topic_tags = topic_tags | append: ',' | append: t
+          endif
+        endif
+      endfor
+      assign topics_joined = topic_tags
+    endif
+
+    assign image_alt = ''
+    if card_article.image
+      assign image_alt = card_article.image.alt | default: card_article.title
+      assign image_alt = image_alt | strip | escape
+    endif
+
+    assign nb_related_post_card_css = nb_related_post_card_css | default: ''
   endif
-
-  assign cat_final = cat | default: cat_fallback
-
-  assign topics_joined = ''
-  if topics != ''
-    assign topics_joined = topics | join: ','
-  else
-    assign topic_tags = ''
-    for t in card_article.tags
-      if t != cat_final and t != ''
-        {%- capture _topic_accumulator -%}
-          {{ topic_tags }}{%- if topic_tags != '' -%},{%- endif -%}{{ t }}
-        {%- endcapture -%}
-        assign topic_tags = _topic_accumulator | strip
-      endif
-    endfor
-    assign topics_joined = topic_tags
-  endif
-
-  assign image_alt = ''
-  if card_article.image
-    assign image_alt = card_article.image.alt | default: card_article.title
-    assign image_alt = image_alt | strip | escape
-  endif
-
-  assign nb_related_post_card_css = nb_related_post_card_css | default: ''
 -%}
-{%- if nb_related_post_card_css == '' -%}
-  {%- assign nb_related_post_card_css = 'set' -%}
-  <style>
-    .blog-post-card {
-      display: flex;
-      flex-direction: column;
-      text-align: var(--text-align);
-    }
+{%- if render_card -%}
+  {%- if nb_related_post_card_css == '' -%}
+    {%- assign nb_related_post_card_css = 'set' -%}
+    <style>
+      .blog-post-card {
+        display: flex;
+        flex-direction: column;
+        text-align: var(--text-align);
+      }
 
-    .blog-post-card__image-container,
-    .blog-post-card__content {
-      width: 100%;
-    }
+      .blog-post-card__image-container,
+      .blog-post-card__content {
+        width: 100%;
+      }
 
-    .blog-post-card__content {
-      padding-block-start: 0.4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
+      .blog-post-card__content {
+        padding-block-start: 0.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
 
-    .blog-post-card__content a {
-      display: block;
-      text-wrap: pretty;
-      text-decoration: none;
-      padding-block-start: 0.25rem;
-    }
+      .blog-post-card__content a {
+        display: block;
+        text-wrap: pretty;
+        text-decoration: none;
+        padding-block-start: 0.25rem;
+      }
 
-    .blog-post-card__meta {
-      color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-      font-size: var(--font-size--body-sm);
-    }
+      .blog-post-card__meta {
+        color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+        font-size: var(--font-size--body-sm);
+      }
 
-    .blog-post-card__meta > * {
-      display: inline;
-      margin: 0;
-    }
+      .blog-post-card__meta > * {
+        display: inline;
+        margin: 0;
+      }
 
-    .blog-post-card__sep {
-      margin: 0 0.4em;
-    }
-  </style>
-{%- endif -%}
-<div
-  class="blog-post-card"
-  style="--text-align: {{ card_alignment }}"
-  data-cat="{{ cat_final | escape }}"
-  data-topics="{{ topics_joined | escape }}"
->
-  {%- if card_article.image -%}
-    <div class="blog-post-card__image-container">
-      <a href="{{ card_article.url }}">
-        {{ card_article.image | image_url: width: 960 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 320px, 50vw', alt: image_alt }}
-      </a>
-    </div>
+      .blog-post-card__sep {
+        margin: 0 0.4em;
+      }
+    </style>
   {%- endif -%}
-  <div class="blog-post-card__content">
-    <a href="{{ card_article.url }}">
-      <h3 class="h4">{{ card_article.title | escape }}</h3>
-    </a>
-    <div class="blog-post-card__meta">
-      {%- if card_article.published_at -%}
-        <span>{{ card_article.published_at | time_tag: format: 'date' }}</span>
+  <div
+    class="blog-post-card"
+    style="--text-align: {{ card_alignment }}"
+    data-cat="{{ cat_final | escape }}"
+    data-topics="{{ topics_joined | escape }}"
+  >
+    {%- if card_article.image -%}
+      <div class="blog-post-card__image-container">
+        <a href="{{ card_article.url }}">
+          {{ card_article.image | image_url: width: 960 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 320px, 50vw', alt: image_alt }}
+        </a>
+      </div>
+    {%- endif -%}
+    <div class="blog-post-card__content">
+      <a href="{{ card_article.url }}">
+        <h3 class="h4">{{ card_article.title | escape }}</h3>
+      </a>
+      <div class="blog-post-card__meta">
+        {%- if card_article.published_at -%}
+          <span>{{ card_article.published_at | time_tag: format: 'date' }}</span>
+        {%- endif -%}
+        {%- if card_article.published_at -%}
+          <span class="blog-post-card__sep" aria-hidden="true">·</span>
+        {%- endif -%}
+        <span class="blog-post-card__read">{% render 'reading-time', article: card_article %}</span>
+      </div>
+      {%- assign excerpt_source = card_article.excerpt | strip_html -%}
+      {%- if excerpt_source == '' -%}
+        {%- assign excerpt_source = card_article.content | strip_html -%}
       {%- endif -%}
-      {%- if card_article.published_at -%}
-        <span class="blog-post-card__sep" aria-hidden="true">·</span>
+      {%- if excerpt_source != '' -%}
+        <p class="blog-post-card__excerpt">{{ excerpt_source | truncatewords: 30 | escape }}</p>
       {%- endif -%}
-      <span class="blog-post-card__read">{% render 'reading-time', article: card_article %}</span>
     </div>
-    {%- assign excerpt_source = card_article.excerpt | strip_html -%}
-    {%- if excerpt_source == '' -%}
-      {%- assign excerpt_source = card_article.content | strip_html -%}
-    {%- endif -%}
-    {%- if excerpt_source != '' -%}
-      <p class="blog-post-card__excerpt">{{ excerpt_source | truncatewords: 30 | escape }}</p>
-    {%- endif -%}
   </div>
-</div>
+{%- endif -%}
