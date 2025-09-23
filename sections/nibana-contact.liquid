@@ -53,7 +53,7 @@ Also mirrors to:
         {% endif %}
         <p>
           <a
-            class="nb-btn nb-btn--primary"
+            class="nb-cta"
             href="{{ call_cta_link | escape }}"
           >
             {{ section.settings.call_label | default: 'Book a Free 20-min Call' | escape }}
@@ -145,7 +145,7 @@ Also mirrors to:
           value="{% if section.settings.optin_checked %}true{% else %}false{% endif %}"
         >
 
-        <button type="submit" class="nb-btn nb-btn--primary">{{ section.settings.submit_label | default: 'Submit' | escape }}</button>
+        <button type="submit" class="nb-btn nb-btn--teal">{{ section.settings.submit_label | default: 'Submit' | escape }}</button>
 
         {% if form.errors %}
           <div class="form__message" role="alert">
