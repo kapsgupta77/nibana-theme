@@ -42,10 +42,12 @@
       assign topic_tags = ''
       for t in card_article.tags
         if t != cat_final and t != ''
-          {%- capture _topic_accumulator -%}
-            {{ topic_tags }}{%- if topic_tags != '' -%},{%- endif -%}{{ t }}
-          {%- endcapture -%}
-          assign topic_tags = _topic_accumulator | strip
+          if topic_tags == ''
+            assign topic_tags = t
+          else
+            assign topic_tags = topic_tags | append: ',' | append: t
+          endif
+
         endif
       endfor
       assign topics_joined = topic_tags
