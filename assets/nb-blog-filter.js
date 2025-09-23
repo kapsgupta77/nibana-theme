@@ -2,6 +2,8 @@
   const qs = (s, r=document) => r.querySelector(s);
   const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
 
+  const MAX_POPULAR = 6; // show at most 6 curated popular subtopics
+
   function slugify(s) {
     return (s || '').toString().trim().toLowerCase()
       .replace(/\u2019/g, "'") // smart apostrophe
@@ -49,7 +51,11 @@
     // Popular subtopics (top N by frequency)
     const freq = {};
     cardData.forEach(c => c.topicsSlug.forEach(t => { freq[t]=(freq[t]||0)+1; }));
-    const popular = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([t])=>t).filter(Boolean);
+    const popular = Object.entries(freq)
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0, MAX_POPULAR)
+      .map(([t])=>t)
+      .filter(Boolean);
     if (popular.length) {
       popularRow.hidden = false;
       popular.forEach(t => {
