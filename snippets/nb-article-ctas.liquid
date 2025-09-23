@@ -127,16 +127,6 @@
   endif
 -%}
 
-{%- capture _cta_card -%}
-  <div class="nb-cta-panel">
-    <div class="nb-cta-panel__inner">
-      <h3 class="nb-cta-panel__title">{{ heading }}</h3>
-      <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
-      <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
-    </div>
-  </div>
-{%- endcapture -%}
-
 {%- if mode == 'mid' -%}
   {%- liquid
     case primary_type
@@ -166,6 +156,15 @@
         assign url = url_primary
     endcase
   -%}
+  {%- capture _cta_card -%}
+    <div class="nb-cta-panel">
+      <div class="nb-cta-panel__inner">
+        <h3 class="nb-cta-panel__title">{{ heading }}</h3>
+        <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
+        <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
+      </div>
+    </div>
+  {%- endcapture -%}
   <div class="nb-cta-wrap nb-cta-wrap--mid">{{ _cta_card }}</div>
 {%- else -%}
   {%- liquid
@@ -196,5 +195,14 @@
         assign url = url_secondary
     endcase
   -%}
+  {%- capture _cta_card -%}
+    <div class="nb-cta-panel">
+      <div class="nb-cta-panel__inner">
+        <h3 class="nb-cta-panel__title">{{ heading }}</h3>
+        <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
+        <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
+      </div>
+    </div>
+  {%- endcapture -%}
   <div class="nb-cta-wrap nb-cta-wrap--end">{{ _cta_card }}</div>
 {%- endif -%}
