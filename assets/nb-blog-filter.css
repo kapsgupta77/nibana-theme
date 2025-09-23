@@ -1,0 +1,8 @@
+.nb-blog-filter { margin: clamp(12px, 3vw, 20px) 0 8px; }
+.nb-filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.nb-chip { padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(0,0,0,.12); background: #fff; cursor: pointer; }
+.nb-chip--on { border-color: rgba(0,0,0,.24); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.nb-subtopic-input { flex: 1; min-width: 220px; padding: 8px 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,.12); }
+.nb-clear { padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,.12); background: #fff; }
+.nb-filter-row--popular { gap: 6px; }
+.nb-chip[hidden], .nb-filter-row[hidden], .nb-clear[hidden] { display: none !important; }
