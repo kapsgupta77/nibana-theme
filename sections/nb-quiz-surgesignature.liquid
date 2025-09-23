@@ -29,7 +29,7 @@
           <div class="nb-quiz__free-insight" data-nb-quiz-practice></div>
         </div>
 
-        <div class="nb-card nb-quiz__gate">
+        <div id="nb-quiz-gate" class="nb-card nb-quiz__gate">
           <style>
             /* ---- scoped, only within this section ---- */
             #nb-quiz-shopify.nb-quiz__form { padding: 20px; }
@@ -85,11 +85,15 @@
               box-shadow: 0 1px 0 rgba(15,23,42,.02) inset;
             }
             .nb-quiz__thanks h3{ margin: 0 0 8px; }
+
+            /* When we decide to show client fallback, hide the fieldset and show the client thanks */
+            #nb-quiz-gate.is-client-thanks .nb-quiz__fieldset{ display:none; }
+            #nb-quiz-gate.is-client-thanks #nb-quiz-client-thanks{ display:block; }
           </style>
 
           {% form 'customer', id: 'nb-quiz-shopify', class: 'nb-quiz__form', novalidate: 'novalidate' %}
             {% if form.posted_successfully? %}
-              <div class="nb-quiz__thanks" id="nb-quiz-thanks">
+              <div id="nb-quiz-server-thanks" class="nb-quiz__thanks">
                 <h3>Check your inbox ✉️</h3>
                 <p>We’ve sent your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
                 <p><a class="nb-link" href="/pages/surge-signature-result">View your result on Nibana →</a></p>
@@ -132,6 +136,12 @@
               </div>
             {% endif %}
           {% endform %}
+
+          <div id="nb-quiz-client-thanks" class="nb-quiz__thanks" style="display:none">
+            <h3>Check your inbox ✉️</h3>
+            <p>We’ve emailed your 2-page playbook. If it’s not there, check Promotions/Spam.</p>
+            <p><a class="nb-link" href="/pages/surge-signature-result">View your result on Nibana →</a></p>
+          </div>
         </div>
 
             <!-- Hidden Mailchimp mirror — submitted in parallel via JS -->
