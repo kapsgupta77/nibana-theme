@@ -17,7 +17,7 @@
           {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
           {%- if a_cat != '' and a_cat == current_cat -%}
             <div class="nb-related__item">
-              {% render 'nb-related-post-card', article: a %}
+              {% render 'blog-post-card', article: a %}
             </div>
             {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
             {%- assign shown = shown | plus: 1 -%}
@@ -39,7 +39,7 @@
                 {%- endfor -%}
                 {%- if match -%}
                   <div class="nb-related__item">
-                    {% render 'nb-related-post-card', article: a %}
+                    {% render 'blog-post-card', article: a %}
                   </div>
                   {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
                   {%- assign shown = shown | plus: 1 -%}
@@ -56,7 +56,7 @@
           {%- if a.id != current.id and shown < take -%}
             {%- unless picked_handles contains a.handle -%}
               <div class="nb-related__item">
-                {% render 'nb-related-post-card', article: a %}
+                {% render 'blog-post-card', article: a %}
               </div>
               {%- assign picked_handles = picked_handles | append: a.handle | append: ',' -%}
               {%- assign shown = shown | plus: 1 -%}
