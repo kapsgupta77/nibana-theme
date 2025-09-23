@@ -119,8 +119,17 @@
   endif
 -%}
 
-{%- if mode == 'mid' -%}
-  {%- liquid
+{%- liquid
+  assign wrap_classes = 'nb-cta-wrap'
+  if mode == 'top'
+    assign wrap_classes = wrap_classes | append: ' nb-cta-wrap--top'
+  elsif mode == 'end'
+    assign wrap_classes = wrap_classes | append: ' nb-cta-wrap--end'
+  else
+    assign wrap_classes = wrap_classes | append: ' nb-cta-wrap--mid'
+  endif
+
+  if mode == 'mid' or mode == 'top'
     case primary_type
       when 'call'
         assign heading = copy_heading_call
@@ -138,19 +147,7 @@
         assign button = copy_button_leadmagnet
         assign url = url_primary
     endcase
-  -%}
-  {%- capture _cta_card -%}
-    <div class="nb-cta-panel">
-      <div class="nb-cta-panel__inner">
-        <h3 class="nb-cta-panel__title">{{ heading }}</h3>
-        <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
-        <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
-      </div>
-    </div>
-  {%- endcapture -%}
-  <div class="nb-cta-wrap nb-cta-wrap--mid">{{ _cta_card }}</div>
-{%- else -%}
-  {%- liquid
+  else
     case secondary_type
       when 'call'
         assign heading = copy_heading_call
@@ -168,15 +165,15 @@
         assign button = copy_button_leadmagnet
         assign url = url_secondary
     endcase
-  -%}
-  {%- capture _cta_card -%}
-    <div class="nb-cta-panel">
-      <div class="nb-cta-panel__inner">
-        <h3 class="nb-cta-panel__title">{{ heading }}</h3>
-        <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
-        <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
-      </div>
+  endif
+-%}
+{%- capture _cta_card -%}
+  <div class="nb-cta-panel">
+    <div class="nb-cta-panel__inner">
+      <h3 class="nb-cta-panel__title">{{ heading }}</h3>
+      <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
+      <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
     </div>
-  {%- endcapture -%}
-  <div class="nb-cta-wrap nb-cta-wrap--end">{{ _cta_card }}</div>
-{%- endif -%}
+  </div>
+{%- endcapture -%}
+<div class="{{ wrap_classes }}">{{ _cta_card }}</div>
