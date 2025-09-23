@@ -5575,7 +5575,7 @@ body.nb-typography{
 /* === Nibana Contact page — Live polish (scoped) === */
 .nb-contact {
   /* top space */
-  padding-top: clamp(28px, 6vw, 64px);
+  padding-top: clamp(80px, 10vw, 140px);
 }
 
 /* Two-column grid */
