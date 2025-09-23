@@ -5663,3 +5663,49 @@ body.nb-typography{
 .nb-contact .nb-btn--primary:hover { background: #b85f23; }
 .nb-contact .nb-btn--teal { background: #10636c; color: #fff; width: 100%; }  /* teal Submit on right */
 .nb-contact .nb-btn--teal:hover { background: #0b4f57; }
+
+/* ---- Contact: stack consent + helper like live ---- */
+.nb-contact .nb-consent{
+  /* previously a grid; make it a single vertical stack */
+  display: block;
+  margin: 12px 0 8px;
+}
+.nb-contact .nb-checkbox{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.35;
+  margin: 0;
+}
+.nb-contact .nb-checkbox input{
+  width: 20px;
+  height: 20px;
+  accent-color: #10636c;
+  border-radius: 6px;
+}
+.nb-contact .nb-form-help{
+  margin: 8px 0 0;
+  color: #5b6a72;
+  font-size: .95em;
+  opacity: .9;
+}
+
+/* ---- Contact: center & enlarge submit button ---- */
+.nb-contact .nb-contact__form .nb-btn.nb-btn--teal{
+  display: block;                     /* allow margin auto */
+  width: min(100%, 340px);            /* big pill, not edge-to-edge */
+  margin: 14px auto 4px;              /* center on the card */
+  padding: 14px 22px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 600;
+  background: #10636c;
+  color: #fff;
+  border: 0;
+  box-shadow: 0 12px 28px rgba(16,99,108,.18);
+}
+.nb-contact .nb-contact__form .nb-btn.nb-btn--teal:hover{
+  background:#0b4f57;
+  box-shadow: 0 14px 32px rgba(16,99,108,.22);
+}
+
