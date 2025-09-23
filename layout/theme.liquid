@@ -5,7 +5,9 @@
 >
   <head>
     {%- render 'stylesheets' -%}
-{{ 'nb-visuals.css' | asset_url | stylesheet_tag }}
+    {{ 'nb-visuals.css' | asset_url | stylesheet_tag }}
+    {{ 'nb-blog-filter.css' | asset_url | stylesheet_tag }}
+    {{ 'nb-blog-cta.css' | asset_url | stylesheet_tag }}
 
     {%- if settings.favicon != blank -%}
       <link
@@ -226,6 +228,7 @@ Runs only when template = page.book-call.
       {% render 'quick-add-modal' %}
     {% endif %}
 {{ 'faq-single-open.js' | asset_url | script_tag }}
+{{ 'nb-blog-filter.js' | asset_url | script_tag }}
 <script>
 /* NIBANA – FAQ JSON-LD from existing markup (home) */
 (function () {

@@ -17,9 +17,53 @@
   {% content_for 'block', id: 'content', type: '_blog-post-description', article: article %}
 {% endcapture %}
 
+{%- comment -%} Attach category & subtopics from metafields with tag fallback {%- endcomment -%}
+{%- assign cat = article.metafields.custom.primary_category | default: '' -%}
+{%- assign topics_metafield = article.metafields.custom.subtopics -%}
+{%- assign topics = '' -%}
+{%- if topics_metafield != blank -%}
+  {%- if topics_metafield.value -%}
+    {%- assign topics = topics_metafield.value -%}
+  {%- else -%}
+    {%- assign topics = topics_metafield -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign cat_fallback = '' -%}
+{%- if cat == '' and article.tags -%}
+  {%- comment -%} Find a tag that exactly matches one of our known categories (case-insensitive) {%- endcomment -%}
+  {%- assign known = "Men’s Work|Relationships|Emotional Intelligence|Leadership|Embodiment|Sexuality|Self-Discovery" | split: "|" -%}
+  {%- for t in article.tags -%}
+    {%- assign t_down = t | downcase -%}
+    {%- for k in known -%}
+      {%- assign k_down = k | downcase -%}
+      {%- if t_down == k_down -%}{%- assign cat_fallback = t -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if cat_fallback != '' -%}{%- break -%}{%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- assign cat_final = cat | default: cat_fallback -%}
+
+{%- comment -%} Build subtopic string (comma-separated); if metafield blank, fallback to tags (excluding category) {%- endcomment -%}
+{%- assign topics_joined = '' -%}
+{%- if topics != '' -%}
+  {%- assign topics_joined = topics | join: ',' -%}
+{%- else -%}
+  {%- assign topic_tags = '' -%}
+  {%- for t in article.tags -%}
+    {%- if t != cat_final and t != '' -%}
+      {%- capture topic_tags -%}{{ topic_tags }}{%- if topic_tags != '' -%},{%- endif -%}{{ t }}{%- endcapture -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- assign topics_joined = topic_tags -%}
+{%- endif -%}
+
 <div
   class="blog-post-card"
   style="--text-align: {{ block.settings.alignment }}"
+  data-cat="{{ cat_final | escape }}"
+  data-topics="{{ topics_joined | escape }}"
 >
   {%- if article.image -%}
     <div class="blog-post-card__image-container">

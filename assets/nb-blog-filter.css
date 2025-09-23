@@ -1,0 +1,57 @@
+/* Container + layout */
+.nb-blog-filter{
+  max-width: var(--normal-content-width, 980px);
+  margin: clamp(12px, 3vw, 24px) auto 0;
+  padding: 0 clamp(8px, 2vw, 12px);
+}
+
+.nb-filter-row{
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
+  margin-bottom: clamp(10px, 2.5vw, 16px);
+}
+
+/* Category chips row sits closer to hero; search has a little more gap */
+.nb-filter-row--cats{ margin-top: 2px; }
+.nb-filter-row--search{ gap:12px; }
+.nb-filter-row--popular{ gap:8px; }
+
+/* Chips */
+.nb-chip{
+  --chip-bg: #fff;
+  --chip-border: rgba(0,0,0,.12);
+  --chip-shadow: 0 2px 10px rgba(0,0,0,.06);
+  --chip-shadow-active: 0 4px 14px rgba(0,0,0,.10);
+  appearance:none; border:1px solid var(--chip-border); background:var(--chip-bg);
+  border-radius:999px; padding:10px 14px; font:inherit; cursor:pointer;
+  transition: box-shadow .2s ease, transform .06s ease, border-color .2s ease, background .2s ease;
+}
+.nb-chip:hover{ box-shadow: var(--chip-shadow); }
+.nb-chip:active{ transform: translateY(1px); }
+.nb-chip--on{
+  background: #fff;
+  border-color: rgba(0,0,0,.24);
+  box-shadow: var(--chip-shadow-active);
+}
+
+/* Search field */
+.nb-subtopic-input{
+  width: min(520px, 80vw);
+  min-width: 240px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: #fff;
+  text-align: center;
+}
+.nb-subtopic-input:focus{ outline: none; box-shadow: 0 0 0 3px rgba(12,138,123,.14); }
+
+.nb-clear{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Utility */
+.nb-chip[hidden], .nb-filter-row[hidden], .nb-clear[hidden]{ display:none !important; }
