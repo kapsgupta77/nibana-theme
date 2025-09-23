@@ -32,40 +32,28 @@ Also mirrors to:
   <div class="nb-grid cols-2">
     <!-- Left column -->
     <div class="nb-panel">
-      <h1 class="nb-h1">{{ section.settings.heading | default: 'Contact Us' | escape }}</h1>
-      <p class="nb-kicker">{{ section.settings.subheading | default: "Feel free to ask us anything. We're here to help." | escape }}</p>
+      <div class="nb-card nb-card--panel nb-contact__left-tray">
+        <h1 class="nb-h1">Contact Us</h1>
+        <p class="nb-kicker">Feel free to ask us anything. We're here to help.</p>
 
-      <div class="nb-card">
-        <h2 class="nb-h3">{{ section.settings.details_heading | default: 'Contact Details' | escape }}</h2>
-        <p>
-          {{ section.settings.details_email | default: 'info@nibana.life' | escape }}<br>
-          {{ section.settings.details_phone | default: '+44 20 7173 5775' | escape }}
-        </p>
-        <p>{{ section.settings.details_note | default: 'We usually reply within 1 business day.' | escape }}</p>
-      </div>
+        <div class="nb-card nb-card--soft">
+          <h2 class="nb-h3">Contact Details</h2>
+          <p>info@nibana.life<br>+44 20 7173 5775</p>
+          <p>We usually reply within 1 business day.</p>
+        </div>
 
-      <div class="nb-card">
-        <h2 class="nb-h3">{{ section.settings.call_heading | default: 'Prefer to talk?' | escape }}</h2>
-        <p>{{ section.settings.call_sub | default: 'Book a free 20-minute discovery call.' | escape }}</p>
-        {% assign call_cta_link = section.settings.call_link %}
-        {% if call_cta_link == blank %}
-          {% assign call_cta_link = '/pages/contact' %}
-        {% endif %}
-        <p>
-          <a
-            class="nb-cta"
-            href="{{ call_cta_link | escape }}"
-          >
-            {{ section.settings.call_label | default: 'Book a Free 20-min Call' | escape }}
-          </a>
-        </p>
+        <div class="nb-card nb-card--soft">
+          <h2 class="nb-h3">Prefer to talk?</h2>
+          <p>Book a free 20-minute discovery call.</p>
+          <p><a class="nb-btn nb-btn--primary" href="/pages/contact">Book a Free 20-min Call</a></p>
+        </div>
       </div>
     </div>
 
     <!-- Right column -->
     <div class="nb-panel">
       {%- comment -%} VISIBLE: Shopify CUSTOMER form (creates/updates customer) {%- endcomment -%}
-      {% form 'customer', id: 'nb-contact-shopify', class: 'nb-card nb-contact__form', novalidate: 'novalidate' %}
+      {% form 'customer', id: 'nb-contact-shopify', class: 'nb-card nb-card--panel nb-contact__form', novalidate: 'novalidate' %}
         <div class="nb-form-grid">
           <div class="nb-field nb-field--full">
             <label class="nb-label" for="nbc-first">First name <span aria-hidden="true">*</span></label>
