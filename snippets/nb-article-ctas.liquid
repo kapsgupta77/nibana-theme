@@ -129,19 +129,23 @@
     assign wrap_classes = wrap_classes | append: ' nb-cta-wrap--mid'
   endif
 
+  assign cta_type = ''
   if mode == 'mid' or mode == 'top'
     case primary_type
       when 'call'
+        assign cta_type = 'call'
         assign heading = copy_heading_call
         assign body = copy_body_call
         assign button = copy_button_call
         assign url = url_primary
       when 'quiz'
+        assign cta_type = 'quiz'
         assign heading = copy_heading_quiz
         assign body = copy_body_quiz
         assign button = copy_button_quiz
         assign url = url_primary
       else
+        assign cta_type = 'leadmagnet'
         assign heading = copy_heading_leadmagnet
         assign body = copy_body_leadmagnet
         assign button = copy_button_leadmagnet
@@ -150,21 +154,31 @@
   else
     case secondary_type
       when 'call'
+        assign cta_type = 'call'
         assign heading = copy_heading_call
         assign body = copy_body_call
         assign button = copy_button_call
         assign url = url_secondary
       when 'quiz'
+        assign cta_type = 'quiz'
         assign heading = copy_heading_quiz
         assign body = copy_body_quiz
         assign button = copy_button_quiz
         assign url = url_secondary
       else
+        assign cta_type = 'leadmagnet'
         assign heading = copy_heading_leadmagnet
         assign body = copy_body_leadmagnet
         assign button = copy_button_leadmagnet
         assign url = url_secondary
     endcase
+  endif
+
+  assign btn_modifier = ''
+  if cta_type == 'call'
+    assign btn_modifier = ' nb-btn--call'
+  elsif cta_type != ''
+    assign btn_modifier = ' nb-btn--noncall'
   endif
 -%}
 {%- capture _cta_card -%}
@@ -172,7 +186,7 @@
     <div class="nb-cta-panel__inner">
       <h3 class="nb-cta-panel__title">{{ heading }}</h3>
       <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
-      <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
+      <a class="nb-cta-panel__btn{{ btn_modifier }}" data-cta-type="{{ cta_type }}" href="{{ url }}">{{ button }}</a>
     </div>
   </div>
 {%- endcapture -%}
