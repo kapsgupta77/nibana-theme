@@ -9,15 +9,15 @@
 -%}
 
 {%- if blog.articles_count > 1 -%}
-  <section class="nb-related">
-    <h2 class="h2" style="margin: 24px 0;">Related posts</h2>
-    <div class="nb-related__grid">
+  <section class="nb-related nb-related--lux">
+    <h2 class="h2 nb-related__heading">Related posts</h2>
+    <div class="nb-related__grid nb-related__grid--lux">
       {%- comment -%} Pass 1: same primary category {%- endcomment -%}
       {%- for a in blog.articles -%}
         {%- if a.id != current.id and shown < take -%}
           {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
           {%- if a_cat != '' and a_cat == current_cat -%}
-            <div class="nb-related__item">
+            <div class="nb-related__item nb-related__item--lux">
               {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
             </div>
             {%- assign nb_related_post_card_css_state = 'set' -%}
@@ -40,7 +40,7 @@
                   {%- if a_topics contains t -%}{%- assign match = true -%}{%- break -%}{%- endif -%}
                 {%- endfor -%}
                 {%- if match -%}
-                  <div class="nb-related__item">
+                  <div class="nb-related__item nb-related__item--lux">
                     {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
                   </div>
                   {%- assign nb_related_post_card_css_state = 'set' -%}
@@ -58,7 +58,7 @@
         {%- for a in blog.articles -%}
           {%- if a.id != current.id and shown < take -%}
             {%- unless picked_handles contains a.handle -%}
-              <div class="nb-related__item">
+              <div class="nb-related__item nb-related__item--lux">
                 {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
               </div>
               {%- assign nb_related_post_card_css_state = 'set' -%}

@@ -65,80 +65,40 @@
   -%}
   {%- if nb_related_post_card_css == '' -%}
     {%- assign nb_related_post_card_css = 'set' -%}
-    <style>
-      .blog-post-card {
-        display: flex;
-        flex-direction: column;
-        text-align: var(--text-align);
-      }
-
-      .blog-post-card__image-container,
-      .blog-post-card__content {
-        width: 100%;
-      }
-
-      .blog-post-card__content {
-        padding-block-start: 0.4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-
-      .blog-post-card__content a {
-        display: block;
-        text-wrap: pretty;
-        text-decoration: none;
-        padding-block-start: 0.25rem;
-      }
-
-      .blog-post-card__meta {
-        color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-        font-size: var(--font-size--body-sm);
-      }
-
-      .blog-post-card__meta > * {
-        display: inline;
-        margin: 0;
-      }
-
-      .blog-post-card__sep {
-        margin: 0 0.4em;
-      }
-    </style>
+    {{ 'nb-related-cards.css' | asset_url | stylesheet_tag }}
   {%- endif -%}
-  <div
-    class="blog-post-card"
-    style="--text-align: {{ card_alignment }}"
+  <a
+    class="nb-related-card"
+    href="{{ card_article.url }}"
     data-cat="{{ cat_final | escape }}"
     data-topics="{{ topics_joined | escape }}"
+    style="--nb-related-card-align: {{ card_alignment }}"
   >
-    {%- if card_article.image -%}
-      <div class="blog-post-card__image-container">
-        <a href="{{ card_article.url }}">
-          {{ card_article.image | image_url: width: 960 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 320px, 50vw', alt: image_alt }}
-        </a>
-      </div>
-    {%- endif -%}
-    <div class="blog-post-card__content">
-      <a href="{{ card_article.url }}">
-        <h3 class="h4">{{ card_article.title | escape }}</h3>
-      </a>
-      <div class="blog-post-card__meta">
+    <div class="nb-related-card__media">
+      {%- if card_article.image -%}
+        {{ card_article.image | image_url: width: 960 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 320px, 60vw', alt: image_alt, class: 'nb-related-card__image', widths: '320, 480, 640, 800, 960', placeholder: 'blurred' }}
+      {%- else -%}
+        <div class="nb-related-card__image nb-related-card__image--placeholder" role="presentation" aria-hidden="true"></div>
+      {%- endif -%}
+    </div>
+    <div class="nb-related-card__body">
+      <h3 class="nb-related-card__title h4">{{ card_article.title | escape }}</h3>
+      <div class="nb-related-card__meta">
         {%- if card_article.published_at -%}
-          <span>{{ card_article.published_at | time_tag: format: 'date' }}</span>
+          <span class="nb-related-card__date">{{ card_article.published_at | time_tag: format: 'date' }}</span>
         {%- endif -%}
         {%- if card_article.published_at -%}
-          <span class="blog-post-card__sep" aria-hidden="true">·</span>
+          <span class="nb-related-card__sep" aria-hidden="true">·</span>
         {%- endif -%}
-        <span class="blog-post-card__read">{% render 'reading-time', article: card_article %}</span>
+        <span class="nb-related-card__read">{% render 'reading-time', article: card_article %}</span>
       </div>
       {%- assign excerpt_source = card_article.excerpt | strip_html -%}
       {%- if excerpt_source == '' -%}
         {%- assign excerpt_source = card_article.content | strip_html -%}
       {%- endif -%}
       {%- if excerpt_source != '' -%}
-        <p class="blog-post-card__excerpt">{{ excerpt_source | truncatewords: 30 | escape }}</p>
+        <p class="nb-related-card__excerpt">{{ excerpt_source | truncatewords: 28 | escape }}</p>
       {%- endif -%}
     </div>
-  </div>
+  </a>
 {%- endif -%}
