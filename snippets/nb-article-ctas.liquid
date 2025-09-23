@@ -11,27 +11,35 @@
     case category
       when "Men’s Work"
         assign cat_primary = 'call'
+
         assign cat_secondary = 'leadmagnet'
       when "Relationships"
         assign cat_primary = 'leadmagnet'
+
         assign cat_secondary = 'call'
       when "Emotional Intelligence"
         assign cat_primary = 'quiz'
+
         assign cat_secondary = 'leadmagnet'
       when "Leadership"
         assign cat_primary = 'call'
+
         assign cat_secondary = 'quiz'
       when "Embodiment"
         assign cat_primary = 'leadmagnet'
+
         assign cat_secondary = 'call'
       when "Sexuality"
         assign cat_primary = 'quiz'
+
         assign cat_secondary = 'leadmagnet'
       when "Self-Discovery"
         assign cat_primary = 'quiz'
+
         assign cat_secondary = 'call'
       else
         assign cat_primary = 'leadmagnet'
+
         assign cat_secondary = 'call'
     endcase
   endif
@@ -134,18 +142,27 @@
     case primary_type
       when 'call'
         assign heading = copy_heading_call
+
         assign body = copy_body_call
+
         assign button = copy_button_call
+
         assign url = url_primary
       when 'quiz'
         assign heading = copy_heading_quiz
+
         assign body = copy_body_quiz
+
         assign button = copy_button_quiz
+
         assign url = url_primary
       else
         assign heading = copy_heading_leadmagnet
+
         assign body = copy_body_leadmagnet
+
         assign button = copy_button_leadmagnet
+
         assign url = url_primary
     endcase
   -%}
@@ -155,18 +172,27 @@
     case secondary_type
       when 'call'
         assign heading = copy_heading_call
+
         assign body = copy_body_call
+
         assign button = copy_button_call
+
         assign url = url_secondary
       when 'quiz'
         assign heading = copy_heading_quiz
+
         assign body = copy_body_quiz
+
         assign button = copy_button_quiz
+
         assign url = url_secondary
       else
         assign heading = copy_heading_leadmagnet
+
         assign body = copy_body_leadmagnet
+
         assign button = copy_button_leadmagnet
+
         assign url = url_secondary
     endcase
   -%}
