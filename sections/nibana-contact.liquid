@@ -16,6 +16,17 @@ Also mirrors to:
   assign nb_card_soft_bg = nb_card_bg | color_lighten: 8
 %}
 
+{%- comment -%} Top safety gap for this section (on the Shopify wrapper) {%- endcomment -%}
+<style>
+  #shopify-section-{{ section.id }}{
+    /* creates real space ABOVE the section, outside of its background */
+    margin-top: clamp(28px, 6vw, 96px);
+  }
+  @media (min-width: 990px){
+    #shopify-section-{{ section.id }}{ margin-top: clamp(36px, 7vw, 110px); }
+  }
+</style>
+
 <section
   class="nb-shell nb-contact"
   style="
