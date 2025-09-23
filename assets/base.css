@@ -5477,3 +5477,98 @@ body.nb-typography{
   max-width: 360px;
 }
 
+/* === NIBANA — Contact page (scoped to .nb-contact) === */
+.nb-contact{
+  max-width: var(--nb-contact-max-width, 1100px);
+  margin: 0 auto;
+  padding: var(--nb-contact-section-padding, 48px 16px);
+}
+.nb-contact .nb-grid.cols-2{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: clamp(16px,2.2vw,28px);
+}
+@media (min-width: 992px){
+  .nb-contact .nb-grid.cols-2{ grid-template-columns: 1.05fr 1fr; }
+}
+.nb-contact .nb-panel{ min-width: 0; }
+
+/* Left/Right cards */
+.nb-contact .nb-card{
+  background: var(--nb-contact-card-bg, #fff);
+  border: 1px solid var(--nb-contact-card-border, #E5E7EB);
+  border-radius: var(--nb-contact-card-radius, 16px);
+  padding: var(--nb-contact-card-padding, 22px);
+  box-shadow: var(--nb-contact-card-shadow, 0 8px 24px rgba(0,0,0,.06));
+}
+.nb-contact .nb-card--soft{
+  background: var(--nb-contact-card-soft-bg, #f3f7f6);
+  border-color: rgba(16,99,108,.10);
+}
+
+/* Headings + intro */
+.nb-contact .nb-h1{
+  color: var(--nb-teal, #10636c);
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0 0 6px;
+}
+.nb-contact .nb-kicker{ opacity:.85; margin:0 0 18px; }
+.nb-contact .nb-h3{ margin:0 0 8px; color:#153c3f; }
+
+/* Form tray (light teal like live) */
+.nb-contact .nb-contact__form{
+  background: #eaf5f4;
+  border: 1px solid rgba(16,99,108,.12);
+}
+
+/* Fields */
+.nb-contact .nb-form-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 14px 18px;
+}
+.nb-contact .nb-field{ width:100%; }
+.nb-contact .nb-label{
+  display:block; margin:0 0 6px; font-weight:600; color:#153c3f;
+}
+.nb-contact .nb-input{
+  width:100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(16,99,108,.22);
+  background:#fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+.nb-contact .nb-input:hover{ background:#fff; }
+.nb-contact .nb-input:focus{
+  outline: 0;
+  border-color: var(--nb-teal, #10636c);
+  box-shadow: 0 0 0 3px rgba(16,99,108,.12);
+  background:#fff;
+}
+.nb-contact select.nb-input{ appearance:none; }
+
+/* Message area */
+.nb-contact textarea.nb-input{ min-height: 140px; resize: vertical; }
+
+/* Consent row */
+.nb-contact .nb-consent{ margin: 4px 0 8px; }
+.nb-contact .nb-checkbox{
+  display:flex; gap:10px; align-items:flex-start;
+}
+.nb-contact .nb-checkbox input{
+  width:20px; height:20px; border-radius:6px; accent-color: var(--nb-teal, #10636c);
+}
+.nb-contact .nb-form-help{ font-size:.95em; opacity:.8; margin:6px 0 14px; }
+
+/* Buttons: orange for call CTA, TEAL for Submit */
+.nb-contact .nb-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding: 12px 22px; border-radius: 9999px; font-weight:600;
+  text-decoration:none; border:0; box-shadow: 0 10px 28px rgba(0,0,0,.06);
+}
+.nb-contact .nb-btn--primary{ background: var(--nb-chocolate,#d16c28); color:#fff; }
+.nb-contact .nb-btn--primary:hover{ background: var(--nb-choc-600,#b85f23); }
+.nb-contact .nb-btn--teal{ background: var(--nb-teal-700,#0f5b62); color:#fff; width:100%; }
+.nb-contact .nb-btn--teal:hover{ background: var(--nb-teal,#10636c); }
