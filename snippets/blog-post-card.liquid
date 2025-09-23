@@ -1,9 +1,11 @@
 {%- liquid
   assign card_article = article
   assign card_alignment = alignment | default: 'left'
-  assign render_card = card_article != blank
-
-  if render_card
+-%}
+{%- if card_article == blank -%}
+  {%- comment -%}No article to render{%- endcomment -%}
+{%- else -%}
+  {%- liquid
     assign cat = card_article.metafields.custom.primary_category | default: ''
     assign topics_metafield = card_article.metafields.custom.subtopics
     assign topics = ''
@@ -60,9 +62,7 @@
     endif
 
     assign nb_related_post_card_css = nb_related_post_card_css | default: ''
-  endif
--%}
-{%- if render_card -%}
+  -%}
   {%- if nb_related_post_card_css == '' -%}
     {%- assign nb_related_post_card_css = 'set' -%}
     <style>
