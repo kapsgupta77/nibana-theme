@@ -1,244 +1,199 @@
-{% comment %}
-  Nibana – Contact Section (v2.1)
-  - 2-panel layout: Info (left) + Form (right)
-  - Uses global tokens from base.css:
-      • Call CTA: .nb-cta (optionally add .nb-cta--xl)
-      • Non-call CTA: .button
-      • Panels: .nib-panel
-  - Required: Name, Inquiry Purpose, Message
-  - Opt-in checkbox checked by default (Theme Editor toggle)
-  - Hidden customer form creates/updates Customer with tags for Mailchimp sync
-{% endcomment %}
+{%- comment -%}
+Contact page: visible Shopify CUSTOMER form (creates/updates customer record) with Nibana styling.
+Also mirrors to:
+- Hidden Shopify CONTACT form (fires store email)
+- Hidden Mailchimp form (parallel subscribe)
+{%- endcomment -%}
 
-{% assign secid = 'nibana-contact--' | append: section.id %}
+{% liquid
+  assign nb_max_width = section.settings.max_width | default: '1100px'
+  assign nb_section_padding = section.settings.section_padding | default: '48px 16px'
+  assign nb_card_bg = section.settings.card_bg | default: '#ffffff'
+  assign nb_card_border = section.settings.card_border | default: '#E5E7EB'
+  assign nb_card_radius = section.settings.card_radius | default: '16px'
+  assign nb_card_padding = section.settings.card_padding | default: '22px'
+  assign nb_card_shadow = section.settings.card_shadow | default: '0 8px 24px rgba(0,0,0,.14)'
+  assign nb_card_soft_bg = nb_card_bg | color_lighten: 8
+%}
+
+{%- comment -%} Top safety gap for this section (on the Shopify wrapper) {%- endcomment -%}
+<style>
+  #shopify-section-{{ section.id }}{
+    /* creates real space ABOVE the section, outside of its background */
+    margin-top: clamp(28px, 6vw, 96px);
+  }
+  @media (min-width: 990px){
+    #shopify-section-{{ section.id }}{ margin-top: clamp(36px, 7vw, 110px); }
+  }
+</style>
 
 <section
-  id="{{ secid }}"
-  class="page-width color-{{ section.settings.color_scheme }}"
-  style="max-width: {{ section.settings.max_width }}; margin: 0 auto; padding: {{ section.settings.section_padding }};"
-  data-nb-contact="true"
-  data-nb-debug="{{ section.settings.enable_debug }}"
-  data-mc-enabled="{{ section.settings.use_mailchimp_flow }}"
-  data-mc-action="{{ section.settings.mailchimp_action }}"
-  data-shopify-customer-enabled="{{ section.settings.use_shopify_customer_flow }}"
+  class="nb-shell nb-contact"
+  style="
+    --nb-contact-max-width: {{ nb_max_width }};
+    --nb-contact-section-padding: {{ nb_section_padding }};
+    --nb-contact-card-bg: {{ nb_card_bg }};
+    --nb-contact-card-soft-bg: {{ nb_card_soft_bg }};
+    --nb-contact-card-border: {{ nb_card_border }};
+    --nb-contact-card-radius: {{ nb_card_radius }};
+    --nb-contact-card-padding: {{ nb_card_padding }};
+    --nb-contact-card-shadow: {{ nb_card_shadow }};
+    padding-block-start: clamp(80px, 10vw, 140px);
+  "
 >
-<style>
-    /* Scoped to this section */
-    #{{ secid }} .nib-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 28px;
-    }
-    @media (min-width: 900px) {
-      #{{ secid }} .nib-grid {
-        grid-template-columns: 1.05fr 1fr;
-        gap: 32px;
-        align-items: start;
-      }
-    }
-    #{{ secid }} .nib-card {
-  background: {{ section.settings.card_bg }};
-  border: 1px solid {{ section.settings.card_border }};
-  border-radius: {{ section.settings.card_radius }};
-  /* Upgrade to luxe/3D shadow using global token (falls back to section setting) */
-  box-shadow: var(--nb-shadow-2, {{ section.settings.card_shadow }});
-  padding: {{ section.settings.card_padding }};
-}
-/* Center the left column card relative to the taller right column */
-#{{ secid }} .left-panel { align-self: center; }
+  <div class="nb-grid cols-2">
+    <!-- Left column -->
+    <div class="nb-panel">
+      <div class="nb-card nb-card--panel nb-contact__left-tray">
+        <h1 class="nb-h1">Contact Us</h1>
+        <p class="nb-kicker">Feel free to ask us anything. We're here to help.</p>
 
-/* Red star for all required labels */
-#{{ secid }} .nib-req { color:#b91c1c; margin-left:4px; }
-    #{{ secid }} .nib-muted { opacity: .8; }
-    #{{ secid }} .nib-label { display:block; margin:0 0 6px 0; font-weight: 500; }
-    #{{ secid }} .nib-input, #{{ secid }} .nib-select, #{{ secid }} .nib-textarea {
-      width:100%; padding:12px 14px; border:1px solid var(--color-input-border, #e5e7eb);
-      border-radius: 10px; background:#fff;
-    }
-    #{{ secid }} .nib-help { font-size: 12px; opacity:.7; margin-top: 6px; }
-    #{{ secid }} .nib-actions { display:flex; gap:12px; align-items:center; }
-    #{{ secid }} .nib-form-grid { display:grid; grid-template-columns: 1fr; gap: 14px; }
-
-#{{ secid }} .nib-card.nib-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(0,0,0,.14);
-  transition: box-shadow .2s ease, transform .12s ease;
-}
-
-  </style>
-
-  <div class="nib-grid">
-    <!-- LEFT PANEL: Info + Details + Book a Call -->
-   <div class="nib-card nib-panel left-panel">
-      <h1 class="{{ section.settings.heading_class }}" style="margin:0 0 6px 0;">
-        {{ section.settings.heading }}
-      </h1>
-      <p class="{{ section.settings.subheading_class }} nib-muted" style="margin:0 0 22px 0;">
-        {{ section.settings.subheading }}
-      </p>
-
-      <div style="display:grid; gap:18px;">
-        <!-- Contact Details -->
-        <div class="nib-card nib-panel" style="padding:16px;">
-          <h3 class="{{ section.settings.block_heading_class }}" style="margin:0 0 8px 0;">{{ section.settings.details_heading }}</h3>
-          <p style="margin:0;">
-            <a href="mailto:{{ section.settings.details_email }}">{{ section.settings.details_email }}</a><br>
-            <a href="tel:{{ section.settings.details_phone | replace: ' ', '' }}">{{ section.settings.details_phone }}</a>
-          </p>
-          {% if section.settings.details_note != blank %}
-            <p class="nib-muted" style="margin:8px 0 0 0;">{{ section.settings.details_note }}</p>
-          {% endif %}
+        <div class="nb-card nb-card--soft">
+          <h2 class="nb-h3">Contact Details</h2>
+          <p>info@nibana.life<br>+44 20 7173 5775</p>
+          <p>We usually reply within 1 business day.</p>
         </div>
 
-        <!-- Prefer to talk -->
-        <div class="nib-card nib-panel" style="padding:16px;">
-          <h3 class="{{ section.settings.block_heading_class }}" style="margin:0 0 8px 0;">{{ section.settings.call_heading }}</h3>
-          <p class="nib-muted" style="margin:0 0 12px 0;">{{ section.settings.call_sub }}</p>
-          <a href="{{ section.settings.call_link }}"
-             class="{{ section.settings.cta_call_class }}"
-             style="text-decoration:none;">
-             {{ section.settings.call_label }}
-          </a>
+        <div class="nb-card nb-card--soft">
+          <h2 class="nb-h3">Prefer to talk?</h2>
+          <p>Book a free 20-minute discovery call.</p>
+          <p><a class="nb-btn nb-btn--primary" href="/pages/contact">Book a Free 20-min Call</a></p>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT PANEL: Contact Form -->
-    <div class="nib-card nib-panel">
-      {% form 'contact', id: 'NibanaContactForm', class: 'contact-form' %}
-        {% if form.posted_successfully? %}
-          <div role="status" class="nib-card nib-panel" style="padding:12px; background:#f6fff6; border-color:#d9ead3;">
-            {{ section.settings.success_text }}
-          </div>
-        {% endif %}
-        {% if form.errors %}
-          <div role="alert" class="nib-card nib-panel" style="padding:12px; background:#fff5f5; border-color:#f3c2c2;">
-            {{ section.settings.error_text }}
-          </div>
-        {% endif %}
-
-        <div class="nib-form-grid">
-          <!-- Name (required) -->
-          <div>
-            <label for="ContactName" class="nib-label">
-  {{ section.settings.label_name }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-            <input id="ContactName" type="text" name="contact[name]"
-                   required aria-required="true" autocapitalize="words" autocomplete="name"
-                   value="{{ form.name | default: customer.name }}" class="nib-input">
+    <!-- Right column -->
+    <div class="nb-panel">
+      {%- comment -%} VISIBLE: Shopify CUSTOMER form (creates/updates customer) {%- endcomment -%}
+      {% form 'customer', id: 'nb-contact-shopify', class: 'nb-card nb-card--panel nb-contact__form', novalidate: 'novalidate' %}
+        <div class="nb-form-grid">
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-first">First name <span aria-hidden="true">*</span></label>
+            <input class="nb-input" id="nbc-first" name="contact[first_name]" type="text" required>
           </div>
 
-          <!-- Email (required) -->
-          <div>
-            <label for="ContactEmail" class="nib-label">
-  {{ section.settings.label_email }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-            <input id="ContactEmail" type="email" name="contact[email]"
-                   required aria-required="true" autocomplete="email"
-                   value="{{ form.email | default: customer.email }}" class="nib-input">
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-last">Last name <span aria-hidden="true">*</span></label>
+            <input class="nb-input" id="nbc-last" name="contact[last_name]" type="text" required>
           </div>
 
-          <!-- Phone -->
-          <div>
-            <label for="ContactPhone" class="nib-label">{{ section.settings.label_phone }}</label>
-            <input id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" class="nib-input">
+          <input type="hidden" id="nbc-name" name="contact[name]">
+
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-email">{{ section.settings.label_email | default: 'Email' | escape }} <span aria-hidden="true">*</span></label>
+            <input class="nb-input" id="nbc-email" name="contact[email]" type="email" required>
           </div>
 
-          <!-- Inquiry Purpose (required) -->
-          <div>
-            <label for="InquiryPurpose" class="nib-label">
-  {{ section.settings.label_purpose }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-{% comment %} Fallback options if no blocks exist {% endcomment %}
-{% assign has_purpose_blocks = false %}
-{% for block in section.blocks %}
-  {% if block.type == 'purpose_option' %}
-    {% assign has_purpose_blocks = true %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-
-<select id="InquiryPurpose" name="contact[Inquiry Purpose]" required aria-required="true" class="nib-select">
-  <option value="" disabled selected>{{ section.settings.purpose_placeholder }}</option>
-
-  {% if has_purpose_blocks %}
-    {% for block in section.blocks %}
-      {% if block.type == 'purpose_option' %}
-        <option value="{{ block.settings.option_label }}">{{ block.settings.option_label }}</option>
-      {% endif %}
-    {% endfor %}
-  {% else %}
-    {% assign defaults = "Discovery Call|Transformatioanal Life Coaching|Relationship Coaching|Executive Coaching|Speaking / Workshops|Media / Press|Other" | split: "|" %}
-    {% for label in defaults %}
-      <option value="{{ label }}">{{ label }}</option>
-    {% endfor %}
-  {% endif %}
-</select>
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-phone">{{ section.settings.label_phone | default: 'Phone' | escape }}</label>
+            <input class="nb-input" id="nbc-phone" name="contact[phone]" type="tel">
           </div>
 
-          <!-- Message (required) -->
-          <div>
-            <label for="ContactMessage" class="nib-label">
-  {{ section.settings.label_message }} <span class="nib-req" aria-hidden="true">*</span>
-</label>
-            <textarea id="ContactMessage" name="contact[body]" rows="6" required aria-required="true" class="nib-textarea"></textarea>
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-reason">{{ section.settings.label_purpose | default: 'Inquiry Purpose' | escape }} <span aria-hidden="true">*</span></label>
+            {% liquid
+              assign purpose_blocks = section.blocks | where: 'type', 'purpose_option'
+            %}
+            {% capture purpose_option_markup %}
+              {% for block in purpose_blocks %}
+                {% assign option_label = block.settings.option_label | strip %}
+                {% if option_label != blank %}
+                  <option value="{{ option_label | escape }}">{{ option_label | escape }}</option>
+                {% endif %}
+              {% endfor %}
+            {% endcapture %}
+            {% assign purpose_option_markup = purpose_option_markup | strip %}
+            <select class="nb-input" id="nbc-reason" name="contact[reason]" required>
+              <option value="" selected>{{ section.settings.purpose_placeholder | default: 'Choose one…' | escape }}</option>
+              {% if purpose_option_markup != blank %}
+                {{ purpose_option_markup }}
+              {% else %}
+                <option value="Coaching enquiry">Coaching enquiry</option>
+                <option value="Speaking">Speaking</option>
+                <option value="Corporate workshop">Corporate workshop</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Press">Press</option>
+                <option value="Other">Other</option>
+              {% endif %}
+            </select>
           </div>
 
-          <!-- Opt-in (checked by default; editable) -->
-          <div>
-            <label style="display:flex; gap:8px; align-items:center;">
-              <input id="JoinEmails" type="checkbox" {% if section.settings.optin_checked %}checked{% endif %}>
-              <span>{{ section.settings.optin_label }}</span>
-            </label>
-            <div class="nib-help">{{ section.settings.optin_help }}</div>
-          </div>
-
-          <!-- Submit -->
-          <div class="nib-actions" style="margin-top: 6px;">
-            <button type="submit"
-        class="{{ section.settings.cta_submit_class }}"
-        style="width:100%; background: var(--nb-teal, #10636c); color:#fff;">
-  {{ section.settings.submit_label }}
-</button>
+          <div class="nb-field nb-field--full">
+            <label class="nb-label" for="nbc-message">{{ section.settings.label_message | default: 'Message' | escape }} <span aria-hidden="true">*</span></label>
+            <textarea class="nb-input" id="nbc-message" name="contact[body]" rows="6" placeholder="How can we help?" required></textarea>
           </div>
         </div>
+
+        <div class="nb-consent">
+          <label class="nb-checkbox">
+            <input
+              id="nbc-consent"
+              type="checkbox"
+              {% if section.settings.optin_checked %}checked{% endif %}
+            >
+            <span>{{ section.settings.optin_label | default: 'Also send me occasional tips & updates' | escape }}</span>
+          </label>
+          <p class="nb-form-help">{{ section.settings.optin_help | default: "We’ll only email with useful insights. Unsubscribe anytime. No Spam here." | escape }}</p>
+        </div>
+
+        <!-- Hidden helper for mirroring tags -->
+        <input type="hidden" id="nbc-tags" name="contact[tags]" value="Source: /contact" data-base="Source: /contact">
+        <input
+          type="hidden"
+          id="nbc-accepts"
+          name="contact[accepts_marketing]"
+          value="{% if section.settings.optin_checked %}true{% else %}false{% endif %}"
+        >
+
+        <button type="submit" class="nb-btn nb-btn--teal">{{ section.settings.submit_label | default: 'Submit' | escape }}</button>
+
+        {% if form.errors %}
+          <div class="form__message" role="alert">
+            <p>{{ section.settings.error_text | default: 'Please check the highlighted fields and try again.' | escape }}</p>
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+        {% if form.posted_successfully? %}
+          <div class="nb-card nb-card--soft" role="status">
+            <p>{{ section.settings.success_text | default: 'Thanks — your message has been sent. We’ll reply as soon as we can.' | escape }}</p>
+          </div>
+        {% endif %}
       {% endform %}
 
-      {%- comment -%}
-  Hidden customer/newsletter form (creates/updates Shopify Customer).
-  We also include a hidden iframe for a last-resort synchronous POST.
-{%- endcomment -%}
-{% if section.settings.use_shopify_customer_flow %}
-  <div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-    <iframe id="NewsletterFrame" name="NewsletterFrame" tabindex="-1"></iframe>
-    {% form 'customer', id: 'NibanaHiddenNewsletter' %}
-      <input type="email" name="contact[email]" id="HiddenCustomerEmail">
-      <input type="hidden" name="contact[tags]" id="HiddenCustomerTags" value="newsletter, Contact Form">
-      <button id="HiddenSubmit" type="submit">Submit</button>
-    {% endform %}
-  </div>
-{% endif %}
+      {%- comment -%} HIDDEN: Shopify CONTACT mirror (sends store email) {%- endcomment -%}
+      <div aria-hidden="true" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+        {% form 'contact', id: 'nb-contact-email', target: 'nbc-email-target', novalidate: 'novalidate' %}
+          <input type="text"   id="nbc-email-first"  name="contact[first_name]">
+          <input type="text"   id="nbc-email-last"   name="contact[last_name]">
+          <input type="text"   id="nbc-email-name"   name="contact[name]">
+          <input type="email"  id="nbc-email-email"  name="contact[email]">
+          <input type="tel"    id="nbc-email-phone"  name="contact[phone]">
+          <input type="text"   id="nbc-email-reason" name="contact[reason]">
+          <textarea id="nbc-email-body" name="contact[body]"></textarea>
+          <button type="submit">Submit</button>
+        {% endform %}
+        <iframe id="nbc-email-target" name="nbc-email-target" title="Shopify contact submit"></iframe>
+      </div>
+
+      {%- comment -%} HIDDEN: Mailchimp mirror (parallel subscribe) {%- endcomment -%}
+      <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+            method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
+            style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+        <input type="text"   name="FNAME" id="nbc-mc-fname">
+        <input type="text"   name="LNAME" id="nbc-mc-lname">
+        <input type="email"  name="EMAIL" id="nbc-mc-email">
+        <input type="text"   name="PHONE" id="nbc-mc-phone">
+        <input
+          type="hidden"
+          name="group[78632][1]"
+          id="nbc-mc-consent"
+          value="{% if section.settings.optin_checked %}1{% else %}0{% endif %}"
+        >
+        <input type="submit" value="Subscribe">
+      </form>
+      <iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
     </div>
   </div>
-
-{%- comment -%}
-  Hidden Mailchimp embed form (posts to your Mailchimp audience in the background).
-  Requires "mailchimp_action" setting (subscribe/post?... URL from Mailchimp Embedded form).
-{%- endcomment -%}
-<div aria-hidden="true" style="position:absolute; width:1px; height:1px; overflow:hidden; left:-9999px;">
-  <iframe id="MailchimpFrame" name="MailchimpFrame" tabindex="-1"></iframe>
-  <form id="NibanaMailchimp" method="post" target="MailchimpFrame" action="{{ section.settings.mailchimp_action }}">
-    <input type="email" name="EMAIL" id="MC_EMAIL">
-    <input type="text"  name="FNAME" id="MC_FNAME">
-    <input type="text"  name="PHONE" id="MC_PHONE">
-    <!-- Mailchimp accepts a comma-separated "tags" field -->
-    <input type="hidden" name="tags"  id="MC_TAGS"  value="Contact Form">
-    <!-- Honeypot fields Mailchimp expects (keeps it happy even when empty) -->
-    <input type="text" name="b_" tabindex="-1" value="">
-  </form>
-</div>
-
-<script src="{{ 'nb-contact.js' | asset_url }}" defer></script>
 </section>
 
 {% schema %}
@@ -277,17 +232,21 @@
     { "type": "text", "id": "success_text", "label": "Success message", "default": "Thanks for reaching out — we’ll get back within 1 business day." },
     { "type": "text", "id": "error_text", "label": "Error message", "default": "Please check the highlighted fields and try again." },
 
+    { "type": "text", "id": "captcha_heading", "label": "Captcha overlay heading", "default": "Almost there…" },
+    { "type": "textarea", "id": "captcha_copy", "label": "Captcha overlay copy", "default": "Shopify sometimes asks for a quick captcha. Complete the prompt below to finish sending your message." },
+    { "type": "text", "id": "captcha_close_label", "label": "Captcha overlay close label", "default": "Close" },
+
     { "type": "text", "id": "cta_submit_class", "label": "Submit button class (non-call CTA)", "default": "button" },
     { "type": "text", "id": "cta_call_class", "label": "Book-a-call button class (call CTA)", "default": "nb-cta" },
     { "type": "text", "id": "heading_class", "label": "Heading class", "default": "h1" },
     { "type": "text", "id": "subheading_class", "label": "Subheading class", "default": "paragraph" },
     { "type": "text", "id": "block_heading_class", "label": "Panel heading class", "default": "h3" },
 
-    { "type": "checkbox", "id": "enable_debug", "label": "Enable Mailchimp debug badge (temporary)", "default": false },
+    { "type": "checkbox", "id": "enable_debug", "label": "Enable Mailchimp debug badge (temporary)", "default": false, "info": "Enable to surface Shopify contact diagnostics (beacon, fetch, iframe logs) for troubleshooting." },
 
     { "type": "checkbox", "id": "use_mailchimp_flow", "label": "Add contacts to Mailchimp directly on submit", "default": true },
     { "type": "url",      "id": "mailchimp_action",  "label": "Mailchimp embed form action (Hosted or Embed URL)" },
-    { "type": "checkbox", "id": "use_shopify_customer_flow", "label": "Also create a Shopify customer (may be blocked by hCaptcha)", "default": false },
+    { "type": "checkbox", "id": "use_shopify_customer_flow", "label": "Also create a Shopify customer (may be blocked by hCaptcha)", "default": true },
 
     { "type": "text", "id": "max_width", "label": "Max width", "default": "1100px" },
     { "type": "text", "id": "section_padding", "label": "Section padding", "default": "48px 16px" },

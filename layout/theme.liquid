@@ -55,6 +55,9 @@ DNS prefetch is cheap site-wide; preconnect opens TLS early where it matters.
   <meta name="google-site-verification" content="svWEU0CU65jKsUVlQILttsbFdiql4KZBKACoNfSB8gY" />
 
 {{ 'nb-coaching.css' | asset_url | stylesheet_tag }}
+{% if template.name == 'page' and template.suffix == 'contact' %}
+{{ 'nb-contact.css' | asset_url | stylesheet_tag }}
+{% endif %}
 
 {%- comment -%}
 NIBANA — Book-a-call JSON-LD (WebPage + Breadcrumb + FAQ)
@@ -506,8 +509,8 @@ It:
 </script>
 {% render 'nb-sticky-cta-controller' %}
 {% render 'nb-anim-init' %}
-{% if request.path contains '/pages/contact' %}
-  <script src="{{ 'nb-contact-dualpost.js' | asset_url }}" defer></script>
-{% endif %}
+{% render 'nb-newsletter-proxy' %}
+{% render 'nb-customer-intake' %}
+<script src="{{ 'nb-contact.js' | asset_url }}" defer></script>
   </body>
 </html>

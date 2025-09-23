@@ -6,60 +6,95 @@
 
   function val(sel){ const el = mc.querySelector(sel); return el ? (el.value || '').trim() : ''; }
 
-  function nbPostShopifyCustomerFallback(payload){
-    try{
-      const body = new URLSearchParams();
-      const url = '/contact#contact_form';
-      const contentType = 'application/x-www-form-urlencoded;charset=UTF-8';
-      const headers = { 'Content-Type': contentType };
-
-      body.set('form_type','customer');
-      body.set('utf8','✓');
-      body.set('contact[email]', payload.email || '');
-      if (payload.fname) body.set('contact[first_name]', payload.fname);
-      if (payload.lname) body.set('contact[last_name]', payload.lname);
-      if (payload.phone) body.set('contact[phone]', payload.phone);
-
-      const tags = [];
-      if (payload.consent) { body.set('contact[accepts_marketing]','true'); tags.push('newsletter'); }
-      if (Array.isArray(payload.tags) && payload.tags.length) {
-        tags.push.apply(tags, payload.tags);
-      }
-      body.set('contact[tags]', tags.join(', '));
-
-      const encoded = body.toString();
-      if (navigator.sendBeacon) {
-        const blob = new Blob([encoded], { type: contentType });
-        navigator.sendBeacon(url, blob);
-        return Promise.resolve();
-      }
-
-      return fetch(url, {
-        method:'POST',
-        body: encoded,
-        credentials:'same-origin',
-        keepalive: true,
-        headers
-      });
-    }catch(e){ /* noop */ }
+  function debugEnabled(){
+    return !!(window.nbShopifyDebug && window.nbShopifyDebug.enabled);
   }
 
-  const postCustomer = typeof window.nbPostShopifyCustomer === 'function'
-    ? window.nbPostShopifyCustomer
-    : nbPostShopifyCustomerFallback;
+  function debugLog(type, message, data){
+    if (!debugEnabled()) return;
+    const payload = Object.assign({ message }, data || {});
+    if (type === 'error') {
+      console.error('[nb-contact-dualpost]', payload);
+    } else {
+      console.debug('[nb-contact-dualpost]', payload);
+    }
+  }
 
-  function postShopify(){
+  function postEncodedShopifyContact(payload){
+    try {
+      const url = '/contact#contact_form';
+      const params = new URLSearchParams();
+      params.set('form_type', 'customer');
+      params.set('utf8', '✓');
+      params.set('contact[email]', payload.email || '');
+      params.set('contact[first_name]', payload.fname || '');
+      params.set('contact[last_name]',  payload.lname || '');
+      params.set('contact[name]', [payload.fname, payload.lname].filter(Boolean).join(' '));
+      if (payload.phone) params.set('contact[phone]', payload.phone);
+
+      const tags = Array.isArray(payload.tags) ? payload.tags.slice() : [];
+      if (payload.consent && !tags.some(t => String(t).toLowerCase()==='newsletter')) {
+        tags.unshift('newsletter');
+      }
+      params.set('contact[tags]', tags.join(', '));
+      params.set('contact[accepts_marketing]', payload.consent ? 'true' : 'false');
+
+      const encoded = params.toString();
+      return fetch(url, {
+        method: 'POST',
+        body: encoded,
+        credentials: 'same-origin',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
+      });
+    } catch(_) {}
+  }
+
+  async function postShopify(){
     const email = val('[name="EMAIL"], input[type="email"]');
     if (!email) return;
 
-    const fname = val('[name="FNAME"], [name="first_name"]');
-    const lname = val('[name="LNAME"], [name="last_name"]');
+    const firstName = val('[name="FNAME"], [name="first_name"]');
+    const lastName = val('[name="LNAME"], [name="last_name"]');
     const phone = val('[name="PHONE"], [type="tel"], [name="phone"]');
-    const consent = !!mc.querySelector('input[name="gdpr[CONSENT]"]')?.checked;
+    const gdprConsent = !!mc.querySelector('input[name="gdpr[CONSENT]"]')?.checked;
+    const formConsent = !!document.querySelector('#JoinEmails')?.checked;
+    const acceptsMarketing = gdprConsent || formConsent;
 
-    postCustomer({ email, fname, lname, phone, consent, tags: ['Source: /contact'] });
+    const payload = {
+      email,
+      fname: firstName,
+      lname: lastName,
+      phone,
+      tags: ['Source: /contact'],
+      consent: acceptsMarketing
+    };
+
+    const hasHelper = typeof window.nbSubmitShopifyContact === 'function';
+
+    if (hasHelper) {
+      try {
+        await window.nbSubmitShopifyContact({
+          email,
+          fname: firstName,
+          lname: lastName,
+          phone,
+          consent: acceptsMarketing,
+          tags: ['Source: /contact']
+        });
+      } catch(_) {}
+    } else {
+      debugLog('debug', 'Shared Shopify helper missing, using encoded fallback', { stage: 'fallback', payload });
+      postEncodedShopifyContact({
+        email,
+        fname: firstName,
+        lname: lastName,
+        phone,
+        consent: acceptsMarketing,
+        tags: ['Source: /contact']
+      });
+    }
   }
 
-  // Hook Mailchimp submit; send Shopify in parallel (non-blocking)
   mc.addEventListener('submit', function(){ postShopify(); }, { capture:true });
 })();

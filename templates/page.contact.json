@@ -11,6 +11,59 @@
   "sections": {
     "main": {
       "type": "nibana-contact",
+      "blocks": {
+        "purpose_option_4aeWxR": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Discovery Call"
+          }
+        },
+        "purpose_option_faLVaq": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Transformational Life Coaching"
+          }
+        },
+        "purpose_option_cWyaNX": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Relationship Coaching"
+          }
+        },
+        "purpose_option_arMCWU": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Executive Coaching"
+          }
+        },
+        "purpose_option_4QAEnU": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Speaking / Workshops"
+          }
+        },
+        "purpose_option_Dr7GYB": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Media / Press"
+          }
+        },
+        "purpose_option_GCNfgX": {
+          "type": "purpose_option",
+          "settings": {
+            "option_label": "Other"
+          }
+        }
+      },
+      "block_order": [
+        "purpose_option_4aeWxR",
+        "purpose_option_faLVaq",
+        "purpose_option_cWyaNX",
+        "purpose_option_arMCWU",
+        "purpose_option_4QAEnU",
+        "purpose_option_Dr7GYB",
+        "purpose_option_GCNfgX"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
         "heading": "Contact Us",
@@ -35,6 +88,9 @@
         "submit_label": "Submit",
         "success_text": "Thanks for reaching out — we’ll get back ASAP.",
         "error_text": "Please check the highlighted fields and try again.",
+        "captcha_heading": "Almost there…",
+        "captcha_copy": "Shopify sometimes asks for a quick captcha. Complete the prompt below to finish sending your message.",
+        "captcha_close_label": "Close",
         "cta_submit_class": "button",
         "cta_call_class": "nb-cta",
         "heading_class": "h1",
