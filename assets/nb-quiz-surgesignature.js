@@ -258,7 +258,41 @@
 })();
 
 (function(){
-  var thanks = document.getElementById('nb-quiz-thanks');
+  var gate = document.getElementById('nb-quiz-gate');
+  var form = document.getElementById('nb-quiz-shopify');
+  if (!gate || !form) return;
+
+  form.addEventListener('submit', function(){
+    try { localStorage.setItem('nb_quiz_submitted', '1'); } catch(_){ }
+  });
+
+  (function showThanksIfNeeded(){
+    var qs = new URLSearchParams(window.location.search);
+    var serverThanks = document.getElementById('nb-quiz-server-thanks');
+    var hasUrlSuccess =
+      qs.get('customer_posted') === 'true' ||
+      qs.get('form_type') === 'customer' ||
+      qs.get('contact_posted') === 'true';
+
+    if (serverThanks) {
+      try { localStorage.removeItem('nb_quiz_submitted'); } catch(_){ }
+      return;
+    }
+
+    var hadFlag = false;
+    try { hadFlag = localStorage.getItem('nb_quiz_submitted') === '1'; } catch(_){ }
+
+    if (!serverThanks && (hasUrlSuccess || hadFlag)) {
+      gate.classList.add('is-client-thanks');
+      try { localStorage.removeItem('nb_quiz_submitted'); } catch(_){ }
+      var t = document.getElementById('nb-quiz-client-thanks');
+      if (t) try { t.scrollIntoView({behavior:'smooth', block:'center'}); } catch(_){ }
+    }
+  })();
+})();
+
+(function(){
+  var thanks = document.getElementById('nb-quiz-server-thanks');
   if (!thanks) return;
   try {
     thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
