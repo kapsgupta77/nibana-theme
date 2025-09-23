@@ -57,7 +57,19 @@ Also mirrors to:
         <div class="nb-card nb-card--soft">
           <h2 class="nb-h3">Prefer to talk?</h2>
           <p>Book a free 20-minute discovery call.</p>
-          <p><a class="nb-btn nb-btn--primary" href="/pages/contact">Book a Free 20-min Call</a></p>
+          {% liquid
+            assign call_url = section.settings.call_link | default: '#'
+            assign call_label = section.settings.call_label | strip | default: 'Book a Free 20-min Call'
+            assign call_class = section.settings.cta_call_class | strip
+          %}
+          <p>
+            <a
+              class="nb-btn nb-btn--primary{% if call_class != blank %} {{ call_class }}{% endif %}"
+              href="{{ call_url | escape }}"
+            >
+              {{ call_label | escape }}
+            </a>
+          </p>
         </div>
       </div>
     </div>
