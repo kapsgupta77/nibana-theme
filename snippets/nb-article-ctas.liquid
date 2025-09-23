@@ -128,11 +128,11 @@
 -%}
 
 {%- capture _cta_card -%}
-  <div class="nb-cta">
-    <div class="nb-cta__inner">
-      <h3 class="nb-cta__title">{{ heading }}</h3>
-      <p class="nb-cta__body">{{ body }}{% if nuance != '' %} <span class="nb-cta__nuance">{{ nuance }}</span>{% endif %}</p>
-      <a class="nb-cta__btn" href="{{ url }}">{{ button }}</a>
+  <div class="nb-cta-panel">
+    <div class="nb-cta-panel__inner">
+      <h3 class="nb-cta-panel__title">{{ heading }}</h3>
+      <p class="nb-cta-panel__body">{{ body }}{% if nuance != '' %} <span class="nb-cta-panel__nuance">{{ nuance }}</span>{% endif %}</p>
+      <a class="nb-cta-panel__btn" href="{{ url }}">{{ button }}</a>
     </div>
   </div>
 {%- endcapture -%}
