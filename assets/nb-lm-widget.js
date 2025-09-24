@@ -54,9 +54,11 @@
     safeStorage(function(){ localStorage.setItem(STORAGE_COOLDOWN, String(now())); });
   }
 
+
   function clearCooldown(){
     safeStorage(function(){ localStorage.removeItem(STORAGE_COOLDOWN); });
   }
+
 
   function withinCooldown(){
     var ts = safeStorage(function(){ return localStorage.getItem(STORAGE_COOLDOWN); });
@@ -77,6 +79,7 @@
       pill.removeAttribute('aria-hidden');
     }
   }
+
 
   function getFocusable(container){
     if (!container) return [];
@@ -142,6 +145,7 @@
     fireEvent('generate_lead', { method: 'lead_magnet_widget' });
     setCooldown();
     applyCooldownState();
+
   }
 
   function buildTags(utms){
