@@ -11,6 +11,9 @@
   var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   var widget, dialog, form, successView, messageRegion, honeypot, pill;
+  var mailchimpForm = null;
+  var mailchimpFields = {};
+  var spinnerStyleInjected = false;
   var lastTrigger = null;
 
   function now(){ return Date.now(); }
@@ -124,6 +127,55 @@
     messageRegion.textContent = text || '';
   }
 
+  function ensureSpinnerStyles(){
+    if (spinnerStyleInjected) return;
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.id = 'nb-lm-spinner-style';
+    style.textContent = '' +
+      '.nb-lm__submit-spinner{' +
+      'display:inline-block;' +
+      'width:16px;' +
+      'height:16px;' +
+      'margin-right:8px;' +
+      'border-radius:50%;' +
+      'border:2px solid currentColor;' +
+      'border-top-color:transparent;' +
+      'animation:nbLmSpin 0.8s linear infinite;' +
+      '}' +
+      '@keyframes nbLmSpin{to{transform:rotate(360deg);}}';
+    var target = document.head || document.body || document.documentElement;
+    if (target) {
+      target.appendChild(style);
+      spinnerStyleInjected = true;
+    }
+  }
+
+  function setSubmittingState(btn, isSubmitting){
+    if (!btn) return;
+    if (isSubmitting) {
+      ensureSpinnerStyles();
+      btn.setAttribute('disabled', 'true');
+      btn.setAttribute('aria-busy', 'true');
+      btn.dataset.nbLmSubmitting = 'true';
+      if (!btn.querySelector('[data-nb-lm-spinner]')) {
+        var spinner = document.createElement('span');
+        spinner.className = 'nb-lm__submit-spinner';
+        spinner.setAttribute('data-nb-lm-spinner', '');
+        spinner.setAttribute('aria-hidden', 'true');
+        btn.insertBefore(spinner, btn.firstChild || null);
+      }
+    } else {
+      btn.removeAttribute('disabled');
+      btn.removeAttribute('aria-busy');
+      delete btn.dataset.nbLmSubmitting;
+      var existing = btn.querySelector('[data-nb-lm-spinner]');
+      if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+      }
+    }
+  }
+
   function showSuccess(){
     if (!widget) return;
     if (form) {
@@ -150,40 +202,19 @@
 
   }
 
-  function dispatchMailchimpParallel(first, last, email){
-    if (!widget) return;
-    var parallelAttr = widget.getAttribute('data-mc-parallel');
-    var isEnabled = parallelAttr !== null && parallelAttr !== 'false' && parallelAttr !== '0';
-    if (!isEnabled) return;
-    var action = widget.getAttribute('data-mc-action') || '';
-    if (!action.trim()) return;
-    var normalizedAction = action.indexOf('/subscribe?') !== -1 ? action.replace('/subscribe?', '/subscribe/post?') : action;
-    var resolvedUrl;
+  function submitMailchimpMirror(first, last, email){
+    if (!mailchimpForm) return;
     try {
-      resolvedUrl = new URL(normalizedAction, window.location.origin);
+      if (mailchimpFields.first) mailchimpFields.first.value = first || '';
+      if (mailchimpFields.last) mailchimpFields.last.value = last || '';
+      if (mailchimpFields.email) mailchimpFields.email.value = email || '';
+      if (mailchimpForm.requestSubmit) {
+        mailchimpForm.requestSubmit();
+      } else {
+        mailchimpForm.submit();
+      }
     } catch (err) {
-      return;
-    }
-    var u = resolvedUrl.searchParams.get('u');
-    var id = resolvedUrl.searchParams.get('id');
-    if (!u || !id) return;
-    var payload = new URLSearchParams();
-    payload.append('u', u);
-    payload.append('id', id);
-    payload.append('EMAIL', email || '');
-    payload.append('FNAME', first || '');
-    payload.append('LNAME', last || '');
-    try {
-      fetch(resolvedUrl.toString(), {
-        method: 'POST',
-        mode: 'no-cors',
-        body: payload
-      }).catch(function(err){
-        console.warn('NB LM: parallel Mailchimp POST failed', err);
-      });
-      console.info('NB LM: parallel Mailchimp POST dispatched');
-    } catch (err) {
-      console.warn('NB LM: parallel Mailchimp POST skipped', err);
+      console.warn('NB LM: Mailchimp mirror submit skipped', err);
     }
   }
 
@@ -303,7 +334,7 @@
     params.append('contact[tags]', tags.join(','));
 
     var submitBtn = form.querySelector('[type="submit"]');
-    if (submitBtn) submitBtn.setAttribute('disabled', 'true');
+    setSubmittingState(submitBtn, true);
     showMessage('info', 'Working on it…');
 
     fetch('/contact', {
@@ -312,11 +343,13 @@
       credentials: 'same-origin',
       body: params.toString()
     }).then(function(res){
-      if (!res.ok) throw new Error('Non-200 response');
+      if (!(res && (res.ok || res.status === 302 || res.redirected === true))) {
+        throw new Error('Unsuccessful response');
+      }
       return res.text();
     }).then(function(){
       showSuccess();
-      dispatchMailchimpParallel(first, last, email);
+      submitMailchimpMirror(first, last, email);
     }).catch(function(err){
       console.error('Lead magnet submit failed', err);
       showMessage('error', 'We hit a snag — please try again.');
@@ -324,8 +357,7 @@
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
-    }).finally(function(){
-      if (submitBtn) submitBtn.removeAttribute('disabled');
+      setSubmittingState(submitBtn, false);
     });
   }
 
@@ -436,6 +468,12 @@
     successView = widget && widget.querySelector('[data-nb-lm-success]');
     messageRegion = widget && widget.querySelector('[data-nb-lm-message]');
     pill = document.querySelector('[data-nb-lm-pill]');
+    mailchimpForm = widget && widget.querySelector('#nb-lm-mc');
+    if (mailchimpForm) {
+      mailchimpFields.first = mailchimpForm.querySelector('#nb-lm-mc-fname');
+      mailchimpFields.last = mailchimpForm.querySelector('#nb-lm-mc-lname');
+      mailchimpFields.email = mailchimpForm.querySelector('#nb-lm-mc-email');
+    }
 
     if (!widget || !form) return;
 
@@ -450,6 +488,10 @@
 
     if (messageRegion) {
       showMessage('info', '');
+      var actions = form.querySelector('.nb-lm__actions');
+      if (actions && actions.nextElementSibling !== messageRegion) {
+        actions.insertAdjacentElement('afterend', messageRegion);
+      }
     }
 
     saveUtms(parseSearchParams());

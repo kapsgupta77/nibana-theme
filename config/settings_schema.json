@@ -2329,17 +2329,6 @@
         "id": "lm_widget_label",
         "label": "Lead magnet button label",
         "default": "Get my free guide"
-      },
-      {
-        "type": "checkbox",
-        "id": "lm_mc_parallel",
-        "label": "Also send to Mailchimp (parallel)",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "lm_mc_action",
-        "label": "Mailchimp form action URL"
       }
     ]
   }

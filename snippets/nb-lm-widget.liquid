@@ -2,7 +2,7 @@
   {{ settings.lm_widget_label | default: 'Get my free guide' }}
 </button>
 
-<div class="nb-lm" id="nb-lm-modal" data-nb-lm-widget data-mc-parallel="{{ settings.lm_mc_parallel }}" data-mc-action="{{ settings.lm_mc_action | escape }}" hidden>
+<div class="nb-lm" id="nb-lm-modal" data-nb-lm-widget hidden>
   <div class="nb-lm__backdrop" data-nb-lm-close aria-hidden="true"></div>
   <div class="nb-lm__dialog" role="dialog" aria-modal="true" aria-labelledby="nb-lm-title" aria-describedby="nb-lm-description" aria-hidden="true" data-nb-lm-dialog tabindex="-1">
     <button type="button" class="nb-lm__close" data-nb-lm-close aria-label="Close lead magnet"></button>
@@ -47,6 +47,22 @@
           <a class="nb-cta nb-cta--md nb-cta--teal" href="/dl/connection-guide" rel="noopener">Open the guide</a>
           <a class="nb-link nb-link--cta" href="/pages/discovery-call">Book a discovery call</a>
         </div>
+      </div>
+      <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+        <form
+          action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+          method="post"
+          target="nb-lm-mc-target"
+          id="nb-lm-mc"
+          novalidate
+        >
+          <input type="text" name="FNAME" id="nb-lm-mc-fname">
+          <input type="text" name="LNAME" id="nb-lm-mc-lname">
+          <input type="email" name="EMAIL" id="nb-lm-mc-email">
+          <input type="hidden" name="group[78632][1]" value="1">
+          <input type="submit" value="Subscribe">
+        </form>
+        <iframe name="nb-lm-mc-target" id="nb-lm-mc-target" title="Mailchimp submit" hidden></iframe>
       </div>
     </div>
   </div>
