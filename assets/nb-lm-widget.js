@@ -490,7 +490,7 @@
     }
 
     var okish = res && (res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
-      res.status === 302 || res.status === 303 || res.redirected === true);
+      res.status === 302 || res.status === 303);
     var looksChallenge = (finalURL && /\/challenge/i.test(finalURL)) || /h-captcha|g-recaptcha/i.test(bodySnippet);
 
     if (res && okish && !looksChallenge) {
@@ -501,25 +501,24 @@
     }
 
     var networkError = !res;
-    var shouldFallback = networkError || (res && (!okish || looksChallenge));
-    var fallbackOk = false;
+    var fallbackAttempted = false;
 
-    if (shouldFallback) {
-      if (!networkError) {
-        markPendingSuccess();
-      }
-      fallbackOk = nativeFallbackSubmit(lastSubmitContext);
-      if (fallbackOk) {
+    if (looksChallenge) {
+      markPendingSuccess();
+      fallbackAttempted = true;
+      if (nativeFallbackSubmit(lastSubmitContext)) {
         return;
       }
     }
 
-    if (networkError) {
+    if (networkError || !okish || fallbackAttempted) {
       showInlineError('We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
+      enableSubmitButton(submitBtn);
+      return;
     }
 
     enableSubmitButton(submitBtn);
