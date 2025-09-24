@@ -1,8 +1,6 @@
-<div class="nb-sticky-cta" data-nb-lm-pill>
-  <button type="button" class="nb-cta nb-sticky-cta__btn" data-nb-lm-open aria-haspopup="dialog" aria-controls="nb-lm-modal" aria-expanded="false">
-    Get my free guide
-  </button>
-</div>
+<button type="button" class="nb-lm-pill" data-nb-lm-pill data-nb-lm-open aria-haspopup="dialog" aria-controls="nb-lm-modal" aria-expanded="false">
+  {{ settings.lm_widget_label | default: 'Get my free guide' }}
+</button>
 
 <div class="nb-lm" id="nb-lm-modal" data-nb-lm-widget hidden>
   <div class="nb-lm__backdrop" data-nb-lm-close aria-hidden="true"></div>
@@ -19,20 +17,23 @@
         <input type="hidden" name="utf8" value="✓">
         <input type="hidden" name="contact[accepts_marketing]" value="true">
         <input type="hidden" name="contact[tags]" value="newsletter,leadmagnet:connections_guide,source:widget">
-        <div class="nb-lm__field">
-          <label class="nb-label" for="nb-lm-first-name">First name <span class="nb-optional">(optional)</span></label>
-          <input id="nb-lm-first-name" name="contact[first_name]" type="text" autocomplete="given-name" spellcheck="false">
+        <div class="nb-lm__field" data-nb-lm-field="first_name">
+          <label class="nb-label" for="nb-lm-first-name">First name</label>
+          <input id="nb-lm-first-name" name="contact[first_name]" type="text" required aria-required="true" autocomplete="given-name" spellcheck="false" aria-describedby="nb-lm-first-name-error">
+          <p class="nb-lm__error" id="nb-lm-first-name-error" data-nb-lm-error hidden role="alert"></p>
         </div>
-        <div class="nb-lm__field">
-          <label class="nb-label" for="nb-lm-last-name">Last name <span class="nb-optional">(optional)</span></label>
-          <input id="nb-lm-last-name" name="contact[last_name]" type="text" autocomplete="family-name" spellcheck="false">
+        <div class="nb-lm__field" data-nb-lm-field="last_name">
+          <label class="nb-label" for="nb-lm-last-name">Last name</label>
+          <input id="nb-lm-last-name" name="contact[last_name]" type="text" required aria-required="true" autocomplete="family-name" spellcheck="false" aria-describedby="nb-lm-last-name-error">
+          <p class="nb-lm__error" id="nb-lm-last-name-error" data-nb-lm-error hidden role="alert"></p>
         </div>
-        <div class="nb-lm__field">
+        <div class="nb-lm__field" data-nb-lm-field="email">
           <label class="nb-label" for="nb-lm-email">Email address</label>
-          <input id="nb-lm-email" name="contact[email]" type="email" required autocomplete="email">
+          <input id="nb-lm-email" name="contact[email]" type="email" required aria-required="true" autocomplete="email" aria-describedby="nb-lm-email-error">
+          <p class="nb-lm__error" id="nb-lm-email-error" data-nb-lm-error hidden role="alert"></p>
         </div>
         <div class="nb-lm__actions">
-          <button type="submit" class="nb-cta nb-cta--md">Get the free guide</button>
+          <button type="submit" class="nb-cta nb-cta--md nb-cta--teal">Get the free guide</button>
         </div>
         <p class="nb-lm__consent" data-nb-lm-consent>
           By subscribing, you’ll receive occasional tips and updates. Unsubscribe any time. See our <a href="/policies/privacy-policy" class="nb-link">Privacy Policy</a>.
@@ -40,9 +41,12 @@
         <div class="nb-lm__message" data-nb-lm-message role="status" aria-live="polite"></div>
       </form>
       <div class="nb-lm__success" data-nb-lm-success hidden>
-        <h3 class="nb-lm__success-title">Guide unlocked!</h3>
+        <h3 class="nb-lm__success-title">You’re in. Here’s your guide.</h3>
         <p class="nb-lm__success-copy">Open your copy of the Connections Guide — we’ve also emailed it to you so you can revisit it any time.</p>
-        <a class="nb-cta nb-cta--md" href="/dl/connection-guide" rel="noopener">Open the guide</a>
+        <div class="nb-lm__success-actions">
+          <a class="nb-cta nb-cta--md nb-cta--teal" href="/dl/connection-guide" rel="noopener">Open the guide</a>
+          <a class="nb-link nb-link--cta" href="/pages/discovery-call">Book a discovery call</a>
+        </div>
       </div>
     </div>
   </div>

@@ -8,6 +8,7 @@
   var COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   var BASE_TAGS = ['newsletter', 'leadmagnet:connections_guide', 'source:widget'];
+  var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   var widget, dialog, form, successView, messageRegion, honeypot, pill;
   var lastTrigger = null;
@@ -133,6 +134,7 @@
       }
       if (honeypot) honeypot.value = '';
     }
+    clearFieldErrors();
     if (successView) {
       successView.removeAttribute('hidden');
       successView.style.removeProperty('display');
@@ -159,10 +161,48 @@
     return Array.from(new Set(tags));
   }
 
-  function gatherField(selector){
-    if (!form) return '';
-    var el = form.querySelector(selector);
-    return el && typeof el.value === 'string' ? el.value.trim() : '';
+  function getFieldInput(name){
+    if (!form) return null;
+    return form.querySelector('input[name="contact[' + name + ']"]');
+  }
+
+  function getFieldValue(name){
+    var input = getFieldInput(name);
+    return input && typeof input.value === 'string' ? input.value.trim() : '';
+  }
+
+  function clearFieldErrors(){
+    if (!form) return;
+    var fields = form.querySelectorAll('[data-nb-lm-field]');
+    Array.prototype.forEach.call(fields, function(field){
+      field.classList.remove('is-invalid');
+      var input = field.querySelector('input');
+      if (input) {
+        input.removeAttribute('aria-invalid');
+      }
+      var error = field.querySelector('[data-nb-lm-error]');
+      if (error) {
+        error.textContent = '';
+        error.hidden = true;
+      }
+    });
+  }
+
+  function setFieldError(name, message){
+    if (!form) return null;
+    var field = form.querySelector('[data-nb-lm-field="' + name + '"]');
+    if (!field) return null;
+    field.classList.add('is-invalid');
+    var input = field.querySelector('input');
+    if (input) {
+      input.setAttribute('aria-invalid', 'true');
+    }
+    var error = field.querySelector('[data-nb-lm-error]');
+    if (error) {
+      error.hidden = false;
+      error.textContent = message || '';
+    }
+    return input || null;
   }
 
   function submitForm(evt){
@@ -173,11 +213,36 @@
       return;
     }
 
-    var email = gatherField('input[name="contact[email]"]');
-    if (!email) {
-      showMessage('error', 'Please enter a valid email address.');
-      var emailField = form.querySelector('input[name="contact[email]"]');
-      if (emailField) emailField.focus();
+    clearFieldErrors();
+    showMessage('info', '');
+
+    var first = getFieldValue('first_name');
+    var last = getFieldValue('last_name');
+    var email = getFieldValue('email');
+
+    var hasErrors = false;
+    var focusTarget = null;
+
+    if (!first) {
+      hasErrors = true;
+      focusTarget = focusTarget || setFieldError('first_name', 'First name is required.');
+    }
+
+    if (!last) {
+      hasErrors = true;
+      focusTarget = focusTarget || setFieldError('last_name', 'Last name is required.');
+    }
+
+    if (!email || !EMAIL_PATTERN.test(email)) {
+      hasErrors = true;
+      focusTarget = focusTarget || setFieldError('email', 'Enter a valid email address.');
+    }
+
+    if (hasErrors) {
+      showMessage('error', 'Please complete the required fields.');
+      if (focusTarget && typeof focusTarget.focus === 'function') {
+        focusTarget.focus();
+      }
       return;
     }
 
@@ -188,11 +253,8 @@
     params.append('utf8', '✓');
     params.append('contact[email]', email);
     params.append('contact[accepts_marketing]', 'true');
-
-    var first = gatherField('input[name="contact[first_name]"]');
-    var last = gatherField('input[name="contact[last_name]"]');
-    if (first) params.append('contact[first_name]', first);
-    if (last) params.append('contact[last_name]', last);
+    params.append('contact[first_name]', first);
+    params.append('contact[last_name]', last);
 
     var utmsCurrent = parseSearchParams(window.location.search);
     var stored = loadUtms();
@@ -210,15 +272,22 @@
     fetch('/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      credentials: 'same-origin',
       body: params.toString()
     }).then(function(res){
       if (!res.ok) throw new Error('Non-200 response');
-      if (submitBtn) submitBtn.removeAttribute('disabled');
+      return res.text();
+    }).then(function(){
       showSuccess();
     }).catch(function(err){
-      if (submitBtn) submitBtn.removeAttribute('disabled');
       console.error('Lead magnet submit failed', err);
       showMessage('error', 'We hit a snag — please try again.');
+      var errorFocus = getFieldInput('email');
+      if (errorFocus && typeof errorFocus.focus === 'function') {
+        errorFocus.focus();
+      }
+    }).finally(function(){
+      if (submitBtn) submitBtn.removeAttribute('disabled');
     });
   }
 
@@ -261,13 +330,14 @@
       successView.setAttribute('hidden', 'hidden');
       successView.style.display = 'none';
     }
+    clearFieldErrors();
     showMessage('info', '');
     widget.hidden = false;
     widget.classList.add('is-active');
     widget.setAttribute('aria-hidden', 'false');
     if (dialog) dialog.setAttribute('aria-hidden', 'false');
     if (pill) pill.setAttribute('aria-expanded', 'true');
-    var focusTarget = form ? form.querySelector('input[name="contact[email]"]') : null;
+    var focusTarget = form ? getFieldInput('email') : null;
     if (!focusTarget) focusTarget = dialog;
     window.requestAnimationFrame(function(){
       if (focusTarget && typeof focusTarget.focus === 'function') {

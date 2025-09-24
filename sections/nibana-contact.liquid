@@ -188,22 +188,24 @@ Also mirrors to:
       </div>
 
       {%- comment -%} HIDDEN: Mailchimp mirror (parallel subscribe) {%- endcomment -%}
-      <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
-            method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
-            style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
-        <input type="text"   name="FNAME" id="nbc-mc-fname">
-        <input type="text"   name="LNAME" id="nbc-mc-lname">
-        <input type="email"  name="EMAIL" id="nbc-mc-email">
-        <input type="text"   name="PHONE" id="nbc-mc-phone">
-        <input
-          type="hidden"
-          name="group[78632][1]"
-          id="nbc-mc-consent"
-          value="{% if section.settings.optin_checked %}1{% else %}0{% endif %}"
-        >
-        <input type="submit" value="Subscribe">
-      </form>
-      <iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
+      {% comment %}
+        <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+              method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
+              style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+          <input type="text"   name="FNAME" id="nbc-mc-fname">
+          <input type="text"   name="LNAME" id="nbc-mc-lname">
+          <input type="email"  name="EMAIL" id="nbc-mc-email">
+          <input type="text"   name="PHONE" id="nbc-mc-phone">
+          <input
+            type="hidden"
+            name="group[78632][1]"
+            id="nbc-mc-consent"
+            value="{% if section.settings.optin_checked %}1{% else %}0{% endif %}"
+          >
+          <input type="submit" value="Subscribe">
+        </form>
+        <iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
+      {% endcomment %}
     </div>
   </div>
 </section>
