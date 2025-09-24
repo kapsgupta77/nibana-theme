@@ -5387,9 +5387,27 @@ body.nb-typography{
 .nb-lm__actions{ display:flex; justify-content:flex-start; }
 
 .nb-lm__consent{ font-size:14px; color:var(--nb-muted, #324247); margin:0; }
-.nb-lm__message{ font-size:14px; color:var(--nb-deep-teal, #0b3f45); min-height:1em; margin-top:8px; }
-.nb-lm__message[data-state="error"]{ color:#b3422f; }
-.nb-lm__message[data-state="success"]{ color:var(--nb-teal, #10636c); }
+.nb-lm__message{
+  font-size:14px;
+  color:var(--nb-deep-teal, #0b3f45);
+  min-height:1.2em;
+  margin-top:12px;
+  line-height:1.45;
+}
+.nb-lm__message:not(:empty){
+  display:block;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(16, 99, 108, 0.08);
+}
+.nb-lm__message[data-state="error"]{
+  color:#b3422f;
+  background:rgba(179, 66, 47, 0.14);
+  font-weight:600;
+}
+.nb-lm__message[data-state="success"]{
+  color:var(--nb-teal, #10636c);
+}
 
 .nb-lm__success{ display:flex; flex-direction:column; gap:16px; }
 .nb-lm__success[hidden]{ display:none !important; }

@@ -4,11 +4,13 @@
   var RELAY_PATH = '/dl/connection-guide';
   var STORAGE_UTM = 'nb_lm_widget_utms';
   var STORAGE_COOLDOWN = 'nb_lm_widget_cooldown';
+  var STORAGE_PENDING_SUCCESS = 'nb_lm_pending_success';
   var UTM_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
   var COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   var BASE_TAGS = ['newsletter', 'leadmagnet:connections_guide', 'source:widget'];
   var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var CHALLENGE_PATTERN = /(h-captcha|g-recaptcha)/i;
 
   var widget, dialog, form, successView, messageRegion, honeypot, pill;
   var mailchimpForm = null;
@@ -61,6 +63,21 @@
 
   function clearCooldown(){
     safeStorage(function(){ localStorage.removeItem(STORAGE_COOLDOWN); });
+  }
+
+
+  function markPendingSuccess(){
+    safeStorage(function(){ localStorage.setItem(STORAGE_PENDING_SUCCESS, '1'); });
+  }
+
+
+  function consumePendingSuccess(){
+    var pending = safeStorage(function(){ return localStorage.getItem(STORAGE_PENDING_SUCCESS); });
+    if (pending === '1') {
+      safeStorage(function(){ localStorage.removeItem(STORAGE_PENDING_SUCCESS); });
+      return true;
+    }
+    return false;
   }
 
 
@@ -341,6 +358,8 @@
     setSubmittingState(submitBtn, true);
     showMessage('info', 'Working on it…');
 
+    var handledOutcome = 'pending';
+
     fetch('/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -354,11 +373,40 @@
       if (typeof console !== 'undefined' && console.info) {
         console.info('NB LM: newsletter submit treated as success (status ' + res.status + ', redirected=' + res.redirected + ')');
       }
-      return res.text();
-    }).then(function(){
+      return res.text().then(function(body){
+        if (res.redirected) {
+          var targetUrl = res.url || '';
+          var challengeDetected = false;
+          if (targetUrl && targetUrl.indexOf('/challenge') !== -1) {
+            challengeDetected = true;
+          } else if (body && CHALLENGE_PATTERN.test(body)) {
+            challengeDetected = true;
+          }
+          if (challengeDetected) {
+            handledOutcome = 'challenge';
+            markPendingSuccess();
+            setSubmittingState(submitBtn, false);
+            if (typeof window !== 'undefined' && window.location && typeof window.location.assign === 'function') {
+              window.location.assign(targetUrl || '/challenge');
+            }
+            return { challenge: true };
+          }
+        }
+        return { body: body };
+      });
+    }).then(function(result){
+      if (result && result.challenge) {
+        return;
+      }
+      handledOutcome = 'success';
       showSuccess();
       submitMailchimpMirror(first, last, email);
+    }).then(function(){
+      if (handledOutcome !== 'challenge') {
+        setSubmittingState(submitBtn, false);
+      }
     }).catch(function(err){
+      handledOutcome = 'error';
       console.error('Lead magnet submit failed', err);
       showMessage('error', 'We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
@@ -486,11 +534,16 @@
     if (!widget || !form) return;
 
     honeypot = ensureHoneypot();
+    var shouldResumeSuccess = consumePendingSuccess();
+
     if (successView) {
-      var successLink = successView.querySelector('a');
+      var successLink = successView.querySelector('a.nb-cta');
       if (successLink) {
         successLink.setAttribute('href', RELAY_PATH);
         successLink.setAttribute('rel', 'noopener');
+        successLink.addEventListener('click', function(){
+          fireEvent('asset_open', { asset: 'connection_guide', method: 'lead_magnet_widget' });
+        });
       }
     }
 
@@ -505,6 +558,13 @@
     saveUtms(parseSearchParams());
     applyCooldownState();
     bindEvents();
+
+    if (shouldResumeSuccess) {
+      openModal();
+      showSuccess();
+      var resumeSubmit = form && form.querySelector('[type="submit"]');
+      setSubmittingState(resumeSubmit, false);
+    }
   }
 
   if (document.readyState === 'loading') {
