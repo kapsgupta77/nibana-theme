@@ -9,8 +9,8 @@
     <div class="nb-lm__content">
       <header class="nb-lm__header">
         <p class="nb-eyebrow">Free guide</p>
-        <h2 class="nb-lm__title" id="nb-lm-title">5 shifts to help your teen feel truly seen</h2>
-        <p class="nb-lm__dek" id="nb-lm-description">Pop your details below and I’ll send the Connections Guide straight to your inbox.</p>
+        <h2 class="nb-lm__title" id="nb-lm-title">{{ settings.lm_title | default: 'Get the Connection Guide' }}</h2>
+        <p class="nb-lm__dek" id="nb-lm-description">{{ settings.lm_subhead | default: 'Pop your details below and I’ll send the Connections Guide straight to your inbox.' }}</p>
       </header>
       <form class="nb-lm__form" id="nb-lm-form" data-nb-lm-form method="post" novalidate>
         <input type="hidden" name="form_type" value="customer">
@@ -40,29 +40,14 @@
         <div class="nb-lm__message" data-nb-lm-message role="status" aria-live="polite"></div>
       </form>
       <div class="nb-lm__success" data-nb-lm-success hidden>
-        <h3 class="nb-lm__success-title">You’re in. Here’s your guide.</h3>
-        <p class="nb-lm__success-copy">Open your copy of the Connections Guide — we’ve also emailed it to you so you can revisit it any time.</p>
+        <h3 class="nb-lm__success-title">{{ settings.lm_success_title | default: "You’re in. Here’s your guide." }}</h3>
+        <p class="nb-lm__success-copy">{{ settings.lm_success_body | default: "Open your copy of the Connections Guide — we’ve also emailed it to you so you can revisit it any time." }}</p>
         <div class="nb-lm__success-actions">
           <a class="nb-cta nb-cta--md nb-cta--teal" href="/dl/connection-guide" rel="noopener">Open the guide</a>
           <a class="nb-link nb-link--cta" href="/pages/discovery-call">Book a discovery call</a>
         </div>
       </div>
-      <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
-        <form
-          action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
-          method="post"
-          target="nb-lm-mc-target"
-          id="nb-lm-mc"
-          novalidate
-        >
-          <input type="text" name="FNAME" id="nb-lm-mc-fname">
-          <input type="text" name="LNAME" id="nb-lm-mc-lname">
-          <input type="email" name="EMAIL" id="nb-lm-mc-email">
-          <input type="hidden" name="group[78632][1]" value="1">
-          <input type="submit" value="Subscribe">
-        </form>
-        <iframe name="nb-lm-mc-target" id="nb-lm-mc-target" title="Mailchimp submit" hidden></iframe>
-      </div>
+      {% render 'nb-mc-mirror-lm' %}
     </div>
   </div>
 </div>

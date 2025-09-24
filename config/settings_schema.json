@@ -2329,6 +2329,30 @@
         "id": "lm_widget_label",
         "label": "Lead magnet button label",
         "default": "Get my free guide"
+      },
+      {
+        "type": "text",
+        "id": "lm_title",
+        "label": "LM modal headline",
+        "default": "Get the Connection Guide"
+      },
+      {
+        "type": "textarea",
+        "id": "lm_subhead",
+        "label": "LM modal subheading",
+        "default": "Pop your details below and I’ll send the Connections Guide straight to your inbox."
+      },
+      {
+        "type": "text",
+        "id": "lm_success_title",
+        "label": "LM success headline",
+        "default": "You’re in. Here’s your guide."
+      },
+      {
+        "type": "textarea",
+        "id": "lm_success_body",
+        "label": "LM success body",
+        "default": "Open your copy of the Connections Guide — we’ve also emailed it to you so you can revisit it any time."
       }
     ]
   }
