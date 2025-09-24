@@ -150,6 +150,43 @@
 
   }
 
+  function dispatchMailchimpParallel(first, last, email){
+    if (!widget) return;
+    var parallelAttr = widget.getAttribute('data-mc-parallel');
+    var isEnabled = parallelAttr !== null && parallelAttr !== 'false' && parallelAttr !== '0';
+    if (!isEnabled) return;
+    var action = widget.getAttribute('data-mc-action') || '';
+    if (!action.trim()) return;
+    var normalizedAction = action.indexOf('/subscribe?') !== -1 ? action.replace('/subscribe?', '/subscribe/post?') : action;
+    var resolvedUrl;
+    try {
+      resolvedUrl = new URL(normalizedAction, window.location.origin);
+    } catch (err) {
+      return;
+    }
+    var u = resolvedUrl.searchParams.get('u');
+    var id = resolvedUrl.searchParams.get('id');
+    if (!u || !id) return;
+    var payload = new URLSearchParams();
+    payload.append('u', u);
+    payload.append('id', id);
+    payload.append('EMAIL', email || '');
+    payload.append('FNAME', first || '');
+    payload.append('LNAME', last || '');
+    try {
+      fetch(resolvedUrl.toString(), {
+        method: 'POST',
+        mode: 'no-cors',
+        body: payload
+      }).catch(function(err){
+        console.warn('NB LM: parallel Mailchimp POST failed', err);
+      });
+      console.info('NB LM: parallel Mailchimp POST dispatched');
+    } catch (err) {
+      console.warn('NB LM: parallel Mailchimp POST skipped', err);
+    }
+  }
+
   function buildTags(utms){
     var tags = BASE_TAGS.slice();
     if (utms) {
@@ -279,6 +316,7 @@
       return res.text();
     }).then(function(){
       showSuccess();
+      dispatchMailchimpParallel(first, last, email);
     }).catch(function(err){
       console.error('Lead magnet submit failed', err);
       showMessage('error', 'We hit a snag — please try again.');
