@@ -3,7 +3,8 @@
     "main": {
       "type": "nb-redirect",
       "settings": {
-        "target_url": "",
+        "target_url": "https://www.canva.com/design/DAGtUTKvgb8/eVx8rarmXCX6qkmdVUBHVg/view?utm_content=DAGtUTKvgb8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb137f7b655",
+
         "event_name": "asset_open",
         "delay_ms": "250"
       }
