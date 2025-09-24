@@ -1,0 +1,49 @@
+<div class="nb-sticky-cta" data-nb-lm-pill>
+  <button type="button" class="nb-cta nb-sticky-cta__btn" data-nb-lm-open aria-haspopup="dialog" aria-controls="nb-lm-modal" aria-expanded="false">
+    Get my free guide
+  </button>
+</div>
+
+<div class="nb-lm" id="nb-lm-modal" data-nb-lm-widget hidden>
+  <div class="nb-lm__backdrop" data-nb-lm-close aria-hidden="true"></div>
+  <div class="nb-lm__dialog" role="dialog" aria-modal="true" aria-labelledby="nb-lm-title" aria-describedby="nb-lm-description" aria-hidden="true" data-nb-lm-dialog tabindex="-1">
+    <button type="button" class="nb-lm__close" data-nb-lm-close aria-label="Close lead magnet"></button>
+    <div class="nb-lm__content">
+      <header class="nb-lm__header">
+        <p class="nb-eyebrow">Free guide</p>
+        <h2 class="nb-lm__title" id="nb-lm-title">5 shifts to help your teen feel truly seen</h2>
+        <p class="nb-lm__dek" id="nb-lm-description">Pop your details below and I’ll send the Connections Guide straight to your inbox.</p>
+      </header>
+      <form class="nb-lm__form" data-nb-lm-form method="post" action="/contact" novalidate>
+        <input type="hidden" name="form_type" value="customer">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="contact[accepts_marketing]" value="true">
+        <input type="hidden" name="contact[tags]" value="newsletter,leadmagnet:connections_guide,source:widget">
+        <div class="nb-lm__field">
+          <label class="nb-label" for="nb-lm-first-name">First name <span class="nb-optional">(optional)</span></label>
+          <input id="nb-lm-first-name" name="contact[first_name]" type="text" autocomplete="given-name" spellcheck="false">
+        </div>
+        <div class="nb-lm__field">
+          <label class="nb-label" for="nb-lm-last-name">Last name <span class="nb-optional">(optional)</span></label>
+          <input id="nb-lm-last-name" name="contact[last_name]" type="text" autocomplete="family-name" spellcheck="false">
+        </div>
+        <div class="nb-lm__field">
+          <label class="nb-label" for="nb-lm-email">Email address</label>
+          <input id="nb-lm-email" name="contact[email]" type="email" required autocomplete="email">
+        </div>
+        <div class="nb-lm__actions">
+          <button type="submit" class="nb-cta nb-cta--md">Get the free guide</button>
+        </div>
+        <p class="nb-lm__consent" data-nb-lm-consent>
+          By subscribing, you’ll receive occasional tips and updates. Unsubscribe any time. See our <a href="/policies/privacy-policy" class="nb-link">Privacy Policy</a>.
+        </p>
+        <div class="nb-lm__message" data-nb-lm-message role="status" aria-live="polite"></div>
+      </form>
+      <div class="nb-lm__success" data-nb-lm-success hidden>
+        <h3 class="nb-lm__success-title">Guide unlocked!</h3>
+        <p class="nb-lm__success-copy">Open your copy of the Connections Guide — we’ve also emailed it to you so you can revisit it any time.</p>
+        <a class="nb-cta nb-cta--md" href="/dl/connection-guide" rel="noopener">Open the guide</a>
+      </div>
+    </div>
+  </div>
+</div>

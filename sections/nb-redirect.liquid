@@ -1,0 +1,41 @@
+{% comment %}
+  Nibana Redirect — emits GA4 event then redirects after a short delay.
+{% endcomment %}
+<section class="nb-redirect" data-target-url="{{ section.settings.target_url | escape }}" data-event-name="{{ section.settings.event_name | default: 'asset_open' | escape }}" data-delay="{{ section.settings.delay_ms | default: '250' | escape }}">
+  <div class="nb-shell">
+    <div class="nb-redirect__panel">
+      <h1 class="nb-redirect__title" aria-live="polite">Hold on… opening your guide</h1>
+      <p class="nb-redirect__dek">If nothing happens, use the button below.</p>
+      {% if section.settings.target_url != blank %}
+        <a class="nb-cta nb-cta--md" href="{{ section.settings.target_url }}" rel="noopener">Continue</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var el = document.currentScript && document.currentScript.previousElementSibling;
+  if (!el) return;
+  var target = el.getAttribute('data-target-url') || '';
+  if (!target) return;
+  var eventName = el.getAttribute('data-event-name') || 'asset_open';
+  var delay = parseInt(el.getAttribute('data-delay') || '250', 10);
+  try { if (typeof window.gtag === 'function') { window.gtag('event', eventName, { asset: 'connections_guide_pdf', surface: 'relay_page' }); } } catch(e) {}
+  window.setTimeout(function(){ window.location.replace(target); }, isNaN(delay) ? 250 : delay);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Nibana Redirect",
+  "settings": [
+    { "type": "url",  "id": "target_url", "label": "Target URL" },
+    { "type": "text", "id": "event_name", "label": "GA4 event name", "default": "asset_open" },
+    { "type": "text", "id": "delay_ms",   "label": "Redirect delay (ms)", "default": "250" }
+  ],
+  "presets": [
+    { "name": "Nibana Redirect" }
+  ]
+}
+{% endschema %}
