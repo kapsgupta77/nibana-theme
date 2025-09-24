@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "nb-redirect",
+      "settings": {
+        "target_url": "",
+        "event_name": "asset_open",
+        "delay_ms": "250"
+      }
+    }
+  },
+  "order": ["main"]
+}
