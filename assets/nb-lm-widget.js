@@ -192,7 +192,34 @@
     }
   }
 
-  function showSuccess(){
+  function getSubmitButton(){
+    if (!form) return null;
+    return form.querySelector('[type="submit"]');
+  }
+
+  function disableSubmitButton(btn){
+    setSubmittingState(btn || getSubmitButton(), true);
+  }
+
+  function enableSubmitButton(btn){
+    setSubmittingState(btn || getSubmitButton(), false);
+  }
+
+  function showInlineError(text){
+    showMessage('error', text);
+  }
+
+  function trackGenerateLead(){
+    try {
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
+      }
+    } catch (err) {
+      // ignore analytics errors
+    }
+  }
+
+  function showSuccessPanel(){
     if (!widget) return;
     if (form) {
       form.setAttribute('aria-hidden', 'true');
@@ -288,22 +315,18 @@
     return input || null;
   }
 
-  async function submitForm(evt){
-    if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
-    if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
-    if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
-
+  async function handleSubmit(){
     if (!form) return;
     if (honeypot && honeypot.value) {
-      showSuccess();
-      fireEvent('generate_lead', { method: 'lead_magnet_widget' });
+      showSuccessPanel();
+      trackGenerateLead();
       return;
     }
 
     clearFieldErrors();
     showMessage('info', '');
 
-    var submitBtn = form.querySelector('[type="submit"]');
+    var submitBtn = getSubmitButton();
     if (submitBtn && submitBtn.dataset.nbLmSubmitting === 'true') {
       return;
     }
@@ -331,7 +354,7 @@
     }
 
     if (hasErrors) {
-      showMessage('error', 'Please complete the required fields.');
+      showInlineError('Please complete the required fields.');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus();
       }
@@ -361,7 +384,7 @@
     var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
     var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
 
-    setSubmittingState(submitBtn, true);
+    disableSubmitButton(submitBtn);
     showMessage('info', 'Working on it…');
 
     try {
@@ -369,8 +392,8 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'same-origin',
-        body: params.toString(),
-        redirect: 'follow'
+        redirect: 'follow',
+        body: params.toString()
       });
 
       var snippet = '';
@@ -384,36 +407,47 @@
       var okish = res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
         res.status === 302 || res.status === 303 || res.redirected === true;
 
-      var finalURL = (res && res.url) || '';
-      var isChallenge = !!(res && res.redirected && /\/challenge/i.test(finalURL));
+      var finalURL = res && res.url ? res.url : '';
+      var isChallengeUrl = /\/challenge/i.test(finalURL);
+      var isChallengeBody = /h-captcha|g-recaptcha/i.test(snippet);
 
-      if (isChallenge) {
+      if (isChallengeUrl || isChallengeBody) {
         encounteredChallenge = true;
         markPendingSuccess();
-        if (typeof window !== 'undefined' && window.location && typeof window.location.assign === 'function') {
-          window.location.assign(finalURL || '/challenge');
+        try {
+          if (typeof window !== 'undefined' && window.location && typeof window.location.assign === 'function') {
+            window.location.assign(finalURL || '/challenge');
+          }
+        } catch (redirectErr) {
+          console.error('Lead magnet challenge redirect failed', redirectErr);
         }
         return;
       }
 
       if (okish) {
-        showSuccess();
-        fireEvent('generate_lead', { method: 'lead_magnet_widget' });
+        showSuccessPanel();
+        trackGenerateLead();
         submitMailchimpMirror(first, last, email);
-      } else {
-        throw new Error('Unsuccessful response');
+        enableSubmitButton(submitBtn);
+        return;
+      }
+
+      showInlineError('We hit a snag—please try again.');
+      var errorFocusInline = getFieldInput('email');
+      if (errorFocusInline && typeof errorFocusInline.focus === 'function') {
+        errorFocusInline.focus();
       }
     } catch (err) {
       if (encounteredChallenge) return;
       console.error('Lead magnet submit failed', err);
-      showMessage('error', 'We hit a snag—please try again.');
+      showInlineError('We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
     } finally {
       if (!encounteredChallenge) {
-        setSubmittingState(submitBtn, false);
+        enableSubmitButton(submitBtn);
       }
     }
   }
@@ -468,7 +502,7 @@
     if (dialog) dialog.setAttribute('aria-hidden', 'false');
     if (pill) pill.setAttribute('aria-expanded', 'true');
     if (options.showSuccess) {
-      showSuccess();
+      showSuccessPanel();
     }
     var focusTarget = null;
     if (options.showSuccess && successView) {
@@ -534,7 +568,8 @@
       form.addEventListener('submit', function(evt){
         if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
         if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
-        submitForm(evt);
+        if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
+        handleSubmit();
       });
     }
   }
@@ -583,15 +618,8 @@
 
     if (shouldResumeSuccess) {
       openLeadMagnetModal({ showSuccess: true });
-      try {
-        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-          window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
-        }
-      } catch (err) {
-        // ignore analytics resume errors
-      }
-      var resumeSubmit = form && form.querySelector('[type="submit"]');
-      setSubmittingState(resumeSubmit, false);
+      trackGenerateLead();
+      enableSubmitButton(form && form.querySelector('[type="submit"]'));
     }
   }
 
