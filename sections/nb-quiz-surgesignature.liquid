@@ -144,25 +144,27 @@
           </div>
         </div>
 
-            <!-- Hidden Mailchimp mirror — submitted in parallel via JS -->
-            <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
-                  method="post" target="nbq-mc-target" id="nbq-mc" aria-hidden="true"
-                  style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
-              <input type="text"   name="FNAME" id="nbq-mc-fname">
-              <input type="text"   name="LNAME" id="nbq-mc-lname">
-              <input type="email"  name="EMAIL" id="nbq-mc-email">
-              <input type="text"   name="PHONE" id="nbq-mc-phone">
-              <!-- Lead Source group -->
-              <input type="hidden" name="group[78632][1]" value="1">
-              <!-- Style interests — we tick one via JS by setting checked=true -->
-              <input type="checkbox" name="group[78632][2]" id="nbq-mc-acc" value="1">
-              <input type="checkbox" name="group[78632][4]" id="nbq-mc-stab" value="1">
-              <input type="checkbox" name="group[78632][8]" id="nbq-mc-def" value="1">
-              <!-- Optional: STYLE merge field -->
-              <input type="hidden" name="STYLE" id="nbq-mc-style">
-              <input type="submit" value="Subscribe">
-            </form>
-            <iframe name="nbq-mc-target" id="nbq-mc-target" title="Mailchimp submit" hidden></iframe>
+            {% comment %}
+              Hidden Mailchimp mirror — submitted in parallel via JS
+              <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+                    method="post" target="nbq-mc-target" id="nbq-mc" aria-hidden="true"
+                    style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+                <input type="text"   name="FNAME" id="nbq-mc-fname">
+                <input type="text"   name="LNAME" id="nbq-mc-lname">
+                <input type="email"  name="EMAIL" id="nbq-mc-email">
+                <input type="text"   name="PHONE" id="nbq-mc-phone">
+                <!-- Lead Source group -->
+                <input type="hidden" name="group[78632][1]" value="1">
+                <!-- Style interests — we tick one via JS by setting checked=true -->
+                <input type="checkbox" name="group[78632][2]" id="nbq-mc-acc" value="1">
+                <input type="checkbox" name="group[78632][4]" id="nbq-mc-stab" value="1">
+                <input type="checkbox" name="group[78632][8]" id="nbq-mc-def" value="1">
+                <!-- Optional: STYLE merge field -->
+                <input type="hidden" name="STYLE" id="nbq-mc-style">
+                <input type="submit" value="Subscribe">
+              </form>
+              <iframe name="nbq-mc-target" id="nbq-mc-target" title="Mailchimp submit" hidden></iframe>
+            {% endcomment %}
         </div>
       </div>
     </div>
