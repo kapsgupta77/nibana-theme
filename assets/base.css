@@ -5250,7 +5250,7 @@ body.nb-typography{
 .nb-lm-pill{
   position:fixed;
   left:clamp(12px, 3vw, 24px);
-  bottom:clamp(12px, 3vw, 24px);
+  bottom:calc(16px + env(safe-area-inset-bottom));
   z-index:9999;
   display:inline-flex;
   align-items:center;
