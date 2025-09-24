@@ -11,6 +11,7 @@
   var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   var widget, dialog, form, successView, messageRegion, honeypot, pill;
+  var spinnerStyleInjected = false;
   var lastTrigger = null;
 
   function now(){ return Date.now(); }
@@ -122,6 +123,55 @@
     if (!messageRegion) return;
     messageRegion.dataset.state = type || 'info';
     messageRegion.textContent = text || '';
+  }
+
+  function ensureSpinnerStyles(){
+    if (spinnerStyleInjected) return;
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.id = 'nb-lm-spinner-style';
+    style.textContent = '' +
+      '.nb-lm__submit-spinner{' +
+      'display:inline-block;' +
+      'width:16px;' +
+      'height:16px;' +
+      'margin-right:8px;' +
+      'border-radius:50%;' +
+      'border:2px solid currentColor;' +
+      'border-top-color:transparent;' +
+      'animation:nbLmSpin 0.8s linear infinite;' +
+      '}' +
+      '@keyframes nbLmSpin{to{transform:rotate(360deg);}}';
+    var target = document.head || document.body || document.documentElement;
+    if (target) {
+      target.appendChild(style);
+      spinnerStyleInjected = true;
+    }
+  }
+
+  function setSubmittingState(btn, isSubmitting){
+    if (!btn) return;
+    if (isSubmitting) {
+      ensureSpinnerStyles();
+      btn.setAttribute('disabled', 'true');
+      btn.setAttribute('aria-busy', 'true');
+      btn.dataset.nbLmSubmitting = 'true';
+      if (!btn.querySelector('[data-nb-lm-spinner]')) {
+        var spinner = document.createElement('span');
+        spinner.className = 'nb-lm__submit-spinner';
+        spinner.setAttribute('data-nb-lm-spinner', '');
+        spinner.setAttribute('aria-hidden', 'true');
+        btn.insertBefore(spinner, btn.firstChild || null);
+      }
+    } else {
+      btn.removeAttribute('disabled');
+      btn.removeAttribute('aria-busy');
+      delete btn.dataset.nbLmSubmitting;
+      var existing = btn.querySelector('[data-nb-lm-spinner]');
+      if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+      }
+    }
   }
 
   function showSuccess(){
@@ -303,7 +353,7 @@
     params.append('contact[tags]', tags.join(','));
 
     var submitBtn = form.querySelector('[type="submit"]');
-    if (submitBtn) submitBtn.setAttribute('disabled', 'true');
+    setSubmittingState(submitBtn, true);
     showMessage('info', 'Working on it…');
 
     fetch('/contact', {
@@ -312,7 +362,9 @@
       credentials: 'same-origin',
       body: params.toString()
     }).then(function(res){
-      if (!res.ok) throw new Error('Non-200 response');
+      if (!(res && (res.ok || res.status === 302 || res.redirected === true))) {
+        throw new Error('Unsuccessful response');
+      }
       return res.text();
     }).then(function(){
       showSuccess();
@@ -324,8 +376,7 @@
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
-    }).finally(function(){
-      if (submitBtn) submitBtn.removeAttribute('disabled');
+      setSubmittingState(submitBtn, false);
     });
   }
 
@@ -450,6 +501,10 @@
 
     if (messageRegion) {
       showMessage('info', '');
+      var actions = form.querySelector('.nb-lm__actions');
+      if (actions && actions.nextElementSibling !== messageRegion) {
+        actions.insertAdjacentElement('afterend', messageRegion);
+      }
     }
 
     saveUtms(parseSearchParams());
