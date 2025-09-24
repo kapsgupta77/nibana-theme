@@ -358,22 +358,31 @@
     params.append('contact[tags]', tags.join(','));
 
     var encounteredChallenge = false;
+    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
+    var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
 
     setSubmittingState(submitBtn, true);
     showMessage('info', 'Working on it…');
 
     try {
-      var res = await fetch('/contact', {
+      var res = await fetch(rootUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'same-origin',
-        body: params.toString()
+        body: params.toString(),
+        redirect: 'follow'
       });
 
-      var ok = !!(res && (res.ok || res.status === 302 || res.status === 303 || res.redirected === true));
-      if (!ok) {
-        throw new Error('Unsuccessful response');
+      var snippet = '';
+      try {
+        snippet = (await res.clone().text()).slice(0, 200);
+      } catch (errSnippet) {
+        // ignore diagnostics errors
       }
+      console.info('[NB LM] submit status:', res.status, 'ok:', res.ok, 'redirected:', res.redirected, 'url:', res.url, 'body:', snippet);
+
+      var okish = res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
+        res.status === 302 || res.status === 303 || res.redirected === true;
 
       var finalURL = (res && res.url) || '';
       var isChallenge = !!(res && res.redirected && /\/challenge/i.test(finalURL));
@@ -387,9 +396,13 @@
         return;
       }
 
-      showSuccess();
-      fireEvent('generate_lead', { method: 'lead_magnet_widget' });
-      submitMailchimpMirror(first, last, email);
+      if (okish) {
+        showSuccess();
+        fireEvent('generate_lead', { method: 'lead_magnet_widget' });
+        submitMailchimpMirror(first, last, email);
+      } else {
+        throw new Error('Unsuccessful response');
+      }
     } catch (err) {
       if (encounteredChallenge) return;
       console.error('Lead magnet submit failed', err);
@@ -518,7 +531,11 @@
     }
 
     if (form) {
-      form.addEventListener('submit', submitForm, { once: false });
+      form.addEventListener('submit', function(evt){
+        if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
+        if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
+        submitForm(evt);
+      });
     }
   }
 
