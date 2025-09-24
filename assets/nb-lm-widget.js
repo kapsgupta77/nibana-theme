@@ -388,7 +388,7 @@
     return input || null;
   }
 
-  async function onSubmit(evt){
+  async function onLmSubmit(evt){
     if (!form) return;
     if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
     if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
@@ -442,8 +442,6 @@
     fireEvent('lead_submit', { form: 'lm_widget', location: 'sticky_modal' });
 
     disableSubmitButton(submitBtn);
-    showMessage('info', 'Working on it…');
-
     var utms = collectUtmsForSubmit();
     var tags = makeTagString(utms);
 
@@ -467,6 +465,7 @@
 
     submitMailchimpMirror(first, last, email);
 
+    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
     var res = null;
     var bodySnippet = '';
     var finalURL = '';
@@ -481,44 +480,57 @@
       });
       try {
         bodySnippet = (await res.clone().text()).slice(0, 200);
-      } catch (errSnippet) {
-        // swallow diagnostics errors
-      }
+      } catch (errSnippet) {}
       finalURL = res && res.url ? res.url : '';
     } catch (err) {
-      console.error('Lead magnet submit failed', err);
+      res = null;
     }
 
     var okish = res && (res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
-      res.status === 302 || res.status === 303);
+      res.status === 302 || res.status === 303 || res.redirected === true);
     var looksChallenge = (finalURL && /\/challenge/i.test(finalURL)) || /h-captcha|g-recaptcha/i.test(bodySnippet);
 
-    if (res && okish && !looksChallenge) {
+    if (okish && !looksChallenge) {
       showSuccessPanel();
       trackGenerateLead();
       enableSubmitButton(submitBtn);
       return;
     }
 
-    var networkError = !res;
-    var fallbackAttempted = false;
+    var fallbackSucceeded = false;
+    var shouldFallback = (!okish || looksChallenge || !res);
 
-    if (looksChallenge) {
+    if (shouldFallback) {
       markPendingSuccess();
-      fallbackAttempted = true;
-      if (nativeFallbackSubmit(lastSubmitContext)) {
+      form.setAttribute('action', (widgetEl && widgetEl.getAttribute('data-root-url')) || rootUrl || '/');
+      form.method = 'POST';
+      form.enctype = 'application/x-www-form-urlencoded';
+      form.noValidate = true;
+
+      ensureHidden('form_type', 'customer');
+      ensureHidden('utf8', '✓');
+      ensureHidden('contact[email]', email);
+      ensureHidden('contact[first_name]', first);
+      ensureHidden('contact[last_name]', last);
+      ensureHidden('contact[tags]', tags);
+
+      try {
+        form.submit();
+        fallbackSucceeded = true;
+      } catch (fallbackErr) {
+        fallbackSucceeded = false;
+      }
+      if (fallbackSucceeded) {
         return;
       }
     }
 
-    if (networkError || !okish || fallbackAttempted) {
+    if (shouldFallback && !fallbackSucceeded) {
       showInlineError('We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
-      enableSubmitButton(submitBtn);
-      return;
     }
 
     enableSubmitButton(submitBtn);
@@ -637,7 +649,7 @@
     }
 
     if (form) {
-      form.addEventListener('submit', onSubmit, { capture: true });
+      form.addEventListener('submit', onLmSubmit, { capture: true });
     }
   }
 
@@ -685,7 +697,11 @@
 
     if (shouldResumeSuccess) {
       openLeadMagnetModal({ showSuccess: true });
-      trackGenerateLead();
+      try {
+        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+          window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
+        }
+      } catch (err) {}
       enableSubmitButton(form && form.querySelector('[type="submit"]'));
     }
   }
