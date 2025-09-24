@@ -10,7 +10,6 @@
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   var BASE_TAGS = ['newsletter', 'leadmagnet:connections_guide', 'source:widget'];
   var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  var CHALLENGE_PATTERN = /(h-captcha|g-recaptcha)/i;
 
   var widget, dialog, form, successView, messageRegion, honeypot, pill;
   var mailchimpForm = null;
@@ -213,7 +212,6 @@
       }
     }
     showMessage('success', '');
-    fireEvent('generate_lead', { method: 'lead_magnet_widget' });
     setCooldown();
     applyCooldownState();
 
@@ -290,11 +288,15 @@
     return input || null;
   }
 
-  function submitForm(evt){
-    evt.preventDefault();
+  async function submitForm(evt){
+    if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
+    if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
+    if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
+
     if (!form) return;
     if (honeypot && honeypot.value) {
       showSuccess();
+      fireEvent('generate_lead', { method: 'lead_magnet_widget' });
       return;
     }
 
@@ -355,66 +357,52 @@
     var tags = buildTags(utms);
     params.append('contact[tags]', tags.join(','));
 
+    var encounteredChallenge = false;
+
     setSubmittingState(submitBtn, true);
     showMessage('info', 'Working on it…');
 
-    var handledOutcome = 'pending';
+    try {
+      var res = await fetch('/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        credentials: 'same-origin',
+        body: params.toString()
+      });
 
-    fetch('/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      credentials: 'same-origin',
-      body: params.toString()
-    }).then(function(res){
-      var isSuccess = !!(res && (res.ok || res.status === 302 || res.status === 303 || res.redirected === true));
-      if (!isSuccess) {
+      var ok = !!(res && (res.ok || res.status === 302 || res.status === 303 || res.redirected === true));
+      if (!ok) {
         throw new Error('Unsuccessful response');
       }
-      if (typeof console !== 'undefined' && console.info) {
-        console.info('NB LM: newsletter submit treated as success (status ' + res.status + ', redirected=' + res.redirected + ')');
-      }
-      return res.text().then(function(body){
-        if (res.redirected) {
-          var targetUrl = res.url || '';
-          var challengeDetected = false;
-          if (targetUrl && targetUrl.indexOf('/challenge') !== -1) {
-            challengeDetected = true;
-          } else if (body && CHALLENGE_PATTERN.test(body)) {
-            challengeDetected = true;
-          }
-          if (challengeDetected) {
-            handledOutcome = 'challenge';
-            markPendingSuccess();
-            setSubmittingState(submitBtn, false);
-            if (typeof window !== 'undefined' && window.location && typeof window.location.assign === 'function') {
-              window.location.assign(targetUrl || '/challenge');
-            }
-            return { challenge: true };
-          }
+
+      var finalURL = (res && res.url) || '';
+      var isChallenge = !!(res && res.redirected && /\/challenge/i.test(finalURL));
+
+      if (isChallenge) {
+        encounteredChallenge = true;
+        markPendingSuccess();
+        if (typeof window !== 'undefined' && window.location && typeof window.location.assign === 'function') {
+          window.location.assign(finalURL || '/challenge');
         }
-        return { body: body };
-      });
-    }).then(function(result){
-      if (result && result.challenge) {
         return;
       }
-      handledOutcome = 'success';
+
       showSuccess();
+      fireEvent('generate_lead', { method: 'lead_magnet_widget' });
       submitMailchimpMirror(first, last, email);
-    }).then(function(){
-      if (handledOutcome !== 'challenge') {
-        setSubmittingState(submitBtn, false);
-      }
-    }).catch(function(err){
-      handledOutcome = 'error';
+    } catch (err) {
+      if (encounteredChallenge) return;
       console.error('Lead magnet submit failed', err);
       showMessage('error', 'We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
-      setSubmittingState(submitBtn, false);
-    });
+    } finally {
+      if (!encounteredChallenge) {
+        setSubmittingState(submitBtn, false);
+      }
+    }
   }
 
   function handleKeydown(evt){
@@ -443,33 +431,50 @@
     }
   }
 
-  function openModal(trigger){
+  function openModal(trigger, opts){
+    var options = opts || {};
     if (!widget) return;
     lastTrigger = trigger || document.activeElement;
     clearCooldown();
     applyCooldownState();
-    if (form) {
-      form.removeAttribute('aria-hidden');
-      form.style.removeProperty('display');
+    if (!options.showSuccess) {
+      if (form) {
+        form.removeAttribute('aria-hidden');
+        form.style.removeProperty('display');
+      }
+      if (successView) {
+        successView.setAttribute('hidden', 'hidden');
+        successView.style.display = 'none';
+      }
+      clearFieldErrors();
+      showMessage('info', '');
     }
-    if (successView) {
-      successView.setAttribute('hidden', 'hidden');
-      successView.style.display = 'none';
-    }
-    clearFieldErrors();
-    showMessage('info', '');
     widget.hidden = false;
     widget.classList.add('is-active');
     widget.setAttribute('aria-hidden', 'false');
     if (dialog) dialog.setAttribute('aria-hidden', 'false');
     if (pill) pill.setAttribute('aria-expanded', 'true');
-    var focusTarget = form ? getFieldInput('email') : null;
+    if (options.showSuccess) {
+      showSuccess();
+    }
+    var focusTarget = null;
+    if (options.showSuccess && successView) {
+      var successFocusables = getFocusable(successView);
+      focusTarget = successFocusables.length ? successFocusables[0] : null;
+    }
+    if (!focusTarget) {
+      focusTarget = form ? getFieldInput('email') : null;
+    }
     if (!focusTarget) focusTarget = dialog;
     window.requestAnimationFrame(function(){
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus();
       }
     });
+  }
+
+  function openLeadMagnetModal(opts){
+    openModal(null, opts || {});
   }
 
   function closeModal(opts){
@@ -513,7 +518,7 @@
     }
 
     if (form) {
-      form.addEventListener('submit', submitForm);
+      form.addEventListener('submit', submitForm, { once: false });
     }
   }
 
@@ -560,11 +565,21 @@
     bindEvents();
 
     if (shouldResumeSuccess) {
-      openModal();
-      showSuccess();
+      openLeadMagnetModal({ showSuccess: true });
+      try {
+        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+          window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
+        }
+      } catch (err) {
+        // ignore analytics resume errors
+      }
       var resumeSubmit = form && form.querySelector('[type="submit"]');
       setSubmittingState(resumeSubmit, false);
     }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.openLeadMagnetModal = openLeadMagnetModal;
   }
 
   if (document.readyState === 'loading') {
