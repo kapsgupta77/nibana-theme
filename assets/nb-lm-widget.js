@@ -284,6 +284,11 @@
     clearFieldErrors();
     showMessage('info', '');
 
+    var submitBtn = form.querySelector('[type="submit"]');
+    if (submitBtn && submitBtn.dataset.nbLmSubmitting === 'true') {
+      return;
+    }
+
     var first = getFieldValue('first_name');
     var last = getFieldValue('last_name');
     var email = getFieldValue('email');
@@ -333,7 +338,6 @@
     var tags = buildTags(utms);
     params.append('contact[tags]', tags.join(','));
 
-    var submitBtn = form.querySelector('[type="submit"]');
     setSubmittingState(submitBtn, true);
     showMessage('info', 'Working on it…');
 
@@ -343,8 +347,12 @@
       credentials: 'same-origin',
       body: params.toString()
     }).then(function(res){
-      if (!(res && (res.ok || res.status === 302 || res.redirected === true))) {
+      var isSuccess = !!(res && (res.ok || res.status === 302 || res.status === 303 || res.redirected === true));
+      if (!isSuccess) {
         throw new Error('Unsuccessful response');
+      }
+      if (typeof console !== 'undefined' && console.info) {
+        console.info('NB LM: newsletter submit treated as success (status ' + res.status + ', redirected=' + res.redirected + ')');
       }
       return res.text();
     }).then(function(){
@@ -352,7 +360,7 @@
       submitMailchimpMirror(first, last, email);
     }).catch(function(err){
       console.error('Lead magnet submit failed', err);
-      showMessage('error', 'We hit a snag — please try again.');
+      showMessage('error', 'We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
