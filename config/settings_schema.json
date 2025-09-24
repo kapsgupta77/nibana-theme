@@ -2339,8 +2339,7 @@
       {
         "type": "text",
         "id": "lm_mc_action",
-        "label": "Mailchimp form action URL",
-        "default": ""
+        "label": "Mailchimp form action URL"
       }
     ]
   }
