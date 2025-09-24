@@ -16,7 +16,6 @@
   var mailchimpFields = {};
   var spinnerStyleInjected = false;
   var lastTrigger = null;
-  var lastSubmitContext = null;
 
   function now(){ return Date.now(); }
 
@@ -206,18 +205,16 @@
     setSubmittingState(btn || getSubmitButton(), false);
   }
 
-  function showInlineError(text){
-    showMessage('error', text);
+  function setSubmitting(isSubmitting){
+    if (isSubmitting) {
+      disableSubmitButton();
+    } else {
+      enableSubmitButton();
+    }
   }
 
-  function trackGenerateLead(){
-    try {
-      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-        window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
-      }
-    } catch (err) {
-      // ignore analytics errors
-    }
+  function showInlineError(text){
+    showMessage('error', text);
   }
 
   function showSuccessPanel(){
@@ -329,31 +326,6 @@
     return (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
   }
 
-  function nativeFallbackSubmit(context){
-    if (!form) return false;
-    var ctx = context || lastSubmitContext || {};
-    var rootUrl = ctx.rootUrl || formRootUrl() || '/';
-    form.setAttribute('action', rootUrl);
-    form.method = 'POST';
-    form.enctype = 'application/x-www-form-urlencoded';
-    form.noValidate = true;
-
-    ensureHidden('form_type', 'customer');
-    ensureHidden('utf8', '✓');
-    ensureHidden('contact[email]', ctx.email || emailValue());
-    ensureHidden('contact[first_name]', ctx.first || firstNameValue());
-    ensureHidden('contact[last_name]', ctx.last || lastNameValue());
-    ensureHidden('contact[tags]', ctx.tags || makeTagString(collectUtmsForSubmit()));
-
-    try {
-      form.submit();
-      return true;
-    } catch (err) {
-      console.error('Lead magnet native fallback failed', err);
-      return false;
-    }
-  }
-
   function clearFieldErrors(){
     if (!form) return;
     var fields = form.querySelectorAll('[data-nb-lm-field]');
@@ -395,9 +367,6 @@
     if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
 
     if (honeypot && honeypot.value) {
-      showSuccessPanel();
-      trackGenerateLead();
-      enableSubmitButton();
       return;
     }
 
@@ -432,7 +401,6 @@
     }
 
     if (hasErrors) {
-      showInlineError('Please complete the required fields.');
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus();
       }
@@ -441,99 +409,43 @@
 
     fireEvent('lead_submit', { form: 'lm_widget', location: 'sticky_modal' });
 
-    disableSubmitButton(submitBtn);
+    setSubmitting(true);
+
     var utms = collectUtmsForSubmit();
     var tags = makeTagString(utms);
+    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
+    var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || formRootUrl() || '/';
 
-    var params = new URLSearchParams();
-    params.append('form_type', 'customer');
-    params.append('utf8', '✓');
-    params.append('contact[email]', email);
-    params.append('contact[first_name]', first);
-    params.append('contact[last_name]', last);
-    params.append('contact[tags]', tags);
-
-    var rootUrl = formRootUrl();
-
-    lastSubmitContext = {
-      first: first,
-      last: last,
-      email: email,
-      tags: tags,
-      rootUrl: rootUrl
-    };
+    ensureHidden('form_type', 'customer');
+    ensureHidden('utf8', '\u2713');
+    ensureHidden('contact[email]', email);
+    ensureHidden('contact[first_name]', first);
+    ensureHidden('contact[last_name]', last);
+    ensureHidden('contact[tags]', tags);
 
     submitMailchimpMirror(first, last, email);
 
-    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
-    var res = null;
-    var bodySnippet = '';
-    var finalURL = '';
+    markPendingSuccess();
+
+    form.setAttribute('action', rootUrl);
+    form.method = 'POST';
+    form.enctype = 'application/x-www-form-urlencoded';
+    form.noValidate = true;
+
+    console.info('NB LM: native Shopify submit');
 
     try {
-      res = await fetch(rootUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        credentials: 'same-origin',
-        redirect: 'follow',
-        body: params.toString()
-      });
-      try {
-        bodySnippet = (await res.clone().text()).slice(0, 200);
-      } catch (errSnippet) {}
-      finalURL = res && res.url ? res.url : '';
+      form.submit();
     } catch (err) {
-      res = null;
-    }
-
-    var okish = res && (res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
-      res.status === 302 || res.status === 303 || res.redirected === true);
-    var looksChallenge = (finalURL && /\/challenge/i.test(finalURL)) || /h-captcha|g-recaptcha/i.test(bodySnippet);
-
-    if (okish && !looksChallenge) {
-      showSuccessPanel();
-      trackGenerateLead();
-      enableSubmitButton(submitBtn);
-      return;
-    }
-
-    var fallbackSucceeded = false;
-    var shouldFallback = (!okish || looksChallenge || !res);
-
-    if (shouldFallback) {
-      markPendingSuccess();
-      form.setAttribute('action', (widgetEl && widgetEl.getAttribute('data-root-url')) || rootUrl || '/');
-      form.method = 'POST';
-      form.enctype = 'application/x-www-form-urlencoded';
-      form.noValidate = true;
-
-      ensureHidden('form_type', 'customer');
-      ensureHidden('utf8', '✓');
-      ensureHidden('contact[email]', email);
-      ensureHidden('contact[first_name]', first);
-      ensureHidden('contact[last_name]', last);
-      ensureHidden('contact[tags]', tags);
-
-      try {
-        form.submit();
-        fallbackSucceeded = true;
-      } catch (fallbackErr) {
-        fallbackSucceeded = false;
-      }
-      if (fallbackSucceeded) {
-        return;
-      }
-    }
-
-    if (shouldFallback && !fallbackSucceeded) {
+      console.error('NB LM: native submit failed', err);
+      safeStorage(function(){ localStorage.removeItem(STORAGE_PENDING_SUCCESS); });
       showInlineError('We hit a snag—please try again.');
+      setSubmitting(false);
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
     }
-
-    enableSubmitButton(submitBtn);
   }
 
   function handleKeydown(evt){
@@ -702,7 +614,7 @@
           window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
         }
       } catch (err) {}
-      enableSubmitButton(form && form.querySelector('[type="submit"]'));
+      setSubmitting(false);
     }
   }
 
