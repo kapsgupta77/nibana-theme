@@ -16,6 +16,7 @@
   var mailchimpFields = {};
   var spinnerStyleInjected = false;
   var lastTrigger = null;
+  var lastSubmitContext = null;
 
   function now(){ return Date.now(); }
 
@@ -278,7 +279,79 @@
 
   function getFieldValue(name){
     var input = getFieldInput(name);
-    return input && typeof input.value === 'string' ? input.value.trim() : '';
+    if (!input || typeof input.value !== 'string') return '';
+    var value = input.value.trim();
+    input.value = value;
+    return value;
+  }
+
+  function firstNameValue(){
+    return getFieldValue('first_name');
+  }
+
+  function lastNameValue(){
+    return getFieldValue('last_name');
+  }
+
+  function emailValue(){
+    return getFieldValue('email');
+  }
+
+  function ensureHidden(name, value){
+    if (!form) return null;
+    var input = form.querySelector('input[name="' + name + '"]');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      form.appendChild(input);
+    }
+    input.value = value || '';
+    return input;
+  }
+
+  function collectUtmsForSubmit(){
+    var current = parseSearchParams(window.location.search);
+    var stored = loadUtms();
+    var merged = Object.assign({}, stored, current);
+    if (!Object.keys(stored).length && Object.keys(current).length) {
+      saveUtms(current);
+    }
+    return merged;
+  }
+
+  function makeTagString(utms){
+    return buildTags(utms).join(',');
+  }
+
+  function formRootUrl(){
+    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
+    return (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
+  }
+
+  function nativeFallbackSubmit(context){
+    if (!form) return false;
+    var ctx = context || lastSubmitContext || {};
+    var rootUrl = ctx.rootUrl || formRootUrl() || '/';
+    form.setAttribute('action', rootUrl);
+    form.method = 'POST';
+    form.enctype = 'application/x-www-form-urlencoded';
+    form.noValidate = true;
+
+    ensureHidden('form_type', 'customer');
+    ensureHidden('utf8', '✓');
+    ensureHidden('contact[email]', ctx.email || emailValue());
+    ensureHidden('contact[first_name]', ctx.first || firstNameValue());
+    ensureHidden('contact[last_name]', ctx.last || lastNameValue());
+    ensureHidden('contact[tags]', ctx.tags || makeTagString(collectUtmsForSubmit()));
+
+    try {
+      form.submit();
+      return true;
+    } catch (err) {
+      console.error('Lead magnet native fallback failed', err);
+      return false;
+    }
   }
 
   function clearFieldErrors(){
@@ -315,11 +388,16 @@
     return input || null;
   }
 
-  async function handleSubmit(){
+  async function onSubmit(evt){
     if (!form) return;
+    if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
+    if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
+    if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
+
     if (honeypot && honeypot.value) {
       showSuccessPanel();
       trackGenerateLead();
+      enableSubmitButton();
       return;
     }
 
@@ -331,9 +409,9 @@
       return;
     }
 
-    var first = getFieldValue('first_name');
-    var last = getFieldValue('last_name');
-    var email = getFieldValue('email');
+    var first = firstNameValue();
+    var last = lastNameValue();
+    var email = emailValue();
 
     var hasErrors = false;
     var focusTarget = null;
@@ -363,93 +441,88 @@
 
     fireEvent('lead_submit', { form: 'lm_widget', location: 'sticky_modal' });
 
+    disableSubmitButton(submitBtn);
+    showMessage('info', 'Working on it…');
+
+    var utms = collectUtmsForSubmit();
+    var tags = makeTagString(utms);
+
     var params = new URLSearchParams();
     params.append('form_type', 'customer');
     params.append('utf8', '✓');
     params.append('contact[email]', email);
-    params.append('contact[accepts_marketing]', 'true');
     params.append('contact[first_name]', first);
     params.append('contact[last_name]', last);
+    params.append('contact[tags]', tags);
 
-    var utmsCurrent = parseSearchParams(window.location.search);
-    var stored = loadUtms();
-    var utms = Object.assign({}, stored, utmsCurrent);
-    if (!Object.keys(stored).length && Object.keys(utmsCurrent).length) {
-      saveUtms(utmsCurrent);
-    }
-    var tags = buildTags(utms);
-    params.append('contact[tags]', tags.join(','));
+    var rootUrl = formRootUrl();
 
-    var encounteredChallenge = false;
-    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
-    var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
+    lastSubmitContext = {
+      first: first,
+      last: last,
+      email: email,
+      tags: tags,
+      rootUrl: rootUrl
+    };
 
-    disableSubmitButton(submitBtn);
-    showMessage('info', 'Working on it…');
+    submitMailchimpMirror(first, last, email);
+
+    var res = null;
+    var bodySnippet = '';
+    var finalURL = '';
 
     try {
-      var res = await fetch(rootUrl, {
+      res = await fetch(rootUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         credentials: 'same-origin',
         redirect: 'follow',
         body: params.toString()
       });
-
-      var snippet = '';
       try {
-        snippet = (await res.clone().text()).slice(0, 200);
+        bodySnippet = (await res.clone().text()).slice(0, 200);
       } catch (errSnippet) {
-        // ignore diagnostics errors
+        // swallow diagnostics errors
       }
-      console.info('[NB LM] submit status:', res.status, 'ok:', res.ok, 'redirected:', res.redirected, 'url:', res.url, 'body:', snippet);
-
-      var okish = res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
-        res.status === 302 || res.status === 303 || res.redirected === true;
-
-      var finalURL = res && res.url ? res.url : '';
-      var isChallengeUrl = /\/challenge/i.test(finalURL);
-      var isChallengeBody = /h-captcha|g-recaptcha/i.test(snippet);
-
-      if (isChallengeUrl || isChallengeBody) {
-        encounteredChallenge = true;
-        markPendingSuccess();
-        try {
-          if (typeof window !== 'undefined' && window.location && typeof window.location.assign === 'function') {
-            window.location.assign(finalURL || '/challenge');
-          }
-        } catch (redirectErr) {
-          console.error('Lead magnet challenge redirect failed', redirectErr);
-        }
-        return;
-      }
-
-      if (okish) {
-        showSuccessPanel();
-        trackGenerateLead();
-        submitMailchimpMirror(first, last, email);
-        enableSubmitButton(submitBtn);
-        return;
-      }
-
-      showInlineError('We hit a snag—please try again.');
-      var errorFocusInline = getFieldInput('email');
-      if (errorFocusInline && typeof errorFocusInline.focus === 'function') {
-        errorFocusInline.focus();
-      }
+      finalURL = res && res.url ? res.url : '';
     } catch (err) {
-      if (encounteredChallenge) return;
       console.error('Lead magnet submit failed', err);
+    }
+
+    var okish = res && (res.ok || res.status === 200 || res.status === 201 || res.status === 204 ||
+      res.status === 302 || res.status === 303 || res.redirected === true);
+    var looksChallenge = (finalURL && /\/challenge/i.test(finalURL)) || /h-captcha|g-recaptcha/i.test(bodySnippet);
+
+    if (res && okish && !looksChallenge) {
+      showSuccessPanel();
+      trackGenerateLead();
+      enableSubmitButton(submitBtn);
+      return;
+    }
+
+    var networkError = !res;
+    var shouldFallback = networkError || (res && (!okish || looksChallenge));
+    var fallbackOk = false;
+
+    if (shouldFallback) {
+      if (!networkError) {
+        markPendingSuccess();
+      }
+      fallbackOk = nativeFallbackSubmit(lastSubmitContext);
+      if (fallbackOk) {
+        return;
+      }
+    }
+
+    if (networkError) {
       showInlineError('We hit a snag—please try again.');
       var errorFocus = getFieldInput('email');
       if (errorFocus && typeof errorFocus.focus === 'function') {
         errorFocus.focus();
       }
-    } finally {
-      if (!encounteredChallenge) {
-        enableSubmitButton(submitBtn);
-      }
     }
+
+    enableSubmitButton(submitBtn);
   }
 
   function handleKeydown(evt){
@@ -565,12 +638,7 @@
     }
 
     if (form) {
-      form.addEventListener('submit', function(evt){
-        if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
-        if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
-        if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
-        handleSubmit();
-      });
+      form.addEventListener('submit', onSubmit, { capture: true });
     }
   }
 
