@@ -1,9 +1,5 @@
 <!doctype html>
-<html
-  class="no-js{% if request.design_mode %} shopify-design-mode{% endif %} lm-provider-{{ settings.lm_provider }}"
-  data-lm-provider="{{ settings.lm_provider }}"
-  lang="{{ request.locale.iso_code }}"
->
+<html class="no-js{% if request.design_mode %} shopify-design-mode{% endif %} lm-provider-{{ settings.lm_provider }}" data-lm-provider="{{ settings.lm_provider }}" lang="{{ request.locale.iso_code }}">
   <head>
     {%- render 'stylesheets' -%}
     {{ 'nb-visuals.css' | asset_url | stylesheet_tag }}
@@ -411,48 +407,6 @@ It:
   }
 </style>
 
-<script id="nb-fab-lift-v2">
-(function () {
-  var root = document.documentElement;
-
-  // Look for common Mailchimp bottom-bar wrappers
-  var BAR_SELECTOR = '.mcforms-wrapper, [id^="mcforms-"], [id^="mc-"], [class*="mailchimp"]';
-
-  function num(v){ v = parseFloat(v); return isNaN(v) ? 0 : v; }
-
-  function barHeight(el){
-    if(!el) return 0;
-    var r = el.getBoundingClientRect();
-    var cs = getComputedStyle(el);
-    if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return 0;
-    // include external margins to lift cleanly above the pill
-    return Math.round(r.height + num(cs.marginTop) + num(cs.marginBottom));
-  }
-
-  function applyLift(){
-    var bar = document.querySelector(BAR_SELECTOR);
-    var h = barHeight(bar);
-    root.style.setProperty('--nb-fab-lift', (h || 0) + 'px');
-  }
-
-  // Recompute when the bar reflows/animates/opens
-  var mo = new MutationObserver(applyLift);
-
-  function init(){
-    applyLift();
-    var bar = document.querySelector(BAR_SELECTOR);
-    if (bar) mo.observe(bar, { attributes: true, childList: true, subtree: true });
-  }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.addEventListener('resize', applyLift, { passive: true });
-})();
-</script>
 <script>
 /* NIBANA — GA4 tracking: global book links (deduped), header CTA, Calendly */
 (function () {
@@ -520,5 +474,6 @@ It:
 {% render 'nb-customer-intake' %}
 <script src="{{ 'nb-lm-widget.js' | asset_url }}" defer></script>
 <script src="{{ 'nb-contact.js' | asset_url }}" defer></script>
+{{ 'nb-fab-lift-v2.js' | asset_url | script_tag }}
   </body>
 </html>
