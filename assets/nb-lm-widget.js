@@ -262,15 +262,15 @@
     return value;
   }
 
-  function firstNameValue(){
+  function getFirstName(){
     return getFieldValue('first_name');
   }
 
-  function lastNameValue(){
+  function getLastName(){
     return getFieldValue('last_name');
   }
 
-  function emailValue(){
+  function getEmail(){
     return getFieldValue('email');
   }
 
@@ -353,9 +353,9 @@
       return;
     }
 
-    var first = firstNameValue();
-    var last = lastNameValue();
-    var email = emailValue();
+    var first = getFirstName();
+    var last = getLastName();
+    var email = getEmail();
 
     var hasErrors = false;
     var focusTarget = null;
@@ -392,7 +392,7 @@
     var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
 
     ensureHidden('form_type', 'customer');
-    ensureHidden('utf8', '\u2713');
+    ensureHidden('utf8', '✓');
     ensureHidden('contact[email]', email);
     ensureHidden('contact[first_name]', first);
     ensureHidden('contact[last_name]', last);
@@ -402,8 +402,10 @@
 
     try { localStorage.setItem(STORAGE_PENDING_SUCCESS, '1'); } catch (_) {}
 
-    var mc = mailchimpForm || (widgetEl && widgetEl.querySelector('[data-nb-mc-mirror="lm"]'));
-    try { if (mc && typeof mc.submit === 'function') mc.submit(); } catch (_) {}
+    try {
+      var mc = mailchimpForm || (widgetEl && widgetEl.querySelector('[data-nb-mc-mirror="lm"]'));
+      if (mc && typeof mc.submit === 'function') mc.submit();
+    } catch (_) {}
 
     form.setAttribute('action', rootUrl);
     form.method = 'POST';
@@ -414,6 +416,7 @@
 
     try {
       form.submit();
+      return;
     } catch (err) {
       console.error('NB LM: native submit failed', err);
       safeStorage(function(){ localStorage.removeItem(STORAGE_PENDING_SUCCESS); });
@@ -560,13 +563,6 @@
     if (!widget || !form) return;
 
     honeypot = ensureHoneypot();
-    var shouldResumeSuccess = false;
-    try {
-      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) === '1') {
-        localStorage.removeItem(STORAGE_PENDING_SUCCESS);
-        shouldResumeSuccess = true;
-      }
-    } catch (_) {}
 
     if (successView) {
       var successLink = successView.querySelector('a.nb-cta');
@@ -591,11 +587,15 @@
     applyCooldownState();
     bindEvents();
 
-    if (shouldResumeSuccess) {
-      openLeadMagnetModal({ showSuccess: true });
-      try { window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' }); } catch (_) {}
-      setSubmitting(false);
-    }
+    (function resumeLmSuccess(){
+      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) === '1') {
+        localStorage.removeItem(STORAGE_PENDING_SUCCESS);
+        openLeadMagnetModal({ showSuccess: true });
+        try { window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' }); } catch (_) {}
+        setSubmitting(false);
+        console.info('NB LM: resumed success after Shopify round-trip');
+      }
+    })();
   }
 
   if (typeof window !== 'undefined') {
