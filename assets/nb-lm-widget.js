@@ -238,6 +238,49 @@
     }
   }
 
+  function hasShopifySuccess(){
+    try {
+      var qs = new URLSearchParams(window.location.search || '');
+      if (qs.get('contact_posted') === 'true') return true;
+      if (qs.get('customer_posted') === 'true') return true;
+      if (qs.get('form_type') === 'customer') return true;
+    } catch (_) {}
+
+    var successSelectors = [
+      '.contact-form__success',
+      '.form-status-list--success',
+      '.form-status.form-status--success',
+      '[data-form-status="success"]'
+    ];
+
+    for (var i = 0; i < successSelectors.length; i += 1) {
+      var node = document.querySelector(successSelectors[i]);
+      if (node && node.textContent.trim()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function getShopifyErrorMessage(){
+    var errorSelectors = [
+      '.contact-form__error',
+      '.form-status-list--error',
+      '.form-status.form-status--error',
+      '[data-form-status="error"]'
+    ];
+
+    for (var i = 0; i < errorSelectors.length; i += 1) {
+      var node = document.querySelector(errorSelectors[i]);
+      if (node && node.textContent.trim()) {
+        return node.textContent.trim();
+      }
+    }
+
+    return '';
+  }
+
   function buildTags(utms){
     var tags = BASE_TAGS.slice();
     if (utms) {
@@ -337,27 +380,26 @@
 
   function onLmSubmit(evt){
     if (!form) return;
-    if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
-    if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
-    if (evt && typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
+
+    var shouldPrevent = false;
 
     if (honeypot && honeypot.value) {
-      return;
+      shouldPrevent = true;
     }
 
     clearFieldErrors();
     showMessage('info', '');
 
     var submitBtn = getSubmitButton();
-    if (submitBtn && submitBtn.dataset.nbLmSubmitting === 'true') {
-      return;
+    if (!shouldPrevent && submitBtn && submitBtn.dataset.nbLmSubmitting === 'true') {
+      shouldPrevent = true;
     }
 
     var first = getFirstName();
     var last = getLastName();
     var email = getEmail();
 
-    var hasErrors = false;
+    var hasErrors = shouldPrevent;
     var focusTarget = null;
 
     if (!first) {
@@ -376,9 +418,19 @@
     }
 
     if (hasErrors) {
+      shouldPrevent = true;
       if (focusTarget && typeof focusTarget.focus === 'function') {
         focusTarget.focus();
       }
+    }
+
+    if (evt && shouldPrevent) {
+      if (typeof evt.preventDefault === 'function') evt.preventDefault();
+      if (typeof evt.stopPropagation === 'function') evt.stopPropagation();
+      if (typeof evt.stopImmediatePropagation === 'function') evt.stopImmediatePropagation();
+    }
+
+    if (shouldPrevent) {
       return;
     }
 
@@ -413,21 +465,7 @@
     form.enctype = 'application/x-www-form-urlencoded';
     form.noValidate = true;
 
-    console.info('NB LM: native-submit launched');
-
-    try {
-      form.submit();
-      return;
-    } catch (err) {
-      console.error('NB LM: native submit failed', err);
-      safeStorage(function(){ localStorage.removeItem(STORAGE_PENDING_SUCCESS); });
-      showInlineError('We hit a snag—please try again.');
-      setSubmitting(false);
-      var errorFocus = getFieldInput('email');
-      if (errorFocus && typeof errorFocus.focus === 'function') {
-        errorFocus.focus();
-      }
-    }
+    console.info('NB LM: handing submit to Shopify');
   }
 
   function handleKeydown(evt){
@@ -589,12 +627,27 @@
     bindEvents();
 
     (function resumeLmSuccess(){
-      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) === '1') {
-        localStorage.removeItem(STORAGE_PENDING_SUCCESS);
+      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) !== '1') return;
+
+      localStorage.removeItem(STORAGE_PENDING_SUCCESS);
+
+      if (hasShopifySuccess()) {
         openLeadMagnetModal({ showSuccess: true });
         try { window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' }); } catch (_) {}
         setSubmitting(false);
         console.info('NB LM: resumed success after Shopify round-trip');
+        return;
+      }
+
+      setSubmitting(false);
+      openLeadMagnetModal({ showSuccess: false });
+      var serverError = getShopifyErrorMessage();
+      if (serverError) {
+        showInlineError(serverError);
+        console.warn('NB LM: Shopify reported an error: ' + serverError);
+      } else {
+        showInlineError('We couldn\'t confirm your signup. Please try again.');
+        console.warn('NB LM: Shopify did not report success.');
       }
     })();
   }
