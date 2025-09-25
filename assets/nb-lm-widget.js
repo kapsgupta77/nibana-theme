@@ -1,6 +1,13 @@
 (function(){
   'use strict';
 
+  var html = document.documentElement;
+  var provider = html.getAttribute('data-lm-provider') || 'mailchimp';
+  if (provider !== 'shopify') {
+    console.info('NB LM: native widget disabled (provider=' + provider + ')');
+    return;
+  }
+
   var RELAY_PATH = '/dl/connection-guide';
   var STORAGE_UTM = 'nb_lm_widget_utms';
   var STORAGE_COOLDOWN = 'nb_lm_widget_cooldown';
