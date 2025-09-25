@@ -65,21 +65,6 @@
   }
 
 
-  function markPendingSuccess(){
-    safeStorage(function(){ localStorage.setItem(STORAGE_PENDING_SUCCESS, '1'); });
-  }
-
-
-  function consumePendingSuccess(){
-    var pending = safeStorage(function(){ return localStorage.getItem(STORAGE_PENDING_SUCCESS); });
-    if (pending === '1') {
-      safeStorage(function(){ localStorage.removeItem(STORAGE_PENDING_SUCCESS); });
-      return true;
-    }
-    return false;
-  }
-
-
   function withinCooldown(){
     var ts = safeStorage(function(){ return localStorage.getItem(STORAGE_COOLDOWN); });
     if (!ts) return false;
@@ -242,19 +227,14 @@
 
   }
 
-  function submitMailchimpMirror(first, last, email){
+  function primeMailchimpMirror(first, last, email){
     if (!mailchimpForm) return;
     try {
       if (mailchimpFields.first) mailchimpFields.first.value = first || '';
       if (mailchimpFields.last) mailchimpFields.last.value = last || '';
       if (mailchimpFields.email) mailchimpFields.email.value = email || '';
-      if (mailchimpForm.requestSubmit) {
-        mailchimpForm.requestSubmit();
-      } else {
-        mailchimpForm.submit();
-      }
     } catch (err) {
-      console.warn('NB LM: Mailchimp mirror submit skipped', err);
+      console.warn('NB LM: Mailchimp mirror sync skipped', err);
     }
   }
 
@@ -282,15 +262,15 @@
     return value;
   }
 
-  function firstNameValue(){
+  function getFirstName(){
     return getFieldValue('first_name');
   }
 
-  function lastNameValue(){
+  function getLastName(){
     return getFieldValue('last_name');
   }
 
-  function emailValue(){
+  function getEmail(){
     return getFieldValue('email');
   }
 
@@ -319,11 +299,6 @@
 
   function makeTagString(utms){
     return buildTags(utms).join(',');
-  }
-
-  function formRootUrl(){
-    var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
-    return (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
   }
 
   function clearFieldErrors(){
@@ -360,7 +335,7 @@
     return input || null;
   }
 
-  async function onLmSubmit(evt){
+  function onLmSubmit(evt){
     if (!form) return;
     if (evt && typeof evt.preventDefault === 'function') evt.preventDefault();
     if (evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
@@ -378,9 +353,9 @@
       return;
     }
 
-    var first = firstNameValue();
-    var last = lastNameValue();
-    var email = emailValue();
+    var first = getFirstName();
+    var last = getLastName();
+    var email = getEmail();
 
     var hasErrors = false;
     var focusTarget = null;
@@ -414,28 +389,34 @@
     var utms = collectUtmsForSubmit();
     var tags = makeTagString(utms);
     var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
-    var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || formRootUrl() || '/';
+    var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
 
     ensureHidden('form_type', 'customer');
-    ensureHidden('utf8', '\u2713');
+    ensureHidden('utf8', '✓');
     ensureHidden('contact[email]', email);
     ensureHidden('contact[first_name]', first);
     ensureHidden('contact[last_name]', last);
     ensureHidden('contact[tags]', tags);
 
-    submitMailchimpMirror(first, last, email);
+    primeMailchimpMirror(first, last, email);
 
-    markPendingSuccess();
+    try { localStorage.setItem(STORAGE_PENDING_SUCCESS, '1'); } catch (_) {}
+
+    try {
+      var mc = mailchimpForm || (widgetEl && widgetEl.querySelector('[data-nb-mc-mirror="lm"]'));
+      if (mc && typeof mc.submit === 'function') mc.submit();
+    } catch (_) {}
 
     form.setAttribute('action', rootUrl);
     form.method = 'POST';
     form.enctype = 'application/x-www-form-urlencoded';
     form.noValidate = true;
 
-    console.info('NB LM: native Shopify submit');
+    console.info('NB LM: native-submit launched');
 
     try {
       form.submit();
+      return;
     } catch (err) {
       console.error('NB LM: native submit failed', err);
       safeStorage(function(){ localStorage.removeItem(STORAGE_PENDING_SUCCESS); });
@@ -572,7 +553,7 @@
     successView = widget && widget.querySelector('[data-nb-lm-success]');
     messageRegion = widget && widget.querySelector('[data-nb-lm-message]');
     pill = document.querySelector('[data-nb-lm-pill]');
-    mailchimpForm = widget && widget.querySelector('#nb-lm-mc');
+    mailchimpForm = widget && widget.querySelector('[data-nb-mc-mirror="lm"]');
     if (mailchimpForm) {
       mailchimpFields.first = mailchimpForm.querySelector('#nb-lm-mc-fname');
       mailchimpFields.last = mailchimpForm.querySelector('#nb-lm-mc-lname');
@@ -582,7 +563,6 @@
     if (!widget || !form) return;
 
     honeypot = ensureHoneypot();
-    var shouldResumeSuccess = consumePendingSuccess();
 
     if (successView) {
       var successLink = successView.querySelector('a.nb-cta');
@@ -607,15 +587,15 @@
     applyCooldownState();
     bindEvents();
 
-    if (shouldResumeSuccess) {
-      openLeadMagnetModal({ showSuccess: true });
-      try {
-        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-          window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' });
-        }
-      } catch (err) {}
-      setSubmitting(false);
-    }
+    (function resumeLmSuccess(){
+      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) === '1') {
+        localStorage.removeItem(STORAGE_PENDING_SUCCESS);
+        openLeadMagnetModal({ showSuccess: true });
+        try { window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' }); } catch (_) {}
+        setSubmitting(false);
+        console.info('NB LM: resumed success after Shopify round-trip');
+      }
+    })();
   }
 
   if (typeof window !== 'undefined') {
