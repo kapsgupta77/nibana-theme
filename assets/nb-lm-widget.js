@@ -243,6 +243,7 @@
       var qs = new URLSearchParams(window.location.search || '');
       if (qs.get('contact_posted') === 'true') return true;
       if (qs.get('customer_posted') === 'true') return true;
+
       if (qs.get('form_type') === 'customer') return true;
     } catch (_) {}
 
@@ -648,7 +649,13 @@
       } else {
         showInlineError('We couldn\'t confirm your signup. Please try again.');
         console.warn('NB LM: Shopify did not report success.');
+
       }
+
+      setSubmitting(false);
+      openLeadMagnetModal({ showSuccess: false });
+      showInlineError('We couldn\'t confirm your signup. Please try again.');
+      console.warn('NB LM: Shopify did not report success.');
     })();
   }
 
