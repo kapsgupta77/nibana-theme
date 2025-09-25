@@ -77,12 +77,13 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
+    "lm_provider": "mailchimp",
     "lm_title": "5 Shifts that create Real Connection",
     "content_for_index": [],
     "blocks": {
       "18131037017812181619": {
         "type": "shopify://apps/mailchimp-email-sms/blocks/mailchimp_for_shopify_script/e3b67dce-fd41-4b61-b3cf-961c12344cde",
-        "disabled": true,
+        "disabled": false,
         "settings": {}
       },
       "14339172867238703359": {
