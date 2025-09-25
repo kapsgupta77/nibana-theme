@@ -390,6 +390,7 @@
     var tags = makeTagString(utms);
     var widgetEl = widget || (form && form.closest('[data-nb-lm-widget]'));
     var rootUrl = (widgetEl && widgetEl.getAttribute('data-root-url')) || '/';
+    var contactUrl = widgetEl && widgetEl.getAttribute('data-contact-url');
 
     ensureHidden('form_type', 'customer');
     ensureHidden('utf8', '✓');
@@ -407,7 +408,7 @@
       if (mc && typeof mc.submit === 'function') mc.submit();
     } catch (_) {}
 
-    form.setAttribute('action', rootUrl);
+    form.setAttribute('action', contactUrl || rootUrl);
     form.method = 'POST';
     form.enctype = 'application/x-www-form-urlencoded';
     form.noValidate = true;
