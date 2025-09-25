@@ -5000,10 +5000,10 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
   .nb-fab.is-hidden{ transform: translateY(120%); opacity: 0; }
 }
 
-/* === FAB vs Mailchimp (mobile lift + left align) === */
+/* --- FAB lift defaults and positioning --- */
 :root {
   --nb-fab-gap: 16px;
-  --nb-fab-lift: 0px; /* set by JS */
+  --nb-fab-lift: 0px;
 }
 
 /* Ensure the FAB can sit above overlays */
@@ -5024,6 +5024,12 @@ section.testimonial-section h2 , rte-formatter.spacing-style.text-block.text-blo
     );
 
     transform: none; /* never centered */
+  }
+}
+/* Mobile: when Mailchimp provider is active, reserve safe gap even if JS hasn't measured yet */
+@media (max-width: 749px) {
+  .lm-provider-mailchimp {
+    --nb-fab-lift: 72px; /* safe default so Book-a-call clears the Mailchimp pill */
   }
 }
 /* Hide the mobile FAB on tablet/desktop */
