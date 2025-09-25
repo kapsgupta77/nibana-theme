@@ -2325,6 +2325,16 @@
     "name": "Lead magnet",
     "settings": [
       {
+        "type": "select",
+        "id": "lm_provider",
+        "label": "Lead magnet provider",
+        "default": "mailchimp",
+        "options": [
+          { "value": "mailchimp", "label": "Mailchimp (popup)" },
+          { "value": "shopify",  "label": "Shopify (native)" }
+        ]
+      },
+      {
         "type": "text",
         "id": "lm_widget_label",
         "label": "Lead magnet button label",

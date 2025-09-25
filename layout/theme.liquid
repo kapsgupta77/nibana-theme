@@ -1,6 +1,7 @@
 <!doctype html>
 <html
-  class="no-js{% if request.design_mode %} shopify-design-mode{% endif %}"
+  class="no-js{% if request.design_mode %} shopify-design-mode{% endif %} lm-provider-{{ settings.lm_provider }}"
+  data-lm-provider="{{ settings.lm_provider }}"
   lang="{{ request.locale.iso_code }}"
 >
   <head>
@@ -510,7 +511,9 @@ It:
   });
 })();
 </script>
-{% render 'nb-lm-widget' %}
+{% if settings.lm_provider == 'shopify' %}
+  {% render 'nb-lm-widget' %}
+{% endif %}
 {% render 'nb-sticky-cta-controller' %}
 {% render 'nb-anim-init' %}
 {% render 'nb-newsletter-proxy' %}
