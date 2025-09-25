@@ -238,6 +238,17 @@
     }
   }
 
+  function hasShopifySuccess(){
+    try {
+      var qs = new URLSearchParams(window.location.search || '');
+      if (qs.get('contact_posted') === 'true') return true;
+      if (qs.get('customer_posted') === 'true') return true;
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function buildTags(utms){
     var tags = BASE_TAGS.slice();
     if (utms) {
@@ -589,13 +600,22 @@
     bindEvents();
 
     (function resumeLmSuccess(){
-      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) === '1') {
-        localStorage.removeItem(STORAGE_PENDING_SUCCESS);
+      if (localStorage.getItem(STORAGE_PENDING_SUCCESS) !== '1') return;
+
+      localStorage.removeItem(STORAGE_PENDING_SUCCESS);
+
+      if (hasShopifySuccess()) {
         openLeadMagnetModal({ showSuccess: true });
         try { window.gtag('event', 'generate_lead', { method: 'lead_magnet_widget' }); } catch (_) {}
         setSubmitting(false);
         console.info('NB LM: resumed success after Shopify round-trip');
+        return;
       }
+
+      setSubmitting(false);
+      openLeadMagnetModal({ showSuccess: false });
+      showInlineError('We couldn\'t confirm your signup. Please try again.');
+      console.warn('NB LM: Shopify did not report success.');
     })();
   }
 
