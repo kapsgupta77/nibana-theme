@@ -377,27 +377,6 @@
 .nb-quiz__score--stabiliser  .nb-quiz__score-bar > b { background: #74a29b; }
 .nb-quiz__score--defuser     .nb-quiz__score-bar > b { background: #2f3e48; }
 
-/* Tip card polish */
-.nb-quiz__tip-card {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 10px;
-  align-items: start;
-  margin-top: 12px;
-  padding: 12px 14px;
-  background: #ffffff;
-  border: 1px solid #E5E7EB;
-  border-left: 4px solid var(--nb-teal, #10636c);
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.05);
-}
-
-.nb-quiz__tip-icon {
-  line-height: 1;
-  font-size: 18px;
-  margin-top: 2px;
-}
-
 .nb-quiz__tip-text {
   color: var(--nb-text, #203039);
 }
