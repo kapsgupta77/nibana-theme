@@ -38,18 +38,6 @@
         "success_btn_url": "/pages/dl-connection-guide"
       }
     },
-    "nb_testimonials_slider_k8K67M": {
-      "type": "nb-testimonials-slider",
-      "name": "Testimonials slider",
-      "settings": {
-        "heading": "Testimonials",
-        "subheading": "What our client’s say",
-        "source": "metaobject",
-        "limit": 9,
-        "cta_label": "View all",
-        "cta_link": "/pages/testimonial"
-      }
-    },
     "nb_faq_UrXHxW": {
       "type": "nb-faq",
       "blocks": {
@@ -95,12 +83,38 @@
         "answer": "#EAF4F3",
         "emit_jsonld": true
       }
+    },
+    "testimonials_cW4kTb": {
+      "type": "testimonials",
+      "name": "Testimonials (Slider)",
+      "settings": {
+        "heading": "What our clients say",
+        "subheading": "-",
+        "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "christopher-thomas",
+          "bhavesh-dhaka",
+          "santiago-ruge",
+          "sandipan"
+        ],
+        "limit": 12,
+        "tag_filter": "All",
+        "show_filter": false,
+        "carousel": true,
+        "per_view": 3,
+        "cta_label": "View all",
+        "cta_link": "/pages/testimonial",
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "nb_trustbelt_9D874z",
     "main",
-    "nb_testimonials_slider_k8K67M",
+    "testimonials_cW4kTb",
     "nb_faq_UrXHxW"
   ]
 }
