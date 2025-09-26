@@ -80,10 +80,8 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
           <div id="nb-lm-views">
             <!-- FORM VIEW -->
             <div id="nb-lm-form-wrap" aria-hidden="false">
-              <form id="nb-lm-form" class="nb-lead-landing__form" method="post" action="{{ routes.root_url }}" novalidate>
-                <input type="hidden" name="form_type" value="customer">
-                <input type="hidden" name="utf8" value="✓">
-                <input type="hidden" name="return_to" value="{{ request.path }}#nb-lm-form">
+              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', novalidate: 'novalidate', return_to: request.path | append: '#nb-lm-form' %}
+                {%- comment -%} Keep tags in a hidden input {%- endcomment -%}
                 <input type="hidden" id="nb-lm-tags" name="contact[tags]" value="{{ base_tag_value }}" data-base="{{ base_tag_value }}" data-nb-lm-tags>
 
                 <div class="nb-lead-landing__fields">
@@ -121,7 +119,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
                     <p>Please check the highlighted fields and try again.</p>
                   </div>
                 {% endif %}
-              </form>
+              {% endform %}
             </div>
 
             <!-- SUCCESS VIEW -->
