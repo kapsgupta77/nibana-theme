@@ -1,0 +1,56 @@
+{% comment %}
+Simple redirect helper — shows message, optional noindex meta, then redirects to target URL.
+{% endcomment %}
+
+<section id="nb-redirect-{{ section.id }}" class="nb-redirect">
+  {% if section.settings.noindex %}
+    <meta name="robots" content="noindex,follow">
+  {% endif %}
+
+  <div class="nb-redirect__wrap">
+    <p class="nb-redirect__message">Opening your guide…</p>
+  </div>
+
+  <script>
+    (function(){
+      try {
+        if (window.gtag) {
+          window.gtag('event', 'asset_open', { asset: 'connection_guide' });
+        } else if (window.dataLayer && window.dataLayer.push) {
+          window.dataLayer.push({ event: 'asset_open', asset: 'connection_guide' });
+        }
+      } catch(_) {}
+      var target = {{ section.settings.target_url | json }};
+      if (!target) return;
+      try {
+        window.location.replace(target);
+      } catch(_) {
+        window.location.href = target;
+      }
+    })();
+  </script>
+
+  <style>
+    .nb-redirect{
+      padding-block: clamp(80px, 16vw, 160px);
+      text-align: center;
+    }
+    .nb-redirect__message{
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      color: var(--nb-ink, #1f2c2a);
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "NB Redirect",
+  "settings": [
+    { "type": "text", "id": "target_url", "label": "Target URL" },
+    { "type": "checkbox", "id": "noindex", "label": "Add noindex", "default": true }
+  ],
+  "presets": [
+    { "name": "NB Redirect" }
+  ]
+}
+{% endschema %}
