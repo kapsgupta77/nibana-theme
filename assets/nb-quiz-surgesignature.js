@@ -107,6 +107,50 @@
         return quiz.scoring[maxKey];
       }
 
+      function renderScoreBreakdown({ quiz, answers, container }) {
+        if (!container || !quiz || !Array.isArray(answers) || !answers.length) return;
+
+        // Map letters -> style keys (e.g., {A:'accelerator', B:'stabiliser', C:'defuser'})
+        // This exists in the JSON; try both likely shapes for safety.
+        var letterToStyle = (quiz.scoring && quiz.scoring.map) || quiz.scoring || {};
+        var styles = quiz.styles || {};
+
+        // Tally counts
+        var totals = {};
+        var totalAnswers = 0;
+        answers.forEach(function(letter){
+          var key = letterToStyle[letter];
+          if (!key) return;
+          totals[key] = (totals[key] || 0) + 1;
+          totalAnswers += 1;
+        });
+
+        if (!totalAnswers) return;
+
+        // Build DOM
+        var html = '<div class="nb-quiz__scores-title">Your mix</div><ul class="nb-quiz__scores-list">';
+        ['accelerator','stabilizer','defuser'].forEach(function(key){
+          var styleDef = styles[key] || styles[key === 'stabilizer' ? 'stabiliser' : key];
+          if (!styleDef) return;
+          var totalKey = totals[key] !== undefined ? key : (key === 'stabilizer' ? 'stabiliser' : key);
+          var count = totals[totalKey] || 0;
+          var pct = Math.round((count / totalAnswers) * 100);
+          var classKey = key === 'stabilizer' ? 'stabiliser' : key;
+          var label = styleDef.title || (classKey.charAt(0).toUpperCase() + classKey.slice(1));
+          html += [
+            '<li class="nb-quiz__score nb-quiz__score--', classKey, '">',
+              '<span class="nb-quiz__score-label">', label, '</span>',
+              '<span class="nb-quiz__score-pct">', pct, '%</span>',
+              '<div class="nb-quiz__score-bar"><b style="width:', pct, '%"></b></div>',
+            '</li>'
+          ].join('');
+        });
+        html += '</ul>';
+
+        container.innerHTML = html;
+        container.hidden = false;
+      }
+
       function onComplete(){
         const elapsed = Date.now() - startedAt;
         const style = tally();
@@ -121,7 +165,6 @@
         const s = quiz.styles[style] || {};
 
         appEl.hidden = true;
-        resultEl.hidden = false;
 
         if (header) header.style.display = 'none';
 
@@ -135,6 +178,13 @@
         if (practiceEl) {
           practiceEl.textContent = s.practice_preview ? `Try this: ${s.practice_preview}` : '';
         }
+
+        try {
+          var scoresEl = resultEl ? resultEl.querySelector('[data-nb-quiz-scores]') : null;
+          renderScoreBreakdown({ quiz: quiz, answers: state.answers || [], container: scoresEl });
+        } catch (_){ }
+
+        resultEl.hidden = false;
 
         const thanksLink = resultEl.querySelector('[data-nb-quiz-thanks] a');
         if (thanksLink) thanksLink.setAttribute('href', `/pages/surge-signature-result?style=${style}`);
