@@ -69,7 +69,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
           <div id="nb-lm-views">
             <!-- FORM VIEW -->
             <div id="nb-lm-form-wrap" aria-hidden="false">
-              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', novalidate: 'novalidate' %}
+              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', action: request.path | append: '#nb-lm-form', novalidate: 'novalidate' %}
                 {% if form.posted_successfully? %}
                   {% liquid assign posted_success = true %}
                 {% endif %}
@@ -79,6 +79,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
 
                 <input type="hidden" name="form_type" value="customer">
                 <input type="hidden" name="utf8" value="✓">
+                <input type="hidden" name="return_to" value="{{ request.path }}#nb-lm-form">
                 <input type="hidden" id="nb-lm-tags" name="contact[tags]" value="{{ base_tag_value }}" data-base="{{ base_tag_value }}" data-nb-lm-tags>
 
                 <div class="nb-lead-landing__fields">
@@ -125,8 +126,8 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
               <h2 data-nb-success-heading tabindex="-1">{{ success_title }}</h2>
               <p>{{ success_body }}</p>
               <div class="nb-lm-success__actions">
-                <a href="{{ success_btn_url | escape }}" class="nb-cta nb-cta--primary">{{ success_btn_label | escape }}</a>
-                <a href="/pages/book-a-call" class="nb-cta nb-cta--secondary">Book a discovery call</a>
+                <a href="{{ success_btn_url | escape }}" class="nb-cta nb-cta--md nb-cta--teal">{{ success_btn_label | escape }}</a>
+                <a href="/pages/book-a-call" class="nb-cta nb-cta--md nb-cta--choc">Book a discovery call</a>
               </div>
             </div>
           </div>
@@ -305,7 +306,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       box-shadow: 0 10px 24px color-mix(in srgb, var(--nb-teal-700, #0f5b62) 20%, transparent);
     }
     .nb-lead-landing__submit:not([disabled]):hover,
-    .nb-lm-success__actions .nb-cta.nb-cta--secondary:hover{
+    .nb-lm-success__actions .nb-cta.nb-cta--teal:hover{
       background: var(--nb-teal, #10636c);
     }
     .nb-lead-landing__submit[disabled]{
@@ -349,14 +350,14 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       align-items: center;
       justify-content: center;
     }
-    .nb-lm-success__actions .nb-cta.nb-cta--primary{
+    .nb-lm-success__actions .nb-cta.nb-cta--choc{
       background: var(--nb-chocolate, #d16c28);
       color: #fff;
     }
-    .nb-lm-success__actions .nb-cta.nb-cta--primary:hover{
+    .nb-lm-success__actions .nb-cta.nb-cta--choc:hover{
       background: var(--nb-choc-600, #b85f23);
     }
-    .nb-lm-success__actions .nb-cta.nb-cta--secondary{
+    .nb-lm-success__actions .nb-cta.nb-cta--teal{
       background: var(--nb-teal-700, #0f5b62);
       color: #fff;
     }
