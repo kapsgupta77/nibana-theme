@@ -13,6 +13,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
   assign success_body = section.settings.success_body | default: "Open your copy now — we’ve also emailed it to you."
   assign success_btn_label = section.settings.success_btn_label | default: "Open the guide"
   assign success_btn_url = section.settings.success_btn_url | default: '/pages/dl-connection-guide'
+  assign nb_lm_return_to = request.path | append: '#nb-lm-form'
 
   assign posted_param = request.params.customer_posted
   if posted_param == 'true' or posted_param == '1'
@@ -80,7 +81,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
           <div id="nb-lm-views">
             <!-- FORM VIEW -->
             <div id="nb-lm-form-wrap" aria-hidden="false">
-              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', novalidate: 'novalidate', return_to: request.path | append: '#nb-lm-form' %}
+              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', novalidate: 'novalidate', return_to: nb_lm_return_to %}
                 {%- comment -%} Keep tags in a hidden input {%- endcomment -%}
                 <input type="hidden" id="nb-lm-tags" name="contact[tags]" value="{{ base_tag_value }}" data-base="{{ base_tag_value }}" data-nb-lm-tags>
 
