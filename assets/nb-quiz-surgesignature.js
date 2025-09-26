@@ -107,6 +107,99 @@
         return quiz.scoring[maxKey];
       }
 
+      function renderScoreBreakdown({ quiz, answers, container, styleKey }) {
+        if (!container || !quiz || !Array.isArray(answers) || !answers.length) return;
+
+        // Map letters -> style keys, tolerate either quiz.scoring.map or quiz.scoring
+        var letterToStyle = (quiz.scoring && quiz.scoring.map) || quiz.scoring || {};
+        var styles = quiz.styles || {};
+
+        // Tally counts per style
+        var totals = {};
+        var totalAnswers = 0;
+        answers.forEach(function(letter){
+          var key = letterToStyle[letter];
+          if (!key) return;
+          totals[key] = (totals[key] || 0) + 1;
+          totalAnswers += 1;
+        });
+
+        if (!totalAnswers) return;
+
+        // Build the scores UI (label + count/total + bar that fills by %)
+        var html = '<div class="nb-quiz__scores-title">Your mix</div><ul class="nb-quiz__scores-list">';
+        ['accelerator','stabiliser','defuser'].forEach(function(key){
+          var styleDef = styles[key] || (key === 'stabiliser' ? styles.stabilizer : null);
+          if (!styleDef) return;
+          var count = (totals[key] !== undefined ? totals[key] : (key === 'stabiliser' ? totals.stabilizer : undefined)) || 0;
+          var pct = Math.round((count / totalAnswers) * 100);
+          var label = styleDef.title || (key.charAt(0).toUpperCase() + key.slice(1));
+
+          html += [
+            '<li class="nb-quiz__score nb-quiz__score--', key, '">',
+              '<span class="nb-quiz__score-label">', label, '</span>',
+              '<span class="nb-quiz__score-count">', count, '/', totalAnswers, '</span>',
+              '<div class="nb-quiz__score-bar" aria-label="', label, ' score ', count, ' of ', totalAnswers, '">',
+                '<b style="width:', pct, '%"></b>',
+              '</div>',
+            '</li>'
+          ].join('');
+        });
+        html += '</ul>';
+
+        container.innerHTML = html;
+        container.hidden = false;
+      }
+
+      function renderWinningTip({ quiz, styleKey, tipEl }) {
+        if (!quiz || !styleKey) return;
+
+        // Find/create a single tip container
+        tipEl = tipEl || document.getElementById('nb-quiz-tip')
+              || document.querySelector('.nb-quiz__tip, .nb-quiz__free-insight');
+
+        if (!tipEl) {
+          // Create a fallback container in the left column if none exists
+          var leftCol = document.querySelector('#nb-quiz__left, .nb-quiz__left, .nb-quiz__main, .nb-quiz__result-left');
+          if (leftCol) {
+            tipEl = document.createElement('div');
+            tipEl.id = 'nb-quiz-tip';
+            tipEl.className = 'nb-quiz__tip';
+            leftCol.appendChild(tipEl);
+          } else {
+            return;
+          }
+        }
+
+        // Remove / hide any old per-style tip fragments
+        try {
+          document.querySelectorAll('.nb-quiz__tip[data-style], .nb-quiz__free-insight[data-style]')
+            .forEach(function (el) { el.remove(); });
+        } catch (_){ }
+
+        var style = quiz.styles && quiz.styles[styleKey];
+        if (!style) { tipEl.innerHTML = ''; return; }
+
+        // ✅ The JSON stores this as practice_preview
+        var tipText = style.practice_preview
+                   || style.practice
+                   || style.tip
+                   || style.quick_tip
+                   || style.try
+                   || style.try_this
+                   || '';
+
+        tipText = (tipText || '').toString().trim();
+        if (!tipText) { tipEl.innerHTML = ''; return; }
+
+        tipEl.innerHTML = [
+          '<div class="nb-quiz__tip-card" role="note">',
+            '<div class="nb-quiz__tip-icon" aria-hidden="true">💡</div>',
+            '<div class="nb-quiz__tip-text"><strong>Try this:</strong> ', tipText, '</div>',
+          '</div>'
+        ].join('');
+      }
+
       function onComplete(){
         const elapsed = Date.now() - startedAt;
         const style = tally();
@@ -121,7 +214,6 @@
         const s = quiz.styles[style] || {};
 
         appEl.hidden = true;
-        resultEl.hidden = false;
 
         if (header) header.style.display = 'none';
 
@@ -135,6 +227,32 @@
         if (practiceEl) {
           practiceEl.textContent = s.practice_preview ? `Try this: ${s.practice_preview}` : '';
         }
+
+        try {
+          var scoresEl = document.querySelector('[data-nb-quiz-scores]');
+          var styleKey = style;
+          var winningKey = (typeof styleKey !== 'undefined') ? styleKey
+                        : (state && state.result && state.result.style) ? state.result.style
+                        : null;
+
+          renderScoreBreakdown({
+            quiz: quiz,
+            answers: (state && state.answers) ? state.answers : [],
+            container: scoresEl,
+            styleKey: winningKey
+          });
+
+          var tipEl = document.getElementById('nb-quiz-tip')
+                 || document.querySelector('.nb-quiz__tip, .nb-quiz__free-insight');
+
+          renderWinningTip({
+            quiz: quiz,
+            styleKey: winningKey,
+            tipEl: tipEl
+          });
+        } catch (_){ }
+
+        resultEl.hidden = false;
 
         const thanksLink = resultEl.querySelector('[data-nb-quiz-thanks] a');
         if (thanksLink) thanksLink.setAttribute('href', `/pages/surge-signature-result?style=${style}`);
