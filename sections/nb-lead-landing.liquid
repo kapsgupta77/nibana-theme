@@ -113,11 +113,13 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
           {% endif %}
         </div>
 
-        <div class="nb-lead-landing__form-wrap">
-          {{ form_markup }}
+        <div class="nb-lead-landing__form-wrap nb-lm-col--right">
+          <div id="nb-lm-form-wrap">
+            {{ form_markup }}
+          </div>
 
-          <div class="nb-lead-landing__success" data-nb-lm-success{% unless posted_success %} hidden{% endunless %}>
-            <h2 class="nb-lead-landing__success-title" data-nb-lm-success-title tabindex="-1">{{ success_title }}</h2>
+          <div class="nb-lead-landing__success" id="nb-lm-success" hidden aria-hidden="true">
+            <h2 class="nb-lead-landing__success-title" data-nb-success-heading tabindex="-1">{{ success_title }}</h2>
             <p class="nb-lead-landing__success-body">{{ success_body }}</p>
             <div class="nb-lead-landing__success-ctas">
               <a class="nb-btn nb-btn--teal" href="{{ success_btn_url | escape }}">{{ success_btn_label }}</a>
@@ -375,27 +377,33 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
     }
   </style>
 
+  {% style %}
+    #nb-lead-landing-{{ section.id }} .nb-lm-col--right { padding: clamp(12px, 2vw, 20px); }
+  {% endstyle %}
+
   <script>
     (function(){
-      var section = document.getElementById('nb-lead-landing-{{ section.id }}');
-      if (!section) return;
-      var form = section.querySelector('#nb-lead-landing-form');
-      var state = section.querySelector('[data-nb-lm-state]');
-      var success = section.querySelector('[data-nb-lm-success]');
-      var consent = section.querySelector('[data-nb-lm-consent]');
-      var hint = section.querySelector('[data-nb-lm-consent-hint]');
-      var submit = section.querySelector('[data-nb-lm-submit]');
-      var tagsInput = section.querySelector('[data-nb-lm-tags]');
-      var accepts = section.querySelector('[data-nb-lm-accepts]');
-      var nameInput = section.querySelector('[data-nb-lm-fullname]');
-      var firstInput = section.querySelector('[data-nb-lm-first]');
-      var lastInput = section.querySelector('[data-nb-lm-last]');
-      var emailInput = section.querySelector('[data-nb-lm-email]');
-      var mcForm = section.querySelector('[data-nb-lm-mc]');
-      var mcEmail = section.querySelector('#nblm-mc-email');
-      var mcFname = section.querySelector('#nblm-mc-fname');
-      var mcLname = section.querySelector('#nblm-mc-lname');
-      var mcTags = section.querySelector('#nblm-mc-tags');
+      var root = document.getElementById('nb-lead-landing-{{ section.id }}');
+      if (!root) return;
+      var formWrap = root.querySelector('#nb-lm-form-wrap');
+      var form = root.querySelector('#nb-lead-landing-form');
+      var state = root.querySelector('[data-nb-lm-state]');
+      var success = root.querySelector('#nb-lm-success');
+      var successH = success ? success.querySelector('[data-nb-success-heading]') : null;
+      var consent = root.querySelector('[data-nb-lm-consent]');
+      var hint = root.querySelector('[data-nb-lm-consent-hint]');
+      var submit = root.querySelector('[data-nb-lm-submit]');
+      var tagsInput = root.querySelector('[data-nb-lm-tags]');
+      var accepts = root.querySelector('[data-nb-lm-accepts]');
+      var nameInput = root.querySelector('[data-nb-lm-fullname]');
+      var firstInput = root.querySelector('[data-nb-lm-first]');
+      var lastInput = root.querySelector('[data-nb-lm-last]');
+      var emailInput = root.querySelector('[data-nb-lm-email]');
+      var mcForm = root.querySelector('[data-nb-lm-mc]');
+      var mcEmail = root.querySelector('#nblm-mc-email');
+      var mcFname = root.querySelector('#nblm-mc-fname');
+      var mcLname = root.querySelector('#nblm-mc-lname');
+      var mcTags = root.querySelector('#nblm-mc-tags');
 
       function safeString(value){
         return (value || '').replace(/\s+/g, ' ').trim();
@@ -463,18 +471,32 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
         } catch(_) {}
       }
 
-      function showSuccess(){
-        if (!success || !form) return;
-        form.setAttribute('hidden', 'hidden');
-        success.hidden = false;
-        var title = success.querySelector('[data-nb-lm-success-title]');
-        if (title){
-          try {
-            title.focus();
-          } catch(_) {}
+      function showLmSuccess(){
+        if (!formWrap || !success) return;
+        formWrap.setAttribute('hidden', '');
+        formWrap.setAttribute('aria-hidden', 'true');
+        if (form) {
+          form.setAttribute('hidden', '');
+          form.setAttribute('aria-hidden', 'true');
         }
-        fireEvent('generate_lead', { form_id: 'nb-lead-landing' });
+        success.removeAttribute('hidden');
+        success.setAttribute('aria-hidden', 'false');
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'generate_lead', { method: 'lead_magnet_landing' });
+          }
+        } catch(e){}
+        fireEvent('generate_lead', { method: 'lead_magnet_landing', form_id: 'nb-lead-landing' });
+        if (successH && typeof successH.focus === 'function') {
+          setTimeout(function(){ successH.focus(); }, 0);
+        }
       }
+
+      // Call showLmSuccess() from your existing submit/accept path:
+      //  - If you already have a success callback after Shopify accepts (or after AJAX success),
+      //    replace that call with showLmSuccess().
+      //  - If you rely on native submit + challenge, be sure the submit handler sets:
+      //      localStorage.setItem('nb_lm_pending_success','1');
 
       appendUtms();
       if (consent){
@@ -504,22 +526,26 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
         }, { capture: true });
       }
 
-      var pending = false;
-      try {
-        pending = localStorage.getItem('nb_lm_pending_success') === '1';
-      } catch(_) {}
-
       var posted = state && state.getAttribute('data-posted') === 'true';
       var errors = state && state.getAttribute('data-errors') === 'true';
 
-      if (errors && pending){
+      if (errors){
         try { localStorage.removeItem('nb_lm_pending_success'); } catch(_) {}
-        pending = false;
       }
 
-      if ((pending || posted) && !errors){
-        showSuccess();
+      if (posted && !errors){
+        showLmSuccess();
         try { localStorage.removeItem('nb_lm_pending_success'); } catch(_) {}
+      }
+
+      // Resume path (after challenge redirect)
+      if (!errors){
+        try {
+          if (localStorage.getItem('nb_lm_pending_success') === '1') {
+            localStorage.removeItem('nb_lm_pending_success');
+            showLmSuccess();
+          }
+        } catch(_) {}
       }
     })();
   </script>
