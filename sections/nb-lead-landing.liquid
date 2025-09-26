@@ -33,6 +33,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
 >
   {% style %}
     #nb-lead-landing-{{ section.id }} [hidden] { display: none !important; }
+    #nb-lead-landing-{{ section.id }} .nb-consent-hint { margin-top: 6px; font-size: 0.9rem; opacity: .9; }
     #nb-lead-landing-{{ section.id }} .nb-lm-col--right { padding: clamp(12px, 2vw, 20px); }
   {% endstyle %}
 
@@ -107,13 +108,15 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
 
                 <div class="nb-lead-landing__consent">
                   <label class="nb-lead-landing__checkbox">
-                    <input type="checkbox" id="nblm-consent" data-nb-lm-consent>
+                    <input type="checkbox" id="nblm-consent" name="nblm-consent" data-nb-lm-consent>
                     <span>{{ section.settings.consent_text | default: "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy." }}</span>
                   </label>
-                  <p class="nb-lead-landing__consent-hint" data-nb-lm-consent-hint>Tick this to proceed…</p>
+                  <p class="nb-consent-hint" data-consent-hint aria-live="polite" hidden>
+                    Please tick the box to proceed.
+                  </p>
                 </div>
 
-                <button type="submit" class="nb-btn nb-btn--teal nb-lead-landing__submit" data-nb-lm-submit disabled>Send me the guide</button>
+                <button type="submit" class="nb-cta nb-cta--md nb-cta--teal" disabled>Send me the guide</button>
 
                 {% if has_errors %}
                   <div class="form__message nb-lead-landing__error" role="alert" data-nb-lm-error>
@@ -289,34 +292,9 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       border: 2px solid color-mix(in oklab, var(--nb-ink, #1f2c2a), transparent 60%);
       accent-color: var(--nb-teal, #10636c);
     }
-    .nb-lead-landing__consent-hint{
-      margin: 0;
-      font-size: .9rem;
-      color: color-mix(in oklab, var(--nb-ink, #1f2c2a), transparent 40%);
-    }
-
-    .nb-lead-landing__submit{
-      font-weight: 600;
-      border-radius: 999px;
-      padding: 12px 20px;
-      border: none;
-      text-align: center;
-      cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease;
-      background: var(--nb-teal-700, #0f5b62);
-      color: #fff;
-      box-shadow: 0 10px 24px color-mix(in srgb, var(--nb-teal-700, #0f5b62) 20%, transparent);
-    }
-    .nb-lead-landing__submit:not([disabled]):hover,
     .nb-lm-success__actions .nb-cta.nb-cta--teal:hover{
       background: var(--nb-teal, #10636c);
     }
-    .nb-lead-landing__submit[disabled]{
-      cursor: not-allowed;
-      opacity: .6;
-      box-shadow: none;
-    }
-
     .nb-lead-landing__error{
       background: rgba(209,108,40,.08);
       border-left: 3px solid var(--nb-chocolate, #d16c28);
@@ -391,7 +369,8 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       var successH = success ? success.querySelector('[data-nb-success-heading]') : null;
       var form     = root.querySelector('#nb-lm-form');
       var consent  = form ? (form.querySelector('input[type="checkbox"][name*="consent"]') || form.querySelector('[data-nb-lm-consent]')) : null;
-      var submitBtn= form ? form.querySelector('button[type="submit"], [type="submit"]') : null;
+      var submit   = form ? form.querySelector('button, [type="submit"]') : null;
+      var hint     = root.querySelector('[data-consent-hint]');
 
       // Defensive: if success is visible on load without our pending flag, hide it.
       if (success && !success.hasAttribute('hidden') && !localStorage.getItem('nb_lm_pending_success')) {
@@ -420,7 +399,6 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       var firstInput = root.querySelector('[data-nb-lm-first]');
       var lastInput  = root.querySelector('[data-nb-lm-last]');
       var emailInput = root.querySelector('[data-nb-lm-email]');
-      var hint     = root.querySelector('[data-nb-lm-consent-hint]');
       var mcForm   = root.querySelector('[data-nb-lm-mc]');
       var mcEmail  = root.querySelector('#nblm-mc-email');
       var mcFname  = root.querySelector('#nblm-mc-fname');
@@ -479,32 +457,31 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
         } catch(_) {}
       }
 
-      function gateConsent(){
+      function setSubmitState(){
         var ok = !!(consent && consent.checked);
-        if (submitBtn) {
-          submitBtn.disabled = !ok;
-          submitBtn.setAttribute('aria-disabled', ok ? 'false' : 'true');
+        if (submit) {
+          submit.disabled = !ok;
+          submit.setAttribute('aria-disabled', ok ? 'false' : 'true');
         }
-        if (hint) hint.hidden = ok ? true : false;
         if (accepts) accepts.value = ok ? 'true' : 'false';
+        if (hint && ok) { hint.hidden = true; }
       }
 
       appendUtms();
 
       if (consent){
         consent.checked = false;
-        gateConsent();
-        consent.addEventListener('change', gateConsent);
-      } else {
-        gateConsent();
+        consent.addEventListener('change', setSubmitState);
       }
+      setSubmitState();
 
       if (form){
         form.addEventListener('submit', function(event){
           if (consent && !consent.checked){
             event.preventDefault();
-            gateConsent();
-            if (consent && typeof consent.focus === 'function') consent.focus();
+            setSubmitState();
+            if (hint) hint.hidden = false;
+            try { form.querySelector('input[type="checkbox"][name*="consent"]').focus(); } catch(e){ if (consent && typeof consent.focus === 'function') consent.focus(); }
             return;
           }
           var fullName = (safeString(firstInput && firstInput.value) + ' ' + safeString(lastInput && lastInput.value)).trim();

@@ -18,34 +18,25 @@
       </div>
     </div>
   {% else %}
-    {% if target != blank %}
-      <div class="nb-shell" style="max-width: 760px; margin: 24px auto;">
-        <div class="nb-home-contact__panel" style="padding: 20px;">
-          <p>Opening your guide…</p>
+    <div class="nb-shell" style="max-width:760px;margin:24px auto;">
+      <div class="nb-home-contact__panel" style="padding:20px;">
+        <p>Opening your guide…</p>
+        {% if target != blank %}
           <p><a href="{{ target }}">Click here if you are not redirected.</a></p>
-        </div>
-      </div>
-
-      <script>
-      (function () {
-        var url = {{ target | json }};
-        if (!url) return;
-        try {
-          if (typeof gtag === 'function') {
-            gtag('event', 'asset_open', { asset: 'connection_guide', method: 'redirect' });
-          }
-        } catch (e) {}
-        try { window.location.replace(url); } catch (e) { window.location.href = url; }
-      })();
-      </script>
-      <noscript><meta http-equiv="refresh" content="0; url={{ target | escape }}"></noscript>
-    {% else %}
-      <div class="nb-shell" style="max-width: 760px; margin: 24px auto;">
-        <div class="nb-home-contact__panel" style="padding: 20px;">
+          <meta http-equiv="refresh" content="0; url={{ target | escape }}">
+          <script>
+            (function(){ 
+              var url = {{ target | json }};
+              if (!url) return;
+              try { if (typeof gtag==='function') { gtag('event','asset_open',{asset:'connection_guide',source:(new URL(location.href)).searchParams.get('src')||'email'}); } } catch(e){}
+              try { window.location.replace(url); } catch(e) { window.location.href = url; }
+            })();
+          </script>
+        {% else %}
           <p>No target URL set.</p>
-        </div>
+        {% endif %}
       </div>
-    {% endif %}
+    </div>
   {% endif %}
 </section>
 
