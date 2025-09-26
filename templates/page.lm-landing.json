@@ -38,52 +38,6 @@
         "success_btn_url": "/pages/dl-connection-guide"
       }
     },
-    "nb_faq_UrXHxW": {
-      "type": "nb-faq",
-      "blocks": {
-        "item_7rxAYf": {
-          "type": "item",
-          "settings": {
-            "q": "What’s included?",
-            "a": "<p>Answer example.</p>",
-            "open": false
-          }
-        },
-        "item_B4xQiX": {
-          "type": "item",
-          "settings": {
-            "q": "How long is the call?",
-            "a": "<p>Answer example.</p>",
-            "open": false
-          }
-        },
-        "item_AtkYQG": {
-          "type": "item",
-          "settings": {
-            "q": "Your question here",
-            "a": "<p>Your answer text goes here.</p>",
-            "open": false
-          }
-        }
-      },
-      "block_order": [
-        "item_7rxAYf",
-        "item_B4xQiX",
-        "item_AtkYQG"
-      ],
-      "name": "NB — FAQ (Global)",
-      "settings": {
-        "title": "Frequently asked questions",
-        "width": "normal",
-        "wrap_shell": true,
-        "single_open": true,
-        "ink": "#223238",
-        "teal": "#0F5B59",
-        "shell_col": "#E5E8E1",
-        "answer": "#EAF4F3",
-        "emit_jsonld": true
-      }
-    },
     "testimonials_cW4kTb": {
       "type": "testimonials",
       "name": "Testimonials (Slider)",
@@ -108,6 +62,61 @@
         "color_scheme": "",
         "padding-block-start": 0,
         "padding-block-end": 0
+      }
+    },
+    "nb_faq_UrXHxW": {
+      "type": "nb-faq",
+      "blocks": {
+        "item_7rxAYf": {
+          "type": "item",
+          "settings": {
+            "q": "What’s inside the Connection Guide?",
+            "a": "<p>Five practical “shifts” with short prompts and mini-rituals to reduce friction, have more honest conversations, and feel closer again. It’s built for real life - no scripts to memorise.</p>",
+            "open": true
+          }
+        },
+        "item_B4xQiX": {
+          "type": "item",
+          "settings": {
+            "q": "Does this replace coaching?",
+            "a": "<p>No. It’s a self-guided resource to help you notice, pause, and reconnect. Coaching goes deeper; the Guide often makes those conversations easier.</p>",
+            "open": false
+          }
+        },
+        "item_AtkYQG": {
+          "type": "item",
+          "settings": {
+            "q": "How do I get the PDF after I close this page?",
+            "a": "<p>We email you a link immediately. You can re-open it any time from that email. Check your spam folder in the email in case you don't see it in your inbox.</p>",
+            "open": false
+          }
+        },
+        "item_tmMzLY": {
+          "type": "item",
+          "settings": {
+            "q": "Can I share the Guide?",
+            "a": "<p>Yes! Please forward the email to a friend or colleague who might benefit.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "item_7rxAYf",
+        "item_B4xQiX",
+        "item_AtkYQG",
+        "item_tmMzLY"
+      ],
+      "name": "NB — FAQ (Global)",
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#223238",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
+        "emit_jsonld": true
       }
     }
   },
