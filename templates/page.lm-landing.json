@@ -9,6 +9,20 @@
  */
 {
   "sections": {
+    "nb_trustbelt_9D874z": {
+      "type": "nb-trustbelt",
+      "name": "Trustbelt (Nibana)",
+      "settings": {
+        "heading": "",
+        "source": "service_metaobject",
+        "service": "transformational-life-coaching-helps-you-change-from-the-inside-out",
+        "layout": "inherit",
+        "speed": 22,
+        "items_text": "Trusted by founders\nLoved by couples\nUsed by executives",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
     "main": {
       "type": "nb-lead-landing",
       "settings": {
@@ -17,9 +31,16 @@
         "bullet_1": "Use simple “containers” to feel safe without control.",
         "bullet_2": "Follow real-time feeling instead of scripts.",
         "bullet_3": "Grow attention so small moments feel rich again.",
+        "consent_text": "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy.",
+        "success_title": "You’re in. Here’s your guide.",
+        "success_body": "Open your copy now — we’ve also emailed it to you.",
+        "success_btn_label": "Open the guide",
         "success_btn_url": "/pages/dl-connection-guide"
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "nb_trustbelt_9D874z",
+    "main"
+  ]
 }
