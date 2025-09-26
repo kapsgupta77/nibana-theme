@@ -1,5 +1,28 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "nb_trustbelt_9D874z": {
+      "type": "nb-trustbelt",
+      "name": "Trustbelt (Nibana)",
+      "settings": {
+        "heading": "",
+        "source": "service_metaobject",
+        "service": "transformational-life-coaching-helps-you-change-from-the-inside-out",
+        "layout": "inherit",
+        "speed": 22,
+        "items_text": "Trusted by founders\nLoved by couples\nUsed by executives",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
     "main": {
       "type": "nb-lead-landing",
       "settings": {
@@ -8,9 +31,99 @@
         "bullet_1": "Use simple “containers” to feel safe without control.",
         "bullet_2": "Follow real-time feeling instead of scripts.",
         "bullet_3": "Grow attention so small moments feel rich again.",
+        "consent_text": "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy.",
+        "success_title": "You’re in. Here’s your guide.",
+        "success_body": "Open your copy now — we’ve also emailed it to you.",
+        "success_btn_label": "Open the guide",
         "success_btn_url": "/pages/dl-connection-guide"
+      }
+    },
+    "testimonials_cW4kTb": {
+      "type": "testimonials",
+      "name": "Testimonials (Slider)",
+      "settings": {
+        "heading": "What our clients say",
+        "subheading": "-",
+        "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "christopher-thomas",
+          "bhavesh-dhaka",
+          "santiago-ruge",
+          "sandipan"
+        ],
+        "limit": 12,
+        "tag_filter": "All",
+        "show_filter": false,
+        "carousel": true,
+        "per_view": 3,
+        "cta_label": "View all",
+        "cta_link": "/pages/testimonial",
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "nb_faq_UrXHxW": {
+      "type": "nb-faq",
+      "blocks": {
+        "item_7rxAYf": {
+          "type": "item",
+          "settings": {
+            "q": "What’s inside the Connection Guide?",
+            "a": "<p>Five practical “shifts” with short prompts and mini-rituals to reduce friction, have more honest conversations, and feel closer again. It’s built for real life - no scripts to memorise.</p>",
+            "open": true
+          }
+        },
+        "item_B4xQiX": {
+          "type": "item",
+          "settings": {
+            "q": "Does this replace coaching?",
+            "a": "<p>No. It’s a self-guided resource to help you notice, pause, and reconnect. Coaching goes deeper; the Guide often makes those conversations easier.</p>",
+            "open": false
+          }
+        },
+        "item_AtkYQG": {
+          "type": "item",
+          "settings": {
+            "q": "How do I get the PDF after I close this page?",
+            "a": "<p>We email you a link immediately. You can re-open it any time from that email. Check your spam folder in the email in case you don't see it in your inbox.</p>",
+            "open": false
+          }
+        },
+        "item_tmMzLY": {
+          "type": "item",
+          "settings": {
+            "q": "Can I share the Guide?",
+            "a": "<p>Yes! Please forward the email to a friend or colleague who might benefit.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "item_7rxAYf",
+        "item_B4xQiX",
+        "item_AtkYQG",
+        "item_tmMzLY"
+      ],
+      "name": "NB — FAQ (Global)",
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#223238",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
+        "emit_jsonld": true
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "nb_trustbelt_9D874z",
+    "main",
+    "testimonials_cW4kTb",
+    "nb_faq_UrXHxW"
+  ]
 }

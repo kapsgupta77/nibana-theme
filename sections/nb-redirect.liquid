@@ -1,56 +1,57 @@
-{% comment %}
-Simple redirect helper — shows message, optional noindex meta, then redirects to target URL.
-{% endcomment %}
-
+{% comment %} Lead-magnet redirect section (editor-safe) {% endcomment %}
 <section id="nb-redirect-{{ section.id }}" class="nb-redirect">
-  {% if section.settings.noindex %}
-    <meta name="robots" content="noindex,follow">
+  {% assign target = section.settings.target_url | strip %}
+
+  {% if request.design_mode %}
+    <div class="nb-shell" style="max-width: 760px; margin: 24px auto;">
+      <div class="nb-home-contact__panel" style="padding: 20px;">
+        <h2 style="margin:0 0 8px;">Redirect preview</h2>
+        {% if target != blank %}
+          <p style="margin:0 0 12px;">This page will automatically redirect on the live site.</p>
+          <p style="margin:0 0 12px;"><strong>Target URL:</strong><br>
+            <a href="{{ target }}" target="_blank" rel="noopener">{{ target }}</a>
+          </p>
+          <p style="margin:0;">Auto-redirect is disabled in the Theme Editor so you can configure this section.</p>
+        {% else %}
+          <p style="margin:0;">Add a Target URL in the section settings to enable the redirect.</p>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <div class="nb-shell" style="max-width:760px;margin:24px auto;">
+      <div class="nb-home-contact__panel" style="padding:20px;">
+        <p>Opening your guide…</p>
+        {% if target != blank %}
+          <p><a href="{{ target }}">Click here if you are not redirected.</a></p>
+          <meta http-equiv="refresh" content="0; url={{ target | escape }}">
+          <script>
+            (function(){ 
+              var url = {{ target | json }};
+              if (!url) return;
+              try { if (typeof gtag==='function') { gtag('event','asset_open',{asset:'connection_guide',source:(new URL(location.href)).searchParams.get('src')||'email'}); } } catch(e){}
+              try { window.location.replace(url); } catch(e) { window.location.href = url; }
+            })();
+          </script>
+        {% else %}
+          <p>No target URL set.</p>
+        {% endif %}
+      </div>
+    </div>
   {% endif %}
-
-  <div class="nb-redirect__wrap">
-    <p class="nb-redirect__message">Opening your guide…</p>
-  </div>
-
-  <script>
-    (function(){
-      try {
-        if (window.gtag) {
-          window.gtag('event', 'asset_open', { asset: 'connection_guide' });
-        } else if (window.dataLayer && window.dataLayer.push) {
-          window.dataLayer.push({ event: 'asset_open', asset: 'connection_guide' });
-        }
-      } catch(_) {}
-      var target = {{ section.settings.target_url | json }};
-      if (!target) return;
-      try {
-        window.location.replace(target);
-      } catch(_) {
-        window.location.href = target;
-      }
-    })();
-  </script>
-
-  <style>
-    .nb-redirect{
-      padding-block: clamp(80px, 16vw, 160px);
-      text-align: center;
-    }
-    .nb-redirect__message{
-      font-size: clamp(1.2rem, 2vw, 1.6rem);
-      color: var(--nb-ink, #1f2c2a);
-    }
-  </style>
 </section>
 
 {% schema %}
 {
-  "name": "NB Redirect",
+  "name": "LM Redirect",
   "settings": [
     { "type": "text", "id": "target_url", "label": "Target URL" },
-    { "type": "checkbox", "id": "noindex", "label": "Add noindex", "default": true }
-  ],
-  "presets": [
-    { "name": "NB Redirect" }
+    { "type": "checkbox", "id": "noindex", "label": "Noindex this page", "default": true }
   ]
 }
 {% endschema %}
+
+{% stylesheet %}
+{% if section.settings.noindex %}
+<meta name="robots" content="noindex,follow">
+{% endif %}
+{% endstylesheet %}
