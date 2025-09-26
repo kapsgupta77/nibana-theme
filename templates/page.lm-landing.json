@@ -49,11 +49,58 @@
         "cta_label": "View all",
         "cta_link": "/pages/testimonial"
       }
+    },
+    "nb_faq_UrXHxW": {
+      "type": "nb-faq",
+      "blocks": {
+        "item_7rxAYf": {
+          "type": "item",
+          "settings": {
+            "q": "What’s included?",
+            "a": "<p>Answer example.</p>",
+            "open": false
+          }
+        },
+        "item_B4xQiX": {
+          "type": "item",
+          "settings": {
+            "q": "How long is the call?",
+            "a": "<p>Answer example.</p>",
+            "open": false
+          }
+        },
+        "item_AtkYQG": {
+          "type": "item",
+          "settings": {
+            "q": "Your question here",
+            "a": "<p>Your answer text goes here.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "item_7rxAYf",
+        "item_B4xQiX",
+        "item_AtkYQG"
+      ],
+      "name": "NB — FAQ (Global)",
+      "settings": {
+        "title": "Frequently asked questions",
+        "width": "normal",
+        "wrap_shell": true,
+        "single_open": true,
+        "ink": "#223238",
+        "teal": "#0F5B59",
+        "shell_col": "#E5E8E1",
+        "answer": "#EAF4F3",
+        "emit_jsonld": true
+      }
     }
   },
   "order": [
     "nb_trustbelt_9D874z",
     "main",
-    "nb_testimonials_slider_k8K67M"
+    "nb_testimonials_slider_k8K67M",
+    "nb_faq_UrXHxW"
   ]
 }
