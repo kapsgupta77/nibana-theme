@@ -154,26 +154,43 @@
       function renderWinningTip({ quiz, styleKey, tipEl }) {
         if (!quiz || !styleKey) return;
 
-        // If no #nb-quiz-tip, fall back to any existing "free insight" container
+        // Find/create a single tip container
         tipEl = tipEl || document.getElementById('nb-quiz-tip')
               || document.querySelector('.nb-quiz__tip, .nb-quiz__free-insight');
-        if (!tipEl) return;
+
+        if (!tipEl) {
+          // Create a fallback container in the left column if none exists
+          var leftCol = document.querySelector('#nb-quiz__left, .nb-quiz__left, .nb-quiz__main, .nb-quiz__result-left');
+          if (leftCol) {
+            tipEl = document.createElement('div');
+            tipEl.id = 'nb-quiz-tip';
+            tipEl.className = 'nb-quiz__tip';
+            leftCol.appendChild(tipEl);
+          } else {
+            return;
+          }
+        }
 
         // Remove / hide any old per-style tip fragments
         try {
           document.querySelectorAll('.nb-quiz__tip[data-style], .nb-quiz__free-insight[data-style]')
-            .forEach(function(el){ el.remove(); });
+            .forEach(function (el) { el.remove(); });
         } catch (_){ }
 
         var style = quiz.styles && quiz.styles[styleKey];
-        if (!style) return;
+        if (!style) { tipEl.innerHTML = ''; return; }
 
-        // Prefer a specific tip/practice field; fall back gracefully
-        var tipText = style.practice || style.tip || style.quick_tip || '';
-        if (!tipText) {
-          tipEl.innerHTML = '';
-          return;
-        }
+        // ✅ The JSON stores this as practice_preview
+        var tipText = style.practice_preview
+                   || style.practice
+                   || style.tip
+                   || style.quick_tip
+                   || style.try
+                   || style.try_this
+                   || '';
+
+        tipText = (tipText || '').toString().trim();
+        if (!tipText) { tipEl.innerHTML = ''; return; }
 
         tipEl.innerHTML = [
           '<div class="nb-quiz__tip-card" role="note">',
@@ -213,9 +230,10 @@
 
         try {
           var scoresEl = document.querySelector('[data-nb-quiz-scores]');
-          var winningKey = style
-            || (typeof styleKey !== 'undefined' ? styleKey : null)
-            || (state && state.result && state.result.style) || null;
+          var styleKey = style;
+          var winningKey = (typeof styleKey !== 'undefined') ? styleKey
+                        : (state && state.result && state.result.style) ? state.result.style
+                        : null;
 
           renderScoreBreakdown({
             quiz: quiz,
