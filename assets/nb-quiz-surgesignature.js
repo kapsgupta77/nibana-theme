@@ -152,14 +152,28 @@
       }
 
       function renderWinningTip({ quiz, styleKey, tipEl }) {
-        if (!quiz || !styleKey || !tipEl) return;
+        if (!quiz || !styleKey) return;
 
-        var style = quiz.styles && (quiz.styles[styleKey] || (styleKey === 'stabilizer' ? quiz.styles.stabiliser : undefined));
+        // If no #nb-quiz-tip, fall back to any existing "free insight" container
+        tipEl = tipEl || document.getElementById('nb-quiz-tip')
+              || document.querySelector('.nb-quiz__tip, .nb-quiz__free-insight');
+        if (!tipEl) return;
+
+        // Remove / hide any old per-style tip fragments
+        try {
+          document.querySelectorAll('.nb-quiz__tip[data-style], .nb-quiz__free-insight[data-style]')
+            .forEach(function(el){ el.remove(); });
+        } catch (_){ }
+
+        var style = quiz.styles && quiz.styles[styleKey];
         if (!style) return;
 
-        // Prefer a specific tip/practice field; fall back to generic property names
+        // Prefer a specific tip/practice field; fall back gracefully
         var tipText = style.practice || style.tip || style.quick_tip || '';
-        if (!tipText) return;
+        if (!tipText) {
+          tipEl.innerHTML = '';
+          return;
+        }
 
         tipEl.innerHTML = [
           '<div class="nb-quiz__tip-card" role="note">',
@@ -199,8 +213,6 @@
 
         try {
           var scoresEl = document.querySelector('[data-nb-quiz-scores]');
-          var tipEl = document.getElementById('nb-quiz-tip');
-
           var winningKey = style
             || (typeof styleKey !== 'undefined' ? styleKey : null)
             || (state && state.result && state.result.style) || null;
@@ -211,6 +223,9 @@
             container: scoresEl,
             styleKey: winningKey
           });
+
+          var tipEl = document.getElementById('nb-quiz-tip')
+                 || document.querySelector('.nb-quiz__tip, .nb-quiz__free-insight');
 
           renderWinningTip({
             quiz: quiz,

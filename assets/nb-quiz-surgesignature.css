@@ -180,6 +180,36 @@
   max-width:320px;
 }
 
+/* Tip card polish (single, premium-looking) */
+.nb-quiz__tip-card {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-left: 4px solid var(--nb-teal, #10636c);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.05);
+  color: var(--nb-text, #203039);
+}
+
+/* Place the tip a touch LOWER than the scores for visual balance */
+#nb-quiz-tip,
+.nb-quiz__tip,
+.nb-quiz__free-insight {
+  margin-top: clamp(20px, 6vh, 60px);
+}
+
+.nb-quiz__tip-icon {
+  line-height: 1;
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.nb-quiz__tip-text strong { font-weight: 700; }
+
 /* Result page (page.surge-signature-result) */
 .nb-result .nb-quiz__result-kicker{
   color:color-mix(in srgb, var(--nb-saddle, #7d2921) 90%, #000 10%);
