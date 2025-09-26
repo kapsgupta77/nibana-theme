@@ -13,6 +13,17 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
   assign success_body = section.settings.success_body | default: "Open your copy now — we’ve also emailed it to you."
   assign success_btn_label = section.settings.success_btn_label | default: "Open the guide"
   assign success_btn_url = section.settings.success_btn_url | default: '/pages/dl-connection-guide'
+
+  assign posted_param = request.params.customer_posted
+  if posted_param == 'true' or posted_param == '1'
+    assign posted_success = true
+  endif
+
+  if request.params.customer_post_error
+    assign has_errors = true
+  elsif request.params.form_type == 'customer' and posted_success != true
+    assign has_errors = true
+  endif
 %}
 
 <section
@@ -69,14 +80,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
           <div id="nb-lm-views">
             <!-- FORM VIEW -->
             <div id="nb-lm-form-wrap" aria-hidden="false">
-              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', action: request.path | append: '#nb-lm-form', novalidate: 'novalidate' %}
-                {% if form.posted_successfully? %}
-                  {% liquid assign posted_success = true %}
-                {% endif %}
-                {% if form.errors %}
-                  {% liquid assign has_errors = true %}
-                {% endif %}
-
+              <form id="nb-lm-form" class="nb-lead-landing__form" method="post" action="{{ routes.root_url }}" novalidate>
                 <input type="hidden" name="form_type" value="customer">
                 <input type="hidden" name="utf8" value="✓">
                 <input type="hidden" name="return_to" value="{{ request.path }}#nb-lm-form">
@@ -112,13 +116,12 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
 
                 <button type="submit" class="nb-btn nb-btn--teal nb-lead-landing__submit" data-nb-lm-submit disabled>Send me the guide</button>
 
-                {% if form.errors %}
+                {% if has_errors %}
                   <div class="form__message nb-lead-landing__error" role="alert" data-nb-lm-error>
                     <p>Please check the highlighted fields and try again.</p>
-                    {{ form.errors | default_errors }}
                   </div>
                 {% endif %}
-              {% endform %}
+              </form>
             </div>
 
             <!-- SUCCESS VIEW -->
