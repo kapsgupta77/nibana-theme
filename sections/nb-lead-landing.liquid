@@ -13,65 +13,17 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
   assign success_body = section.settings.success_body | default: "Open your copy now — we’ve also emailed it to you."
   assign success_btn_label = section.settings.success_btn_label | default: "Open the guide"
   assign success_btn_url = section.settings.success_btn_url | default: '/pages/dl-connection-guide'
-  assign discovery_call_url = settings.nb_discovery_call_url | default: settings.nb_book_call_url
-  if discovery_call_url == blank
-    assign discovery_call_url = '/pages/book-a-call'
-  endif
 %}
-
-{% capture form_markup %}
-  {% form 'customer', id: 'nb-lead-landing-form', class: 'nb-lead-landing__form', novalidate: 'novalidate' %}
-    {% if form.posted_successfully? %}
-      {% liquid assign posted_success = true %}
-    {% endif %}
-    {% if form.errors %}
-      {% liquid assign has_errors = true %}
-    {% endif %}
-
-    <div class="nb-lead-landing__fields">
-      <div class="nb-lead-landing__field">
-        <label class="nb-lead-landing__label" for="nblm-first">First name <span aria-hidden="true">*</span></label>
-        <input class="nb-lead-landing__input" id="nblm-first" name="contact[first_name]" type="text" required data-nb-lm-first>
-      </div>
-
-      <div class="nb-lead-landing__field">
-        <label class="nb-lead-landing__label" for="nblm-last">Last name <span aria-hidden="true">*</span></label>
-        <input class="nb-lead-landing__input" id="nblm-last" name="contact[last_name]" type="text" required data-nb-lm-last>
-      </div>
-
-      <div class="nb-lead-landing__field nb-lead-landing__field--full">
-        <label class="nb-lead-landing__label" for="nblm-email">Email <span aria-hidden="true">*</span></label>
-        <input class="nb-lead-landing__input" id="nblm-email" name="contact[email]" type="email" autocomplete="email" required data-nb-lm-email>
-      </div>
-    </div>
-
-    <input type="hidden" id="nblm-full" name="contact[name]" data-nb-lm-fullname>
-    <input type="hidden" id="nblm-tags" name="contact[tags]" value="{{ base_tag_value }}" data-base="{{ base_tag_value }}" data-nb-lm-tags>
-    <input type="hidden" id="nblm-accepts" name="contact[accepts_marketing]" value="false" data-nb-lm-accepts>
-
-    <div class="nb-lead-landing__consent">
-      <label class="nb-lead-landing__checkbox">
-        <input type="checkbox" id="nblm-consent" data-nb-lm-consent>
-        <span>{{ section.settings.consent_text | default: "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy." }}</span>
-      </label>
-      <p class="nb-lead-landing__consent-hint" data-nb-lm-consent-hint>Tick this to proceed…</p>
-    </div>
-
-    <button type="submit" class="nb-btn nb-btn--teal nb-lead-landing__submit" data-nb-lm-submit disabled>Send me the guide</button>
-
-    {% if form.errors %}
-      <div class="form__message nb-lead-landing__error" role="alert" data-nb-lm-error>
-        <p>Please check the highlighted fields and try again.</p>
-        {{ form.errors | default_errors }}
-      </div>
-    {% endif %}
-  {% endform %}
-{% endcapture %}
 
 <section
   id="nb-lead-landing-{{ section.id }}"
   class="nb-lead-landing"
 >
+  {% style %}
+    #nb-lead-landing-{{ section.id }} [hidden] { display: none !important; }
+    #nb-lead-landing-{{ section.id }} .nb-lm-col--right { padding: clamp(12px, 2vw, 20px); }
+  {% endstyle %}
+
   <div class="nb-shell nb-lead-landing__shell">
     <div class="nb-home-contact__panel nb-panel--mint nb-lead-landing__panel">
       <div class="nb-lead-landing__grid">
@@ -113,19 +65,69 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
           {% endif %}
         </div>
 
-        <div class="nb-lead-landing__form-wrap nb-lm-col--right">
-          <div id="nb-lm-form-wrap">
-            {{ form_markup }}
-          </div>
+        <div class="nb-lm-col--right">
+          <div id="nb-lm-views">
+            <!-- FORM VIEW -->
+            <div id="nb-lm-form-wrap" aria-hidden="false">
+              {% form 'customer', id: 'nb-lm-form', class: 'nb-lead-landing__form', novalidate: 'novalidate' %}
+                {% if form.posted_successfully? %}
+                  {% liquid assign posted_success = true %}
+                {% endif %}
+                {% if form.errors %}
+                  {% liquid assign has_errors = true %}
+                {% endif %}
 
-          <div class="nb-lead-landing__success" id="nb-lm-success" hidden aria-hidden="true">
-            <h2 class="nb-lead-landing__success-title" data-nb-success-heading tabindex="-1">{{ success_title }}</h2>
-            <p class="nb-lead-landing__success-body">{{ success_body }}</p>
-            <div class="nb-lead-landing__success-ctas">
-              <a class="nb-btn nb-btn--teal" href="{{ success_btn_url | escape }}">{{ success_btn_label }}</a>
-              {% if discovery_call_url != blank %}
-                <a class="nb-btn nb-btn--primary nb-lead-landing__secondary" href="{{ discovery_call_url | escape }}">Book a discovery call</a>
-              {% endif %}
+                <input type="hidden" name="form_type" value="customer">
+                <input type="hidden" name="utf8" value="✓">
+                <input type="hidden" id="nb-lm-tags" name="contact[tags]" value="{{ base_tag_value }}" data-base="{{ base_tag_value }}" data-nb-lm-tags>
+
+                <div class="nb-lead-landing__fields">
+                  <div class="nb-lead-landing__field">
+                    <label class="nb-lead-landing__label" for="nblm-first">First name <span aria-hidden="true">*</span></label>
+                    <input class="nb-lead-landing__input" id="nblm-first" name="contact[first_name]" type="text" required data-nb-lm-first>
+                  </div>
+
+                  <div class="nb-lead-landing__field">
+                    <label class="nb-lead-landing__label" for="nblm-last">Last name <span aria-hidden="true">*</span></label>
+                    <input class="nb-lead-landing__input" id="nblm-last" name="contact[last_name]" type="text" required data-nb-lm-last>
+                  </div>
+
+                  <div class="nb-lead-landing__field nb-lead-landing__field--full">
+                    <label class="nb-lead-landing__label" for="nblm-email">Email <span aria-hidden="true">*</span></label>
+                    <input class="nb-lead-landing__input" id="nblm-email" name="contact[email]" type="email" autocomplete="email" required data-nb-lm-email>
+                  </div>
+                </div>
+
+                <input type="hidden" id="nblm-full" name="contact[name]" data-nb-lm-fullname>
+                <input type="hidden" id="nblm-accepts" name="contact[accepts_marketing]" value="false" data-nb-lm-accepts>
+
+                <div class="nb-lead-landing__consent">
+                  <label class="nb-lead-landing__checkbox">
+                    <input type="checkbox" id="nblm-consent" data-nb-lm-consent>
+                    <span>{{ section.settings.consent_text | default: "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy." }}</span>
+                  </label>
+                  <p class="nb-lead-landing__consent-hint" data-nb-lm-consent-hint>Tick this to proceed…</p>
+                </div>
+
+                <button type="submit" class="nb-btn nb-btn--teal nb-lead-landing__submit" data-nb-lm-submit disabled>Send me the guide</button>
+
+                {% if form.errors %}
+                  <div class="form__message nb-lead-landing__error" role="alert" data-nb-lm-error>
+                    <p>Please check the highlighted fields and try again.</p>
+                    {{ form.errors | default_errors }}
+                  </div>
+                {% endif %}
+              {% endform %}
+            </div>
+
+            <!-- SUCCESS VIEW -->
+            <div id="nb-lm-success" class="nb-lm-success" hidden aria-hidden="true">
+              <h2 data-nb-success-heading tabindex="-1">{{ success_title }}</h2>
+              <p>{{ success_body }}</p>
+              <div class="nb-lm-success__actions">
+                <a href="{{ success_btn_url | escape }}" class="nb-cta nb-cta--primary">{{ success_btn_label | escape }}</a>
+                <a href="/pages/book-a-call" class="nb-cta nb-cta--secondary">Book a discovery call</a>
+              </div>
             </div>
           </div>
 
@@ -303,7 +305,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       box-shadow: 0 10px 24px color-mix(in srgb, var(--nb-teal-700, #0f5b62) 20%, transparent);
     }
     .nb-lead-landing__submit:not([disabled]):hover,
-    .nb-lead-landing__success-ctas .nb-btn.nb-btn--teal:hover{
+    .nb-lm-success__actions .nb-cta.nb-cta--secondary:hover{
       background: var(--nb-teal, #10636c);
     }
     .nb-lead-landing__submit[disabled]{
@@ -320,7 +322,7 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       font-size: .95rem;
     }
 
-    .nb-lead-landing__success{
+    .nb-lm-success{
       background: rgba(255,255,255,.82);
       border-radius: 18px;
       padding: clamp(18px, 3vw, 26px);
@@ -328,18 +330,18 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       display: grid;
       gap: 14px;
     }
-    .nb-lead-landing__success-title{
+    .nb-lm-success [data-nb-success-heading]{
       margin: 0;
       font-size: clamp(24px, 3.2vw, 34px);
       color: var(--nb-teal, #10636c);
     }
-    .nb-lead-landing__success-body{ margin: 0; color: var(--nb-ink, #1f2c2a); }
-    .nb-lead-landing__success-ctas{
+    .nb-lm-success p{ margin: 0; color: var(--nb-ink, #1f2c2a); }
+    .nb-lm-success__actions{
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
     }
-    .nb-lead-landing__success-ctas .nb-btn{
+    .nb-lm-success__actions .nb-cta{
       border-radius: 999px;
       padding: 12px 22px;
       text-decoration: none;
@@ -347,16 +349,16 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       align-items: center;
       justify-content: center;
     }
-    .nb-lead-landing__success-ctas .nb-btn.nb-btn--teal{
-      background: var(--nb-teal-700, #0f5b62);
-      color: #fff;
-    }
-    .nb-lead-landing__success-ctas .nb-btn.nb-btn--primary{
+    .nb-lm-success__actions .nb-cta.nb-cta--primary{
       background: var(--nb-chocolate, #d16c28);
       color: #fff;
     }
-    .nb-lead-landing__success-ctas .nb-btn.nb-btn--primary:hover{
+    .nb-lm-success__actions .nb-cta.nb-cta--primary:hover{
       background: var(--nb-choc-600, #b85f23);
+    }
+    .nb-lm-success__actions .nb-cta.nb-cta--secondary{
+      background: var(--nb-teal-700, #0f5b62);
+      color: #fff;
     }
 
     @media (min-width: 900px){
@@ -364,11 +366,11 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
         grid-template-columns: 1.1fr 0.9fr;
         align-items: start;
       }
-      .nb-lead-landing__form-wrap{
+      .nb-lm-col--right{
         align-self: stretch;
       }
       .nb-lead-landing__form,
-      .nb-lead-landing__success{
+      .nb-lm-success{
         height: 100%;
       }
       .nb-lead-landing__fields{
@@ -376,34 +378,61 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       }
     }
   </style>
-
-  {% style %}
-    #nb-lead-landing-{{ section.id }} .nb-lm-col--right { padding: clamp(12px, 2vw, 20px); }
-  {% endstyle %}
-
   <script>
-    (function(){
+    (function () {
       var root = document.getElementById('nb-lead-landing-{{ section.id }}');
       if (!root) return;
+
       var formWrap = root.querySelector('#nb-lm-form-wrap');
-      var form = root.querySelector('#nb-lead-landing-form');
-      var state = root.querySelector('[data-nb-lm-state]');
-      var success = root.querySelector('#nb-lm-success');
+      var success  = root.querySelector('#nb-lm-success');
       var successH = success ? success.querySelector('[data-nb-success-heading]') : null;
-      var consent = root.querySelector('[data-nb-lm-consent]');
-      var hint = root.querySelector('[data-nb-lm-consent-hint]');
-      var submit = root.querySelector('[data-nb-lm-submit]');
-      var tagsInput = root.querySelector('[data-nb-lm-tags]');
-      var accepts = root.querySelector('[data-nb-lm-accepts]');
-      var nameInput = root.querySelector('[data-nb-lm-fullname]');
+      var form     = root.querySelector('#nb-lm-form');
+      var consent  = form ? (form.querySelector('input[type="checkbox"][name*="consent"]') || form.querySelector('[data-nb-lm-consent]')) : null;
+      var submitBtn= form ? form.querySelector('button[type="submit"], [type="submit"]') : null;
+
+      // Defensive: if success is visible on load without our pending flag, hide it.
+      if (success && !success.hasAttribute('hidden') && !localStorage.getItem('nb_lm_pending_success')) {
+        success.setAttribute('hidden',''); success.setAttribute('aria-hidden','true');
+        if (formWrap) { formWrap.removeAttribute('hidden'); formWrap.setAttribute('aria-hidden','false'); }
+      }
+
+      function showLmSuccess() {
+        if (formWrap) { formWrap.setAttribute('hidden',''); formWrap.setAttribute('aria-hidden','true'); }
+        if (success)  { success.removeAttribute('hidden'); success.setAttribute('aria-hidden','false'); }
+        try { if (typeof gtag === 'function') { gtag('event','generate_lead', { method: 'lead_magnet_landing' }); } } catch(e){}
+        fireEvent('generate_lead', { method: 'lead_magnet_landing', form_id: 'nb-lead-landing' });
+        if (successH && typeof successH.focus === 'function') { setTimeout(function(){ successH.focus(); }, 0); }
+      }
+
+      // Resume after Shopify challenge
+      if (localStorage.getItem('nb_lm_pending_success') === '1') {
+        localStorage.removeItem('nb_lm_pending_success');
+        showLmSuccess();
+      }
+
+      var state    = root.querySelector('[data-nb-lm-state]');
+      var tagsInput= root.querySelector('[data-nb-lm-tags]');
+      var accepts  = root.querySelector('[data-nb-lm-accepts]');
+      var nameInput= root.querySelector('[data-nb-lm-fullname]');
       var firstInput = root.querySelector('[data-nb-lm-first]');
-      var lastInput = root.querySelector('[data-nb-lm-last]');
+      var lastInput  = root.querySelector('[data-nb-lm-last]');
       var emailInput = root.querySelector('[data-nb-lm-email]');
-      var mcForm = root.querySelector('[data-nb-lm-mc]');
-      var mcEmail = root.querySelector('#nblm-mc-email');
-      var mcFname = root.querySelector('#nblm-mc-fname');
-      var mcLname = root.querySelector('#nblm-mc-lname');
-      var mcTags = root.querySelector('#nblm-mc-tags');
+      var hint     = root.querySelector('[data-nb-lm-consent-hint]');
+      var mcForm   = root.querySelector('[data-nb-lm-mc]');
+      var mcEmail  = root.querySelector('#nblm-mc-email');
+      var mcFname  = root.querySelector('#nblm-mc-fname');
+      var mcLname  = root.querySelector('#nblm-mc-lname');
+      var mcTags   = root.querySelector('#nblm-mc-tags');
+
+      function fireEvent(name, params){
+        try {
+          if (window.gtag) {
+            window.gtag('event', name, params || {});
+          } else if (window.dataLayer && typeof window.dataLayer.push === 'function') {
+            window.dataLayer.push(Object.assign({ event: name }, params || {}));
+          }
+        } catch(_){}
+      }
 
       function safeString(value){
         return (value || '').replace(/\s+/g, ' ').trim();
@@ -436,30 +465,6 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
         if (mcTags) mcTags.value = joined;
       }
 
-      function toggleConsent(){
-        var checked = consent && consent.checked;
-        if (submit){
-          submit.disabled = !checked;
-          submit.setAttribute('aria-disabled', checked ? 'false' : 'true');
-        }
-        if (hint){
-          hint.hidden = checked ? true : false;
-        }
-        if (accepts){
-          accepts.value = checked ? 'true' : 'false';
-        }
-      }
-
-      function fireEvent(name, params){
-        try {
-          if (window.gtag) {
-            window.gtag('event', name, params || {});
-          } else if (window.dataLayer && window.dataLayer.push) {
-            window.dataLayer.push(Object.assign({ event: name }, params || {}));
-          }
-        } catch(_) {}
-      }
-
       function submitMailchimp(){
         if (!mcForm) return;
         if (mcEmail) mcEmail.value = safeString(emailInput && emailInput.value);
@@ -471,57 +476,39 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
         } catch(_) {}
       }
 
-      function showLmSuccess(){
-        if (!formWrap || !success) return;
-        formWrap.setAttribute('hidden', '');
-        formWrap.setAttribute('aria-hidden', 'true');
-        if (form) {
-          form.setAttribute('hidden', '');
-          form.setAttribute('aria-hidden', 'true');
+      function gateConsent(){
+        var ok = !!(consent && consent.checked);
+        if (submitBtn) {
+          submitBtn.disabled = !ok;
+          submitBtn.setAttribute('aria-disabled', ok ? 'false' : 'true');
         }
-        success.removeAttribute('hidden');
-        success.setAttribute('aria-hidden', 'false');
-        try {
-          if (typeof gtag === 'function') {
-            gtag('event', 'generate_lead', { method: 'lead_magnet_landing' });
-          }
-        } catch(e){}
-        fireEvent('generate_lead', { method: 'lead_magnet_landing', form_id: 'nb-lead-landing' });
-        if (successH && typeof successH.focus === 'function') {
-          setTimeout(function(){ successH.focus(); }, 0);
-        }
+        if (hint) hint.hidden = ok ? true : false;
+        if (accepts) accepts.value = ok ? 'true' : 'false';
       }
-
-      // Call showLmSuccess() from your existing submit/accept path:
-      //  - If you already have a success callback after Shopify accepts (or after AJAX success),
-      //    replace that call with showLmSuccess().
-      //  - If you rely on native submit + challenge, be sure the submit handler sets:
-      //      localStorage.setItem('nb_lm_pending_success','1');
 
       appendUtms();
-      if (consent){
-        consent.checked = false;
-      }
-      toggleConsent();
 
       if (consent){
-        consent.addEventListener('change', toggleConsent);
+        consent.checked = false;
+        gateConsent();
+        consent.addEventListener('change', gateConsent);
+      } else {
+        gateConsent();
       }
 
       if (form){
         form.addEventListener('submit', function(event){
           if (consent && !consent.checked){
             event.preventDefault();
-            toggleConsent();
-            if (consent) consent.focus();
+            gateConsent();
+            if (consent && typeof consent.focus === 'function') consent.focus();
             return;
           }
           var fullName = (safeString(firstInput && firstInput.value) + ' ' + safeString(lastInput && lastInput.value)).trim();
           if (nameInput) nameInput.value = fullName;
+          try { localStorage.setItem('nb_lm_pending_success','1'); } catch(_){}
+          try { if (typeof gtag === 'function') { gtag('event','lead_submit', { method: 'lead_magnet_landing' }); } } catch(e){}
           fireEvent('lead_submit', { form_id: 'nb-lead-landing' });
-          try {
-            localStorage.setItem('nb_lm_pending_success', '1');
-          } catch(_) {}
           submitMailchimp();
         }, { capture: true });
       }
@@ -530,22 +517,12 @@ Lead Magnet Landing section: hero, bullets, intake form, inline success.
       var errors = state && state.getAttribute('data-errors') === 'true';
 
       if (errors){
-        try { localStorage.removeItem('nb_lm_pending_success'); } catch(_) {}
+        try { localStorage.removeItem('nb_lm_pending_success'); } catch(_){}
       }
 
       if (posted && !errors){
         showLmSuccess();
-        try { localStorage.removeItem('nb_lm_pending_success'); } catch(_) {}
-      }
-
-      // Resume path (after challenge redirect)
-      if (!errors){
-        try {
-          if (localStorage.getItem('nb_lm_pending_success') === '1') {
-            localStorage.removeItem('nb_lm_pending_success');
-            showLmSuccess();
-          }
-        } catch(_) {}
+        try { localStorage.removeItem('nb_lm_pending_success'); } catch(_){}
       }
     })();
   </script>
