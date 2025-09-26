@@ -107,15 +107,14 @@
         return quiz.scoring[maxKey];
       }
 
-      function renderScoreBreakdown({ quiz, answers, container }) {
+      function renderScoreBreakdown({ quiz, answers, container, styleKey }) {
         if (!container || !quiz || !Array.isArray(answers) || !answers.length) return;
 
-        // Map letters -> style keys (e.g., {A:'accelerator', B:'stabiliser', C:'defuser'})
-        // This exists in the JSON; try both likely shapes for safety.
+        // Map letters -> style keys, tolerate either quiz.scoring.map or quiz.scoring
         var letterToStyle = (quiz.scoring && quiz.scoring.map) || quiz.scoring || {};
         var styles = quiz.styles || {};
 
-        // Tally counts
+        // Tally counts per style
         var totals = {};
         var totalAnswers = 0;
         answers.forEach(function(letter){
@@ -127,21 +126,22 @@
 
         if (!totalAnswers) return;
 
-        // Build DOM
+        // Build the scores UI (label + count/total + bar that fills by %)
         var html = '<div class="nb-quiz__scores-title">Your mix</div><ul class="nb-quiz__scores-list">';
-        ['accelerator','stabilizer','defuser'].forEach(function(key){
-          var styleDef = styles[key] || styles[key === 'stabilizer' ? 'stabiliser' : key];
+        ['accelerator','stabiliser','defuser'].forEach(function(key){
+          var styleDef = styles[key] || (key === 'stabiliser' ? styles.stabilizer : null);
           if (!styleDef) return;
-          var totalKey = totals[key] !== undefined ? key : (key === 'stabilizer' ? 'stabiliser' : key);
-          var count = totals[totalKey] || 0;
+          var count = (totals[key] !== undefined ? totals[key] : (key === 'stabiliser' ? totals.stabilizer : undefined)) || 0;
           var pct = Math.round((count / totalAnswers) * 100);
-          var classKey = key === 'stabilizer' ? 'stabiliser' : key;
-          var label = styleDef.title || (classKey.charAt(0).toUpperCase() + classKey.slice(1));
+          var label = styleDef.title || (key.charAt(0).toUpperCase() + key.slice(1));
+
           html += [
-            '<li class="nb-quiz__score nb-quiz__score--', classKey, '">',
+            '<li class="nb-quiz__score nb-quiz__score--', key, '">',
               '<span class="nb-quiz__score-label">', label, '</span>',
-              '<span class="nb-quiz__score-pct">', pct, '%</span>',
-              '<div class="nb-quiz__score-bar"><b style="width:', pct, '%"></b></div>',
+              '<span class="nb-quiz__score-count">', count, '/', totalAnswers, '</span>',
+              '<div class="nb-quiz__score-bar" aria-label="', label, ' score ', count, ' of ', totalAnswers, '">',
+                '<b style="width:', pct, '%"></b>',
+              '</div>',
             '</li>'
           ].join('');
         });
@@ -149,6 +149,24 @@
 
         container.innerHTML = html;
         container.hidden = false;
+      }
+
+      function renderWinningTip({ quiz, styleKey, tipEl }) {
+        if (!quiz || !styleKey || !tipEl) return;
+
+        var style = quiz.styles && (quiz.styles[styleKey] || (styleKey === 'stabilizer' ? quiz.styles.stabiliser : undefined));
+        if (!style) return;
+
+        // Prefer a specific tip/practice field; fall back to generic property names
+        var tipText = style.practice || style.tip || style.quick_tip || '';
+        if (!tipText) return;
+
+        tipEl.innerHTML = [
+          '<div class="nb-quiz__tip-card" role="note">',
+            '<div class="nb-quiz__tip-icon" aria-hidden="true">💡</div>',
+            '<div class="nb-quiz__tip-text"><strong>Try this:</strong> ', tipText, '</div>',
+          '</div>'
+        ].join('');
       }
 
       function onComplete(){
@@ -180,8 +198,25 @@
         }
 
         try {
-          var scoresEl = resultEl ? resultEl.querySelector('[data-nb-quiz-scores]') : null;
-          renderScoreBreakdown({ quiz: quiz, answers: state.answers || [], container: scoresEl });
+          var scoresEl = document.querySelector('[data-nb-quiz-scores]');
+          var tipEl = document.getElementById('nb-quiz-tip');
+
+          var winningKey = style
+            || (typeof styleKey !== 'undefined' ? styleKey : null)
+            || (state && state.result && state.result.style) || null;
+
+          renderScoreBreakdown({
+            quiz: quiz,
+            answers: (state && state.answers) ? state.answers : [],
+            container: scoresEl,
+            styleKey: winningKey
+          });
+
+          renderWinningTip({
+            quiz: quiz,
+            styleKey: winningKey,
+            tipEl: tipEl
+          });
         } catch (_){ }
 
         resultEl.hidden = false;
