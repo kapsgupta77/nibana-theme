@@ -45,7 +45,7 @@
 
   assign url_call_default = '/pages/book-a-call'
   assign url_quiz_default = '/quiz'
-  assign url_leadmagnet_default = ''
+  assign url_leadmagnet_default = '/pages/connection-guide'
 
   assign url_primary = article.metafields.custom.cta_link | default: article.metafields.custom.cta_primary_url | default: ''
   assign url_secondary = article.metafields.custom.cta_secondary_url | default: ''
