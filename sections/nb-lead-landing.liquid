@@ -1,0 +1,548 @@
+{% comment %}
+Lead Magnet Landing section: hero, bullets, intake form, inline success.
+- Full-bleed wrapper with mint panel using nb-shell inner.
+- Shopify customer form as source of truth with Mailchimp mirror.
+- Captures UTM tags, enforces consent, and resumes inline success after captcha.
+{% endcomment %}
+
+{% liquid
+  assign posted_success = false
+  assign has_errors = false
+  assign base_tag_value = 'newsletter,leadmagnet:connections_guide,source:landing'
+  assign success_title = section.settings.success_title | default: "You’re in. Here’s your guide."
+  assign success_body = section.settings.success_body | default: "Open your copy now — we’ve also emailed it to you."
+  assign success_btn_label = section.settings.success_btn_label | default: "Open the guide"
+  assign success_btn_url = section.settings.success_btn_url | default: '/pages/dl-connection-guide'
+  assign discovery_call_url = settings.nb_discovery_call_url | default: settings.nb_book_call_url
+  if discovery_call_url == blank
+    assign discovery_call_url = '/pages/book-a-call'
+  endif
+%}
+
+{% capture form_markup %}
+  {% form 'customer', id: 'nb-lead-landing-form', class: 'nb-lead-landing__form', novalidate: 'novalidate' %}
+    {% if form.posted_successfully? %}
+      {% liquid assign posted_success = true %}
+    {% endif %}
+    {% if form.errors %}
+      {% liquid assign has_errors = true %}
+    {% endif %}
+
+    <div class="nb-lead-landing__fields">
+      <div class="nb-lead-landing__field">
+        <label class="nb-lead-landing__label" for="nblm-first">First name <span aria-hidden="true">*</span></label>
+        <input class="nb-lead-landing__input" id="nblm-first" name="contact[first_name]" type="text" required data-nb-lm-first>
+      </div>
+
+      <div class="nb-lead-landing__field">
+        <label class="nb-lead-landing__label" for="nblm-last">Last name <span aria-hidden="true">*</span></label>
+        <input class="nb-lead-landing__input" id="nblm-last" name="contact[last_name]" type="text" required data-nb-lm-last>
+      </div>
+
+      <div class="nb-lead-landing__field nb-lead-landing__field--full">
+        <label class="nb-lead-landing__label" for="nblm-email">Email <span aria-hidden="true">*</span></label>
+        <input class="nb-lead-landing__input" id="nblm-email" name="contact[email]" type="email" autocomplete="email" required data-nb-lm-email>
+      </div>
+    </div>
+
+    <input type="hidden" id="nblm-full" name="contact[name]" data-nb-lm-fullname>
+    <input type="hidden" id="nblm-tags" name="contact[tags]" value="{{ base_tag_value }}" data-base="{{ base_tag_value }}" data-nb-lm-tags>
+    <input type="hidden" id="nblm-accepts" name="contact[accepts_marketing]" value="false" data-nb-lm-accepts>
+
+    <div class="nb-lead-landing__consent">
+      <label class="nb-lead-landing__checkbox">
+        <input type="checkbox" id="nblm-consent" data-nb-lm-consent>
+        <span>{{ section.settings.consent_text | default: "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy." }}</span>
+      </label>
+      <p class="nb-lead-landing__consent-hint" data-nb-lm-consent-hint>Tick this to proceed…</p>
+    </div>
+
+    <button type="submit" class="nb-btn nb-btn--teal nb-lead-landing__submit" data-nb-lm-submit disabled>Send me the guide</button>
+
+    {% if form.errors %}
+      <div class="form__message nb-lead-landing__error" role="alert" data-nb-lm-error>
+        <p>Please check the highlighted fields and try again.</p>
+        {{ form.errors | default_errors }}
+      </div>
+    {% endif %}
+  {% endform %}
+{% endcapture %}
+
+<section
+  id="nb-lead-landing-{{ section.id }}"
+  class="nb-lead-landing"
+>
+  <div class="nb-shell nb-lead-landing__shell">
+    <div class="nb-home-contact__panel nb-panel--mint nb-lead-landing__panel">
+      <div class="nb-lead-landing__grid">
+        <div class="nb-lead-landing__content">
+          <div class="nb-lead-landing__hero">
+            <h1 class="nb-lead-landing__title">{{ section.settings.title | default: '5 Shifts to Create Real Connection' }}</h1>
+            {% if section.settings.subhead != blank %}
+              <p class="nb-lead-landing__subhead">{{ section.settings.subhead }}</p>
+            {% endif %}
+          </div>
+
+          {% if section.settings.cover_image != blank %}
+            <div class="nb-lead-landing__media nb-duotone">
+              {{ section.settings.cover_image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'nb-lead-landing__image', alt: section.settings.title | default: 'Lead magnet cover' | escape }}
+            </div>
+          {% endif %}
+
+          {% if section.settings.bullet_1 != blank or section.settings.bullet_2 != blank or section.settings.bullet_3 != blank %}
+            <ul class="nb-lead-landing__bullets">
+              {% if section.settings.bullet_1 != blank %}
+                <li>
+                  <span class="nb-lead-landing__bullet-icon" aria-hidden="true">{{ 'icon-checkmark.svg' | inline_asset_content }}</span>
+                  <span>{{ section.settings.bullet_1 }}</span>
+                </li>
+              {% endif %}
+              {% if section.settings.bullet_2 != blank %}
+                <li>
+                  <span class="nb-lead-landing__bullet-icon" aria-hidden="true">{{ 'icon-checkmark.svg' | inline_asset_content }}</span>
+                  <span>{{ section.settings.bullet_2 }}</span>
+                </li>
+              {% endif %}
+              {% if section.settings.bullet_3 != blank %}
+                <li>
+                  <span class="nb-lead-landing__bullet-icon" aria-hidden="true">{{ 'icon-checkmark.svg' | inline_asset_content }}</span>
+                  <span>{{ section.settings.bullet_3 }}</span>
+                </li>
+              {% endif %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <div class="nb-lead-landing__form-wrap">
+          {{ form_markup }}
+
+          <div class="nb-lead-landing__success" data-nb-lm-success{% unless posted_success %} hidden{% endunless %}>
+            <h2 class="nb-lead-landing__success-title" data-nb-lm-success-title tabindex="-1">{{ success_title }}</h2>
+            <p class="nb-lead-landing__success-body">{{ success_body }}</p>
+            <div class="nb-lead-landing__success-ctas">
+              <a class="nb-btn nb-btn--teal" href="{{ success_btn_url | escape }}">{{ success_btn_label }}</a>
+              {% if discovery_call_url != blank %}
+                <a class="nb-btn nb-btn--primary nb-lead-landing__secondary" href="{{ discovery_call_url | escape }}">Book a discovery call</a>
+              {% endif %}
+            </div>
+          </div>
+
+          <span data-nb-lm-state data-posted="{{ posted_success }}" data-errors="{{ has_errors }}" hidden></span>
+
+          <form
+            action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
+            method="post"
+            target="nblm-mc-target"
+            id="nblm-mc"
+            aria-hidden="true"
+            data-nb-lm-mc
+            data-nb-mc-mirror="lm"
+            style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
+          >
+            <input type="email" name="EMAIL" id="nblm-mc-email">
+            <input type="text" name="FNAME" id="nblm-mc-fname">
+            <input type="text" name="LNAME" id="nblm-mc-lname">
+            <input type="hidden" name="tags" id="nblm-mc-tags" value="leadmagnet:connections_guide,source:landing">
+            <input type="submit" value="Subscribe">
+          </form>
+          <iframe name="nblm-mc-target" id="nblm-mc-target" title="Mailchimp submit" hidden></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #shopify-section-{{ section.id }},
+    #shopify-section-template--{{ section.id }},
+    [id^="shopify-section"][id$="{{ section.id }}"]{
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    #shopify-section-{{ section.id }} .section--wrapper,
+    #shopify-section-template--{{ section.id }} .section--wrapper,
+    [id^="shopify-section"][id$="{{ section.id }}"] .section--wrapper{
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .nb-lead-landing{
+      padding-block: clamp(40px, 8vw, 120px);
+    }
+    .nb-lead-landing__shell{
+      max-width: var(--narrow-page-width, 1120px);
+      margin-inline: auto;
+      padding-inline: clamp(16px, 4vw, 28px);
+    }
+    .nb-lead-landing__panel{
+      padding: clamp(24px, 4vw, 48px);
+      border-radius: 24px;
+      box-shadow: var(--nb-shadow-mint, 0 10px 28px rgba(12,138,123,.08));
+    }
+    .nb-lead-landing__grid{
+      display: grid;
+      gap: clamp(20px, 4vw, 40px);
+    }
+    .nb-lead-landing__hero{ margin-bottom: clamp(16px, 3vw, 28px); }
+    .nb-lead-landing__title{
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
+      margin: 0 0 12px;
+      color: var(--nb-ink, #1f2c2a);
+    }
+    .nb-lead-landing__subhead{
+      margin: 0;
+      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      line-height: 1.5;
+      color: color-mix(in oklab, var(--nb-ink, #1f2c2a), transparent 16%);
+    }
+    .nb-lead-landing__media{
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: clamp(16px, 3vw, 28px);
+    }
+    .nb-lead-landing__image{ display:block; width:100%; height:auto; }
+    .nb-lead-landing__bullets{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+    }
+    .nb-lead-landing__bullets li{
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .nb-lead-landing__bullet-icon{
+      display: inline-flex;
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: var(--nb-teal, #10636c);
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      padding: 4px;
+    }
+    .nb-lead-landing__bullet-icon svg{ width: 100%; height: 100%; fill: currentColor; }
+
+    .nb-lead-landing__form{
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 3vw, 20px);
+      background: rgba(255,255,255,.72);
+      border-radius: 18px;
+      padding: clamp(18px, 3vw, 26px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+    }
+    .nb-lead-landing__fields{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(12px, 2vw, 18px);
+    }
+    .nb-lead-landing__field{ display: flex; flex-direction: column; gap: 6px; }
+    .nb-lead-landing__field--full{ grid-column: 1 / -1; }
+    .nb-lead-landing__label{ font-weight: 600; color: var(--nb-ink, #1f2c2a); }
+    .nb-lead-landing__input{
+      appearance: none;
+      border: 1px solid color-mix(in oklab, var(--nb-ink, #1f2c2a), transparent 70%);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      line-height: 1.35;
+      background: #fff;
+    }
+    .nb-lead-landing__input:focus{
+      outline: 2px solid color-mix(in oklab, var(--nb-teal, #10636c), transparent 30%);
+      outline-offset: 2px;
+      border-color: var(--nb-teal, #10636c);
+    }
+
+    .nb-lead-landing__consent{
+      display: grid;
+      gap: 8px;
+    }
+    .nb-lead-landing__checkbox{
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--nb-ink, #1f2c2a);
+      font-size: .95rem;
+      line-height: 1.4;
+    }
+    .nb-lead-landing__checkbox input[type="checkbox"]{
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      border-radius: 6px;
+      border: 2px solid color-mix(in oklab, var(--nb-ink, #1f2c2a), transparent 60%);
+      accent-color: var(--nb-teal, #10636c);
+    }
+    .nb-lead-landing__consent-hint{
+      margin: 0;
+      font-size: .9rem;
+      color: color-mix(in oklab, var(--nb-ink, #1f2c2a), transparent 40%);
+    }
+
+    .nb-lead-landing__submit{
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 12px 20px;
+      border: none;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      background: var(--nb-teal-700, #0f5b62);
+      color: #fff;
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--nb-teal-700, #0f5b62) 20%, transparent);
+    }
+    .nb-lead-landing__submit:not([disabled]):hover,
+    .nb-lead-landing__success-ctas .nb-btn.nb-btn--teal:hover{
+      background: var(--nb-teal, #10636c);
+    }
+    .nb-lead-landing__submit[disabled]{
+      cursor: not-allowed;
+      opacity: .6;
+      box-shadow: none;
+    }
+
+    .nb-lead-landing__error{
+      background: rgba(209,108,40,.08);
+      border-left: 3px solid var(--nb-chocolate, #d16c28);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: .95rem;
+    }
+
+    .nb-lead-landing__success{
+      background: rgba(255,255,255,.82);
+      border-radius: 18px;
+      padding: clamp(18px, 3vw, 26px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+      display: grid;
+      gap: 14px;
+    }
+    .nb-lead-landing__success-title{
+      margin: 0;
+      font-size: clamp(24px, 3.2vw, 34px);
+      color: var(--nb-teal, #10636c);
+    }
+    .nb-lead-landing__success-body{ margin: 0; color: var(--nb-ink, #1f2c2a); }
+    .nb-lead-landing__success-ctas{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .nb-lead-landing__success-ctas .nb-btn{
+      border-radius: 999px;
+      padding: 12px 22px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nb-lead-landing__success-ctas .nb-btn.nb-btn--teal{
+      background: var(--nb-teal-700, #0f5b62);
+      color: #fff;
+    }
+    .nb-lead-landing__success-ctas .nb-btn.nb-btn--primary{
+      background: var(--nb-chocolate, #d16c28);
+      color: #fff;
+    }
+    .nb-lead-landing__success-ctas .nb-btn.nb-btn--primary:hover{
+      background: var(--nb-choc-600, #b85f23);
+    }
+
+    @media (min-width: 900px){
+      .nb-lead-landing__grid{
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+      .nb-lead-landing__form-wrap{
+        align-self: stretch;
+      }
+      .nb-lead-landing__form,
+      .nb-lead-landing__success{
+        height: 100%;
+      }
+      .nb-lead-landing__fields{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+
+  <script>
+    (function(){
+      var section = document.getElementById('nb-lead-landing-{{ section.id }}');
+      if (!section) return;
+      var form = section.querySelector('#nb-lead-landing-form');
+      var state = section.querySelector('[data-nb-lm-state]');
+      var success = section.querySelector('[data-nb-lm-success]');
+      var consent = section.querySelector('[data-nb-lm-consent]');
+      var hint = section.querySelector('[data-nb-lm-consent-hint]');
+      var submit = section.querySelector('[data-nb-lm-submit]');
+      var tagsInput = section.querySelector('[data-nb-lm-tags]');
+      var accepts = section.querySelector('[data-nb-lm-accepts]');
+      var nameInput = section.querySelector('[data-nb-lm-fullname]');
+      var firstInput = section.querySelector('[data-nb-lm-first]');
+      var lastInput = section.querySelector('[data-nb-lm-last]');
+      var emailInput = section.querySelector('[data-nb-lm-email]');
+      var mcForm = section.querySelector('[data-nb-lm-mc]');
+      var mcEmail = section.querySelector('#nblm-mc-email');
+      var mcFname = section.querySelector('#nblm-mc-fname');
+      var mcLname = section.querySelector('#nblm-mc-lname');
+      var mcTags = section.querySelector('#nblm-mc-tags');
+
+      function safeString(value){
+        return (value || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function appendUtms(){
+        if (!tagsInput) return;
+        var params;
+        try {
+          params = new URLSearchParams(window.location.search);
+        } catch(_) {
+          params = null;
+        }
+        var base = tagsInput.getAttribute('data-base') || tagsInput.defaultValue || '';
+        var tags = base ? base.split(',').map(function(tag){ return tag.trim(); }).filter(Boolean) : [];
+        if (params){
+          ['utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(key){
+            var val = params.get(key);
+            if (!val) return;
+            var clean = String(val).replace(/\s+/g, ' ').replace(/,/g, ' ');
+            tags.push(key + ':' + clean);
+          });
+        }
+        var dedup = [];
+        tags.forEach(function(tag){
+          if (tag && dedup.indexOf(tag) === -1) dedup.push(tag);
+        });
+        var joined = dedup.join(', ');
+        tagsInput.value = joined;
+        if (mcTags) mcTags.value = joined;
+      }
+
+      function toggleConsent(){
+        var checked = consent && consent.checked;
+        if (submit){
+          submit.disabled = !checked;
+          submit.setAttribute('aria-disabled', checked ? 'false' : 'true');
+        }
+        if (hint){
+          hint.hidden = checked ? true : false;
+        }
+        if (accepts){
+          accepts.value = checked ? 'true' : 'false';
+        }
+      }
+
+      function fireEvent(name, params){
+        try {
+          if (window.gtag) {
+            window.gtag('event', name, params || {});
+          } else if (window.dataLayer && window.dataLayer.push) {
+            window.dataLayer.push(Object.assign({ event: name }, params || {}));
+          }
+        } catch(_) {}
+      }
+
+      function submitMailchimp(){
+        if (!mcForm) return;
+        if (mcEmail) mcEmail.value = safeString(emailInput && emailInput.value);
+        if (mcFname) mcFname.value = safeString(firstInput && firstInput.value);
+        if (mcLname) mcLname.value = safeString(lastInput && lastInput.value);
+        if (mcTags && tagsInput) mcTags.value = tagsInput.value;
+        try {
+          if (mcForm.requestSubmit) mcForm.requestSubmit(); else mcForm.submit();
+        } catch(_) {}
+      }
+
+      function showSuccess(){
+        if (!success || !form) return;
+        form.setAttribute('hidden', 'hidden');
+        success.hidden = false;
+        var title = success.querySelector('[data-nb-lm-success-title]');
+        if (title){
+          try {
+            title.focus();
+          } catch(_) {}
+        }
+        fireEvent('generate_lead', { form_id: 'nb-lead-landing' });
+      }
+
+      appendUtms();
+      if (consent){
+        consent.checked = false;
+      }
+      toggleConsent();
+
+      if (consent){
+        consent.addEventListener('change', toggleConsent);
+      }
+
+      if (form){
+        form.addEventListener('submit', function(event){
+          if (consent && !consent.checked){
+            event.preventDefault();
+            toggleConsent();
+            if (consent) consent.focus();
+            return;
+          }
+          var fullName = (safeString(firstInput && firstInput.value) + ' ' + safeString(lastInput && lastInput.value)).trim();
+          if (nameInput) nameInput.value = fullName;
+          fireEvent('lead_submit', { form_id: 'nb-lead-landing' });
+          try {
+            localStorage.setItem('nb_lm_pending_success', '1');
+          } catch(_) {}
+          submitMailchimp();
+        }, { capture: true });
+      }
+
+      var pending = false;
+      try {
+        pending = localStorage.getItem('nb_lm_pending_success') === '1';
+      } catch(_) {}
+
+      var posted = state && state.getAttribute('data-posted') === 'true';
+      var errors = state && state.getAttribute('data-errors') === 'true';
+
+      if (errors && pending){
+        try { localStorage.removeItem('nb_lm_pending_success'); } catch(_) {}
+        pending = false;
+      }
+
+      if ((pending || posted) && !errors){
+        showSuccess();
+        try { localStorage.removeItem('nb_lm_pending_success'); } catch(_) {}
+      }
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "NB Lead Landing",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "5 Shifts to Create Real Connection" },
+    { "type": "textarea", "id": "subhead", "label": "Subheading" },
+    { "type": "text", "id": "bullet_1", "label": "Bullet 1" },
+    { "type": "text", "id": "bullet_2", "label": "Bullet 2" },
+    { "type": "text", "id": "bullet_3", "label": "Bullet 3" },
+    { "type": "image_picker", "id": "cover_image", "label": "Cover image" },
+    { "type": "textarea", "id": "consent_text", "label": "Consent text", "default": "Yes, send me occasional tips and resources from Nibana. You can unsubscribe any time. See our Privacy Policy." },
+    { "type": "text", "id": "success_title", "label": "Success title", "default": "You’re in. Here’s your guide." },
+    { "type": "textarea", "id": "success_body", "label": "Success body", "default": "Open your copy now — we’ve also emailed it to you." },
+    { "type": "text", "id": "success_btn_label", "label": "Success button label", "default": "Open the guide" },
+    { "type": "text", "id": "success_btn_url", "label": "Success button URL", "default": "/pages/dl-connection-guide" }
+  ],
+  "presets": [
+    { "name": "NB Lead Landing" }
+  ]
+}
+{% endschema %}
