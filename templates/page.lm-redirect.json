@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "main": {
+      "type": "nb-redirect",
+      "settings": {
+        "target_url": "",
+        "noindex": true
+      }
+    }
+  },
+  "order": ["main"]
+}

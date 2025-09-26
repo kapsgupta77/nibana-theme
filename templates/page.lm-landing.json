@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "nb-lead-landing",
+      "settings": {
+        "title": "5 Shifts to Create Real Connection",
+        "subhead": "Practical prompts and mini-rituals to reset tension, communicate honestly, and feel closer—at home and at work.",
+        "bullet_1": "Use simple “containers” to feel safe without control.",
+        "bullet_2": "Follow real-time feeling instead of scripts.",
+        "bullet_3": "Grow attention so small moments feel rich again.",
+        "success_btn_url": "/pages/dl-connection-guide"
+      }
+    }
+  },
+  "order": ["main"]
+}
