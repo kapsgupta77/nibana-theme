@@ -78,26 +78,32 @@
   }
 
   .ai-banner-title-{{ ai_gen_id }} {
-    font-size: {{ block.settings.title_size_desktop }}px;
+    font-family: var(--font-heading--family, 'Cormorant', serif);
+    font-size: {{ block.settings.title_size_desktop | default: 64 }}px;
     font-weight: {{ block.settings.title_weight }};
-    line-height: 1.2;
-    margin: 0 0 {{ block.settings.title_margin_bottom_desktop }}px 0;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin: 0 0 {{ block.settings.title_margin_bottom_desktop | default: 12 }}px 0;
     color: {{ block.settings.title_color }};
   }
 
   .ai-banner-subtitle-{{ ai_gen_id }} {
-    font-size: {{ block.settings.subtitle_size_desktop }}px;
+    font-family: var(--font-body--family, 'Inter', sans-serif);
+    font-size: {{ block.settings.subtitle_size_desktop | default: 28 }}px;
     font-weight: {{ block.settings.subtitle_weight }};
     line-height: 1.3;
-    margin: 0 0 {{ block.settings.subtitle_margin_bottom_desktop }}px 0;
+    margin: 0 0 {{ block.settings.subtitle_margin_bottom_desktop | default: 12 }}px 0;
     color: {{ block.settings.subtitle_color }};
   }
 
   .ai-banner-description-{{ ai_gen_id }} {
-    font-size: {{ block.settings.description_size_desktop }}px;
+    font-family: var(--font-body--family, 'Inter', sans-serif);
+    font-size: {{ block.settings.description_size_desktop | default: 18 }}px;
+    font-weight: 500;
+    font-style: italic;
     line-height: 1.5;
-    margin: 0 0 {{ block.settings.description_margin_bottom_desktop }}px 0;
-    color: {{ block.settings.description_color }};
+    margin: 0 0 {{ block.settings.description_margin_bottom_desktop | default: 12 }}px 0;
+    color: {{ block.settings.description_color | default: 'rgba(255, 255, 255, 0.85)' }};
   }
 
   .ai-banner-button-{{ ai_gen_id }} {
@@ -195,18 +201,18 @@
     }
 
     .ai-banner-title-{{ ai_gen_id }} {
-      font-size: {{ block.settings.title_size_tablet }}px;
-      margin-bottom: {{ block.settings.title_margin_bottom_tablet }}px;
+      font-size: {{ block.settings.title_size_tablet | default: 48 }}px;
+      margin-bottom: {{ block.settings.title_margin_bottom_tablet | default: 12 }}px;
     }
 
     .ai-banner-subtitle-{{ ai_gen_id }} {
-      font-size: {{ block.settings.subtitle_size_tablet }}px;
-      margin-bottom: {{ block.settings.subtitle_margin_bottom_tablet }}px;
+      font-size: {{ block.settings.subtitle_size_tablet | default: 22 }}px;
+      margin-bottom: {{ block.settings.subtitle_margin_bottom_tablet | default: 12 }}px;
     }
 
     .ai-banner-description-{{ ai_gen_id }} {
-      font-size: {{ block.settings.description_size_tablet }}px;
-      margin-bottom: {{ block.settings.description_margin_bottom_tablet }}px;
+      font-size: {{ block.settings.description_size_tablet | default: 16 }}px;
+      margin-bottom: {{ block.settings.description_margin_bottom_tablet | default: 12 }}px;
     }
 
     .ai-banner-play-button-{{ ai_gen_id }} {
@@ -237,18 +243,18 @@
     }
 
     .ai-banner-title-{{ ai_gen_id }} {
-      font-size: {{ block.settings.title_size_mobile }}px;
-      margin-bottom: {{ block.settings.title_margin_bottom_mobile }}px;
+      font-size: {{ block.settings.title_size_mobile | default: 34 }}px;
+      margin-bottom: {{ block.settings.title_margin_bottom_mobile | default: 12 }}px;
     }
 
     .ai-banner-subtitle-{{ ai_gen_id }} {
-      font-size: {{ block.settings.subtitle_size_mobile }}px;
-      margin-bottom: {{ block.settings.subtitle_margin_bottom_mobile }}px;
+      font-size: {{ block.settings.subtitle_size_mobile | default: 18 }}px;
+      margin-bottom: {{ block.settings.subtitle_margin_bottom_mobile | default: 12 }}px;
     }
 
     .ai-banner-description-{{ ai_gen_id }} {
-      font-size: {{ block.settings.description_size_mobile }}px;
-      margin-bottom: {{ block.settings.description_margin_bottom_mobile }}px;
+      font-size: {{ block.settings.description_size_mobile | default: 15 }}px;
+      margin-bottom: {{ block.settings.description_margin_bottom_mobile | default: 12 }}px;
     }
 
     .ai-banner-play-button-{{ ai_gen_id }} {
@@ -263,7 +269,14 @@
       height: {{ block.settings.play_icon_size_mobile }}px;
     }
   }
-{% endstyle %}<banner-section-{{ ai_gen_id }} class="ai-banner-{{ ai_gen_id }}" {{ block.shopify_attributes }}><div class="ai-banner-background-{{ ai_gen_id }}">
+
+  @media screen and (max-width: 480px) {
+    .ai-banner-description-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+
+  {% endstyle %}<banner-section-{{ ai_gen_id }} class="ai-banner-{{ ai_gen_id }}" {{ block.shopify_attributes }}><div class="ai-banner-background-{{ ai_gen_id }}">
     {% if block.settings.background_image %}
       <img
         src="{{ block.settings.background_image | image_url: width:2000 }}"
@@ -792,7 +805,7 @@
       "id": "description_size_mobile",
       "min": 10,
       "max": 24,
-      "step": 2,
+      "step": 1,
       "unit": "px",
       "label": "Description size",
       "default": 14
