@@ -34,15 +34,9 @@ Mode: pass `carousel: true` to enable slider UI.
 
   assign _has_refs = false
   assign _refs     = blank
-  if service and service.testimonials_list
+  if service and service.testimonials_list and service.testimonials_list.size > 0
     assign _refs = service.testimonials_list
-    assign _refs_values = _refs | map: 'value'
-    if _refs_values != blank
-      assign _refs = _refs_values
-    endif
-    if _refs and _refs.size > 0
-      assign _has_refs = true
-    endif
+    assign _has_refs = true
   endif
 
   assign _entries = blank
@@ -57,10 +51,7 @@ Mode: pass `carousel: true` to enable slider UI.
 {%- capture cards_only -%}
   {%- if _has_refs -%}
     {%- for ref in _refs -%}
-      {%- assign entry = ref -%}
-      {%- if entry == blank and ref.value -%}
-        {%- assign entry = ref.value -%}
-      {%- endif -%}
+      {%- assign entry = ref.value | default: ref -%}
       {%- if entry -%}
         {%- liquid
           assign include = true
