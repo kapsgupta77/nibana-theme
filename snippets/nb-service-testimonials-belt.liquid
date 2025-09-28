@@ -34,9 +34,9 @@ Mode: pass `carousel: true` to enable slider UI.
 
   assign _has_refs = false
   assign _refs     = blank
-  if service and service.testimonials_list
-    assign _refs = service.testimonials_list
-    if _refs and _refs.size > 0
+  if service and service.testimonials_list and service.testimonials_list.value != blank
+    assign _refs = service.testimonials_list.value
+    if _refs != blank
       assign _has_refs = true
     endif
   endif
@@ -52,8 +52,7 @@ Mode: pass `carousel: true` to enable slider UI.
 {%- assign _count = 0 -%}
 {%- capture cards_only -%}
   {%- if _has_refs -%}
-    {%- for ref in _refs -%}
-      {%- assign entry = ref.value -%}
+    {%- for entry in _refs -%}
       {%- if entry -%}
         {%- liquid
           assign include = true
