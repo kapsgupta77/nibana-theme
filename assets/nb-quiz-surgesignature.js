@@ -8,7 +8,7 @@
       const appEl = section.querySelector('[data-nb-quiz-app]');
       const resultEl = section.querySelector('[data-nb-quiz-result]');
       const header = section.querySelector('.nb-quiz__header');
-      let quiz = null, state = { index: 0, answers: [] }, startedAt = 0;
+      let quiz = null, state = { index: 0, answers: [] }, startedAt = 0, QUESTIONS = [];
 
       if (resultEl && resultEl.querySelector('[data-nb-quiz-thanks]')) {
         resultEl.hidden = false;
@@ -77,24 +77,27 @@
       }
 
       function renderQuestion(){
-        const q = quiz.questions[state.index];
+        const total = QUESTIONS.length;
+        if (!total) return;
+        const q = QUESTIONS[state.index];
+        if (!q) return;
         appEl.innerHTML = `
           <div class="nb-card">
-            <div class="nb-quiz__progress" role="progressbar" aria-valuemin="0" aria-valuemax="${quiz.questions.length}" aria-valuenow="${state.index+1}">
-              Question ${state.index+1} of ${quiz.questions.length}
+            <div class="nb-quiz__progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${state.index+1}">
+              Question ${state.index+1} of ${total}
             </div>
             <h3 class="nb-quiz__prompt" aria-live="polite">${q.prompt}</h3>
             <div class="nb-quiz__options">
               ${q.options.map((o,i)=>`<button class="nb-btn nb-btn--option" data-value="${o.value}" data-i="${i}">${o.label}</button>`).join('')}
             </div>
           </div>`;
-        setProgressLabel(state.index+1, quiz.questions.length);
+        setProgressLabel(state.index+1, total);
         dl('quiz_question_view', { index: state.index+1, quiz: cfg.gaNamespace });
         appEl.querySelectorAll('.nb-btn--option').forEach(b=>{
           b.addEventListener('click', ()=>{
             state.answers[state.index] = b.dataset.value;
             state.index++;
-            if(state.index < quiz.questions.length){ renderQuestion(); }
+            if(state.index < total){ renderQuestion(); }
             else { onComplete(); }
           });
         });
@@ -125,6 +128,20 @@
         });
 
         if (!totalAnswers) return;
+
+        var totalQuestions = (Array.isArray(QUESTIONS) && QUESTIONS.length)
+          ? QUESTIONS.length
+          : (Array.isArray(quiz.questions) ? quiz.questions.length : totalAnswers);
+
+        var normalisedTotals = {
+          accelerator: totals.accelerator || 0,
+          stabiliser: (totals.stabiliser !== undefined ? totals.stabiliser : totals.stabilizer) || 0,
+          defuser: totals.defuser || 0
+        };
+        try {
+          sessionStorage.setItem('nbq_scores', JSON.stringify(normalisedTotals));
+          sessionStorage.setItem('nbq_total', String(totalQuestions));
+        } catch (_){ }
 
         // Build the scores UI (label + count/total + bar that fills by %)
         var html = '<div class="nb-quiz__scores-title">Your mix</div><ul class="nb-quiz__scores-list">';
@@ -210,6 +227,7 @@
           localStorage.removeItem('nb_quiz_banner_dismissed');
         } catch(e){}
         dl('quiz_result', { quiz: cfg.gaNamespace, style: style });
+        try { sessionStorage.setItem('nbq_total', String(QUESTIONS.length)); } catch(_){ }
 
         const s = quiz.styles[style] || {};
 
@@ -356,11 +374,15 @@
       startBtn.addEventListener('click', async function(){
         startBtn.disabled = true;
         quiz = await loadQuiz();
+        state.index = 0;
+        state.answers = [];
         startedAt = Date.now();
         dl('quiz_start', { quiz: cfg.gaNamespace });
         appEl.hidden = false;
+        QUESTIONS = Array.isArray(quiz.questions) ? quiz.questions : [];
+        QUESTIONS.forEach((q, i) => { if (q && typeof q === 'object') q.id = i + 1; });
         renderQuestion();
-        setProgressLabel(state.index+1, quiz.questions.length);
+        setProgressLabel(state.index+1, QUESTIONS.length);
         if (header) header.style.display = 'none';
       });
     });
