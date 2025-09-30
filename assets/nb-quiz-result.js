@@ -7,6 +7,17 @@
     const root = document.querySelector('[data-nb-result-app]');
     if(!root) return;
 
+    let TOTAL_QUESTIONS = 20;
+    let storedScores = {};
+    try {
+      TOTAL_QUESTIONS = parseInt(sessionStorage.getItem('nbq_total') || '20', 10);
+      if (isNaN(TOTAL_QUESTIONS)) TOTAL_QUESTIONS = 20;
+      storedScores = JSON.parse(sessionStorage.getItem('nbq_scores') || '{}') || {};
+    } catch (_){
+      TOTAL_QUESTIONS = 20;
+      storedScores = {};
+    }
+
     const forced = (root.getAttribute('data-force-style') || '').toLowerCase();
     const style = forced || qs('style'); // accelerator | stabilizer | defuser
     const jsonUrl = root.getAttribute('data-json');
@@ -86,6 +97,42 @@
       </div>
     `;
     root.innerHTML = card;
+
+    const totals = {
+      accelerator: Number(storedScores.accelerator || 0),
+      stabiliser: Number((storedScores.stabiliser !== undefined ? storedScores.stabiliser : storedScores.stabilizer) || 0),
+      defuser: Number(storedScores.defuser || 0)
+    };
+    const totalAnswered = totals.accelerator + totals.stabiliser + totals.defuser;
+    const denominator = Math.max(TOTAL_QUESTIONS || 0, totalAnswered);
+    if (totalAnswered > 0 && denominator > 0) {
+      const styleDefs = data.styles || {};
+      const mix = document.createElement('div');
+      mix.className = 'nb-card nb-result__mix';
+      mix.innerHTML = [
+        '<div class="nb-quiz__scores-title">Your mix</div>',
+        '<ul class="nb-quiz__scores-list">',
+        ['accelerator','stabiliser','defuser'].map(function(key){
+          const count = totals[key] || 0;
+          const pct = denominator ? Math.round((count / denominator) * 100) : 0;
+          const styleKey = key === 'stabiliser' ? 'stabilizer' : key;
+          const def = styleDefs[key] || styleDefs[styleKey] || {};
+          const label = def.title || (key.charAt(0).toUpperCase() + key.slice(1));
+          return [
+            '<li class="nb-quiz__score nb-quiz__score--', key, '">',
+              '<span class="nb-quiz__score-label">', label, '</span>',
+              '<span class="nb-quiz__score-count">', count, '/', denominator, '</span>',
+              '<div class="nb-quiz__score-bar" aria-label="', label, ' score ', count, ' of ', denominator, '">',
+                '<b style="width:', pct, '%"></b>',
+              '</div>',
+            '</li>'
+          ].join('');
+        }).join(''),
+        '</ul>'
+      ].join('');
+      root.appendChild(mix);
+    }
+
     const copyBtn = root.querySelector('[data-nb-copy]');
     if (copyBtn) {
       copyBtn.addEventListener('click', function(){

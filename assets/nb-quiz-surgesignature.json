@@ -1,6 +1,51 @@
 {
   "questions": [
     {
+      "id": "pdf1",
+      "prompt": "A big opportunity drops in a meeting and no one owns it yet.",
+      "options": [
+        { "label": "I volunteer immediately — we’ll figure it out live.", "value": "A" },
+        { "label": "I go a bit blank and hope someone else grabs it.", "value": "B" },
+        { "label": "I ask two clarifying questions and suggest next steps.", "value": "C" }
+      ]
+    },
+    {
+      "id": "pdf2",
+      "prompt": "A trusted peer gives you tough feedback.",
+      "options": [
+        { "label": "I defend my position fast, then cool down later.", "value": "A" },
+        { "label": "I nod, change the subject, and forget it.", "value": "B" },
+        { "label": "I document actions and set a follow-up.", "value": "C" }
+      ]
+    },
+    {
+      "id": "pdf3",
+      "prompt": "Your flight is cancelled at the gate.",
+      "options": [
+        { "label": "I start calling, tweeting, and re-routing all at once.", "value": "A" },
+        { "label": "I zone out scrolling my phone.", "value": "B" },
+        { "label": "I queue calmly and build a plan B.", "value": "C" }
+      ]
+    },
+    {
+      "id": "pdf4",
+      "prompt": "A project scope changes last minute.",
+      "options": [
+        { "label": "I pivot instantly and push the team into motion.", "value": "A" },
+        { "label": "I feel foggy and need a break before I can think.", "value": "B" },
+        { "label": "I freeze scope, re-baseline, then proceed.", "value": "C" }
+      ]
+    },
+    {
+      "id": "pdf5",
+      "prompt": "You’re asked to present with one hour’s notice.",
+      "options": [
+        { "label": "I say yes — adrenaline will carry me.", "value": "A" },
+        { "label": "I’d rather someone else do it.", "value": "B" },
+        { "label": "I accept if I can control structure and timing.", "value": "C" }
+      ]
+    },
+    {
       "id": "q1",
       "prompt": "A friend texts a 10/10 urgent ask.",
       "options": [
