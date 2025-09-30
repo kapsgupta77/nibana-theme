@@ -20,7 +20,7 @@
         "gate_mode": "soft_gate",
         "enable_gdpr": true,
         "palette": "nibana",
-        "intro_richtext": "<p>When intensity goes up, we all have a go-to pattern. This quiz mirrors yours in work and life - without jargon - and gives you a simple playbook to use today. You’ll see your style, key watch-outs, and one practice to try now.</p><p>15 quick questions to mirror how your energy moves when the stakes rise.</p><p></p>"
+        "intro_richtext": "<p>When intensity goes up, we all have a go-to pattern. This quiz mirrors yours in work and life - without jargon - and gives you a simple playbook to use today. You’ll see your style, key watch-outs, and one practice to try now.</p><p>20 quick questions to mirror how your energy moves when the stakes rise.</p><p></p>"
       }
     },
     "nb_faq_qkkrei": {
@@ -81,9 +81,9 @@
         "wrap_shell": true,
         "single_open": true,
         "ink": "#223238",
-        "teal": "#0F5B59",
-        "shell_col": "#E5E8E1",
-        "answer": "#EAF4F3",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
         "emit_jsonld": true
       }
     }
