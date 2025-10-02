@@ -129,9 +129,21 @@
       {%- if hub.proof_items and hub.proof_items.value and hub.proof_items.value != blank -%}
         {%- assign hub_proofs_list = hub.proof_items.value -%}
       {%- endif -%}
-      {%- if hub_proofs_list and hub_proofs_list.size > 0 -%}
+      {%- assign __hub_proofs_count = 0 -%}
+      {%- if hub_proofs_list != blank -%}
+        {%- for _t in hub_proofs_list -%}{%- assign __hub_proofs_count = __hub_proofs_count | plus: 1 -%}{%- endfor -%}
+      {%- endif -%}
+
+      {%- if __hub_proofs_count > 0 -%}
         <div class="nb-tray nb-proof">
-          {%- render 'nb-service-testimonials-belt', refs: hub_proofs_list, limit: 4, carousel: true -%}
+          {%- comment -%} pass service too (some belts expect it) {%- endcomment -%}
+          {%- render 'nb-service-testimonials-belt', refs: hub_proofs_list, service: service, limit: 4, carousel: true -%}
+        </div>
+      {%- elsif request.design_mode -%}
+        <div class="nb-shell" style="margin:8px 0 0;">
+          <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+            <div class="rte"><strong>Hub debug:</strong> SeoHub has <code>{{ __hub_proofs_count }}</code> testimonial picks. Check SeoHub → proof_items.</div>
+          </div>
         </div>
       {%- endif -%}
 
