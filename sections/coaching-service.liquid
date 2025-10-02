@@ -22,22 +22,21 @@
   endif
 -%}
 {%- if nb_hub -%}
-  {%- assign hub_h1      = nb_hub.h1_override.value | default: page.title -%}
-  {%- assign hub_deck    = nb_hub.deck_subheading -%}
-  {%- assign hub_intro   = nb_hub.intro_richtext -%}
-  {%- assign hub_bullets = nb_hub.feature_bullets.value -%}
-  {%- assign hub_cta_h   = nb_hub.cta_headline.value | default: '' -%}
-  {%- assign hub_cta_txt = nb_hub.cta_text.value    | default: 'Book a discovery call' -%}
-  {%- assign hub_cta_url = nb_hub.cta_url.value     | default: '/pages/book-a-call' -%}
-  {%- assign hub_schema  = nb_hub.schema_type.value | default: 'Service' -%}
-  {%- assign hub_show_faq = nb_hub.show_faq.value | default: false -%}
-  {%- assign hub_show_trust = nb_hub.show_trustbelt.value | default: true -%}
-  {%- assign hub_trust_variant = nb_hub.logo_belt_variant.value | default: 'marquee' -%}
-  {%- assign hub_tag = 'hub:' | append: page.handle -%}
-
-  {%- assign hub_blog_handle = nb_hub.blog_handle.value | default: '' -%}
-  {%- assign hub_faq_q = nb_hub.faq_q.value | default: '' -%}
-  {%- assign hub_faq_a = nb_hub.faq_a.value | default: '' -%}
+{%- assign hub_h1      = nb_hub.h1_override.value | default: page.title -%}
+{%- assign hub_deck    = nb_hub.deck_subheading -%}
+{%- assign hub_intro   = nb_hub.intro_richtext -%}
+{%- assign hub_bullets = nb_hub.feature_bullets.value -%}
+{%- assign hub_cta_h   = nb_hub.cta_headline.value | default: '' -%}
+{%- assign hub_cta_txt = nb_hub.cta_text.value    | default: 'Book a discovery call' -%}
+{%- assign hub_cta_url = nb_hub.cta_url.value     | default: '/pages/book-a-call' -%}
+{%- assign hub_schema  = nb_hub.schema_type.value | default: 'Service' -%}
+{%- assign hub_show_faq = nb_hub.show_faq.value | default: false -%}
+{%- assign hub_show_trust = nb_hub.show_trustbelt.value | default: true -%}
+{%- assign hub_trust_variant = nb_hub.logo_belt_variant.value | default: 'marquee' -%}
+{%- assign hub_tag = 'hub:' | append: page.handle -%}
+{%- assign hub_blog_handle = nb_hub.blog_handle.value | default: '' -%}
+{%- assign hub_faq_q = nb_hub.faq_q.value | default: '' -%}
+{%- assign hub_faq_a = nb_hub.faq_a.value | default: '' -%}
 
   {%- if request.design_mode -%}
     <div class="nb-shell" style="margin:8px 0 0;">
@@ -125,12 +124,12 @@
       {%- elsif request.design_mode -%}
         <div class="nb-shell" style="margin:8px 0 0;">
           <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
-            <div class="rte"><strong>Hub notice:</strong> set <em>SeoHub → blog_handle</em> (e.g., <code>blog</code>) to enable related articles.</div>
+            <div class="rte"><strong>Hub notice:</strong> set <em>SeoHub → blog_handle</em> to the blog handle (e.g., <code>nibana-journal</code>).</div>
           </div>
         </div>
       {%- endif -%}
 
-      {%- comment -%} Hub FAQ (Global-style) from SeoHub faq_q / faq_a {%- endcomment -%}
+      {%- comment -%} NB-FAQ Global styling — content from SeoHub (faq_q / faq_a) {%- endcomment -%}
       {%- if hub_show_faq -%}
         {%- liquid
           assign br_tag = '<br />'
@@ -156,7 +155,7 @@
           endfor
         -%}
         {%- if q_count > 0 -%}
-          <div class="nb-tray nb-faq--wrap">
+          <section class="nb-faq nb-tray">
             <h2 class="nb-faq__title">Frequently asked questions</h2>
             <div class="nb-faq__list" id="nb-faq-{{ section.id }}-hub">
               {%- assign idx = 0 -%}
@@ -177,9 +176,9 @@
                 {%- endif -%}
               {%- endfor -%}
             </div>
-          </div>
+          </section>
 
-          {%- comment -%} FAQ JSON-LD {%- endcomment -%}
+          {%- comment -%} FAQ JSON-LD (NB-FAQ Global content) {%- endcomment -%}
           <script type="application/ld+json">
           {
             "@context": "https://schema.org",
