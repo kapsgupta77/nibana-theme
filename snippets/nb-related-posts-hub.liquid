@@ -2,14 +2,15 @@
   assign _blog = nil
   assign _raw_handle = ''
 
-  if blog_handle and blog_handle.handle
-    assign _blog = blog_handle
-    assign _raw_handle = blog_handle.handle
-  else
-    assign _raw_handle = blog_handle | default: '' | strip
+  if blog_handle
+    if blog_handle.handle
+      assign _blog = blog_handle
+      assign _raw_handle = blog_handle.handle
+    endif
   endif
 
   if _blog == nil
+    assign _raw_handle = blog_handle | default: '' | strip
 
     if _raw_handle != ''
       assign _blog = blogs[_raw_handle]
