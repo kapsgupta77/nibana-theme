@@ -26,7 +26,7 @@
     assign _heading = 'From the Nibana Journal'
   endif
 
-  assign articles = array
+  assign articles = '' | split: ''
   assign _articles_count = 0
   if _blog
     assign _articles_count = _blog.articles_count | plus: 0
