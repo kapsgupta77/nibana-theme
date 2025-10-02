@@ -1408,7 +1408,8 @@
         {%- assign q = qs[i] | strip_html | strip -%}
         {%- assign a_html = as[i] | strip -%}
         {%- if q != '' and a_html != '' -%}
-          {%- unless first -%},          {
+          {%- unless first -%},{%- endunless -%}
+          {
             "@type": "Question",
             "name": {{ q | json }},
             "acceptedAnswer": {
