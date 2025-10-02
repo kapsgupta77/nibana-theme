@@ -1,0 +1,46 @@
+{%- liquid
+  assign card_article = article
+  assign card_body = body
+-%}
+{%- if card_article == blank -%}
+  {%- comment -%}No article to render{%- endcomment -%}
+{%- else -%}
+  {%- liquid
+    assign image_alt = ''
+    if card_article.image
+      assign image_alt = card_article.image.alt | default: card_article.title
+      assign image_alt = image_alt | strip | escape
+    endif
+
+    assign excerpt_text = card_body | default: card_article.excerpt_or_content | strip_html | truncate: 140
+    assign excerpt_text = excerpt_text | strip
+  -%}
+  {%- unless nb_article_card_css -%}
+    {% assign nb_article_card_css = true %}
+    {{ 'nb-article-card.css' | asset_url | stylesheet_tag }}
+  {%- endunless -%}
+  <article class="nb-article-card">
+    <a class="nb-article-card__link" href="{{ card_article.url }}">
+      {%- if card_article.image -%}
+        <div class="nb-article-card__image">
+          {{ card_article.image
+            | image_url: width: 960
+            | image_tag: loading: 'lazy', sizes: '(min-width: 1024px) 33vw, 90vw', widths: '480,720,960', alt: image_alt }}
+        </div>
+      {%- endif -%}
+      <div class="nb-article-card__content">
+        <h3 class="nb-article-card__title">{{ card_article.title | escape }}</h3>
+        <div class="nb-article-card__meta">
+          {%- if card_article.published_at -%}
+            <span class="nb-article-card__date">{{ card_article.published_at | time_tag: format: 'date' }}</span>
+            <span class="nb-article-card__sep" aria-hidden="true">·</span>
+          {%- endif -%}
+          <span class="nb-article-card__read">{% render 'reading-time', article: card_article %}</span>
+        </div>
+        {%- if excerpt_text != '' -%}
+          <p class="nb-article-card__excerpt">{{ excerpt_text }}</p>
+        {%- endif -%}
+      </div>
+    </a>
+  </article>
+{%- endif -%}
