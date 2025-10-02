@@ -42,7 +42,13 @@
             {%- for a in _blog.articles -%}
               {%- if a.handle == h -%}
                 <div class="blog-post-item">
-                  {% content_for 'block', id: 'hub-blog-post-card-' | append: a.id, type: '_blog-post-card', article: a %}
+                  {%- capture hub_card_body -%}
+                    {%- assign hub_excerpt = a.excerpt_or_content | strip_html -%}
+                    {%- if hub_excerpt != '' -%}
+                      <div class="blog-post-card__excerpt">{{ hub_excerpt | truncate: 140 | escape }}</div>
+                    {%- endif -%}
+                  {%- endcapture -%}
+                  {% render 'nb-hub-article-card', article: a, body: hub_card_body %}
                 </div>
                 {%- assign _picked = _picked | append: a.handle | append: ',' -%}
                 {%- assign _shown = _shown | plus: 1 -%}
@@ -60,7 +66,13 @@
             {%- unless _picked contains a.handle -%}
               {%- if a.tags contains _hub_tag -%}
                 <div class="blog-post-item">
-                  {% content_for 'block', id: 'hub-blog-post-card-' | append: a.id, type: '_blog-post-card', article: a %}
+                  {%- capture hub_card_body -%}
+                    {%- assign hub_excerpt = a.excerpt_or_content | strip_html -%}
+                    {%- if hub_excerpt != '' -%}
+                      <div class="blog-post-card__excerpt">{{ hub_excerpt | truncate: 140 | escape }}</div>
+                    {%- endif -%}
+                  {%- endcapture -%}
+                  {% render 'nb-hub-article-card', article: a, body: hub_card_body %}
                 </div>
                 {%- assign _picked = _picked | append: a.handle | append: ',' -%}
                 {%- assign _shown = _shown | plus: 1 -%}
