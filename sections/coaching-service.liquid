@@ -39,23 +39,36 @@
 {%- assign hub_faq_a = nb_hub.faq_a.value | default: '' -%}
 
   {%- if request.design_mode -%}
+    {%- liquid
+      assign _raw = hub_blog_handle | strip
+      assign _blog_dbg = nil
+      assign _resolved = _raw
+      if _raw != ''
+        assign _blog_dbg = blogs[_raw]
+        if _blog_dbg == nil
+          assign _resolved = _raw | handleize
+          assign _blog_dbg = blogs[_resolved]
+        endif
+      endif
+      assign _cnt = 0
+      if _blog_dbg
+        assign _ac = _blog_dbg.articles_count | plus: 0
+        if _ac > 0
+          for a in _blog_dbg.articles
+            if a.tags contains hub_tag
+              assign _cnt = _cnt | plus: 1
+            endif
+          endfor
+        endif
+      endif
+    -%}
     <div class="nb-shell" style="margin:8px 0 0;">
       <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
-        <div class="rte" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
-          <span class="badge">Hub</span>
-          <span class="badge">H1: {{ hub_h1 }}</span>
-          {%- if hub_deck != blank -%}<span class="badge">Deck ✓</span>{%- endif -%}
-          <span class="badge">Tag: {{ hub_tag }}</span>
-          {%- if hub_blog_handle != blank -%}
-            {%- assign _blog = blogs[hub_blog_handle] -%}
-            {%- assign _found = 0 -%}
-            {%- if _blog and _blog.articles_count > 0 -%}
-              {%- for a in _blog.articles -%}
-                {%- if a.tags contains hub_tag -%}{%- assign _found = _found | plus: 1 -%}{%- endif -%}
-              {%- endfor -%}
-            {%- endif -%}
-            <span class="badge">Related by tag: {{ _found }}</span>
-          {%- endif -%}
+        <div class="rte">
+          <strong>Hub debug:</strong>
+          Blog input: <code>{{ hub_blog_handle }}</code> → resolved: <code>{{ _resolved }}</code> ·
+          Tag: <code>{{ hub_tag }}</code> ·
+          Matches: <strong>{{ _cnt }}</strong>
         </div>
       </div>
     </div>
@@ -131,21 +144,36 @@
 
       {%- comment -%} NB-FAQ Global styling — content from SeoHub (faq_q / faq_a) {%- endcomment -%}
       {%- if hub_show_faq -%}
+        <style>
+          .nb-shell{ max-width:min(1160px,94vw); margin-inline:auto; padding-inline:20px; }
+          .nb-shell.nb-shell--narrow{ max-width:min(900px,92vw); }
+          .nb-shell.nb-shell--wide{ max_width:min(1320px,96vw); }
+          .nb-faq-section{ color: var(--nb-faq-ink, #223238); }
+          .nb-faq__wrap{ margin: 12px 0; }
+          .nb-faq__wrap--tray{ background: var(--nb-faq-shell, #E5E8E1); border-radius: 22px; padding: clamp(16px, 2.6vw, 28px); box-shadow: 0 10px 24px rgba(0,0,0,.06); }
+          .nb-faq__title{ margin: 0 0 clamp(10px, 2vw, 16px); text-align: center; font-weight: 800; color: var(--nb-faq-ink, #223238); font-family: var(--font-heading-family, inherit); font-size: clamp(22px, 2.8vw, 28px); }
+          .nb-faq__list{ display: grid; gap: 18px; }
+          .nb-faq__item{ background: transparent; border: 0; box-shadow: none; overflow: visible; }
+          .nb-faq__q{ position: relative; background: var(--nb-faq-teal, #0F5B59); color: #fff; border: 0; border-radius: 9999px; padding: 16px 64px 16px 22px; font-weight: 720; box-shadow: 0 4px 14px rgba(0,0,0,.05); display: grid; grid-template-columns: 1fr auto; align-items: center; list-style: none; cursor: pointer; font-family: var(--font-body-family, inherit); }
+          .nb-faq__q::-webkit-details-marker{ display:none; }
+          .nb-faq__q:hover{ background: color-mix(in oklab, var(--nb-faq-teal, #0F5B59), #000 8%); }
+          .nb-faq__q::after{ content: "+"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.14); font-size: 22px; font-weight: 800; line-height: 1; }
+          details[open] .nb-faq__q::after{ content: "–"; }
+          .nb-faq__a{ background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 14px; margin: 10px 14px 2px; padding: 16px 20px; color: color-mix(in oklab, var(--nb-faq-ink, #223238), #000 8%); line-height: 1.65; }
+        </style>
+
         {%- liquid
           assign br_tag = '<br />'
-
           assign q_raw = hub_faq_q | append: ''
           assign q_html = q_raw | newline_to_br
           assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
           assign q_pipe = q_norm | replace: br_tag, '|||'
           assign qs     = q_pipe | split: '|||'
-
           assign a_raw = hub_faq_a | append: ''
           assign a_html = a_raw | newline_to_br
           assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
           assign a_norm = a_norm | replace: '<br /><br /><br />', '§§' | replace: '<br /><br />', '§§' | replace: '<br />  <br />', '§§' | replace: '<br />   <br />', '§§' | replace: '---','§§'
           assign as     = a_norm | split: '§§'
-
           assign q_count = 0
           for q in qs
             assign qq = q | strip_html | strip
@@ -155,30 +183,45 @@
           endfor
         -%}
         {%- if q_count > 0 -%}
-          <section class="nb-faq nb-tray">
-            <h2 class="nb-faq__title">Frequently asked questions</h2>
-            <div class="nb-faq__list" id="nb-faq-{{ section.id }}-hub">
-              {%- assign idx = 0 -%}
-              {%- for q in qs -%}
-                {%- assign qq = q | strip_html | strip -%}
-                {%- if qq != '' -%}
-                  {%- assign a_block = as[idx] | default: '' -%}
-                  {%- assign a_clean = a_block | strip -%}
-                  {%- assign head6 = a_clean | slice: 0,6 -%}{% assign head5 = a_clean | slice: 0,5 %}{% assign head4 = a_clean | slice: 0,4 %}
-                  {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
-                  {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
-                  {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
-                  <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
-                    <summary class="nb-faq__q">{{ qq }}</summary>
-                    <div class="nb-faq__a rte">{{ a_clean }}</div>
-                  </details>
-                  {%- assign idx = idx | plus: 1 -%}
-                {%- endif -%}
-              {%- endfor -%}
+          <section class="nb-faq-section" style="--nb-faq-ink:#223238; --nb-faq-teal:#0F5B59; --nb-faq-shell:#E5E8E1; --nb-faq-answer:#EAF4F3;">
+            <div class="nb-shell">
+              <div class="nb-faq__wrap nb-faq__wrap--tray">
+                <h2 class="nb-faq__title">Frequently asked questions</h2>
+                <div class="nb-faq__list" data-single-open="true" id="nb-faq-{{ section.id }}-hub">
+                  {%- assign idx = 0 -%}
+                  {%- for q in qs -%}
+                    {%- assign qq = q | strip_html | strip -%}
+                    {%- if qq != '' -%}
+                      {%- assign a_block = as[idx] | default: '' -%}
+                      {%- assign a_clean = a_block | strip -%}
+                      {%- assign head6 = a_clean | slice: 0,6 -%}{% assign head5 = a_clean | slice: 0,5 %}{% assign head4 = a_clean | slice: 0,4 %}
+                      {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+                      {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+                      {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+                      <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+                        <summary class="nb-faq__q">{{ qq }}</summary>
+                        <div class="nb-faq__a rte">{{ a_clean }}</div>
+                      </details>
+                      {%- assign idx = idx | plus: 1 -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
             </div>
           </section>
 
-          {%- comment -%} FAQ JSON-LD (NB-FAQ Global content) {%- endcomment -%}
+          <script>
+            (function(){
+              var root = document.querySelector('#nb-faq-{{ section.id }}-hub.nb-faq__list[data-single-open="true"]');
+              if(!root) return;
+              root.addEventListener('toggle', function(ev){
+                var d = ev.target;
+                if(d.tagName !== 'DETAILS' || !d.open) return;
+                root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+              }, true);
+            })();
+          </script>
+
           <script type="application/ld+json">
           {
             "@context": "https://schema.org",
@@ -192,11 +235,7 @@
                 {%- assign aa = a_block | strip | strip_html -%}
                 {%- if qq != '' and aa != '' -%}
                   {%- if _first == false -%},{%- endif -%}
-                  {
-                    "@type": "Question",
-                    "name": {{ qq | json }},
-                    "acceptedAnswer": { "@type": "Answer", "text": {{ aa | json }} }
-                  }
+                  { "@type": "Question", "name": {{ qq | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ aa | json }} } }
                   {%- assign _first = false -%}
                 {%- endif -%}
                 {%- assign idx = idx | plus: 1 -%}
