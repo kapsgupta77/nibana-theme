@@ -32,7 +32,7 @@
             {%- for a in _blog.articles -%}
               {%- if a.handle == h -%}
                 <div class="nb-related__item nb-related__item--lux">
-                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
+                  <a class="nb-related__link" href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
                     {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
                   </a>
                 </div>
@@ -52,7 +52,7 @@
             {%- unless _picked contains a.handle -%}
               {%- if a.tags contains _hub_tag -%}
                 <div class="nb-related__item nb-related__item--lux">
-                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
+                  <a class="nb-related__link" href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
                     {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
                   </a>
                 </div>
@@ -73,7 +73,7 @@
               {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
               {%- if a_cat == c_handle -%}
                 <div class="nb-related__item nb-related__item--lux">
-                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
+                  <a class="nb-related__link" href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
                     {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
                   </a>
                 </div>
