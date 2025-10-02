@@ -3,12 +3,202 @@
   Page metafield: either custom.coaching_service OR coachingservice.coaching_service
 {%- endcomment -%}
 
+{%- comment -%} === HUB MODE: early gate (renders hub stack and skips service layout) === {%- endcomment -%}
+{%- liquid
+  assign nb_hub_on  = page.metafields.custom.is_hub
+  assign nb_hub_ref = page.metafields.custom.hub_ref
+  assign nb_hub     = nil
+  if nb_hub_on and nb_hub_ref and nb_hub_ref.value
+    assign nb_hub = nb_hub_ref.value
+  endif
+
+  assign cs_custom    = page.metafields.custom.coaching_service
+  assign cs_canonical = page.metafields.coachingservice.coaching_service
+  assign service_ref  = cs_custom | default: cs_canonical
+  assign hub_has_service = false
+  if service_ref and service_ref.value
+    assign service = service_ref.value
+    assign hub_has_service = true
+  endif
+-%}
+{%- if nb_hub -%}
+  {%- assign hub_h1      = nb_hub.h1_override | default: page.title -%}
+  {%- assign hub_deck    = nb_hub.deck_subheading | default: '' -%}
+  {%- assign hub_intro   = nb_hub.intro_richtext | default: '' -%}
+  {%- assign hub_bullets = nb_hub.feature_bullets | default: '' -%}
+  {%- assign hub_cta_h   = nb_hub.cta_headline | default: '' -%}
+  {%- assign hub_cta_txt = nb_hub.cta_text | default: 'Book a discovery call' -%}
+  {%- assign hub_cta_url = nb_hub.cta_url  | default: '/pages/book-a-call' -%}
+  {%- assign hub_schema  = nb_hub.schema_type | default: 'Service' -%}
+  {%- assign hub_show_faq = nb_hub.show_faq | default: false -%}
+  {%- assign hub_show_trust = nb_hub.show_trustbelt | default: true -%}
+  {%- assign hub_trust_variant = nb_hub.logo_belt_variant | default: 'marquee' -%}
+  {%- assign hub_tag = 'hub:' | append: page.handle -%}
+
+  {%- if request.design_mode -%}
+    <div class="nb-shell" style="margin:8px 0 0;">
+      <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+        <div class="rte" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <span class="badge">Hub</span>
+          <span class="badge">H1: {{ hub_h1 }}</span>
+          {%- if hub_deck != blank -%}<span class="badge">Deck ✓</span>{%- endif -%}
+          <span class="badge">Tag: {{ hub_tag }}</span>
+          {%- if section.settings.hub_blog != blank -%}
+            {%- assign _blog = blogs[section.settings.hub_blog] -%}
+            {%- assign _found = 0 -%}
+            {%- if _blog and _blog.articles_count > 0 -%}
+              {%- for a in _blog.articles -%}
+                {%- if a.tags contains hub_tag -%}{%- assign _found = _found | plus: 1 -%}{%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+            <span class="badge">Related by tag: {{ _found }}</span>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <section id="nb-hub-{{ section.id }}" class="nb-hub">
+    <div class="nb-shell">
+      <div class="nb-hero nb-hero--hub">
+        <h1 class="h1">{{ hub_h1 }}</h1>
+        {%- if hub_deck != blank -%}<p class="lead rte">{{ hub_deck }}</p>{%- endif -%}
+      </div>
+
+      {%- if hub_intro != blank -%}
+      <div class="nb-tray nb-intro">
+        <div class="rte">{{ hub_intro }}</div>
+      </div>
+      {%- endif -%}
+
+      {%- if hub_bullets != blank and hub_bullets.size > 0 -%}
+      <div class="nb-tray nb-benefits">
+        <ul class="nb-list">
+          {%- for b in hub_bullets -%}
+            {%- assign bt = b | strip -%}
+            {%- if bt != '' -%}<li>{{ bt }}</li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+      {%- endif -%}
+
+      {%- if hub_has_service -%}
+      <div class="nb-tray nb-proof">
+        {%- render 'nb-service-testimonials-belt', service: service, limit: 4, carousel: true -%}
+      </div>
+      {%- endif -%}
+
+      {%- if section.settings.hub_blog != blank -%}
+        {%- render 'nb-related-posts-hub', hub: nb_hub, blog_handle: section.settings.hub_blog, hub_tag: hub_tag, limit: 6 -%}
+      {%- endif -%}
+
+      {%- if hub_show_faq and hub_has_service -%}
+        {%- liquid
+          assign br_tag = '<br />'
+          assign q_raw = service.faqs_q | append: ''
+          assign a_raw = service.faqs_a | append: ''
+          assign q_html = q_raw | newline_to_br
+          assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+          assign q_pipe = q_norm | replace: br_tag, '|||'
+          assign qs     = q_pipe | split: '|||' 
+          assign a_html = a_raw | newline_to_br
+          assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+          assign a_norm = a_norm | replace: '<br /><br /><br />', '§§' | replace: '<br /><br />', '§§' | replace: '<br />  <br />', '§§' | replace: '<br />   <br />', '§§' | replace: '---','§§'
+          assign as     = a_norm | split: '§§'
+          assign q_count = 0
+          for q in qs
+            assign qq = q | strip_html | strip
+            if qq != ''
+              assign q_count = q_count | plus: 1
+            endif
+          endfor
+        -%}
+        {%- if q_count > 0 -%}
+        <div class="nb-tray nb-faq--wrap">
+          <h2 class="nb-faq__title">Frequently asked questions</h2>
+          <div class="nb-faq__list" id="nb-faq-{{ section.id }}-hub">
+            {%- assign idx = 0 -%}
+            {%- for q in qs -%}
+              {%- assign qq = q | strip_html | strip -%}
+              {%- if qq != '' -%}
+                {%- assign a_block = as[idx] | default: '' -%}
+                {%- assign a_clean = a_block | strip -%}
+                {%- assign head6 = a_clean | slice: 0,6 -%}{% assign head5 = a_clean | slice: 0,5 %}{% assign head4 = a_clean | slice: 0,4 %}
+                {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+                {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+                {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+                <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+                  <summary class="nb-faq__q">{{ qq }}</summary>
+                  <div class="nb-faq__a rte">{{ a_clean }}</div>
+                </details>
+                {%- assign idx = idx | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if hub_show_trust and hub_has_service -%}
+      {%- liquid
+        assign sp_raw  = service.social_proof | append: ''
+        assign sp_html = sp_raw | newline_to_br
+        assign br_tag  = '<br />'
+        assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+        assign sp_pipe = sp_norm | replace: br_tag, '|||' 
+        assign sp      = sp_pipe | split: '|||' 
+        assign _layout = hub_trust_variant | default: 'marquee'
+      -%}
+      {%- render 'nb-trustbelt-core', items: sp, layout: _layout, speed: 22 -%}
+      {%- endif -%}
+
+      <div class="nb-tray nb-bottom-cta" style="text-align:center;">
+        {%- if hub_cta_h != blank -%}<h2 class="h3" style="margin:0 0 8px;">{{ hub_cta_h }}</h2>{%- endif -%}
+        <a class="nb-cta nb-cta--xl" href="{{ hub_cta_url }}"
+          data-analytics-event="hub_cta_click"
+          data-hub-slug="{{ page.handle }}"
+          data-cta-url="{{ hub_cta_url }}"
+          data-cta-location="bottom">
+          {{ hub_cta_txt }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} JSON-LD: Breadcrumb + conditional Service + FAQ {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "position": 1, "name": "Home", "item": {{ routes.root_url | prepend: request.origin | json }} },
+      { "position": 2, "name": {{ page.title | json }}, "item": {{ request.origin | append: request.path | json }} }
+    ]
+  }
+  </script>
+  {%- if hub_schema == 'Service' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": {{ request.origin | append: request.path | append: '#service' | json }},
+    "name": {{ hub_h1 | json }},
+    "serviceType": "Executive Coaching",
+    "provider": { "@type": "Organization", "name": {{ shop.name | json }} }
+  }
+  </script>
+  {%- endif -%}
+
+  {%- assign __nb_hub_rendered = true -%}
+{%- endif -%}
+
 {%- liquid
   assign cs_custom    = page.metafields.custom.coaching_service
   assign cs_canonical = page.metafields.coachingservice.coaching_service
   assign service_ref  = cs_custom | default: cs_canonical
 -%}
 
+{%- unless __nb_hub_rendered -%}
 {%- if service_ref and service_ref.value -%}
 {%- assign service = service_ref.value -%}
 <div class="nb-coaching">
@@ -1468,6 +1658,8 @@
 <section class="page--width" style="padding:40px 0;"><p>No coaching service selected for this page.</p></section>
 {%- endif -%}
 
+{%- endunless -%}
+
 {% schema %}
 {
   "name": "Coaching service",
@@ -1483,6 +1675,11 @@
       "id": "show_loop_diagram",
       "label": "Show loop diagram",
       "default": false
+    },
+    {
+      "type": "blog",
+      "id": "hub_blog",
+      "label": "Hub: blog source (for related posts)"
     }
   ],
   "blocks": [],
