@@ -108,9 +108,15 @@
       @media (min-width:1024px){.nb-hub .nb-benefits .nb-method__body ul{grid-template-columns:1fr 1fr 1fr}}
       .nb-hub .nb-benefits .nb-method__body ul li{padding:12px 14px;border-radius:9999px;background:rgba(255,255,255,.6);box-shadow:0 1px 8px rgba(0,0,0,.04)}
 
-      /* Hub: map blog posts grid */
-      .nb-hub .blog-posts-container--hub{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:1fr}
-      @media (min-width:900px){.nb-hub .blog-posts-container--hub{grid-template-columns:1fr 1fr}}
+      /* Hub: related posts */
+      .nb-hub .nb-related-posts{margin-top:clamp(24px,4vw,48px)}
+      .nb-hub .nb-related-posts .nb-shell{max-width:1200px;margin-inline:auto;padding-inline:16px}
+      .nb-hub .nb-related-posts__header{margin-bottom:clamp(12px,2.5vw,24px)}
+      .nb-hub .nb-related-posts__title{margin:0;font-size:clamp(22px,2.2vw,36px);font-weight:700;letter-spacing:-.02em}
+      .nb-hub .nb-posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-6,24px);align-items:start}
+      .nb-hub .nb-related-posts .panel,
+      .nb-hub .nb-related-posts .nb-card,
+      .nb-hub .nb-related-posts .nb-bubble{background:transparent !important;box-shadow:none !important;padding:0 !important;border-radius:0 !important}
 
       /* Trust belt label */
       .nb-hub .nb-trust-eyebrow{margin:18px 0 10px;text-align:center;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;font-weight:700;opacity:.7}
