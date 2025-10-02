@@ -67,7 +67,7 @@
 
       {%- if hub_intro != blank -%}
       <div class="nb-tray nb-intro">
-        <div class="rte">{{ hub_intro }}</div>
+        <div class="rte">{{ hub_intro | metafield_tag }}</div>
       </div>
       {%- endif -%}
 
