@@ -31,15 +31,19 @@
 {%- if _blog and _articles_count > 0 -%}
   <section class="nb-related nb-related--xl">
     <h2 class="h2 nb-related__heading">{{ _heading }}</h2>
-    <div class="nb-related__grid">
-      {%- comment -%} Pass 1: Pinned handles (exact order) {%- endcomment -%}
+
+    <!-- Match blog page container + item classes -->
+    <div class="blog-posts-container blog-posts-container--hub">
+      {%- comment -%} Pass 1: pinned handles in order {%- endcomment -%}
       {%- if _pins and _pins.size > 0 -%}
         {%- for handle in _pins -%}
           {%- assign h = handle | strip -%}
           {%- if h != '' and _shown < _take -%}
             {%- for a in _blog.articles -%}
               {%- if a.handle == h -%}
-                {%- render 'nb-related-posts-card-xl', article: a, hub_slug: page.handle -%}
+                <div class="blog-post-item">
+                  {% content_for 'block', id: 'hub-blog-post-card-' | append: a.id, type: '_blog-post-card', article: a %}
+                </div>
                 {%- assign _picked = _picked | append: a.handle | append: ',' -%}
                 {%- assign _shown = _shown | plus: 1 -%}
                 {%- break -%}
@@ -49,13 +53,15 @@
         {%- endfor -%}
       {%- endif -%}
 
-      {%- comment -%} Pass 2: Tag-based top-up (hub:<page.handle>) {%- endcomment -%}
+      {%- comment -%} Pass 2: tag-based top-up (hub:<page.handle>) {%- endcomment -%}
       {%- if _shown < _take and _hub_tag != blank -%}
         {%- for a in _blog.articles -%}
           {%- if _shown < _take -%}
             {%- unless _picked contains a.handle -%}
               {%- if a.tags contains _hub_tag -%}
-                {%- render 'nb-related-posts-card-xl', article: a, hub_slug: page.handle -%}
+                <div class="blog-post-item">
+                  {% content_for 'block', id: 'hub-blog-post-card-' | append: a.id, type: '_blog-post-card', article: a %}
+                </div>
                 {%- assign _picked = _picked | append: a.handle | append: ',' -%}
                 {%- assign _shown = _shown | plus: 1 -%}
               {%- endif -%}
@@ -65,7 +71,7 @@
       {%- endif -%}
     </div>
   </section>
-{%- elsif request.design_mode -%}
+{%- elif request.design_mode -%}
   <div class="nb-shell" style="margin:8px 0 0;">
     <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
       <div class="rte"><strong>Hub notice:</strong> <code>seo_hub.blog_handle</code> should be the blog <em>handle</em> (e.g., <code>nibana-journal</code>), not the title.</div>
