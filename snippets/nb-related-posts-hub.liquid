@@ -1,0 +1,81 @@
+{%- liquid
+  assign _blog_handle = blog_handle | default: '' 
+  assign _blog = nil
+  if _blog_handle != '' 
+    assign _blog = blogs[_blog_handle]
+  endif
+  assign _take = limit | default: 6
+  assign _shown = 0
+  assign _picked = ''
+  assign nb_related_post_card_css_state = ''
+-%}
+{%- if _blog and _blog.articles_count > 0 -%}
+  <section class="nb-related nb-related--lux">
+    <h2 class="h2 nb-related__heading">Related posts</h2>
+    <div class="nb-related__grid nb-related__grid--lux">
+      {%- comment -%} Pass 1: Pinned handles from SeoHub.manual_related_handles {%- endcomment -%}
+      {%- if hub and hub.manual_related_handles and hub.manual_related_handles.size > 0 -%}
+        {%- for h in hub.manual_related_handles -%}
+          {%- assign handle = h | strip -%}
+          {%- if handle != '' and _shown < _take -%}
+            {%- for a in _blog.articles -%}
+              {%- if a.handle == handle -%}
+                <div class="nb-related__item nb-related__item--lux">
+                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
+                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
+                  </a>
+                </div>
+                {%- assign nb_related_post_card_css_state = 'set' -%}
+                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                {%- assign _shown = _shown | plus: 1 -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Pass 2: Tag-based top-up (hub:<page.handle>) {%- endcomment -%}
+      {%- if _shown < _take and hub_tag != blank -%}
+        {%- for a in _blog.articles -%}
+          {%- if _shown < _take -%}
+            {%- unless _picked contains a.handle -%}
+              {%- if a.tags contains hub_tag -%}
+                <div class="nb-related__item nb-related__item--lux">
+                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
+                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
+                  </a>
+                </div>
+                {%- assign nb_related_post_card_css_state = 'set' -%}
+                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                {%- assign _shown = _shown | plus: 1 -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Pass 3: Category-based top-up (supporting_category_handle) {%- endcomment -%}
+      {%- if _shown < _take and hub and hub.supporting_category_handle != blank -%}
+        {%- assign c_handle = hub.supporting_category_handle -%}
+        {%- for a in _blog.articles -%}
+          {%- if _shown < _take -%}
+            {%- unless _picked contains a.handle -%}
+              {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
+              {%- if a_cat == c_handle -%}
+                <div class="nb-related__item nb-related__item--lux">
+                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
+                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
+                  </a>
+                </div>
+                {%- assign nb_related_post_card_css_state = 'set' -%}
+                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                {%- assign _shown = _shown | plus: 1 -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
