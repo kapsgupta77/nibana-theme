@@ -41,6 +41,14 @@ Mode: pass `carousel: true` to enable slider UI.
     endif
   endif
 
+  {% comment %} Allow explicit refs param (array of nb_testimonial entries), e.g. from SeoHub {% endcomment %}
+  {% if _has_refs == false and refs and refs != blank %}
+    {% assign _refs = refs %}
+    {% if _refs != blank %}
+      {% assign _has_refs = true %}
+    {% endif %}
+  {% endif %}
+
   assign _entries = blank
   if _has_refs == false
     if shop.metaobjects['nb_testimonial'] and shop.metaobjects['nb_testimonial'].values
