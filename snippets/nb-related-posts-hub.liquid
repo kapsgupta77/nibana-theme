@@ -35,16 +35,35 @@
   if _blog and _articles_count > 0
     if _pins and _pins.size > 0
       for handle in _pins
-        assign h = handle | strip
-        if h != '' and _shown < _take
-          for a in _blog.articles
-            if a.handle == h
-              assign articles = articles | push: a
-              assign _picked = _picked | append: a.handle | append: ','
-              assign _shown = _shown | plus: 1
-              break
-            endif
-          endfor
+        if _shown >= _take
+          break
+        endif
+
+        assign pin_article = nil
+        assign pin_handle = ''
+
+        if handle.handle
+          assign pin_article = handle
+          assign pin_handle = handle.handle
+        else
+          assign pin_handle = handle | strip
+
+          if pin_handle != ''
+            for a in _blog.articles
+              if a.handle == pin_handle
+                assign pin_article = a
+                break
+              endif
+            endfor
+          endif
+        endif
+
+        if pin_article and pin_handle != ''
+          unless _picked contains pin_handle
+            assign articles = articles | push: pin_article
+            assign _picked = _picked | append: pin_handle | append: ','
+            assign _shown = _shown | plus: 1
+          endunless
         endif
       endfor
     endif
