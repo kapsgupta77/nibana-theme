@@ -2,7 +2,7 @@
   assign _blog = nil
   assign _raw_handle = ''
 
-  if blog_handle and blog_handle.handle
+  if blog_handle and blog_handle | respond_to: 'handle'
     assign _blog = blog_handle
     assign _raw_handle = blog_handle.handle
   endif
