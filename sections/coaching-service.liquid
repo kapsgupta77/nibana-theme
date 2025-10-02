@@ -35,6 +35,10 @@
   {%- assign hub_trust_variant = nb_hub.logo_belt_variant.value | default: 'marquee' -%}
   {%- assign hub_tag = 'hub:' | append: page.handle -%}
 
+  {%- assign hub_blog_handle = nb_hub.blog_handle.value | default: '' -%}
+  {%- assign hub_faq_q = nb_hub.faq_q.value | default: '' -%}
+  {%- assign hub_faq_a = nb_hub.faq_a.value | default: '' -%}
+
   {%- if request.design_mode -%}
     <div class="nb-shell" style="margin:8px 0 0;">
       <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
@@ -43,8 +47,8 @@
           <span class="badge">H1: {{ hub_h1 }}</span>
           {%- if hub_deck != blank -%}<span class="badge">Deck ✓</span>{%- endif -%}
           <span class="badge">Tag: {{ hub_tag }}</span>
-          {%- if section.settings.hub_blog != blank -%}
-            {%- assign _blog = blogs[section.settings.hub_blog] -%}
+          {%- if hub_blog_handle != blank -%}
+            {%- assign _blog = blogs[hub_blog_handle] -%}
             {%- assign _found = 0 -%}
             {%- if _blog and _blog.articles_count > 0 -%}
               {%- for a in _blog.articles -%}
@@ -116,66 +120,92 @@
       </div>
       {%- endif -%}
 
-      {%- if section.settings.hub_blog != blank -%}
-        {%- render 'nb-related-posts-hub', hub: nb_hub, blog_handle: section.settings.hub_blog, hub_tag: hub_tag, limit: 6 -%}
+      {%- if hub_blog_handle != blank -%}
+        {%- render 'nb-related-posts-hub', hub: nb_hub, blog_handle: hub_blog_handle, hub_tag: hub_tag, limit: 6 -%}
       {%- elsif request.design_mode -%}
         <div class="nb-shell" style="margin:8px 0 0;">
           <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
-            <div class="rte"><strong>Hub notice:</strong> set <em>“Hub: blog source (for related posts)”</em> in this section to enable related articles.</div>
+            <div class="rte"><strong>Hub notice:</strong> set <em>SeoHub → blog_handle</em> (e.g., <code>blog</code>) to enable related articles.</div>
           </div>
         </div>
       {%- endif -%}
 
-      {%- comment -%} Hub FAQ (Global-style): per-page blocks {%- endcomment -%}
-      {%- assign hub_faq_items = section.blocks | where: 'type', 'hub_faq_item' -%}
-      {%- assign hub_faq_count = 0 -%}
-      {%- for b in hub_faq_items -%}
-        {%- assign _q = b.settings.q | strip -%}
-        {%- assign _a = b.settings.a | strip -%}
-        {%- if _q != '' and _a != '' -%}
-          {%- assign hub_faq_count = hub_faq_count | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
-      {%- if hub_show_faq and hub_faq_count > 0 -%}
-      <div class="nb-tray nb-faq--wrap">
-        <h2 class="nb-faq__title">{{ section.settings.hub_faq_title | default: 'Frequently asked questions' }}</h2>
-        <div class="nb-faq__list" id="nb-faq-{{ section.id }}-hub">
-          {%- for b in hub_faq_items -%}
-            {%- assign _q = b.settings.q | strip -%}
-            {%- assign _a = b.settings.a | strip -%}
-            {%- if _q != '' and _a != '' -%}
-              <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
-                <summary class="nb-faq__q">{{ _q }}</summary>
-                <div class="nb-faq__a rte">{{ _a }}</div>
-              </details>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
+      {%- comment -%} Hub FAQ (Global-style) from SeoHub faq_q / faq_a {%- endcomment -%}
+      {%- if hub_show_faq -%}
+        {%- liquid
+          assign br_tag = '<br />'
 
-      {%- comment -%} FAQ JSON-LD (from blocks) {%- endcomment -%}
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {%- assign _first = true -%}
-          {%- for b in hub_faq_items -%}
-            {%- assign _q = b.settings.q | strip -%}
-            {%- assign _a = b.settings.a | strip -%}
-            {%- if _q != '' and _a != '' -%}
-              {%- if _first == false -%},{%- endif -%}
-              {
-                "@type": "Question",
-                "name": {{ _q | json }},
-                "acceptedAnswer": { "@type": "Answer", "text": {{ _a | json }} }
-              }
-              {%- assign _first = false -%}
-            {%- endif -%}
-          {%- endfor -%}
-        ]
-      }
-      </script>
+          assign q_raw = hub_faq_q | append: ''
+          assign q_html = q_raw | newline_to_br
+          assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+          assign q_pipe = q_norm | replace: br_tag, '|||'
+          assign qs     = q_pipe | split: '|||'
+
+          assign a_raw = hub_faq_a | append: ''
+          assign a_html = a_raw | newline_to_br
+          assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+          assign a_norm = a_norm | replace: '<br /><br /><br />', '§§' | replace: '<br /><br />', '§§' | replace: '<br />  <br />', '§§' | replace: '<br />   <br />', '§§' | replace: '---','§§'
+          assign as     = a_norm | split: '§§'
+
+          assign q_count = 0
+          for q in qs
+            assign qq = q | strip_html | strip
+            if qq != ''
+              assign q_count = q_count | plus: 1
+            endif
+          endfor
+        -%}
+        {%- if q_count > 0 -%}
+          <div class="nb-tray nb-faq--wrap">
+            <h2 class="nb-faq__title">Frequently asked questions</h2>
+            <div class="nb-faq__list" id="nb-faq-{{ section.id }}-hub">
+              {%- assign idx = 0 -%}
+              {%- for q in qs -%}
+                {%- assign qq = q | strip_html | strip -%}
+                {%- if qq != '' -%}
+                  {%- assign a_block = as[idx] | default: '' -%}
+                  {%- assign a_clean = a_block | strip -%}
+                  {%- assign head6 = a_clean | slice: 0,6 -%}{% assign head5 = a_clean | slice: 0,5 %}{% assign head4 = a_clean | slice: 0,4 %}
+                  {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+                  {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+                  {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+                  <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+                    <summary class="nb-faq__q">{{ qq }}</summary>
+                    <div class="nb-faq__a rte">{{ a_clean }}</div>
+                  </details>
+                  {%- assign idx = idx | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+
+          {%- comment -%} FAQ JSON-LD {%- endcomment -%}
+          <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {%- assign _first = true -%}
+              {%- assign idx = 0 -%}
+              {%- for q in qs -%}
+                {%- assign qq = q | strip_html | strip -%}
+                {%- assign a_block = as[idx] | default: '' -%}
+                {%- assign aa = a_block | strip | strip_html -%}
+                {%- if qq != '' and aa != '' -%}
+                  {%- if _first == false -%},{%- endif -%}
+                  {
+                    "@type": "Question",
+                    "name": {{ qq | json }},
+                    "acceptedAnswer": { "@type": "Answer", "text": {{ aa | json }} }
+                  }
+                  {%- assign _first = false -%}
+                {%- endif -%}
+                {%- assign idx = idx | plus: 1 -%}
+              {%- endfor -%}
+            ]
+          }
+          </script>
+        {%- endif -%}
       {%- endif -%}
 
       {%- if hub_show_trust and hub_has_service -%}
@@ -1714,29 +1744,9 @@
       "id": "show_loop_diagram",
       "label": "Show loop diagram",
       "default": false
-    },
-    {
-      "type": "blog",
-      "id": "hub_blog",
-      "label": "Hub: blog source (for related posts)"
-    },
-    {
-      "type": "text",
-      "id": "hub_faq_title",
-      "label": "Hub FAQ title",
-      "default": "Frequently asked questions"
     }
   ],
-  "blocks": [
-    {
-      "type": "hub_faq_item",
-      "name": "Hub FAQ item",
-      "settings": [
-        { "type": "text", "id": "q", "label": "Question" },
-        { "type": "richtext", "id": "a", "label": "Answer" }
-      ]
-    }
-  ],
+  "blocks": [],
   "presets": [
     {
       "name": "Coaching service"
