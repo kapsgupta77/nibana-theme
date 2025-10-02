@@ -1,11 +1,21 @@
 {%- liquid
-  assign _raw_handle = blog_handle | default: '' | strip
   assign _blog = nil
-  if _raw_handle != ''
-    assign _blog = blogs[_raw_handle]
-    if _blog == nil
-      assign _handleized = _raw_handle | handleize
-      assign _blog = blogs[_handleized]
+  assign _raw_handle = ''
+
+  if blog_handle and blog_handle.handle
+    assign _blog = blog_handle
+    assign _raw_handle = blog_handle.handle
+  endif
+
+  if _blog == nil
+    assign _raw_handle = blog_handle | default: '' | strip
+
+    if _raw_handle != ''
+      assign _blog = blogs[_raw_handle]
+      if _blog == nil
+        assign _handleized = _raw_handle | handleize
+        assign _blog = blogs[_handleized]
+      endif
     endif
   endif
 
