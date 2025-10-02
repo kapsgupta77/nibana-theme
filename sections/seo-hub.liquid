@@ -1,0 +1,312 @@
+{% comment %}
+  SEO Hub section
+  - Sources all content from the Seo Hub metaobject referenced by: page.metafields.custom.hub_ref
+  - Optional canonical: page.metafields.custom.canonical_url
+  - Related posts: seo_hub.blog_handle (handle or title; we handleize as fallback) + tag hub:{{ page.handle }}
+  - FAQ: seo_hub.faq_q / seo_hub.faq_a (NB-FAQ global styling)
+  - Testimonials: seo_hub.proof_items (refs to nb_testimonial) via nb-service-testimonials-belt (refs param)
+  - Trustbelt: optional — if a coaching service is bound on the page, we’ll reuse its social_proof via nb-trustbelt-core
+{% endcomment %}
+
+{%- liquid
+  assign hub_ref = page.metafields.custom.hub_ref
+  assign hub = nil
+  if hub_ref and hub_ref.value
+    assign hub = hub_ref.value
+  endif
+-%}
+
+{%- if page.metafields.custom.canonical_url and page.metafields.custom.canonical_url != blank -%}
+  <link rel="canonical" href="{{ page.metafields.custom.canonical_url }}" />
+{%- endif -%}
+
+{%- if hub -%}
+  {%- liquid
+    assign hub_h1      = hub.h1_override.value | default: page.title
+    assign hub_deck    = hub.deck_subheading
+    assign hub_intro   = hub.intro_richtext
+    assign hub_bullets = hub.feature_bullets.value
+    assign hub_cta_h   = hub.cta_headline.value | default: ''
+    assign hub_cta_txt = hub.cta_text.value | default: 'Book a discovery call'
+    assign hub_cta_url = hub.cta_url.value  | default: '/pages/book-a-call'
+    assign hub_schema  = hub.schema_type.value | default: 'Service'
+    assign hub_show_faq = hub.show_faq.value | default: false
+    assign hub_show_trust = hub.show_trustbelt.value | default: true
+    assign hub_trust_variant = hub.logo_belt_variant.value | default: 'marquee'
+    assign hub_blog_handle = hub.blog_handle.value | default: ''
+    assign hub_faq_q = hub.faq_q.value | default: ''
+    assign hub_faq_a = hub.faq_a.value | default: ''
+    assign hub_tag = 'hub:' | append: page.handle
+
+    assign cs_custom    = page.metafields.custom.coaching_service
+    assign cs_canonical = page.metafields.coachingservice.coaching_service
+    assign service_ref  = cs_custom | default: cs_canonical
+    assign service = nil
+    if service_ref and service_ref.value
+      assign service = service_ref.value
+    endif
+  -%}
+
+  {% comment %} Editor debug (non-public) {% endcomment %}
+  {%- if request.design_mode -%}
+    {%- liquid
+      assign _raw = hub_blog_handle | strip
+      assign _blog_dbg = nil
+      assign _resolved = _raw
+      if _raw != ''
+        assign _blog_dbg = blogs[_raw]
+        if _blog_dbg == nil
+          assign _resolved = _raw | handleize
+          assign _blog_dbg = blogs[_resolved]
+        endif
+      endif
+      assign _cnt = 0
+      if _blog_dbg
+        assign _ac = _blog_dbg.articles_count | plus: 0
+        if _ac > 0
+          for a in _blog_dbg.articles
+            if a.tags contains hub_tag
+              assign _cnt = _cnt | plus: 1
+            endif
+          endfor
+        endif
+      endif
+    -%}
+    <div class="nb-shell" style="margin:8px 0 0;">
+      <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+        <div class="rte">
+          <strong>Hub debug:</strong>
+          Blog input: <code>{{ hub_blog_handle }}</code> → resolved: <code>{{ _resolved }}</code> ·
+          Tag: <code>{{ hub_tag }}</code> · Matches: <strong>{{ _cnt }}</strong>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <section id="nb-hub-{{ section.id }}" class="nb-hub">
+    <style>
+      .nb-hub .nb-shell{max-width:var(--narrow-page-width,1120px);margin:0 auto;padding:0 20px}
+      .nb-hub .nb-hero{margin:clamp(16px,3vw,28px) 0}
+      .nb-hub .nb-hero .h1{margin:0 0 6px}
+      .nb-hub .nb-tray{background:var(--nb-mist);border-radius:20px;padding:clamp(18px,2.2vw,26px);box-shadow:0 10px 28px rgba(0,0,0,.06)}
+      .nb-hub .nb-intro{margin:clamp(12px,2vw,18px) 0}
+      .nb-hub .nb-benefits{margin:clamp(12px,2vw,18px) 0}
+      .nb-hub .nb-bottom-cta{margin:clamp(18px,3vw,28px) 0}
+      @media (prefers-reduced-motion:no-preference){
+        .nb-hub a.nb-cta{transition:transform .16s ease, box-shadow .16s ease}
+        .nb-hub a.nb-cta:hover{transform:translateY(-1px)}
+      }
+    </style>
+
+    <div class="nb-shell">
+      <div class="nb-hero nb-hero--hub">
+        <h1 class="h1">{{ hub_h1 }}</h1>
+        {%- if hub_deck != blank -%}
+          <div class="lead rte">{{ hub_deck | metafield_tag }}</div>
+        {%- endif -%}
+      </div>
+
+      {%- if hub_intro != blank -%}
+      <div class="nb-tray nb-intro">
+        <div class="rte">{{ hub_intro | metafield_tag }}</div>
+      </div>
+      {%- endif -%}
+
+      {%- if hub_bullets and hub_bullets.size > 0 -%}
+      <div class="nb-tray nb-benefits">
+        <div class="nb-method__body">
+          <ul>
+            {%- for b in hub_bullets -%}
+              {%- assign bt = b | strip -%}
+              {%- if bt != '' -%}<li>{{ bt }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+      {%- endif -%}
+
+      {%- assign hub_proofs_list = blank -%}
+      {%- if hub.proof_items and hub.proof_items.value and hub.proof_items.value != blank -%}
+        {%- assign hub_proofs_list = hub.proof_items.value -%}
+      {%- endif -%}
+      {%- if hub_proofs_list and hub_proofs_list.size > 0 -%}
+        <div class="nb-tray nb-proof">
+          {%- render 'nb-service-testimonials-belt', refs: hub_proofs_list, limit: 4, carousel: true -%}
+        </div>
+      {%- endif -%}
+
+      {%- if hub_blog_handle != blank -%}
+        {%- render 'nb-related-posts-hub', hub: hub, blog_handle: hub_blog_handle, hub_tag: hub_tag, limit: 6 -%}
+      {%- elsif request.design_mode -%}
+        <div class="nb-shell" style="margin:8px 0 0;">
+          <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+            <div class="rte"><strong>Hub notice:</strong> set <em>SeoHub → blog_handle</em> to the blog handle (e.g., <code>nibana-journal</code>).</div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if hub_show_faq -%}
+        <style>
+          .nb-faq-section{ color: var(--nb-faq-ink, #223238); }
+          .nb-faq__wrap{ margin: 12px 0; }
+          .nb-faq__wrap--tray{ background: var(--nb-faq-shell, #E5E8E1); border-radius: 22px; padding: clamp(16px, 2.6vw, 28px); box-shadow: 0 10px 24px rgba(0,0,0,.06); }
+          .nb-faq__title{ margin: 0 0 clamp(10px, 2vw, 16px); text-align: center; font-weight: 800; color: var(--nb-faq-ink, #223238); font-family: var(--font-heading-family, inherit); font-size: clamp(22px, 2.8vw, 28px); }
+          .nb-faq__list{ display: grid; gap: 18px; }
+          .nb-faq__item{ background: transparent; border: 0; box-shadow: none; overflow: visible; }
+          .nb-faq__q{ position: relative; background: var(--nb-faq-teal, #0F5B59); color: #fff; border: 0; border-radius: 9999px; padding: 16px 64px 16px 22px; font-weight: 720; box-shadow: 0 4px 14px rgba(0,0,0,.05); display: grid; grid-template-columns: 1fr auto; align-items: center; cursor: pointer; font-family: var(--font-body-family, inherit); }
+          .nb-faq__q::-webkit-details-marker{ display:none; }
+          .nb-faq__q:hover{ background: color-mix(in oklab, var(--nb-faq-teal, #0F5B59), #000 8%); }
+          .nb-faq__q::after{ content: "+"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.14); font-size: 22px; font-weight: 800; line-height: 1; }
+          details[open] .nb-faq__q::after{ content: "–"; }
+          .nb-faq__a{ background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 14px; margin: 10px 14px 2px; padding: 16px 20px; color: color-mix(in oklab, var(--nb-faq-ink, #223238), #000 8%); line-height: 1.65; }
+        </style>
+
+        {%- liquid
+          assign br_tag = '<br />'
+          assign q_raw = hub_faq_q | append: ''
+          assign q_html = q_raw | newline_to_br
+          assign q_norm = q_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+          assign q_pipe = q_norm | replace: br_tag, '|||' 
+          assign qs     = q_pipe | split: '|||' 
+          assign a_raw = hub_faq_a | append: ''
+          assign a_html = a_raw | newline_to_br
+          assign a_norm = a_html | replace: '<br/>', br_tag | replace: '<br>', br_tag | replace: '&nbsp;', ' '
+          assign a_norm = a_norm | replace: '<br /><br /><br />', '§§' | replace: '<br /><br />', '§§' | replace: '<br />  <br />', '§§' | replace: '<br />   <br />', '§§' | replace: '---','§§'
+          assign as     = a_norm | split: '§§'
+          assign q_count = 0
+          for q in qs
+            assign qq = q | strip_html | strip
+            if qq != ''
+              assign q_count = q_count | plus: 1
+            endif
+          endfor
+        -%}
+        {%- if q_count > 0 -%}
+          <section class="nb-faq-section" style="--nb-faq-ink:#223238; --nb-faq-teal:#0F5B59; --nb-faq-shell:#E5E8E1; --nb-faq-answer:#EAF4F3;">
+            <div class="nb-shell">
+              <div class="nb-faq__wrap nb-faq__wrap--tray">
+                <h2 class="nb-faq__title">Frequently asked questions</h2>
+                <div class="nb-faq__list" data-single-open="true" id="nb-faq-{{ section.id }}-hub">
+                  {%- assign idx = 0 -%}
+                  {%- for q in qs -%}
+                    {%- assign qq = q | strip_html | strip -%}
+                    {%- if qq != '' -%}
+                      {%- assign a_block = as[idx] | default: '' -%}
+                      {%- assign a_clean = a_block | strip -%}
+                      {%- assign head6 = a_clean | slice: 0,6 -%}{% assign head5 = a_clean | slice: 0,5 %}{% assign head4 = a_clean | slice: 0,4 %}
+                      {%- if head6 == '<br />' -%}{% assign a_clean = a_clean | replace_first: '<br />','' %}{% endif -%}
+                      {%- if head5 == '<br/>'  -%}{% assign a_clean = a_clean | replace_first: '<br/>',''  %}{% endif -%}
+                      {%- if head4 == '<br>'   -%}{% assign a_clean = a_clean | replace_first: '<br>',''   %}{% endif -%}
+                      <details class="nb-faq__item"{% if forloop.first %} open{% endif %}>
+                        <summary class="nb-faq__q">{{ qq }}</summary>
+                        <div class="nb-faq__a rte">{{ a_clean }}</div>
+                      </details>
+                      {%- assign idx = idx | plus: 1 -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <script>
+            (function(){
+              var root = document.querySelector('#nb-faq-{{ section.id }}-hub.nb-faq__list[data-single-open="true"]');
+              if(!root) return;
+              root.addEventListener('toggle', function(ev){
+                var d = ev.target;
+                if(d.tagName !== 'DETAILS' || !d.open) return;
+                root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
+              }, true);
+            })();
+          </script>
+
+          <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {%- assign _first = true -%}
+              {%- assign idx = 0 -%}
+              {%- for q in qs -%}
+                {%- assign qq = q | strip_html | strip -%}
+                {%- assign a_block = as[idx] | default: '' -%}
+                {%- assign aa = a_block | strip | strip_html -%}
+                {%- if qq != '' and aa != '' -%}
+                  {%- if _first == false -%},{%- endif -%}
+                  { "@type": "Question", "name": {{ qq | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ aa | json }} } }
+                  {%- assign _first = false -%}
+                {%- endif -%}
+                {%- assign idx = idx | plus: 1 -%}
+              {%- endfor -%}
+            ]
+          }
+          </script>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if hub_show_trust and service -%}
+        {%- liquid
+          assign sp_raw  = service.social_proof | append: ''
+          assign sp_html = sp_raw | newline_to_br
+          assign br_tag  = '<br />'
+          assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
+          assign sp_pipe = sp_norm | replace: br_tag, '|||' 
+          assign sp      = sp_pipe | split: '|||' 
+          assign _layout = hub_trust_variant | default: 'marquee'
+        -%}
+        {%- render 'nb-trustbelt-core', items: sp, layout: _layout, speed: 22 -%}
+      {%- endif -%}
+
+      <div class="nb-tray nb-bottom-cta" style="text-align:center;">
+        {%- if hub_cta_h != blank -%}<h2 class="h3" style="margin:0 0 8px;">{{ hub_cta_h }}</h2>{%- endif -%}
+        <a class="nb-cta nb-cta--xl" href="{{ hub_cta_url }}"
+          data-analytics-event="hub_cta_click"
+          data-hub-slug="{{ page.handle }}"
+          data-cta-url="{{ hub_cta_url }}"
+          data-cta-location="bottom">
+          {{ hub_cta_txt }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} JSON-LD: Breadcrumb + optional Service {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "position": 1, "name": "Home", "item": {{ routes.root_url | prepend: request.origin | json }} },
+      { "position": 2, "name": {{ page.title | json }}, "item": {{ request.origin | append: request.path | json }} }
+    ]
+  }
+  </script>
+  {%- if hub_schema == 'Service' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": {{ request.origin | append: request.path | append: '#service' | json }},
+    "name": {{ hub_h1 | json }},
+    "serviceType": "Executive Coaching",
+    "provider": { "@type": "Organization", "name": {{ shop.name | json }} }
+  }
+  </script>
+  {%- endif -%}
+{%- else -%}
+  {%- if request.design_mode -%}
+    <div class="nb-shell" style="margin:8px 0 0;">
+      <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+        <div class="rte"><strong>Hub notice:</strong> Set the Page metafield <em>custom.hub_ref</em> to a Seo Hub entry.</div>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SEO Hub",
+  "settings": []
+}
+{% endschema %}
