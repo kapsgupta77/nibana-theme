@@ -23,7 +23,7 @@
 -%}
 {%- if nb_hub -%}
   {%- assign hub_h1      = nb_hub.h1_override | default: page.title -%}
-  {%- assign hub_deck    = nb_hub.deck_subheading | default: '' -%}
+  {%- assign hub_deck    = nb_hub.deck_subheading -%}
   {%- assign hub_intro   = nb_hub.intro_richtext -%}
   {%- assign hub_bullets = nb_hub.feature_bullets | default: '' -%}
   {%- assign hub_cta_h   = nb_hub.cta_headline | default: '' -%}
@@ -62,13 +62,15 @@
     <div class="nb-shell">
       <div class="nb-hero nb-hero--hub">
         <h1 class="h1">{{ hub_h1 }}</h1>
-        {%- if hub_deck != blank -%}<p class="lead rte">{{ hub_deck }}</p>{%- endif -%}
+        {%- if hub_deck != blank -%}
+          <div class="lead rte">{{ hub_deck | metafield_tag }}</div>
+        {%- endif -%}
       </div>
 
-      {%- if hub_intro and hub_intro.value != blank -%}
-      <div class="nb-tray nb-intro">
-        <div class="rte">{{ hub_intro | metafield_tag }}</div>
-      </div>
+      {%- if hub_intro != blank -%}
+        <div class="nb-tray nb-intro">
+          <div class="rte">{{ hub_intro | metafield_tag }}</div>
+        </div>
       {%- endif -%}
 
       {%- if hub_bullets != blank and hub_bullets.size > 0 -%}
