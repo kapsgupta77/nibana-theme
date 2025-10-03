@@ -1,3 +1,10 @@
+{%- liquid
+  assign __nb_refs_from_param = false
+  if refs and refs != blank
+    assign __nb_refs_from_param = true
+  endif
+-%}
+
 {%- comment -%}
 Service-page testimonials belt — grid/slider using the same classes as Testimonials.
 
@@ -9,6 +16,11 @@ Filter: param `tag_filter` OR service.testimonials_tag_filter; "All" disables.
 Limit: `limit` (default 4)
 Mode: pass `carousel: true` to enable slider UI.
 {%- endcomment -%}
+
+{%- liquid
+  assign _refs = blank
+  assign _has_refs = false
+-%}
 
 {%- liquid
   assign _heading  = heading  | default: 'What our clients say'
@@ -40,6 +52,19 @@ Mode: pass `carousel: true` to enable slider UI.
       assign _has_refs = true
     endif
   endif
+-%}
+
+{%- if refs and refs != blank -%}
+  {%- assign _refs = refs -%}
+  {%- assign _has_refs = true -%}
+{%- endif -%}
+
+{%- liquid
+  if __nb_refs_from_param and refs != blank
+    assign _refs = refs
+    assign _has_refs = true
+  endif
+
 
   # Allow explicit refs param (array of nb_testimonial entries), e.g. from SeoHub
   if _has_refs == false and refs and refs != blank
@@ -56,6 +81,16 @@ Mode: pass `carousel: true` to enable slider UI.
     endif
   endif
 -%}
+
+{%- if request.design_mode -%}
+  <div class="nb-shell" style="margin:8px 0;">
+    <div class="nb-tray" style="padding:8px 10px; border-radius:12px; background:var(--oc-surface);">
+      <div class="rte">Testimonials belt source:
+        {%- if refs and refs != blank -%}<strong>SeoHub refs</strong>{%- elsif service -%}<strong>Service list</strong>{%- else -%}<strong>none</strong>{%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
 
 {%- assign _count = 0 -%}
 {%- capture cards_only -%}

@@ -1,0 +1,155 @@
+{%- liquid
+  assign card_article = article
+  assign card_body = body
+  assign card_alignment = alignment | default: 'left'
+-%}
+{%- if card_article -%}
+  {%- liquid
+    assign image_alt = ''
+    if card_article.image
+      assign image_alt = card_article.image.alt | default: card_article.title
+      assign image_alt = image_alt | strip | escape
+    endif
+
+    assign total_words = card_article.content | strip_html | split: ' ' | size
+    assign reading_minutes = total_words | divided_by: 200
+    assign reading_remainder = total_words | modulo: 200
+    if reading_remainder > 0
+      assign reading_minutes = reading_minutes | plus: 1
+    endif
+    if reading_minutes < 1
+      assign reading_minutes = 1
+    endif
+
+    assign excerpt_text = card_article.excerpt | strip_html
+    if excerpt_text == ''
+      assign excerpt_text = card_article.content | strip_html
+    endif
+    assign excerpt_text = excerpt_text | truncate: 140
+  -%}
+
+  {%- unless nb_hub_article_card_css_loaded -%}
+    {% assign nb_hub_article_card_css_loaded = true %}
+    <style>
+      .blog-post-card {
+        display: flex;
+        flex-direction: column;
+        text-align: var(--text-align);
+      }
+
+      .blog-post-item .blog-post-card__image-container,
+      .blog-post-item .blog-post-card__content {
+        width: 100%;
+      }
+
+      .blog-post-item:first-child .blog-post-card {
+        flex-direction: row;
+      }
+
+      @media screen and (max-width: 749px) {
+        .blog-post-item:first-child .blog-post-card {
+          flex-direction: column;
+        }
+      }
+
+      .blog-post-item:first-child .blog-post-card__image-container {
+        width: 70%;
+      }
+
+      @media screen and (max-width: 749px) {
+        .blog-post-item:first-child .blog-post-card__image-container {
+          width: 100%;
+        }
+      }
+
+      .blog-post-item:first-child:has(.blog-post-card__image-container) .blog-post-card__content {
+        padding-inline-start: var(--columns-gap);
+        width: 30%;
+      }
+
+      @media screen and (max-width: 749px) {
+        .blog-post-item:first-child:has(.blog-post-card__image-container) .blog-post-card__content {
+          padding-inline-start: 0;
+          width: 100%;
+        }
+      }
+
+      .blog-post-card__image-container {
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+      }
+
+      .blog-post-card__image {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .blog-post-card__content {
+        padding-block-start: 0.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .blog-post-card__title {
+        margin: 0;
+      }
+
+      .blog-post-card__title a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .blog-post-card__title a:hover {
+        color: var(--color-primary-hover);
+      }
+
+      .blog-post-card__meta {
+        color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+        font-size: var(--font-size--body-sm);
+      }
+
+      .blog-post-card__meta > * {
+        display: inline;
+        margin: 0;
+      }
+
+      .blog-post-card__sep {
+        margin: 0 0.4em;
+      }
+
+      .blog-post-card__excerpt {
+        color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+      }
+    </style>
+  {%- endunless -%}
+
+  <div class="blog-post-card" style="--text-align: {{ card_alignment }}">
+    {%- if card_article.image -%}
+      <div class="blog-post-card__image-container">
+        <a href="{{ card_article.url }}">
+          {{ card_article.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 50vw, 90vw', alt: image_alt, class: 'blog-post-card__image', widths: '360, 540, 720, 900, 1080, 1200', placeholder: 'blurred' }}
+        </a>
+      </div>
+    {%- endif -%}
+    <div class="blog-post-card__content">
+      <h3 class="blog-post-card__title">
+        <a href="{{ card_article.url }}">{{ card_article.title | escape }}</a>
+      </h3>
+      <div class="blog-post-card__meta">
+        {%- if card_article.published_at -%}
+          <span class="blog-post-card__date">{{ card_article.published_at | time_tag: format: 'date' }}</span>
+          <span class="blog-post-card__sep" aria-hidden="true">·</span>
+        {%- endif -%}
+        <span class="blog-post-card__read">{{ reading_minutes }} min read</span>
+      </div>
+      {%- if card_body -%}
+        {{ card_body }}
+      {%- elsif excerpt_text != '' -%}
+        <div class="blog-post-card__excerpt">{{ excerpt_text | escape }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

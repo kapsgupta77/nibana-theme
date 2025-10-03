@@ -85,21 +85,75 @@
 
   <section id="nb-hub-{{ section.id }}" class="nb-hub">
     <style>
+      /* Shell & rhythm (keep panels full-bleed-safe) */
       .nb-hub .nb-shell{max-width:var(--narrow-page-width,1120px);margin:0 auto;padding:0 20px}
-      .nb-hub .nb-hero{margin:clamp(16px,3vw,28px) 0}
-      .nb-hub .nb-hero .h1{margin:0 0 6px}
-      .nb-hub .nb-tray{background:var(--nb-mist);border-radius:20px;padding:clamp(18px,2.2vw,26px);box-shadow:0 10px 28px rgba(0,0,0,.06)}
-      .nb-hub .nb-intro{margin:clamp(12px,2vw,18px) 0}
-      .nb-hub .nb-benefits{margin:clamp(12px,2vw,18px) 0}
-      .nb-hub .nb-bottom-cta{margin:clamp(18px,3vw,28px) 0}
-      @media (prefers-reduced-motion:no-preference){
-        .nb-hub a.nb-cta{transition:transform .16s ease, box-shadow .16s ease}
-        .nb-hub a.nb-cta:hover{transform:translateY(-1px)}
+      .nb-hub .nb-hero{margin:clamp(36px,7vw,88px) 0 clamp(14px,3.5vw,26px)}
+      .nb-hub .nb-tray{background:var(--nb-mist);border-radius:22px;padding:clamp(24px,3.2vw,36px);box-shadow:0 10px 28px rgba(0,0,0,.06)}
+
+      /* HERO — eyebrow, H1 rhythm, deck as lead */
+      .nb-hub .nb-eyebrow{
+        display:inline-flex;align-items:center;gap:12px;
+        margin:0 0 10px;letter-spacing:.08em;text-transform:uppercase;
+        font-size:.8rem;font-weight:800;opacity:.75
       }
+      .nb-hub .nb-eyebrow::after{
+        content:"";display:inline-block;height:2px;width:clamp(40px,6vw,56px);
+        background:currentColor;opacity:.3;border-radius:2px
+      }
+      /* Hero: force ~2-line measure regardless of whether hero uses <h1> or .h1 utility */
+      .nb-hub .nb-hero h1,
+      .nb-hub .nb-hero .h1{margin:0 0 8px;line-height:1.22;max-width:20ch}
+      .nb-hub .lead{font-weight:500;line-height:1.6;max-width:65ch}
+
+      /* INTRO tray — editorial measure + subtle vellum top highlight */
+      .nb-hub .nb-intro{margin:clamp(18px,3vw,32px) 0}
+      .nb-hub .nb-intro .rte{max-width:68ch;margin:0 auto}
+      .nb-hub .nb-intro .rte p:first-child{font-weight:600}
+      .nb-hub .nb-intro.nb-tray{
+        box-shadow:0 10px 28px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.7)
+      }
+
+      /* BENEFITS — refined grid + tactile pill chips */
+      .nb-hub .nb-benefits{margin:clamp(18px,3vw,32px) 0}
+      .nb-hub .nb-benefits .nb-method__body ul{ display:grid;gap:14px;grid-template-columns:1fr }
+      @media (min-width:700px){
+        .nb-hub .nb-benefits .nb-method__body ul{grid-template-columns:1fr 1fr}
+      }
+      @media (min-width:1024px){
+        .nb-hub .nb-benefits .nb-method__body ul{grid-template-columns:1fr 1fr 1fr}
+      }
+      .nb-hub .nb-benefits .nb-method__body ul li{
+        padding:14px 18px;
+        border-radius:9999px;
+        background:var(--nb-pill-bg, rgba(255,255,255,.75));
+        border:1px solid var(--nb-pill-border, rgba(0,0,0,.06));
+        box-shadow:var(--nb-pill-shadow, 0 1px 8px rgba(0,0,0,.04));
+        transition:transform .18s ease, box-shadow .18s ease;
+      }
+      .nb-hub .nb-benefits .nb-method__body ul li:hover{
+        transform:translateY(-1px);
+        box-shadow:var(--nb-pill-shadow-hover, 0 10px 20px rgba(0,0,0,.08));
+      }
+      .nb-hub .nb-benefits .nb-method__body ul li em{font-style:italic}
+      
+      /* Bottom CTA: center + breathing room */
+      .nb-hub .nb-bottom-cta{ text-align:center }
+      .nb-hub .nb-bottom-cta .h3,
+      .nb-hub .nb-bottom-cta h2{ margin:0 0 14px }
+      .nb-hub .nb-bottom-cta .nb-cta{ margin-top:12px }
     </style>
 
     <div class="nb-shell">
       <div class="nb-hero nb-hero--hub">
+        {%- liquid
+          assign hub_eyebrow = ''
+          if hub.eyebrow_label and hub.eyebrow_label.value != blank
+            assign hub_eyebrow = hub.eyebrow_label.value
+          elsif service and service.title != blank
+            assign hub_eyebrow = service.title
+          endif
+        -%}
+        {%- if hub_eyebrow != '' -%}<p class="nb-eyebrow">{{ hub_eyebrow }}</p>{%- endif -%}
         <h1 class="h1">{{ hub_h1 }}</h1>
         {%- if hub_deck != blank -%}
           <div class="lead rte">{{ hub_deck | metafield_tag }}</div>
@@ -115,7 +169,7 @@
       {%- if hub_bullets and hub_bullets.size > 0 -%}
       <div class="nb-tray nb-benefits">
         <div class="nb-method__body">
-          <ul>
+          <ul class="nb-list nb-list--bulleted">
             {%- for b in hub_bullets -%}
               {%- assign bt = b | strip -%}
               {%- if bt != '' -%}<li>{{ bt }}</li>{%- endif -%}
@@ -129,14 +183,32 @@
       {%- if hub.proof_items and hub.proof_items.value and hub.proof_items.value != blank -%}
         {%- assign hub_proofs_list = hub.proof_items.value -%}
       {%- endif -%}
-      {%- if hub_proofs_list and hub_proofs_list.size > 0 -%}
+      {%- assign __hub_proofs_count = 0 -%}
+      {%- if hub_proofs_list != blank -%}
+        {%- for _t in hub_proofs_list -%}{%- assign __hub_proofs_count = __hub_proofs_count | plus: 1 -%}{%- endfor -%}
+      {%- endif -%}
+
+      {%- if __hub_proofs_count > 0 -%}
         <div class="nb-tray nb-proof">
-          {%- render 'nb-service-testimonials-belt', refs: hub_proofs_list, limit: 4, carousel: true -%}
+          {%- comment -%} pass service too (some belts expect it) {%- endcomment -%}
+          {%- render 'nb-service-testimonials-belt', refs: hub_proofs_list, service: service, limit: 4, carousel: true -%}
+        </div>
+      {%- elsif request.design_mode -%}
+        <div class="nb-shell" style="margin:8px 0 0;">
+          <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+            <div class="rte"><strong>Hub debug:</strong> SeoHub has <code>{{ __hub_proofs_count }}</code> testimonial picks. Check SeoHub → proof_items.</div>
+          </div>
         </div>
       {%- endif -%}
 
       {%- if hub_blog_handle != blank -%}
-        {%- render 'nb-related-posts-hub', hub: hub, blog_handle: hub_blog_handle, hub_tag: hub_tag, limit: 6 -%}
+        {%- render 'nb-related-posts-hub',
+          hub: hub,
+          blog_handle: hub_blog_handle,
+          hub_tag: hub_tag,
+          limit: 6,
+          heading: hub.related_heading.value
+        -%}
       {%- elsif request.design_mode -%}
         <div class="nb-shell" style="margin:8px 0 0;">
           <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
@@ -146,21 +218,7 @@
       {%- endif -%}
 
       {%- if hub_show_faq -%}
-        <style>
-          .nb-faq-section{ color: var(--nb-faq-ink, #223238); }
-          .nb-faq__wrap{ margin: 12px 0; }
-          .nb-faq__wrap--tray{ background: var(--nb-faq-shell, #E5E8E1); border-radius: 22px; padding: clamp(16px, 2.6vw, 28px); box-shadow: 0 10px 24px rgba(0,0,0,.06); }
-          .nb-faq__title{ margin: 0 0 clamp(10px, 2vw, 16px); text-align: center; font-weight: 800; color: var(--nb-faq-ink, #223238); font-family: var(--font-heading-family, inherit); font-size: clamp(22px, 2.8vw, 28px); }
-          .nb-faq__list{ display: grid; gap: 18px; }
-          .nb-faq__item{ background: transparent; border: 0; box-shadow: none; overflow: visible; }
-          .nb-faq__q{ position: relative; background: var(--nb-faq-teal, #0F5B59); color: #fff; border: 0; border-radius: 9999px; padding: 16px 64px 16px 22px; font-weight: 720; box-shadow: 0 4px 14px rgba(0,0,0,.05); display: grid; grid-template-columns: 1fr auto; align-items: center; cursor: pointer; font-family: var(--font-body-family, inherit); }
-          .nb-faq__q::-webkit-details-marker{ display:none; }
-          .nb-faq__q:hover{ background: color-mix(in oklab, var(--nb-faq-teal, #0F5B59), #000 8%); }
-          .nb-faq__q::after{ content: "+"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.14); font-size: 22px; font-weight: 800; line-height: 1; }
-          details[open] .nb-faq__q::after{ content: "–"; }
-          .nb-faq__a{ background: #fff; border: 1px solid rgba(0,0,0,.06); border-radius: 14px; margin: 10px 14px 2px; padding: 16px 20px; color: color-mix(in oklab, var(--nb-faq-ink, #223238), #000 8%); line-height: 1.65; }
-        </style>
-
+        {% render 'nb-faq-styles' %}
         {%- liquid
           assign br_tag = '<br />'
           assign q_raw = hub_faq_q | append: ''
@@ -209,18 +267,6 @@
             </div>
           </section>
 
-          <script>
-            (function(){
-              var root = document.querySelector('#nb-faq-{{ section.id }}-hub.nb-faq__list[data-single-open="true"]');
-              if(!root) return;
-              root.addEventListener('toggle', function(ev){
-                var d = ev.target;
-                if(d.tagName !== 'DETAILS' || !d.open) return;
-                root.querySelectorAll('details[open]').forEach(function(o){ if(o!==d) o.open=false; });
-              }, true);
-            })();
-          </script>
-
           <script type="application/ld+json">
           {
             "@context": "https://schema.org",
@@ -246,20 +292,21 @@
       {%- endif -%}
 
       {%- if hub_show_trust and service -%}
+        <div class="nb-trust-eyebrow">Trusted by</div>
         {%- liquid
           assign sp_raw  = service.social_proof | append: ''
           assign sp_html = sp_raw | newline_to_br
           assign br_tag  = '<br />'
           assign sp_norm = sp_html | replace: '<br/>', br_tag | replace: '<br>', br_tag
-          assign sp_pipe = sp_norm | replace: br_tag, '|||' 
-          assign sp      = sp_pipe | split: '|||' 
+          assign sp_pipe = sp_norm | replace: br_tag, '|||'
+          assign sp      = sp_pipe | split: '|||'
           assign _layout = hub_trust_variant | default: 'marquee'
         -%}
-        {%- render 'nb-trustbelt-core', items: sp, layout: _layout, speed: 22 -%}
+        {%- render 'nb-trustbelt-core', items: sp, layout: _layout, speed: 16 -%}
       {%- endif -%}
 
-      <div class="nb-tray nb-bottom-cta" style="text-align:center;">
-        {%- if hub_cta_h != blank -%}<h2 class="h3" style="margin:0 0 8px;">{{ hub_cta_h }}</h2>{%- endif -%}
+      <div class="nb-tray nb-bottom-cta">
+        {%- if hub_cta_h != blank -%}<h2 class="h3">{{ hub_cta_h }}</h2>{%- endif -%}
         <a class="nb-cta nb-cta--xl" href="{{ hub_cta_url }}"
           data-analytics-event="hub_cta_click"
           data-hub-slug="{{ page.handle }}"
@@ -267,6 +314,12 @@
           data-cta-location="bottom">
           {{ hub_cta_txt }}
         </a>
+        {%- if hub.cta_note and hub.cta_note.value != blank -%}
+          <p class="nb-cta-note">{{ hub.cta_note.value }}</p>
+        {%- endif -%}
+        {%- if hub.cta_secondary_text and hub.cta_secondary_text.value != blank and hub.cta_secondary_url and hub.cta_secondary_url.value != blank -%}
+          <a class="nb-cta-secondary" href="{{ hub.cta_secondary_url.value }}">{{ hub.cta_secondary_text.value }}</a>
+        {%- endif -%}
       </div>
     </div>
   </section>

@@ -12,85 +12,96 @@
   assign _take = limit | default: 6
   assign _shown = 0
   assign _picked = ''
-  assign nb_related_post_card_css_state = ''
   assign _hub_tag = hub_tag | default: ''
 
   assign _pins = blank
   if hub and hub.manual_related_handles and hub.manual_related_handles.value
     assign _pins = hub.manual_related_handles.value
   endif
+
+  assign _heading = heading | default: ''
+  if _heading == '' and hub and hub.related_heading and hub.related_heading.value != blank
+    assign _heading = hub.related_heading.value
+  endif
+  if _heading == ''
+    assign _heading = 'From the Nibana Journal'
+  endif
 -%}
 {%- if _blog -%}{%- assign _articles_count = _blog.articles_count | plus: 0 -%}{%- endif -%}
+
 {%- if _blog and _articles_count > 0 -%}
-  <section class="nb-related nb-related--lux">
-    <h2 class="h2 nb-related__heading">Related posts</h2>
-    <div class="nb-related__grid nb-related__grid--lux">
-      {%- if _pins and _pins.size > 0 -%}
-        {%- for handle in _pins -%}
-          {%- assign h = handle | strip -%}
-          {%- if h != '' and _shown < _take -%}
-            {%- for a in _blog.articles -%}
-              {%- if a.handle == h -%}
-                <div class="nb-related__item nb-related__item--lux">
-                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
-                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
-                  </a>
-                </div>
-                {%- assign nb_related_post_card_css_state = 'set' -%}
-                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
-                {%- assign _shown = _shown | plus: 1 -%}
-                {%- break -%}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
+  <section class="nb-related nb-related--xl">
+    <div class="nb-shell nb-shell--wide">
+      <h2 class="h2 nb-related__heading">{{ _heading }}</h2>
 
-      {%- if _shown < _take and _hub_tag != blank -%}
-        {%- for a in _blog.articles -%}
-          {%- if _shown < _take -%}
-            {%- unless _picked contains a.handle -%}
-              {%- if a.tags contains _hub_tag -%}
-                <div class="nb-related__item nb-related__item--lux">
-                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
-                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
-                  </a>
-                </div>
-                {%- assign nb_related_post_card_css_state = 'set' -%}
-                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
-                {%- assign _shown = _shown | plus: 1 -%}
-              {%- endif -%}
-            {%- endunless -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
+      <div class="nb-related__grid">
+        {%- comment -%} Pass 1 — pinned handles in order {%- endcomment -%}
+        {%- if _pins and _pins.size > 0 -%}
+          {%- for handle in _pins -%}
+            {%- assign h = handle | strip -%}
+            {%- if h != '' and _shown < _take -%}
+              {%- for a in _blog.articles -%}
+                {%- if a.handle == h -%}
+                  <div class="nb-related__item">
+                    {% render 'blog-post-card', article: a %}
+                  </div>
+                  {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                  {%- assign _shown = _shown | plus: 1 -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
 
-      {%- if _shown < _take and hub and hub.supporting_category_handle and hub.supporting_category_handle.value != blank -%}
-        {%- assign c_handle = hub.supporting_category_handle.value -%}
-        {%- for a in _blog.articles -%}
-          {%- if _shown < _take -%}
-            {%- unless _picked contains a.handle -%}
-              {%- assign a_cat = a.metafields.custom.primary_category | default: '' -%}
-              {%- if a_cat == c_handle -%}
-                <div class="nb-related__item nb-related__item--lux">
-                  <a href="{{ a.url }}" data-analytics-event="related_blog_click" data-hub-slug="{{ page.handle }}" data-post-slug="{{ a.handle }}">
-                    {% render 'blog-post-card', article: a, nb_related_post_card_css: nb_related_post_card_css_state %}
-                  </a>
+        {%- comment -%} Pass 2 — tag-based top-up (hub:<page.handle>) {%- endcomment -%}
+        {%- if _shown < _take and _hub_tag != blank -%}
+          {%- for a in _blog.articles -%}
+            {%- if _shown < _take -%}
+              {%- unless _picked contains a.handle -%}
+                {%- if a.tags contains _hub_tag -%}
+                  <div class="nb-related__item">
+                    {% render 'blog-post-card', article: a %}
+                  </div>
+                  {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                  {%- assign _shown = _shown | plus: 1 -%}
+                {%- endif -%}
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- comment -%} Pass 3 — latest posts fallback {%- endcomment -%}
+        {%- if _shown < _take -%}
+          {%- for a in _blog.articles -%}
+            {%- if _shown < _take -%}
+              {%- unless _picked contains a.handle -%}
+                <div class="nb-related__item">
+                  {% render 'blog-post-card', article: a %}
                 </div>
-                {%- assign nb_related_post_card_css_state = 'set' -%}
                 {%- assign _picked = _picked | append: a.handle | append: ',' -%}
                 {%- assign _shown = _shown | plus: 1 -%}
-              {%- endif -%}
-            {%- endunless -%}
-          {%- endif -%}
-        {%- endfor -%}
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      {%- if request.design_mode -%}
+        <div class="nb-tray" style="margin-top:8px; padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+          <div class="rte">
+            <strong>Hub debug:</strong>
+            Blog input: <code>{{ _raw_handle }}</code> · Resolved: <code>{{ _handleized | default: _raw_handle }}</code> ·
+            Tag: <code>{{ _hub_tag }}</code> · Shown: <strong>{{ _shown }}</strong> / {{ _take }}
+          </div>
+        </div>
       {%- endif -%}
     </div>
   </section>
 {%- elsif request.design_mode -%}
   <div class="nb-shell" style="margin:8px 0 0;">
     <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
-      <div class="rte"><strong>Hub notice:</strong> <code>seo_hub.blog_handle</code> should be the blog <em>handle</em> (e.g., <code>nibana-journal</code>), not the title “Nibana Journal”.</div>
+      <div class="rte"><strong>Hub notice:</strong> <code>seo_hub.blog_handle</code> should be the blog <em>handle</em> (e.g., <code>news</code>), not the title.</div>
     </div>
   </div>
 {%- endif -%}
