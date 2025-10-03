@@ -1,20 +1,11 @@
 {%- liquid
+  assign _raw_handle = blog_handle | default: '' | strip
   assign _blog = nil
-
-  if blog_handle and blog_handle.handle
-    assign _blog = blog_handle
-    assign _raw_handle = blog_handle.handle
-  endif
-
-  if _blog == nil
-    assign _raw_handle = blog_handle | default: '' | strip
-
-    if _raw_handle != ''
-      assign _blog = blogs[_raw_handle]
-      if _blog == nil
-        assign _handleized = _raw_handle | handleize
-        assign _blog = blogs[_handleized]
-      endif
+  if _raw_handle != ''
+    assign _blog = blogs[_raw_handle]
+    if _blog == nil
+      assign _handleized = _raw_handle | handleize
+      assign _blog = blogs[_handleized]
     endif
   endif
 
@@ -22,6 +13,7 @@
   assign _shown = 0
   assign _picked = ''
   assign _hub_tag = hub_tag | default: ''
+
   assign _pins = blank
   if hub and hub.manual_related_handles and hub.manual_related_handles.value
     assign _pins = hub.manual_related_handles.value
@@ -34,84 +26,84 @@
   if _heading == ''
     assign _heading = 'From the Nibana Journal'
   endif
-
-  assign articles = '' | split: ''
-  assign _articles_count = 0
-  if _blog
-    assign _articles_count = _blog.articles_count | plus: 0
-  endif
-
-  if _blog and _articles_count > 0
-    if _pins and _pins.size > 0
-      for handle in _pins
-        if _shown >= _take
-          break
-        endif
-
-        assign pin_article = nil
-        assign pin_handle = ''
-
-        if handle.handle
-          assign pin_article = handle
-          assign pin_handle = handle.handle
-        else
-          assign pin_handle = handle | strip
-
-          if pin_handle != ''
-            for a in _blog.articles
-              if a.handle == pin_handle
-                assign pin_article = a
-                break
-              endif
-            endfor
-          endif
-        endif
-
-        if pin_article and pin_handle != ''
-          unless _picked contains pin_handle
-            assign articles = articles | push: pin_article
-            assign _picked = _picked | append: pin_handle | append: ','
-            assign _shown = _shown | plus: 1
-          endunless
-        endif
-      endfor
-    endif
-
-    if _shown < _take and _hub_tag != blank
-      for a in _blog.articles
-        if _shown < _take
-          unless _picked contains a.handle
-            if a.tags contains _hub_tag
-              assign articles = articles | push: a
-              assign _picked = _picked | append: a.handle | append: ','
-              assign _shown = _shown | plus: 1
-            endif
-          endunless
-        endif
-      endfor
-    endif
-  endif
-
-  assign _selected_count = articles | size
 -%}
-{%- if _selected_count > 0 -%}
-  <section class="nb-related-posts">
-    <div class="nb-shell">
-      <header class="nb-related-posts__header">
-        <h2 class="nb-related-posts__title">{{ _heading }}</h2>
-      </header>
+{%- if _blog -%}{%- assign _articles_count = _blog.articles_count | plus: 0 -%}{%- endif -%}
 
-      <div class="nb-posts-grid">
-        {%- for article in articles -%}
-          {% render 'nb-article-card', article: article %}
+{%- if _blog and _articles_count > 0 -%}
+  <section class="nb-related nb-related--xl">
+    <h2 class="h2 nb-related__heading">{{ _heading }}</h2>
+
+    <div class="nb-related__grid">
+      {%- comment -%} Pass 1 — Pinned handles in exact order {%- endcomment -%}
+      {%- if _pins and _pins.size > 0 -%}
+        {%- for handle in _pins -%}
+          {%- assign h = handle | strip -%}
+          {%- if h != '' and _shown < _take -%}
+            {%- for a in _blog.articles -%}
+              {%- if a.handle == h -%}
+                <div class="nb-related__item">
+                  {% render 'blog-post-card', article: a %}
+                </div>
+                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                {%- assign _shown = _shown | plus: 1 -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
         {%- endfor -%}
-      </div>
+      {%- endif -%}
+
+      {%- comment -%} Pass 2 — Tag-based top-up (hub:<page.handle>) {%- endcomment -%}
+      {%- if _shown < _take and _hub_tag != blank -%}
+        {%- for a in _blog.articles -%}
+          {%- if _shown < _take -%}
+            {%- unless _picked contains a.handle -%}
+              {%- if a.tags contains _hub_tag -%}
+                <div class="nb-related__item">
+                  {% render 'blog-post-card', article: a %}
+                </div>
+                {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+                {%- assign _shown = _shown | plus: 1 -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Pass 3 — Fallback to latest posts (avoid empty state) {%- endcomment -%}
+      {%- if _shown < _take -%}
+        {%- for a in _blog.articles -%}
+          {%- if _shown < _take -%}
+            {%- unless _picked contains a.handle -%}
+              <div class="nb-related__item">
+                {% render 'blog-post-card', article: a %}
+              </div>
+              {%- assign _picked = _picked | append: a.handle | append: ',' -%}
+              {%- assign _shown = _shown | plus: 1 -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
     </div>
+
+    {%- if request.design_mode -%}
+      <div class="nb-shell" style="margin:8px 0 0;">
+        <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
+          <div class="rte">
+            <strong>Hub debug:</strong>
+            Blog input: <code>{{ _raw_handle }}</code> · Resolved: <code>{{ _handleized | default: _raw_handle }}</code> ·
+            Tag: <code>{{ _hub_tag }}</code> · Shown: <strong>{{ _shown }}</strong> / {{ _take }}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
   </section>
 {%- elsif request.design_mode -%}
   <div class="nb-shell" style="margin:8px 0 0;">
     <div class="nb-tray" style="padding:10px 12px; border-radius:12px; background:var(--oc-surface);">
-      <div class="rte"><strong>Hub notice:</strong> <code>seo_hub.blog_handle</code> should be the blog <em>handle</em> (e.g., <code>nibana-journal</code>), not the title.</div>
+      <div class="rte">
+        <strong>Hub notice:</strong> <code>seo_hub.blog_handle</code> should be the blog <em>handle</em> (e.g., <code>news</code>), not the title.
+      </div>
     </div>
   </div>
 {%- endif -%}
