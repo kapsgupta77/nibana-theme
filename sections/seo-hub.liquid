@@ -111,9 +111,7 @@
       /* Related posts */
       .nb-hub .nb-related{margin-top:clamp(24px,4vw,48px)}
       /* Related posts — grid (3-up on wide screens) */
-      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:1fr}
-      @media (min-width:900px){.nb-hub .nb-related__grid{grid-template-columns:1fr 1fr}}
-      @media (min-width:1280px){.nb-hub .nb-related__grid{grid-template-columns:1fr 1fr 1fr}}
+      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
       /* keep heading centering from earlier */
       .nb-hub .nb-related__heading{margin:0 0 18px;text-align:center}
 
