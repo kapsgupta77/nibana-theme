@@ -108,10 +108,12 @@
   {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
 </title>
 
-<link
-  rel="canonical"
-  href="{{ canonical_url }}"
->
+{%- comment -%} Canonical: prefer page metafield; else Shopify default {%- endcomment -%}
+{%- if request.page_type == 'page' and page and page.metafields.custom.canonical_url and page.metafields.custom.canonical_url != blank -%}
+  <link rel="canonical" href="{{ page.metafields.custom.canonical_url | escape }}">
+{%- else -%}
+  <link rel="canonical" href="{{ canonical_url | escape }}">
+{%- endif -%}
 
 {% if page_description %}
   <meta
