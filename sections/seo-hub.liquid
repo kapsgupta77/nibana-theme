@@ -113,24 +113,16 @@
 
       /* Related posts */
       .nb-hub .nb-related{margin-top:clamp(24px,4vw,48px)}
-      /* Related posts — centered heading, cards fill grid tracks */
-      .nb-hub .nb-related__heading{margin:0 0 18px;text-align:center}
-
-      /* Grid: 1 / 2 / 3 columns */
-      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:repeat(1, minmax(0, 1fr));justify-content:normal;justify-items:stretch;align-items:stretch}
+      /* Related posts — centered grid matching panel width */
+      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:repeat(1, minmax(0, 1fr));justify-content:center}
       @media (min-width:900px){.nb-hub .nb-related__grid{grid-template-columns:repeat(2, minmax(0, 1fr))}}
       @media (min-width:1200px){.nb-hub .nb-related__grid{grid-template-columns:repeat(3, minmax(0, 1fr))}}
-
-      /* Force blog cards to use full track width (override their internal max-width/margins) */
+      /* Ensure each card fills its grid track */
       .nb-hub .nb-related__item{width:100%}
-      .nb-hub .nb-related__item>*{width:100% !important;max-width:none !important;margin:0 !important;display:block}
-      /* A few likely classnames used by the blog card; safe to include even if not present */
-      .nb-hub .nb-related__item .blog-post-card,
-      .nb-hub .nb-related__item .blog-post,
-      .nb-hub .nb-related__item article{width:100% !important;max-width:none !important;margin:0 !important}
+      .nb-hub .nb-related__item>*{width:100%;display:block}
 
-      /* Ensure media spans full card width for visual balance */
-      .nb-hub .nb-related__item img{width:100%;height:auto;display:block}
+      /* Keep heading centred and aligned with panels */
+      .nb-hub .nb-related__heading{margin:0 0 18px;text-align:center}
 
       /* Trust belt label */
       .nb-hub .nb-trust-eyebrow{margin:18px 0 10px;text-align:center;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;font-weight:700;opacity:.7}
