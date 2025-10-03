@@ -87,6 +87,8 @@
     <style>
       /* Shell & rhythm */
       .nb-hub .nb-shell{max-width:var(--narrow-page-width,1120px);margin:0 auto;padding:0 20px}
+      /* Wide measure for grids like Related posts */
+      .nb-hub .nb-shell.nb-shell--wide{max-width:min(1320px,96vw)}
       .nb-hub .nb-related>.nb-shell{padding-inline:0;max-width:100%}
       .nb-hub .nb-hero{margin:clamp(28px,6vw,72px) 0}
       .nb-hub .nb-tray{background:var(--nb-mist);border-radius:20px;padding:clamp(22px,3vw,34px);box-shadow:0 10px 28px rgba(0,0,0,.06)}
@@ -112,8 +114,9 @@
       /* Related posts */
       .nb-hub .nb-related{margin-top:clamp(24px,4vw,48px)}
       /* Related posts — grid (3-up on wide screens) */
-      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
-      /* keep heading centering from earlier */
+      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:1fr}
+      @media (min-width:900px){.nb-hub .nb-related__grid{grid-template-columns:1fr 1fr}}
+      @media (min-width:1280px){.nb-hub .nb-related__grid{grid-template-columns:1fr 1fr 1fr}}
       .nb-hub .nb-related__heading{margin:0 0 18px;text-align:center}
 
       /* Trust belt label */
