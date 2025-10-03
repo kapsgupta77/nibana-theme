@@ -100,7 +100,7 @@
         content:"";display:inline-block;height:2px;width:clamp(40px,6vw,56px);
         background:currentColor;opacity:.3;border-radius:2px
       }
-      .nb-hub .nb-hero .h1{margin:0 0 8px;line-height:1.22;max-width:22ch}
+      .nb-hub .nb-hero .h1{margin:0 0 8px;line-height:1.22;max-width:20ch}
       .nb-hub .lead{font-weight:500;line-height:1.6;max-width:65ch}
 
       /* INTRO tray — editorial measure + subtle vellum top highlight */
@@ -122,17 +122,25 @@
       @media (min-width:1024px){
         .nb-hub .nb-benefits .nb-method__body ul{grid-template-columns:1fr 1fr 1fr}
       }
+      /* Chips use global tokens if present (fall back to current values) */
       .nb-hub .nb-benefits .nb-method__body ul li{
-        list-style-position:inside;
-        padding:14px 18px;border-radius:9999px;
-        background:rgba(255,255,255,.75);
-        border:1px solid rgba(0,0,0,.06);
-        box-shadow:0 1px 8px rgba(0,0,0,.04);
-        backdrop-filter:saturate(120%) blur(1px);
-        transition:transform .18s ease, box-shadow .18s ease
+        list-style-position:inside; /* keeps the bullet inside the pill like About/Service */
+        padding:var(--nb-pill-pad, 14px 18px);
+        border-radius:var(--nb-pill-radius, 9999px);
+        background:var(--nb-pill-bg, rgba(255,255,255,.75));
+        border:1px solid var(--nb-pill-border, rgba(0,0,0,.06));
+        box-shadow:var(--nb-pill-shadow, 0 1px 8px rgba(0,0,0,.04));
+        backdrop-filter:var(--nb-pill-backdrop, saturate(120%) blur(1px));
+        transition:transform .18s ease, box-shadow .18s ease;
       }
       .nb-hub .nb-benefits .nb-method__body ul li:hover{
-        transform:translateY(-1px);box-shadow:0 10px 20px rgba(0,0,0,.08)
+        transform:translateY(-1px);
+        box-shadow:var(--nb-pill-shadow-hover, 0 10px 20px rgba(0,0,0,.08));
+      }
+      /* Bullets inherit your global ::marker tokens; fallbacks keep current look */
+      .nb-hub .nb-benefits .nb-method__body ul li::marker{
+        color:var(--nb-bullet-ink, currentColor);
+        font-size:var(--nb-bullet-size, 1em);
       }
       .nb-hub .nb-benefits .nb-method__body ul li em{font-style:italic}
     </style>
