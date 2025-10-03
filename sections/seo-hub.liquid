@@ -16,10 +16,6 @@
   endif
 -%}
 
-{%- if page.metafields.custom.canonical_url and page.metafields.custom.canonical_url != blank -%}
-  <link rel="canonical" href="{{ page.metafields.custom.canonical_url }}" />
-{%- endif -%}
-
 {%- if hub -%}
   {%- liquid
     assign hub_h1      = hub.h1_override.value | default: page.title
@@ -29,7 +25,6 @@
     assign hub_cta_h   = hub.cta_headline.value | default: ''
     assign hub_cta_txt = hub.cta_text.value | default: 'Book a discovery call'
     assign hub_cta_url = hub.cta_url.value  | default: '/pages/book-a-call'
-    assign hub_schema  = hub.schema_type.value | default: 'Service'
     assign hub_show_faq = hub.show_faq.value | default: false
     assign hub_show_trust = hub.show_trustbelt.value | default: true
     assign hub_trust_variant = hub.logo_belt_variant.value | default: 'marquee'
@@ -354,7 +349,7 @@
     </div>
   </section>
 
-  {%- comment -%} JSON-LD: Breadcrumb + optional Service {%- endcomment -%}
+  {%- comment -%} JSON-LD: Breadcrumb {%- endcomment -%}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -365,18 +360,17 @@
     ]
   }
   </script>
-  {%- if hub_schema == 'Service' -%}
+  {%- comment -%} JSON-LD: WebPage (informational hub) {%- endcomment -%}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Service",
-    "@id": {{ request.origin | append: request.path | append: '#service' | json }},
+    "@type": "WebPage",
+    "@id": {{ request.origin | append: request.path | append: "#webpage" | json }},
+    "url": {{ request.origin | append: request.path | json }},
     "name": {{ hub_h1 | json }},
-    "serviceType": "Executive Coaching",
-    "provider": { "@type": "Organization", "name": {{ shop.name | json }} }
+    "description": {{ hub_deck | strip_html | strip | json }}
   }
   </script>
-  {%- endif -%}
 {%- else -%}
   {%- if request.design_mode -%}
     <div class="nb-shell" style="margin:8px 0 0;">
