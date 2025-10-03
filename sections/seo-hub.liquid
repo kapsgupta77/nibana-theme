@@ -87,9 +87,12 @@
     <style>
       /* Shell & rhythm */
       .nb-hub .nb-shell{max-width:var(--narrow-page-width,1120px);margin:0 auto;padding:0 20px}
-      /* Wide measure for grids like Related posts */
-      .nb-hub .nb-shell.nb-shell--wide{max-width:min(1320px,96vw)}
-      .nb-hub .nb-related>.nb-shell{padding-inline:0;max-width:100%}
+      /* Wide measure for sections that need more room (e.g., related posts) */
+      .nb-hub .nb-shell.nb-shell--wide{
+        max-width: min(1360px, 96vw);
+        margin-inline: auto;
+        padding-inline: 20px;
+      }
       .nb-hub .nb-hero{margin:clamp(28px,6vw,72px) 0}
       .nb-hub .nb-tray{background:var(--nb-mist);border-radius:20px;padding:clamp(22px,3vw,34px);box-shadow:0 10px 28px rgba(0,0,0,.06)}
       .nb-hub .nb-intro{margin:clamp(18px,3vw,32px) 0}
@@ -113,16 +116,29 @@
 
       /* Related posts */
       .nb-hub .nb-related{margin-top:clamp(24px,4vw,48px)}
-      /* Related posts — centered grid matching panel width */
-      .nb-hub .nb-related__grid{display:grid;gap:clamp(18px,2.4vw,28px);grid-template-columns:repeat(1, minmax(0, 1fr));justify-content:center}
-      @media (min-width:900px){.nb-hub .nb-related__grid{grid-template-columns:repeat(2, minmax(0, 1fr))}}
-      @media (min-width:1200px){.nb-hub .nb-related__grid{grid-template-columns:repeat(3, minmax(0, 1fr))}}
-      /* Ensure each card fills its grid track */
-      .nb-hub .nb-related__item{width:100%}
-      .nb-hub .nb-related__item>*{width:100%;display:block}
-
-      /* Keep heading centred and aligned with panels */
+      /* Related posts — wider, centred heading */
       .nb-hub .nb-related__heading{margin:0 0 18px;text-align:center}
+
+      /* Grid: 1 / 2 / 3 columns */
+      .nb-hub .nb-related__grid{
+        display:grid;
+        gap:clamp(18px,2.4vw,28px);
+        grid-template-columns:repeat(1, minmax(0,1fr));
+      }
+      @media (min-width:900px){
+        .nb-hub .nb-related__grid{grid-template-columns:repeat(2, minmax(0,1fr));}
+      }
+      @media (min-width:1200px){
+        .nb-hub .nb-related__grid{grid-template-columns:repeat(3, minmax(0,1fr));}
+      }
+
+      /* Make each card use the full width of its grid track WITHOUT nuking its internal styles */
+      .nb-hub .nb-related__item{min-width:0;}
+      .nb-hub .nb-related__item>*{
+        width:100%;
+        display:block;
+        /* no max-width: none; keep card internals intact */
+      }
 
       /* Trust belt label */
       .nb-hub .nb-trust-eyebrow{margin:18px 0 10px;text-align:center;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;font-weight:700;opacity:.7}
