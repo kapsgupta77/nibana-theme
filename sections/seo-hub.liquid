@@ -100,6 +100,8 @@
         content:"";display:inline-block;height:2px;width:clamp(40px,6vw,56px);
         background:currentColor;opacity:.3;border-radius:2px
       }
+      /* Hero: force ~2-line measure regardless of whether hero uses <h1> or .h1 utility */
+      .nb-hub .nb-hero h1,
       .nb-hub .nb-hero .h1{margin:0 0 8px;line-height:1.22;max-width:20ch}
       .nb-hub .lead{font-weight:500;line-height:1.6;max-width:65ch}
 
@@ -113,36 +115,32 @@
 
       /* BENEFITS — refined grid + tactile pill chips */
       .nb-hub .nb-benefits{margin:clamp(18px,3vw,32px) 0}
-      .nb-hub .nb-benefits .nb-method__body ul{
-        display:grid;gap:14px;grid-template-columns:1fr
-      }
+      .nb-hub .nb-benefits .nb-method__body ul{ display:grid;gap:14px;grid-template-columns:1fr }
       @media (min-width:700px){
         .nb-hub .nb-benefits .nb-method__body ul{grid-template-columns:1fr 1fr}
       }
       @media (min-width:1024px){
         .nb-hub .nb-benefits .nb-method__body ul{grid-template-columns:1fr 1fr 1fr}
       }
-      /* Chips use global tokens if present (fall back to current values) */
       .nb-hub .nb-benefits .nb-method__body ul li{
-        list-style-position:inside; /* keeps the bullet inside the pill like About/Service */
-        padding:var(--nb-pill-pad, 14px 18px);
-        border-radius:var(--nb-pill-radius, 9999px);
+        padding:14px 18px;
+        border-radius:9999px;
         background:var(--nb-pill-bg, rgba(255,255,255,.75));
         border:1px solid var(--nb-pill-border, rgba(0,0,0,.06));
         box-shadow:var(--nb-pill-shadow, 0 1px 8px rgba(0,0,0,.04));
-        backdrop-filter:var(--nb-pill-backdrop, saturate(120%) blur(1px));
         transition:transform .18s ease, box-shadow .18s ease;
       }
       .nb-hub .nb-benefits .nb-method__body ul li:hover{
         transform:translateY(-1px);
         box-shadow:var(--nb-pill-shadow-hover, 0 10px 20px rgba(0,0,0,.08));
       }
-      /* Bullets inherit your global ::marker tokens; fallbacks keep current look */
-      .nb-hub .nb-benefits .nb-method__body ul li::marker{
-        color:var(--nb-bullet-ink, currentColor);
-        font-size:var(--nb-bullet-size, 1em);
-      }
       .nb-hub .nb-benefits .nb-method__body ul li em{font-style:italic}
+      
+      /* Bottom CTA: center + breathing room */
+      .nb-hub .nb-bottom-cta{ text-align:center }
+      .nb-hub .nb-bottom-cta .h3,
+      .nb-hub .nb-bottom-cta h2{ margin:0 0 14px }
+      .nb-hub .nb-bottom-cta .nb-cta{ margin-top:12px }
     </style>
 
     <div class="nb-shell">
@@ -171,7 +169,7 @@
       {%- if hub_bullets and hub_bullets.size > 0 -%}
       <div class="nb-tray nb-benefits">
         <div class="nb-method__body">
-          <ul>
+          <ul class="nb-list nb-list--bulleted">
             {%- for b in hub_bullets -%}
               {%- assign bt = b | strip -%}
               {%- if bt != '' -%}<li>{{ bt }}</li>{%- endif -%}
@@ -308,7 +306,7 @@
       {%- endif -%}
 
       <div class="nb-tray nb-bottom-cta">
-        {%- if hub_cta_h != blank -%}<h2 class="h3" style="margin:0 0 8px;">{{ hub_cta_h }}</h2>{%- endif -%}
+        {%- if hub_cta_h != blank -%}<h2 class="h3">{{ hub_cta_h }}</h2>{%- endif -%}
         <a class="nb-cta nb-cta--xl" href="{{ hub_cta_url }}"
           data-analytics-event="hub_cta_click"
           data-hub-slug="{{ page.handle }}"
