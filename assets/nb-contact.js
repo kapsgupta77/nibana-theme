@@ -2,6 +2,18 @@
   const cf = document.getElementById('nb-contact-shopify');
   if (!cf) return;
 
+  const sectionEl = cf.closest('.nb-contact') || document.querySelector('[data-nb-contact]');
+  if (sectionEl) {
+    // Mark labels of required inputs so CSS can render the red "*"
+    (function markRequired(){
+      const rootId = sectionEl.id ? '#' + sectionEl.id : '[data-nb-contact]';
+      document.querySelectorAll(rootId + ' [required]').forEach(function(el){
+        const lab = el.id ? document.querySelector(rootId + ' label[for="'+ el.id +'"]') : null;
+        if (lab) lab.classList.add('nb-required');
+      });
+    })();
+  }
+
   const setValue = function (id, value) {
     const el = document.getElementById(id);
     if (el) el.value = value;

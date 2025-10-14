@@ -14,6 +14,7 @@ Also mirrors to:
   assign nb_card_padding = section.settings.card_padding | default: '22px'
   assign nb_card_shadow = section.settings.card_shadow | default: '0 8px 24px rgba(0,0,0,.14)'
   assign nb_card_soft_bg = nb_card_bg | color_lighten: 8
+  assign secid = 'nb-contact-' | append: section.id
 %}
 
 {%- comment -%} Top safety gap for this section (on the Shopify wrapper) {%- endcomment -%}
@@ -28,6 +29,7 @@ Also mirrors to:
 </style>
 
 <section
+  id="{{ secid }}"
   class="nb-shell nb-contact"
   style="
     --nb-contact-max-width: {{ nb_max_width }};
@@ -40,6 +42,7 @@ Also mirrors to:
     --nb-contact-card-shadow: {{ nb_card_shadow }};
     padding-block-start: clamp(80px, 10vw, 140px);
   "
+  data-nb-contact="true"
 >
   <div class="nb-grid cols-2">
     <!-- Left column -->
