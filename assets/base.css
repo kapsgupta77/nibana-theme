@@ -5696,3 +5696,11 @@ body.nb-typography{
 
 .article-tags, .tag-list, .nb-article-tags { display: none !important; }
 .nb-related__grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:16px; }
+
+/* Contact: show a red star on required labels */
+.nb-contact label.nb-required::after {
+  content: " *";
+  color: var(--nb-error, #D1433F); /* falls back to red if token missing */
+  font-weight: 600;
+  margin-left: 2px;
+}
