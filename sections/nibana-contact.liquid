@@ -83,19 +83,19 @@ Also mirrors to:
       {% form 'customer', id: 'nb-contact-shopify', class: 'nb-card nb-card--panel nb-contact__form', novalidate: 'novalidate' %}
         <div class="nb-form-grid">
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-first">First name <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-first">First name</label>
             <input class="nb-input" id="nbc-first" name="contact[first_name]" type="text" required>
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-last">Last name <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-last">Last name</label>
             <input class="nb-input" id="nbc-last" name="contact[last_name]" type="text" required>
           </div>
 
           <input type="hidden" id="nbc-name" name="contact[name]">
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-email">{{ section.settings.label_email | default: 'Email' | escape }} <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-email">{{ section.settings.label_email | default: 'Email' | escape }}</label>
             <input class="nb-input" id="nbc-email" name="contact[email]" type="email" required>
           </div>
 
@@ -105,7 +105,7 @@ Also mirrors to:
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-reason">{{ section.settings.label_purpose | default: 'Inquiry Purpose' | escape }} <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-reason">{{ section.settings.label_purpose | default: 'Inquiry Purpose' | escape }}</label>
             {% liquid
               assign purpose_blocks = section.blocks | where: 'type', 'purpose_option'
             %}
@@ -134,7 +134,7 @@ Also mirrors to:
           </div>
 
           <div class="nb-field nb-field--full">
-            <label class="nb-label" for="nbc-message">{{ section.settings.label_message | default: 'Message' | escape }} <span aria-hidden="true">*</span></label>
+            <label class="nb-label" for="nbc-message">{{ section.settings.label_message | default: 'Message' | escape }}</label>
             <textarea class="nb-input" id="nbc-message" name="contact[body]" rows="6" placeholder="How can we help?" required></textarea>
           </div>
         </div>
