@@ -43,11 +43,11 @@
 
 | # | Change | Impact | Effort |
 |---|--------|--------|--------|
-| 1 | Floating sticky CTA bar on mobile | Very High | Medium |
-| 2 | Animated hero entrance with scroll-triggered stats counter | High | Medium |
-| 3 | Service card hover overlays with descriptions | High | Medium |
-| 4 | Video testimonial section | High | Heavy |
-| 5 | Mega-menu for coaching services with previews | Medium | Heavy |
+| 1 | Animated hero entrance with scroll-triggered stats counter | High | Medium |
+| 2 | Service card hover overlays with descriptions | High | Medium |
+| 3 | Video testimonial section | High | Heavy |
+| 4 | Mega-menu for coaching services with previews | Medium | Heavy |
+| 5 | Enhance existing mobile floating CTA with microcopy/animation | Medium | Quick |
 
 ### Key Metrics to Track
 
@@ -1002,67 +1002,58 @@ For the full blog listing page (`templates/blog.json`):
 **File:** `assets/base.css`
 **Impact:** High — draws attention without being aggressive.
 
-### 11.2 Floating Mobile CTA
+### 11.2 Existing Floating Mobile CTA — Enhancement Opportunities
 
-**Problem:** On mobile, the primary CTA is only visible when the user scrolls to specific sections. If they're reading mid-page, there's no persistent way to book.
+**Current state:** The site already has a well-implemented floating mobile CTA system:
 
-**Recommendation:** Add a sticky bottom CTA bar on mobile:
+- **`.nb-fab`** — A fixed-position pill button (chocolate background, pill-shaped, right-aligned) visible on mobile (≤1024px). Styled in `assets/base.css:4976` and `layout/theme.liquid:370`.
+- **`snippets/nb-sticky-cta-controller.liquid`** — Smart visibility controller using `IntersectionObserver` that auto-hides the floating CTA when a booking link is already visible on screen. Detects Calendly, cal.com, tidycal, and custom `[data-cta="book-call"]` elements.
+- **FAB lift logic** — JS in `layout/theme.liquid:413` that detects Mailchimp bottom bars and lifts the FAB above them with a configurable gap.
+- **Analytics** — Pushes `cta_sticky_click` events to `dataLayer`.
+- The header CTA is already hidden on mobile (`sections/header.liquid:821`) to avoid redundancy.
+
+**Recommendations to enhance the existing FAB:**
+
+1. **Add a subtle entrance animation** — The FAB appears instantly. Add a slide-up entrance after a short delay:
 
 ```css
-/* Floating mobile CTA bar */
-.nb-mobile-cta-bar {
-  display: none;
-}
-
-@media (max-width: 749px) {
-  .nb-mobile-cta-bar {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 999;
-    background: #fff;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-    padding: 10px 16px;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
+@media (prefers-reduced-motion: no-preference) {
+  .nb-fab {
+    animation: nb-fab-enter 0.4s ease 1.5s both;
   }
 
-  .nb-mobile-cta-bar__text {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--nb-ink, #2f3e48);
-    line-height: 1.2;
-  }
-
-  .nb-mobile-cta-bar .nb-cta {
-    white-space: nowrap;
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-
-  /* Add bottom padding to body to prevent content being hidden behind the bar */
-  body {
-    padding-bottom: 64px;
+  @keyframes nb-fab-enter {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 }
 ```
 
-**Liquid implementation** (add to `layout/theme.liquid` before `</body>`):
+2. **Add a periodic attention pulse** — Draw the eye with a subtle glow every 10 seconds:
 
-```liquid
-<!-- Mobile sticky CTA -->
-<div class="nb-mobile-cta-bar" aria-label="Book a call">
-  <span class="nb-mobile-cta-bar__text">Ready to transform?</span>
-  <a class="nb-cta" href="/pages/book-a-call">Book a free call</a>
-</div>
+```css
+@media (prefers-reduced-motion: no-preference) {
+  .nb-fab > a {
+    animation: nb-fab-pulse 10s ease 3s infinite;
+  }
+
+  @keyframes nb-fab-pulse {
+    0%, 92%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+    96% { box-shadow: 0 8px 32px rgba(209,108,40,.4); }
+  }
+}
 ```
 
-**File:** `layout/theme.liquid`, `assets/base.css`
-**Impact:** Very High — mobile visitors get persistent access to the primary conversion action.
+3. **Add reassurance microcopy** — Consider adding a small "Free · 20 min" label below or beside the FAB button text.
+
+**File:** `assets/base.css`, `layout/theme.liquid`
+**Impact:** Low-Medium — the core feature already works well; these are polish improvements.
 
 ### 11.3 CTA Copy Variations to A/B Test
 
@@ -1103,7 +1094,7 @@ Key mobile patterns already in place:
 
 **Recommendations:**
 
-1. **Floating mobile CTA bar** (see Section 11.2)
+1. **Floating mobile CTA already exists** (`.nb-fab`) — see Section 11.2 for enhancement ideas
 2. **Move key CTAs to bottom of card panels** — ensure the CTA is the last element in stacked mobile cards
 3. **Tap target sizing** — ensure all interactive elements are minimum 48px height:
 
@@ -1488,7 +1479,7 @@ The theme has good accessibility basics:
 
 | # | Recommendation | Impact | Effort | Priority | Files |
 |---|---------------|--------|--------|----------|-------|
-| 1 | Floating mobile CTA bar | Very High | Quick | **P1** | `layout/theme.liquid`, `assets/base.css` |
+| 1 | Enhance existing mobile FAB (animation/pulse) | Low-Med | Quick | **P3** | `assets/base.css` |
 | 2 | Hero overlay contrast fix | High | Quick | **P1** | Theme Editor / `assets/base.css` |
 | 3 | CTA pulse animation | High | Quick | **P1** | `assets/base.css` |
 | 4 | Fix CTA color contrast (a11y) | High | Quick | **P1** | `assets/base.css` |
