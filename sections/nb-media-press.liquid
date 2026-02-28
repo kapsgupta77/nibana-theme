@@ -1,0 +1,230 @@
+{% comment %}
+  Media & Press -- Press Coverage
+  Featured publication logos at top, followed by a card grid of press articles.
+  All content is hardcoded since press mentions are historical and rarely change.
+{% endcomment %}
+
+<section
+  id="nb-media-press-{{ section.id }}"
+  class="nb-media-press {{ section.settings.color_scheme }}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;"
+>
+  <div class="nb-shell">
+    <div
+      class="nb-media-press__wrap"
+      {% if section.settings.panel_on %}style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};"{% endif %}
+    >
+      <header class="nb-media-press__head">
+        <h2 class="nb-h2">{{ section.settings.heading }}</h2>
+        {% if section.settings.intro != blank %}
+          <div class="nb-rte nb-media-press__intro">{{ section.settings.intro }}</div>
+        {% endif %}
+      </header>
+
+      {%- comment -%} Featured publication names row {%- endcomment -%}
+      <div class="nb-media-press__logos">
+        <span class="nb-media-press__logo-item">GQ</span>
+        <span class="nb-media-press__logo-item">Men's Health</span>
+        <span class="nb-media-press__logo-item">The Sun</span>
+        <span class="nb-media-press__logo-item">Thrive Global</span>
+        <span class="nb-media-press__logo-item">Good Men Project</span>
+      </div>
+
+      {%- comment -%} Article cards grid {%- endcomment -%}
+      <ul class="nb-media-press__grid">
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">GQ</div>
+          <div class="nb-media-press__topic">OM and Men</div>
+          <div class="nb-media-press__date">Feb 2018</div>
+          <a class="nb-media-press__link" href="https://www.gq-magazine.co.uk/article/what-is-orgasmic-meditation-om" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">Men's Health</div>
+          <div class="nb-media-press__topic">Clubhouse men's groups (with Olympian Jason Rogers)</div>
+          <div class="nb-media-press__date">Jun 2021</div>
+          <a class="nb-media-press__link" href="https://www.menshealth.com/trending-news/a36595514/clubhouse-mens-groups/" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">The Sun</div>
+          <div class="nb-media-press__topic">Spring clean health body mind</div>
+          <div class="nb-media-press__date">2022</div>
+          <a class="nb-media-press__link" href="https://www.thesun.co.uk/fabulous/17974578/spring-clean-health-body-mind/" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">Thrive Global</div>
+          <div class="nb-media-press__topic">Men's sensitivity is healing</div>
+          <div class="nb-media-press__date">Feb 2020</div>
+          <a class="nb-media-press__link" href="https://thriveglobal.com/stories/mens-sensitivity-is-healing/" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">Good Men Project</div>
+          <div class="nb-media-press__topic">Regular contributor</div>
+          <div class="nb-media-press__date">2020+</div>
+          <a class="nb-media-press__link" href="https://goodmenproject.com/author/kapil-gupta/" target="_blank" rel="noopener">View articles &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">GetMeGiddy.com</div>
+          <div class="nb-media-press__topic">Love Bombing</div>
+          <div class="nb-media-press__date">Feb 2022</div>
+          <a class="nb-media-press__link" href="https://www.getmegiddy.com/love-bomb-explainer" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">Brown Bodies (Anisah OBE)</div>
+          <div class="nb-media-press__topic">Man Enough</div>
+          <div class="nb-media-press__date">Jul 2023</div>
+          <a class="nb-media-press__link" href="https://open.substack.com/pub/brownbodies/p/man-enough" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">High Profile Club Magazine</div>
+          <div class="nb-media-press__topic">Emotional communications expert profile</div>
+          <div class="nb-media-press__date">Feb 2020</div>
+          <a class="nb-media-press__link" href="https://highprofilemag.com" target="_blank" rel="noopener">Visit publication &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">BestLifeOnline</div>
+          <div class="nb-media-press__topic">Things Happy People Never Do</div>
+          <div class="nb-media-press__date">Dec 2019</div>
+          <a class="nb-media-press__link" href="https://bestlifeonline.com/things-happy-people-never-do/" target="_blank" rel="noopener">Read article &rarr;</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <style>
+    .nb-media-press .nb-media-press__wrap {
+      background: {% if section.settings.panel_on %}var(--nb-panel-bg, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
+      border-radius: 20px;
+      padding: clamp(20px, 3vw, 36px);
+      box-shadow: {% if section.settings.panel_on %}0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset{% else %}none{% endif %};
+    }
+
+    .nb-media-press__head {
+      margin-bottom: clamp(14px, 2vw, 22px);
+    }
+
+    .nb-media-press__intro {
+      margin-top: 6px;
+      max-width: 640px;
+    }
+
+    /* Featured publication logos row */
+    .nb-media-press__logos {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(16px, 2.5vw, 32px);
+      margin-bottom: clamp(20px, 3vw, 32px);
+      padding: clamp(14px, 2vw, 22px) 0;
+      border-bottom: 1px solid rgba(16,99,108,.12);
+    }
+
+    .nb-media-press__logo-item {
+      font-family: var(--font-heading--family, 'Cormorant', serif);
+      font-size: clamp(18px, 1.8vw, 26px);
+      font-weight: 700;
+      color: var(--nb-teal, #10636c);
+      opacity: .7;
+      letter-spacing: -0.01em;
+    }
+
+    /* Article cards grid */
+    .nb-media-press__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: clamp(12px, 1.6vw, 18px);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 989px) {
+      .nb-media-press__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 749px) {
+      .nb-media-press__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .nb-media-press__card {
+      background: #fff;
+      border: 1px solid #e8ecef;
+      border-radius: 14px;
+      padding: clamp(14px, 1.8vw, 20px);
+      box-shadow: 0 2px 8px rgba(0,0,0,.03);
+      transition: box-shadow .2s, transform .2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nb-media-press__card:hover {
+      box-shadow: 0 12px 26px rgba(12,138,123,.10);
+      transform: translateY(-1px);
+    }
+
+    .nb-media-press__pub {
+      font-weight: 700;
+      color: var(--nb-teal, #10636c);
+      font-size: clamp(14px, 1.1vw, 16px);
+    }
+
+    .nb-media-press__topic {
+      color: var(--nb-ink, #2f3e48);
+      font-size: clamp(13px, 1vw, 15px);
+      line-height: 1.45;
+    }
+
+    .nb-media-press__date {
+      font-size: 12px;
+      color: var(--nb-ink, #2f3e48);
+      opacity: .6;
+    }
+
+    .nb-media-press__link {
+      margin-top: auto;
+      padding-top: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--nb-chocolate, #d16c28);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .nb-media-press__link:hover {
+      color: var(--nb-choc-600, #9E4E19);
+      text-decoration: underline;
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Media -- Press Coverage",
+  "class": "section-wrapper nb-media-press-wrap",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Press & Publications" },
+    { "type": "richtext", "id": "intro", "label": "Intro text", "default": "<p>Selected features and articles from leading publications.</p>" },
+    { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": true },
+    { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "Media -- Press Coverage" }
+  ]
+}
+{% endschema %}
