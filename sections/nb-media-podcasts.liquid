@@ -1,0 +1,314 @@
+{% comment %}
+  Media & Press -- Podcast Appearances
+  List of 17 podcast appearances as compact cards.
+  Includes Laadli Award callout for the Love Aaj Kal episode.
+  Sorted most recent first.
+{% endcomment %}
+
+<section
+  id="nb-media-podcasts-{{ section.id }}"
+  class="nb-media-podcasts {{ section.settings.color_scheme }}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;"
+>
+  <div class="nb-shell">
+    <div
+      class="nb-media-podcasts__wrap"
+      {% if section.settings.panel_on %}style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};"{% endif %}
+    >
+      <header class="nb-media-podcasts__head">
+        <h2 class="nb-h2">{{ section.settings.heading }}</h2>
+      </header>
+
+      {%- comment -%} Laadli Award callout {%- endcomment -%}
+      <div class="nb-media-podcasts__award">
+        <span class="nb-media-podcasts__award-badge">Award Winner</span>
+        <span class="nb-media-podcasts__award-text">
+          The Love Aaj Kal episode won the <strong>Laadli Award for Best Podcast 2022</strong>, supported by UNFPA and the Norwegian Embassy.
+        </span>
+      </div>
+
+      {%- comment -%} Podcast cards grid {%- endcomment -%}
+      <ul class="nb-media-podcasts__grid">
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Becoming Okay (Meg Schirnhofer)</div>
+          <div class="nb-media-podcasts__topic">Relationships don't change you, they reveal you</div>
+          <div class="nb-media-podcasts__date">Jan 2026</div>
+          <a class="nb-media-podcasts__link" href="https://www.youtube.com/watch?v=2_qFaYl4m1s" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Netil Radio (Adam Slawson)</div>
+          <div class="nb-media-podcasts__topic">Vulnerability in the city</div>
+          <div class="nb-media-podcasts__date">Jul 2024</div>
+          <a class="nb-media-podcasts__link" href="https://soundcloud.com/netil-radio/vulnerability-in-the-city-w-kapilgupta-11th-july-2024" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Coming into Right Relationship with the Masculine (Michelle Lynn)</div>
+          <div class="nb-media-podcasts__topic">Masculine dynamics</div>
+          <div class="nb-media-podcasts__date">Feb 2024</div>
+          <a class="nb-media-podcasts__link" href="https://youtu.be/88Xh_DT8swA" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">The Calling Within (Viktoria)</div>
+          <div class="nb-media-podcasts__topic">Two-part episode</div>
+          <div class="nb-media-podcasts__date">Nov 2023</div>
+          <div class="nb-media-podcasts__multi-link">
+            <a class="nb-media-podcasts__link" href="https://open.spotify.com/episode/5lL4zjF7aUy8JauHhg2TUz" target="_blank" rel="noopener">Part 1 &rarr;</a>
+            <a class="nb-media-podcasts__link" href="https://open.spotify.com/episode/433H9Sf9HclNv8QyoOxtSY" target="_blank" rel="noopener">Part 2 &rarr;</a>
+          </div>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">The Dating Playbook (Sarah and Mary)</div>
+          <div class="nb-media-podcasts__topic">Dating</div>
+          <div class="nb-media-podcasts__date">Apr 2021</div>
+          <a class="nb-media-podcasts__link" href="https://open.spotify.com/episode/6CsoB6FpanXqik70KVwXCs" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card nb-media-podcasts__card--highlight">
+          <span class="nb-media-podcasts__highlight-badge">Laadli Award Winner</span>
+          <div class="nb-media-podcasts__show">Love Aaj Kal, Spotify India (Ankit)</div>
+          <div class="nb-media-podcasts__topic">Relationships</div>
+          <div class="nb-media-podcasts__date">Jan 2021</div>
+          <a class="nb-media-podcasts__link" href="https://open.spotify.com/episode/5W5PrqBT9Y3QUiMyA4xlTw" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Maskless Men (Jay Williams)</div>
+          <div class="nb-media-podcasts__topic">Masculine-feminine dynamics in relationships</div>
+          <div class="nb-media-podcasts__date">Dec 2021</div>
+          <a class="nb-media-podcasts__link" href="https://podcasts.apple.com/gb/podcast/ep029-how-masculine-feminine-dynamics-effect-your-relationship/id1514949831?i=1000503713063" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Being Fine (Joanna Trott)</div>
+          <div class="nb-media-podcasts__topic">Learning how to cry</div>
+          <div class="nb-media-podcasts__date">Oct 2020</div>
+          <a class="nb-media-podcasts__link" href="https://youtu.be/Yiiz6B0JdRM" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Redesigning Humanity (Jason Grant)</div>
+          <div class="nb-media-podcasts__topic">Integral coaching</div>
+          <div class="nb-media-podcasts__date">Oct 2020</div>
+          <a class="nb-media-podcasts__link" href="https://www.youtube.com/watch?v=ITJEabYW01U" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">In Bed with Caoi</div>
+          <div class="nb-media-podcasts__topic">Intimacy</div>
+          <div class="nb-media-podcasts__date">Sep 2020</div>
+          <a class="nb-media-podcasts__link" href="https://podcasts.apple.com/gb/podcast/in-bed-with-caoi-featuring-kapil-gupta/id1511942303?i=1000492015952" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Authentic Dating Series</div>
+          <div class="nb-media-podcasts__topic">Dating/relationships</div>
+          <div class="nb-media-podcasts__date">Jul 2020</div>
+          <a class="nb-media-podcasts__link" href="https://apple.co/2ZtUrzH" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Smash The Box (Mark Pitcher)</div>
+          <div class="nb-media-podcasts__topic">How to be a man in a woman's world</div>
+          <div class="nb-media-podcasts__date">Apr 2020</div>
+          <a class="nb-media-podcasts__link" href="https://open.spotify.com/episode/3ASv8eymGjFMD3hKy3YZ4W" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">GTex (Simone Vincenzi)</div>
+          <div class="nb-media-podcasts__topic">From Performance to Presence</div>
+          <div class="nb-media-podcasts__date">Mar 2020</div>
+          <a class="nb-media-podcasts__link" href="https://youtu.be/896mh0IHkMQ" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Thank You Heartbreak (Chelsea Leigh Trescott, NY)</div>
+          <div class="nb-media-podcasts__topic">The invisible weight men carry</div>
+          <div class="nb-media-podcasts__date">Mar 2020</div>
+          <a class="nb-media-podcasts__link" href="https://www.buzzsprout.com/755768/3180103" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Mavericks and Leadership (Judith)</div>
+          <div class="nb-media-podcasts__topic">Humanity in the workplace</div>
+          <div class="nb-media-podcasts__date">Feb 2020</div>
+          <a class="nb-media-podcasts__link" href="https://themaverickparadox.com/humanity-in-the-workplace/" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">The Mindset Athlete (James Roberts, UK Paralympian)</div>
+          <div class="nb-media-podcasts__topic">Mindset</div>
+          <div class="nb-media-podcasts__date">Jan 2020</div>
+          <a class="nb-media-podcasts__link" href="https://open.spotify.com/show/1lERur4JkrmDTjvmg5FwnH" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+        <li class="nb-media-podcasts__card">
+          <div class="nb-media-podcasts__show">Imperial College Radio (Gareth)</div>
+          <div class="nb-media-podcasts__topic">Interview</div>
+          <div class="nb-media-podcasts__date">Feb 2018</div>
+          <a class="nb-media-podcasts__link" href="https://soundcloud.com/garethonair/sat1-13-feb-2018" target="_blank" rel="noopener">Listen &rarr;</a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+
+  <style>
+    .nb-media-podcasts .nb-media-podcasts__wrap {
+      background: {% if section.settings.panel_on %}var(--nb-panel-bg, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
+      border-radius: 20px;
+      padding: clamp(20px, 3vw, 36px);
+      box-shadow: {% if section.settings.panel_on %}0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset{% else %}none{% endif %};
+    }
+
+    .nb-media-podcasts__head {
+      margin-bottom: clamp(10px, 1.4vw, 16px);
+    }
+
+    /* Laadli Award callout banner */
+    .nb-media-podcasts__award {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      border: 2px solid var(--nb-chocolate, #d16c28);
+      border-radius: 14px;
+      padding: clamp(12px, 1.5vw, 18px) clamp(14px, 2vw, 22px);
+      margin-bottom: clamp(16px, 2vw, 24px);
+      flex-wrap: wrap;
+    }
+
+    .nb-media-podcasts__award-badge {
+      background: var(--nb-chocolate, #d16c28);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .nb-media-podcasts__award-text {
+      font-size: clamp(13px, 1vw, 15px);
+      color: var(--nb-ink, #2f3e48);
+      line-height: 1.5;
+    }
+
+    /* Podcast cards grid */
+    .nb-media-podcasts__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: clamp(10px, 1.4vw, 16px);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 749px) {
+      .nb-media-podcasts__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .nb-media-podcasts__card {
+      background: #fff;
+      border: 1px solid #e8ecef;
+      border-radius: 14px;
+      padding: clamp(12px, 1.5vw, 18px);
+      box-shadow: 0 2px 8px rgba(0,0,0,.03);
+      transition: box-shadow .2s, transform .2s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nb-media-podcasts__card:hover {
+      box-shadow: 0 12px 26px rgba(12,138,123,.10);
+      transform: translateY(-1px);
+    }
+
+    /* Highlighted card (award winner) */
+    .nb-media-podcasts__card--highlight {
+      border: 2px solid var(--nb-chocolate, #d16c28);
+      position: relative;
+    }
+
+    .nb-media-podcasts__highlight-badge {
+      background: var(--nb-chocolate, #d16c28);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      align-self: flex-start;
+      margin-bottom: 2px;
+    }
+
+    .nb-media-podcasts__show {
+      font-weight: 700;
+      color: var(--nb-teal, #10636c);
+      font-size: clamp(13px, 1.05vw, 15px);
+      line-height: 1.35;
+    }
+
+    .nb-media-podcasts__topic {
+      color: var(--nb-ink, #2f3e48);
+      font-size: clamp(12px, 0.95vw, 14px);
+      line-height: 1.4;
+    }
+
+    .nb-media-podcasts__date {
+      font-size: 12px;
+      color: var(--nb-ink, #2f3e48);
+      opacity: .6;
+    }
+
+    .nb-media-podcasts__link {
+      margin-top: auto;
+      padding-top: 2px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--nb-chocolate, #d16c28);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .nb-media-podcasts__link:hover {
+      color: var(--nb-choc-600, #9E4E19);
+      text-decoration: underline;
+    }
+
+    .nb-media-podcasts__multi-link {
+      display: flex;
+      gap: 14px;
+      margin-top: auto;
+      padding-top: 2px;
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Media -- Podcasts",
+  "class": "section-wrapper nb-media-podcasts-wrap",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Podcast Appearances" },
+    { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": true },
+    { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "Media -- Podcasts" }
+  ]
+}
+{% endschema %}

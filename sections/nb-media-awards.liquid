@@ -1,0 +1,137 @@
+{% comment %}
+  Media & Press -- Awards & Credentials
+  Badge-style display for Laadli Award and FRSA.
+  Two cards side by side on desktop, stacked on mobile.
+{% endcomment %}
+
+<section
+  id="nb-media-awards-{{ section.id }}"
+  class="nb-media-awards {{ section.settings.color_scheme }}"
+  style="padding-block-start: {{ section.settings.pad_top }}px; padding-block-end: {{ section.settings.pad_bottom }}px;"
+>
+  <div class="nb-shell">
+    <div
+      class="nb-media-awards__wrap"
+      {% if section.settings.panel_on %}style="--nb-panel-bg: {{ section.settings.panel_color | default: '#F3FAF8' }};"{% endif %}
+    >
+      <header class="nb-media-awards__head">
+        <h2 class="nb-h2">{{ section.settings.heading }}</h2>
+      </header>
+
+      <div class="nb-media-awards__grid">
+        <div class="nb-media-awards__card">
+          <div class="nb-media-awards__icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="var(--nb-chocolate, #d16c28)" stroke="var(--nb-chocolate, #d16c28)" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nb-media-awards__title">Laadli Award 2022</div>
+          <div class="nb-media-awards__sub">Best Podcast</div>
+          <div class="nb-media-awards__desc">
+            Awarded for the Love Aaj Kal episode on Spotify India, supported by UNFPA and the Norwegian Embassy.
+          </div>
+        </div>
+
+        <div class="nb-media-awards__card">
+          <div class="nb-media-awards__icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="var(--nb-teal, #10636c)" stroke-width="1.5"/>
+              <path d="M12 7V12L15 15" stroke="var(--nb-teal, #10636c)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nb-media-awards__title">FRSA</div>
+          <div class="nb-media-awards__sub">Fellow of the Royal Society of Arts</div>
+          <div class="nb-media-awards__desc">
+            Recognised for contributions to social progress, creativity, and the arts.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .nb-media-awards .nb-media-awards__wrap {
+      background: {% if section.settings.panel_on %}var(--nb-panel-bg, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
+      border-radius: 20px;
+      padding: clamp(20px, 3vw, 36px);
+      box-shadow: {% if section.settings.panel_on %}0 10px 28px rgba(12,138,123,.08), 0 1px 0 rgba(255,255,255,.8) inset{% else %}none{% endif %};
+    }
+
+    .nb-media-awards__head {
+      text-align: center;
+      margin-bottom: clamp(14px, 2vw, 22px);
+    }
+
+    .nb-media-awards__grid {
+      display: grid;
+      gap: clamp(14px, 2vw, 22px);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 749px) {
+      .nb-media-awards__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .nb-media-awards__card {
+      background: #fff;
+      border: 1px solid #e8ecef;
+      border-radius: 14px;
+      padding: clamp(18px, 2.2vw, 28px);
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.03);
+      transition: box-shadow .2s, transform .2s;
+    }
+
+    .nb-media-awards__card:hover {
+      box-shadow: 0 12px 26px rgba(12,138,123,.10);
+      transform: translateY(-1px);
+    }
+
+    .nb-media-awards__icon {
+      margin-bottom: 12px;
+    }
+
+    .nb-media-awards__title {
+      font-weight: 800;
+      font-size: clamp(16px, 1.3vw, 20px);
+      color: var(--nb-teal, #10636c);
+      margin-bottom: 4px;
+    }
+
+    .nb-media-awards__sub {
+      font-weight: 600;
+      font-size: clamp(13px, 1vw, 15px);
+      color: var(--nb-ink, #2f3e48);
+      margin-bottom: 8px;
+    }
+
+    .nb-media-awards__desc {
+      font-size: clamp(12px, 0.95vw, 14px);
+      color: var(--nb-ink, #2f3e48);
+      opacity: .8;
+      line-height: 1.5;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Media -- Awards",
+  "class": "section-wrapper nb-media-awards-wrap",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Awards & Credentials" },
+    { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": true },
+    { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "Media -- Awards" }
+  ]
+}
+{% endschema %}
