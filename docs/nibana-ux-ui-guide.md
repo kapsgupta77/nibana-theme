@@ -128,13 +128,17 @@
 **File:** `assets/base.css`
 **Impact:** Medium — creates a premium "reveal" moment that signals quality.
 
-### 2.3 Social Proof Stats Strip Below Hero
+### 2.3 Enhance the Existing Social Proof Logo Bar Below Hero
 
-**Problem:** After the hero, there is no immediate credibility reinforcement. Visitors see the hero headline but no evidence to back it up.
+**Current state:** The homepage already has a social proof logo bar (`section_yYHbaA` in `templates/index.json`) placed directly below the hero. It uses the "Icons with text" section type and displays five media/event logos: **GQ**, **TEDx Lambeth**, **Ministry of Justice**, **Thrive Global**, and **The Good Men Project**. This is a strong credibility signal in an excellent position.
 
-**Recommendation:** Add a compact stats bar directly below the hero showing key credibility numbers.
+**Recommendations to enhance it:**
 
-**Structural concept (new Liquid snippet or inline in `templates/index.json`):**
+1. **Add a heading** — Add a subtle "As Featured In" or "Trusted By" label above the logos so visitors instantly understand what they're looking at.
+
+2. **Add a stats row beneath** — Complement the existing logo bar with a compact stats strip showing key credibility numbers (e.g., "7+ Years coaching", "100+ Clients", "15+ Countries"). This pairs social proof (logos) with quantitative proof (numbers) for a 1-2 punch.
+
+**Stats strip concept (add as a new section directly after `section_yYHbaA`):**
 
 ```html
 <div class="nb-stats-strip">
@@ -198,8 +202,12 @@
 }
 ```
 
-**File:** New section file or added to homepage template config
-**Impact:** Very High — immediately establishes credibility and authority.
+3. **Improve logo sizing consistency** — The current custom CSS sets `.icon-block__media` to `height: 150px; object-fit: contain;`. Consider reducing to ~80–100px for a tighter, more polished strip, and ensure all logos have uniform visual weight (some may appear larger than others due to differing aspect ratios).
+
+4. **Add subtle grayscale → color hover effect** — Apply `filter: grayscale(1); opacity: 0.7;` to the logos by default, transitioning to full color on hover. This is a classic "As Seen In" pattern that looks premium.
+
+**File:** `templates/index.json` (section `section_yYHbaA` settings), `assets/base.css` (optional styling enhancements)
+**Impact:** Medium — the existing logo bar already provides strong credibility; these are polish enhancements.
 
 ---
 
@@ -581,7 +589,7 @@ Add a `description` setting to the service block schema:
 
 2. **Add credential badges** — ICF certification, coaching methodology badges, etc.
 
-3. **Move higher on homepage** — Place the trust belt immediately after the stats strip (below hero) for maximum early-page credibility.
+3. **Keep it near the top** — The homepage already has a social proof logo bar (GQ, TEDx, etc.) directly below the hero. Consider placing the trust belt immediately after that logo bar to stack credibility signals early on the page.
 
 **File:** `sections/nb-trustbelt.liquid`, `templates/index.json` (reorder sections)
 **Impact:** High — trust elements work best when they appear before the first CTA.
@@ -1344,9 +1352,9 @@ This leverages the existing `sections/video-banner.liquid` section pattern.
 
 ### 14.4 "As Seen In" Media Bar
 
-**Current state:** The theme has `sections/nb-media-press.liquid` for media mentions.
+**Current state:** The homepage already has a social proof logo bar (`section_yYHbaA`) directly below the hero showing GQ, TEDx Lambeth, Ministry of Justice, Thrive Global, and The Good Men Project logos. This is well-placed and effective. The theme also has `sections/nb-media-press.liquid` for a more detailed media mentions section used on the Media & Press page.
 
-**Recommendation:** Place this prominently on the homepage, ideally in position 3 (after hero and stats strip). Show logos of any publications, podcasts, or events where Nibana has been featured.
+**Recommendation:** The existing homepage logo bar is in an excellent position. Enhance it with a subtle "As Featured In" heading and consider the grayscale-to-color hover effect described in section 2.3. If more media features are added in future, they can be showcased on the dedicated Media & Press page using `nb-media-press.liquid`.
 
 ---
 
@@ -1484,14 +1492,14 @@ The theme has good accessibility basics:
 | 3 | CTA pulse animation | High | Quick | **P1** | `assets/base.css` |
 | 4 | Fix CTA color contrast (a11y) | High | Quick | **P1** | `assets/base.css` |
 | 5 | Reassurance microcopy below CTAs | High | Quick | **P1** | `sections/home-get-in-touch.liquid`, `sections/cta-bar.liquid` |
-| 6 | Social proof stats strip below hero | Very High | Medium | **P2** | New section, `templates/index.json` |
+| 6 | Enhance existing logo bar + add stats strip | Medium | Medium | **P3** | `templates/index.json`, `assets/base.css` |
 | 7 | Service card hover overlays | High | Medium | **P2** | `sections/services.liquid` |
 | 8 | Inline mini-testimonials near CTAs | High | Medium | **P2** | New snippet, multiple sections |
 | 9 | Animated hero entrance | Medium | Quick | **P2** | `assets/base.css` |
 | 10 | Alternating section backgrounds | Medium | Quick | **P2** | `assets/base.css` |
 | 11 | Sticky header backdrop blur | Medium | Quick | **P2** | `assets/base.css` |
 | 12 | Skip-to-content link | Medium | Quick | **P2** | `layout/theme.liquid`, `assets/base.css` |
-| 13 | Trust belt moved earlier on homepage | High | Quick | **P2** | `templates/index.json` |
+| 13 | Trust belt placed after existing logo bar | Medium | Quick | **P3** | `templates/index.json` |
 | 14 | Booking page trust elements | High | Medium | **P2** | Booking page template |
 | 15 | Featured blog post layout | Medium | Medium | **P3** | `sections/our-blog.liquid` |
 | 16 | Pull-quote styling | Medium | Quick | **P3** | `assets/base.css` |
