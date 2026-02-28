@@ -101,11 +101,22 @@
   content="{{ og_description | escape }}"
 >
 
+{%- if request.page_type == 'blog' and current_tags -%}
+  <meta name="robots" content="noindex, follow">
+{%- endif -%}
+
+{%- liquid
+  assign effective_page_title = page_title
+  if request.page_type == 'page' and template.suffix == 'contact'
+    assign effective_page_title = 'Contact Us | Get in Touch - Nibana Life Coach'
+  endif
+-%}
+
 <title>
-  {{ page_title }}
+  {{ effective_page_title }}
   {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
   {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  {%- unless effective_page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
 </title>
 
 {%- comment -%} Canonical: prefer page metafield; else Shopify default {%- endcomment -%}
