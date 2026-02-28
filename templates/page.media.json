@@ -1,0 +1,108 @@
+{
+  "sections": {
+    "media_hero": {
+      "type": "nb-media-hero",
+      "settings": {
+        "kicker": "Media & Press",
+        "heading": "Media & Press",
+        "sub_rich": "<p>Featured in GQ, Men's Health, The Sun, Thrive Global, and more</p>",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "media_tedx": {
+      "type": "nb-media-tedx",
+      "settings": {
+        "kicker": "Featured Talk",
+        "heading": "Kapil's TEDx Talk: \"Dare To Be Sensitive\"",
+        "subheading": "TEDx Lambeth",
+        "description": "<p>In this thought-provoking talk, Kapil speaks about how most men are socially conditioned from a young age to hide their emotions and see their vulnerability and sensitivity as weakness, and the impact this has on their lives and personal relationships.</p>",
+        "youtube_id": "sdTy9IZR87k",
+        "views_badge": "136,000+ views",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "media_press": {
+      "type": "nb-media-press",
+      "settings": {
+        "heading": "Press & Publications",
+        "intro": "",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "media_podcasts": {
+      "type": "nb-media-podcasts",
+      "settings": {
+        "heading": "Podcast Appearances",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "media_book": {
+      "type": "nb-media-book",
+      "settings": {
+        "kicker": "Published Author",
+        "heading": "Being FINE: The Other F Word",
+        "author_note": "Co-authored by Kapil Gupta",
+        "description": "<p>A powerful exploration of what lies beneath the surface when we say we're \"fine.\" This book challenges readers to look beyond the mask and discover what happens when we dare to be honest about how we really feel.</p>",
+        "image_alt": "Being FINE: The Other F Word book cover",
+        "cta_label": "View on Amazon",
+        "cta_link": "https://www.amazon.co.uk/Being-FINE-Other-F-Word/dp/1838335900",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "media_awards": {
+      "type": "nb-media-awards",
+      "settings": {
+        "heading": "Awards & Credentials",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    },
+    "media_cta": {
+      "type": "nb-media-cta",
+      "settings": {
+        "kicker": "Get in Touch",
+        "heading": "Book Kapil for Your Podcast or Event",
+        "bio": "<p>Kapil Gupta is the founder of Nibana and creator of the Performance to Presence Method. He works 1:1 with founders, executives, and couples globally. He is a co-author of \"Being FINE: The Other F Word\" and his TEDx talk \"Dare To Be Sensitive\" has been viewed over 136,000 times. He is a Fellow of the Royal Society of Arts (FRSA).</p>",
+        "cta_label": "Get in Touch",
+        "cta_link": "/pages/contact",
+        "panel_on": true,
+        "panel_color": "#F3FAF8",
+        "color_scheme": "",
+        "pad_top": 0,
+        "pad_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "media_hero",
+    "media_tedx",
+    "media_press",
+    "media_podcasts",
+    "media_book",
+    "media_awards",
+    "media_cta"
+  ]
+}
