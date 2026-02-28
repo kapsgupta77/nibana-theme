@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "media_hero": {
@@ -7,7 +16,7 @@
         "heading": "Media & Press",
         "sub_rich": "<p>Featured in GQ, Men's Health, The Sun, Thrive Global, and more</p>",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -23,7 +32,7 @@
         "youtube_id": "sdTy9IZR87k",
         "views_badge": "136,000+ views",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -35,7 +44,7 @@
         "heading": "Press & Publications",
         "intro": "",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -46,7 +55,7 @@
       "settings": {
         "heading": "Podcast Appearances",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -59,11 +68,12 @@
         "heading": "Being FINE: The Other F Word",
         "author_note": "Co-authored by Kapil Gupta",
         "description": "<p>A powerful exploration of what lies beneath the surface when we say we're \"fine.\" This book challenges readers to look beyond the mask and discover what happens when we dare to be honest about how we really feel.</p>",
+        "image": "shopify://shop_images/Being_Fine_-_Book_Cover.jpg",
         "image_alt": "Being FINE: The Other F Word book cover",
         "cta_label": "View on Amazon",
         "cta_link": "https://www.amazon.co.uk/Being-FINE-Other-F-Word/dp/1838335900",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -74,7 +84,7 @@
       "settings": {
         "heading": "Awards & Credentials",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
@@ -89,7 +99,7 @@
         "cta_label": "Get in Touch",
         "cta_link": "/pages/contact",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "color_scheme": "",
         "pad_top": 0,
         "pad_bottom": 0
