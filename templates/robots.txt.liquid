@@ -14,5 +14,9 @@ Disallow: /blogs/*/tagged/
 {%- assign sitemap_url = robots.sitemap_url -%}
 {%- if sitemap_url == blank -%}
   {%- assign sitemap_url = shop.secure_url | append: '/sitemap.xml' -%}
+{%- elsif sitemap_url contains '://' -%}
+  {%- assign sitemap_url = sitemap_url -%}
+{%- else -%}
+  {%- assign sitemap_url = shop.secure_url | append: sitemap_url -%}
 {%- endif -%}
 Sitemap: {{ sitemap_url }}
