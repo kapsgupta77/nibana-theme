@@ -2,18 +2,13 @@
   Extend Shopify's default robots.txt and disallow crawling blog tag pages.
 {%- endcomment -%}
 {%- for group in robots.default_groups -%}
-  {{- group.user_agent -}}
-
-  {%- for rule in group.rules -%}
-    {{- rule -}}
-  {%- endfor -%}
-
-  {%- if group.user_agent.value == '*' -%}
+{{ group.user_agent }}
+{%- for rule in group.rules %}
+{{ rule }}
+{%- endfor %}
+{%- if group.user_agent.value == '*' %}
 Disallow: /blogs/*/tagged/
-  {%- endif -%}
+{%- endif %}
 
-{%- endfor -%}
-
-{%- if robots.sitemap_url -%}
-  {{- robots.sitemap_url -}}
-{%- endif -%}
+{% endfor -%}
+{{ robots.sitemap_url }}
