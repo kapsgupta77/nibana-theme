@@ -85,7 +85,16 @@
   <div class="img-text-container {% if section.settings.image_position == 'right' %}reverse{% endif %}">
     <div class="img-text-image">
       {% if section.settings.image != blank %}
-        <img src="{{ section.settings.image | img_url: '800x' }}" alt="{{ section.settings.heading }}">
+        {% liquid
+          assign image_alt_text = section.settings.image_alt | strip
+          if image_alt_text == blank and section.settings.image.alt != blank
+            assign image_alt_text = section.settings.image.alt
+          endif
+          if image_alt_text == blank
+            assign image_alt_text = section.settings.heading | strip
+          endif
+        %}
+        <img src="{{ section.settings.image | img_url: '800x' }}" alt="{{ image_alt_text | escape }}">
       {% endif %}
     </div>
     <div class="img-text-content">
@@ -113,6 +122,11 @@
       "id": "heading",
       "label": "Heading",
       "default": "Your Heading Goes Here"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text"
     },
     {
       "type": "richtext",
