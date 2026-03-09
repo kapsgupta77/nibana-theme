@@ -1,7 +1,8 @@
 {%- comment -%}
   NB — Rich Text
   General-purpose rich text section for pillar pages and long-form content.
-  Supports: heading (H2), rich-text body (with bullets, inline links, bold), optional panel background.
+  Supports: heading (H2), rich-text body (with bullets, inline links, bold),
+  optional panel background, optional floating card container.
 {%- endcomment -%}
 
 {%- liquid
@@ -10,17 +11,24 @@
   assign panel_on   = section.settings.panel_on
   assign panel_col  = section.settings.panel_color | default: '#F3FAF8'
   assign max_w      = section.settings.max_width | default: 'normal'
+  assign card_on    = section.settings.card_on
+  assign card_bg    = section.settings.card_bg | default: '#ffffff'
 -%}
 
 <section
   id="nb-rt-{{ section.id }}"
-  class="nb-rt {% if panel_on %}nb-rt--panel{% endif %}"
+  class="nb-rt {% if panel_on %}nb-rt--panel{% endif %} {% if card_on %}nb-rt--card{% endif %}"
   style="
     --nb-rt-panel: {{ panel_col }};
+    --nb-rt-card-bg: {{ card_bg }};
     padding-block-start: {{ section.settings.pad_top }}px;
     padding-block-end: {{ section.settings.pad_bottom }}px;
   "
 >
+  {% if card_on %}
+  <div class="nb-rt__card">
+  {% endif %}
+
   <div class="nb-rt__shell nb-rt__shell--{{ max_w }}">
     {%- if heading != blank -%}
       <h2 class="nb-rt__heading">{{ heading }}</h2>
@@ -32,6 +40,10 @@
       </div>
     {%- endif -%}
   </div>
+
+  {% if card_on %}
+  </div>
+  {% endif %}
 </section>
 
 {% style %}
@@ -39,9 +51,21 @@
     background: {% if panel_on %}var(--nb-rt-panel, var(--nb-mist, #F3FAF8)){% else %}transparent{% endif %};
   }
 
+  /* Floating card container */
+  #nb-rt-{{ section.id }} .nb-rt__card{
+    max-width: min(1160px, 94vw);
+    margin-inline: auto;
+    background: var(--nb-rt-card-bg, #fff);
+    border-radius: 20px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
+    padding: clamp(24px, 3vw, 48px) clamp(20px, 4vw, 40px);
+  }
+
   #nb-rt-{{ section.id }} .nb-rt__shell{
     margin: 0 auto;
-    padding: clamp(24px, 3vw, 48px) clamp(20px, 4vw, 40px);
+    {% unless card_on %}
+      padding: clamp(24px, 3vw, 48px) clamp(20px, 4vw, 40px);
+    {% endunless %}
   }
   #nb-rt-{{ section.id }} .nb-rt__shell--narrow{ max-width: 720px; }
   #nb-rt-{{ section.id }} .nb-rt__shell--normal{ max-width: 900px; }
@@ -122,6 +146,11 @@
       ]
     },
 
+    { "type": "header", "content": "Floating card container" },
+    { "type": "checkbox", "id": "card_on", "label": "Wrap in floating card", "default": false },
+    { "type": "color", "id": "card_bg", "label": "Card background", "default": "#ffffff" },
+
+    { "type": "header", "content": "Panel background" },
     { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": false },
     { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
 
