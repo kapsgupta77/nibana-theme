@@ -1,7 +1,8 @@
 {%- comment -%}
   NB — Rich Text
   General-purpose rich text section for pillar pages and long-form content.
-  Supports: heading (H2), rich-text body (with bullets, inline links, bold), optional panel background.
+  Supports: heading (H2), rich-text body (with bullets, inline links, bold),
+  optional panel background, optional floating card container.
 {%- endcomment -%}
 
 {%- liquid
@@ -10,13 +11,16 @@
   assign panel_on   = section.settings.panel_on
   assign panel_col  = section.settings.panel_color | default: '#F3FAF8'
   assign max_w      = section.settings.max_width | default: 'normal'
+  assign card_on    = section.settings.card_on
+  assign card_bg    = section.settings.card_bg | default: '#ffffff'
 -%}
 
 <section
   id="nb-rt-{{ section.id }}"
-  class="nb-rt {% if panel_on %}nb-rt--panel{% endif %}"
+  class="nb-rt {% if panel_on %}nb-rt--panel{% endif %} {% if card_on %}nb-rt--card{% endif %}"
   style="
     --nb-rt-panel: {{ panel_col }};
+    --nb-rt-card-bg: {{ card_bg }};
     padding-block-start: {{ section.settings.pad_top }}px;
     padding-block-end: {{ section.settings.pad_bottom }}px;
   "
@@ -33,6 +37,16 @@
     {%- endif -%}
   </div>
 </section>
+
+<style>
+  /* Floating card container (class-based, no Liquid conditionals in CSS) */
+  .nb-rt--card .nb-rt__shell{
+    max-width: min(1160px, 94vw);
+    background: var(--nb-rt-card-bg, #fff);
+    border-radius: 20px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  }
+</style>
 
 {% style %}
   #nb-rt-{{ section.id }}{
@@ -122,6 +136,11 @@
       ]
     },
 
+    { "type": "header", "content": "Floating card container" },
+    { "type": "checkbox", "id": "card_on", "label": "Wrap in floating card", "default": false },
+    { "type": "color", "id": "card_bg", "label": "Card background", "default": "#ffffff" },
+
+    { "type": "header", "content": "Panel background" },
     { "type": "checkbox", "id": "panel_on", "label": "Show panel background", "default": false },
     { "type": "color", "id": "panel_color", "label": "Panel background color", "default": "#F3FAF8" },
 
