@@ -2,7 +2,6 @@
   NB — CTA Banner
   Centered banner with heading, optional body text, and CTA button.
   Extends cta-bar.liquid by adding a body richtext field.
-  Supports floating card container for consistent page treatment.
 {%- endcomment -%}
 
 {%- liquid
@@ -15,48 +14,36 @@
   assign btn_bg     = section.settings.button_color | default: '#0b656e'
   assign btn_hover  = section.settings.button_hover_color | default: '#07494f'
   assign btn_txt    = section.settings.button_text_color | default: '#ffffff'
-  assign card_on    = section.settings.card_on
 -%}
 
 <section
   id="nb-cta-banner-{{ section.id }}"
-  class="nb-cta-banner {% if card_on %}nb-cta-banner--card{% endif %}"
+  class="nb-cta-banner"
   style="
     --nb-ctab-bg: {{ bg }};
     --nb-ctab-txt: {{ txt }};
     --nb-ctab-btn: {{ btn_bg }};
     --nb-ctab-btn-hover: {{ btn_hover }};
     --nb-ctab-btn-txt: {{ btn_txt }};
-    padding-block-start: {{ section.settings.pad_top | default: 0 }}px;
-    padding-block-end: {{ section.settings.pad_bottom | default: 0 }}px;
   "
 >
-  <div class="nb-cta-banner__card">
-    <div class="nb-cta-banner__inner">
-      {%- if heading != blank -%}
-        <h2 class="nb-cta-banner__heading">{{ heading }}</h2>
-      {%- endif -%}
+  <div class="nb-cta-banner__inner">
+    {%- if heading != blank -%}
+      <h2 class="nb-cta-banner__heading">{{ heading }}</h2>
+    {%- endif -%}
 
-      {%- if body != blank -%}
-        <div class="nb-rte nb-cta-banner__body">{{ body }}</div>
-      {%- endif -%}
+    {%- if body != blank -%}
+      <div class="nb-rte nb-cta-banner__body">{{ body }}</div>
+    {%- endif -%}
 
-      {%- if btn_label != blank and btn_link != blank -%}
-        <a class="nb-cta-banner__btn" href="{{ btn_link }}">{{ btn_label }}</a>
-      {%- endif -%}
-    </div>
+    {%- if btn_label != blank and btn_link != blank -%}
+      <a class="nb-cta-banner__btn" href="{{ btn_link }}">{{ btn_label }}</a>
+    {%- endif -%}
   </div>
 </section>
 
 {% style %}
-  /* Floating card wrapper */
-  #nb-cta-banner-{{ section.id }} .nb-cta-banner__card{
-    {% if card_on %}
-      max-width: min(1160px, 94vw);
-      margin-inline: auto;
-      border-radius: 20px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.06);
-    {% endif %}
+  #nb-cta-banner-{{ section.id }}{
     background: var(--nb-ctab-bg);
     padding: clamp(32px, 4vw, 64px) clamp(20px, 4vw, 40px);
   }
@@ -115,18 +102,12 @@
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Book a Free Call" },
     { "type": "url", "id": "button_link", "label": "Button link" },
 
-    { "type": "header", "content": "Floating card container" },
-    { "type": "checkbox", "id": "card_on", "label": "Wrap in floating card", "default": false },
-
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#EAF4F3" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#223238" },
     { "type": "color", "id": "button_color", "label": "Button colour", "default": "#0b656e" },
     { "type": "color", "id": "button_hover_color", "label": "Button hover colour", "default": "#07494f" },
-    { "type": "color", "id": "button_text_color", "label": "Button text colour", "default": "#ffffff" },
-
-    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
-    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
+    { "type": "color", "id": "button_text_color", "label": "Button text colour", "default": "#ffffff" }
   ],
   "presets": [
     { "name": "NB — CTA Banner", "category": "Custom" }
