@@ -201,6 +201,15 @@
         "heading": "What Clients Say",
         "subheading": "-",
         "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "christopher-thomas",
+          "david-chambers",
+          "nitesh-jaruhar",
+          "jason-rogers",
+          "sandipan",
+          "pallavi-s"
+        ],
         "limit": 5,
         "carousel": true,
         "per_view": 3,
