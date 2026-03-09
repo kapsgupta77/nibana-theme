@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero_wrapper": {
@@ -6,92 +15,79 @@
         "banner": {
           "type": "ai_gen_block_7e689f9",
           "settings": {
-            "background_image": "shopify://shop_images/Kapil_in_white_shirt.webp",
-            "fallback_color": "#f5f6f4",
-            "overlay_opacity": 15,
-            "banner_height_desktop": 700,
-            "banner_height_tablet": 550,
-            "banner_height_mobile": 420,
-            "show_content": true,
-            "title": "The Performance to Presence Method",
-            "subtitle": "A proven framework for high-achievers who have built impressive lives on the outside but feel something essential is missing on the inside.",
-            "description": "Private, transformational coaching for founders, executives, and leaders.",
-            "button_text": "Book a free 20-min call",
-            "button_url": "/pages/book-a-call",
-            "content_max_width": 520,
-            "text_align": "left",
-            "content_position_x_desktop": 25,
-            "content_position_y_desktop": 48,
-            "content_position_x_tablet": 30,
-            "content_position_y_tablet": 50,
-            "content_position_x_mobile": 50,
-            "content_position_y_mobile": 50,
-            "title_size_desktop": 56,
-            "subtitle_size_desktop": 20,
-            "description_size_desktop": 16,
-            "title_margin_bottom_desktop": 16,
-            "subtitle_margin_bottom_desktop": 12,
-            "description_margin_bottom_desktop": 20,
-            "title_size_tablet": 42,
-            "subtitle_size_tablet": 18,
-            "description_size_tablet": 15,
-            "title_margin_bottom_tablet": 12,
-            "subtitle_margin_bottom_tablet": 10,
-            "description_margin_bottom_tablet": 16,
-            "title_size_mobile": 32,
-            "subtitle_size_mobile": 16,
-            "description_size_mobile": 14,
-            "title_margin_bottom_mobile": 12,
-            "subtitle_margin_bottom_mobile": 8,
-            "description_margin_bottom_mobile": 16,
-            "title_weight": "700",
-            "subtitle_weight": "400",
-            "text_color": "#2f3e48",
-            "title_color": "#0E6A6F",
-            "subtitle_color": "#2f3e48",
-            "description_color": "rgba(47, 62, 72, 0.75)",
-            "button_font_size": 17,
-            "button_font_weight": "600",
-            "button_padding_x": 28,
-            "button_padding_y": 14,
-            "button_border_radius": 8,
-            "button_border_width": 0,
-            "button_bg_color": "#d16c28",
-            "button_text_color": "#ffffff",
-            "button_border_color": "#d16c28",
-            "button_hover_bg_color": "#b85f23",
-            "button_hover_text_color": "#ffffff",
-            "button_hover_border_color": "#b85f23",
-            "show_play_button": false,
-            "video_url": "",
-            "rotating_text": "",
-            "play_button_position_x_desktop": 75,
-            "play_button_position_y_desktop": 60,
-            "play_button_position_x_tablet": 75,
-            "play_button_position_y_tablet": 70,
-            "play_button_position_x_mobile": 85,
-            "play_button_position_y_mobile": 85,
-            "play_button_size_desktop": 100,
-            "play_icon_size_desktop": 30,
-            "play_button_size_tablet": 80,
-            "play_icon_size_tablet": 25,
-            "play_button_size_mobile": 60,
-            "play_icon_size_mobile": 20,
-            "play_button_bg_color": "#ffffff",
-            "play_button_hover_bg_color": "#f0f0f0",
-            "play_icon_color": "#000000",
-            "play_button_border_width": 2,
-            "play_button_border_color": "#ffffff",
-            "play_button_hover_border_color": "#f0f0f0",
-            "rotating_text_size": 14,
-            "rotating_text_weight": "600",
-            "rotating_text_color": "#000000",
-            "rotation_speed": 15
-          }
+            "text": "<h1>The Performance to Presence Method</h1>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "h1",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "subheadline": {
+          "type": "text",
+          "settings": {
+            "text": "<p>A proven framework for high-achievers who have built impressive lives on the outside but feel something essential is missing on the inside.</p>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 32,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "cta": {
+          "type": "button",
+          "settings": {
+            "label": "Book a Free Call",
+            "link": "/pages/book-a-call",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
         }
       },
-      "block_order": ["banner"],
+      "block_order": [
+        "heading",
+        "subheadline",
+        "cta"
+      ],
       "settings": {
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/Kapil-headshot1.jpg",
+        "media_type_2": "image",
+        "link": "",
+        "open_in_new_tab": false,
         "content_direction": "column",
         "vertical_on_mobile": true,
         "horizontal_alignment": "flex-start",
@@ -99,27 +95,21 @@
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
+        "gap": 16,
+        "section_width": "full-width",
+        "section_height": "large",
         "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
+        "color_scheme": "scheme-5",
+        "toggle_overlay": true,
+        "overlay_color": "#00000080",
+        "overlay_style": "gradient",
         "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
+        "padding-block-start": 40,
+        "padding-block-end": 40
       }
     },
-
     "problem": {
       "type": "nb-rich-text",
       "settings": {
@@ -129,11 +119,11 @@
         "card_on": true,
         "card_bg": "#ffffff",
         "panel_on": false,
-        "pad_top": 28,
-        "pad_bottom": 12
+        "panel_color": "#f3faf8",
+        "pad_top": 40,
+        "pad_bottom": 20
       }
     },
-
     "quadrants": {
       "type": "cards-multicol-list-nibana",
       "blocks": {
@@ -170,18 +160,22 @@
           }
         }
       },
-      "block_order": ["card_identity", "card_skills", "card_philosophy", "card_practices"],
+      "block_order": [
+        "card_identity",
+        "card_skills",
+        "card_philosophy",
+        "card_practices"
+      ],
       "settings": {
         "heading": "The Four Quadrants of Transformation",
         "subheading": "The Performance to Presence Method is built around four interconnected quadrants. Each one addresses a different dimension of who you are and how you move through the world. Together, they form a complete map for lasting, embodied change.",
-        "columns": 4,
         "bg": "soft",
+        "columns": 4,
         "cards": true,
         "equal": true,
         "list_style": "none"
       }
     },
-
     "deep_identity": {
       "type": "nb-rich-text",
       "settings": {
@@ -191,25 +185,23 @@
         "card_on": true,
         "card_bg": "#F3FAF8",
         "panel_on": false,
-        "pad_top": 12,
-        "pad_bottom": 12
+        "panel_color": "#f3faf8",
+        "pad_top": 20,
+        "pad_bottom": 20
       }
     },
-
     "deep_skills": {
       "type": "nb-rich-text",
       "settings": {
         "heading": "Inner Skills: The Capabilities That Change Everything",
         "body": "<p>High-performers are rarely short on external skills. Strategy, execution, discipline: these come naturally. But the internal skills that sustain presence, connection, and emotional fluency are often underdeveloped, not because of weakness, but because nobody taught them.</p><p>Inner Skills is the operational quadrant of the method. It builds the capacity to stay grounded when things get intense, to listen deeply rather than react, and to manage your energy with the same care you'd give your finances.</p><p>This quadrant develops:</p><ul><li><strong>Presence</strong> — the ability to be fully here, rather than mentally rehearsing the future or replaying the past</li><li><strong>Energy Accounting</strong> — understanding how you generate and spend your life force, and learning to invest it wisely rather than haemorrhage it</li><li><strong>Attuned Attention</strong> — training your awareness to notice what's actually happening, in your body, your relationships, and your environment</li><li><strong>Deep Listening</strong> — hearing what's beneath the words, both in yourself and in others</li><li><strong>Reactivity vs Response</strong> — creating space between stimulus and reaction, so you can choose how you show up</li><li><strong>Feelings and Intuition</strong> — reconnecting with the intelligence that lives in your body, not just your head</li></ul><p>These are not soft skills. They are the foundation of the kind of leadership, partnership, and self-understanding that performance alone cannot deliver.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/listen-to-the-fear-at-a-whisper\">Listen to the Fear at a Whisper</a> | <a href=\"/blogs/news/your-sensitivity-is-what-will-heal-the-world\">Your Sensitivity Is What Will Heal the World</a></p>",
         "max_width": "normal",
-        "card_on": true,
-        "card_bg": "#ffffff",
-        "panel_on": false,
-        "pad_top": 12,
-        "pad_bottom": 12
+        "panel_on": true,
+        "panel_color": "#f3faf8",
+        "pad_top": 20,
+        "pad_bottom": 20
       }
     },
-
     "deep_philosophy": {
       "type": "nb-rich-text",
       "settings": {
@@ -219,25 +211,23 @@
         "card_on": true,
         "card_bg": "#F3FAF8",
         "panel_on": false,
-        "pad_top": 12,
-        "pad_bottom": 12
+        "panel_color": "#f3faf8",
+        "pad_top": 20,
+        "pad_bottom": 20
       }
     },
-
     "deep_practices": {
       "type": "nb-rich-text",
       "settings": {
         "heading": "Practices: Where Insight Becomes Lived Experience",
         "body": "<p>Awareness without practice is just interesting conversation. The Practices quadrant is where everything else lands. It is the daily, embodied work that turns understanding into transformation.</p><p>This is not about adding more tasks to your morning routine. It is about building a relationship with yourself that is ongoing, physical, and real.</p><p>This quadrant includes:</p><ul><li><strong>Communication: Resonance and Calibration</strong> — learning to speak and listen in a way that creates genuine connection rather than performance</li><li><strong>Slow vs Flow</strong> — calibrating between intentional slowness and natural momentum, and noticing the feedback loops in your life</li><li><strong>Discipline as Devotion</strong> — reframing discipline not as punishment but as care for the life you're building</li><li><strong>Intimacy and Connection</strong> — practising depth in your relationships, including your relationship with yourself</li><li><strong>Service</strong> — engaging with something larger than your own story</li></ul><p>Practices are not prescribed as a one-size-fits-all programme. They are co-created in coaching based on where you are, what you need, and what quadrant requires the most attention.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/men-s-mental-health-at-work-why-emotional-connection-beats-i-m-fine-culture\">Men's Mental Health at Work</a> | <a href=\"/blogs/news/what-s-your-strategy-to-get-the-love-you-want\">What's Your Strategy to Get the Love You Want?</a></p>",
         "max_width": "normal",
-        "card_on": true,
-        "card_bg": "#ffffff",
-        "panel_on": false,
-        "pad_top": 12,
-        "pad_bottom": 12
+        "panel_on": true,
+        "panel_color": "#f3faf8",
+        "pad_top": 20,
+        "pad_bottom": 20
       }
     },
-
     "how_it_works": {
       "type": "about-how",
       "settings": {
@@ -249,12 +239,12 @@
         "cta_label": "",
         "cta_link": "",
         "panel_on": true,
-        "panel_color": "#EAF4F3",
-        "pad_top": 12,
-        "pad_bottom": 12
+        "panel_color": "#eaf4f3",
+        "color_scheme": "",
+        "pad_top": 20,
+        "pad_bottom": 20
       }
     },
-
     "who_for": {
       "type": "cards-multicol-list-nibana",
       "blocks": {
@@ -291,34 +281,45 @@
           }
         }
       },
-      "block_order": ["founders", "leaders", "men", "couples"],
+      "block_order": [
+        "founders",
+        "leaders",
+        "men",
+        "couples"
+      ],
       "settings": {
         "heading": "Who This Method Is For",
         "subheading": "",
-        "columns": 4,
         "bg": "soft",
+        "columns": 4,
         "cards": true,
         "equal": true,
         "list_style": "none"
       }
     },
-
     "testimonials": {
       "type": "testimonials",
       "settings": {
         "heading": "What Clients Say",
         "subheading": "-",
         "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "bhavesh-dhaka",
+          "christopher-thomas"
+        ],
         "limit": 5,
+        "tag_filter": "All",
+        "show_filter": false,
         "carousel": true,
         "per_view": 3,
         "cta_label": "",
         "cta_link": "",
-        "padding-block-start": 12,
-        "padding-block-end": 12
+        "color_scheme": "",
+        "padding-block-start": 20,
+        "padding-block-end": 20
       }
     },
-
     "quiz_cta": {
       "type": "nb-cta-banner",
       "settings": {
@@ -326,8 +327,7 @@
         "body": "<p>Before we work together, discover how you naturally handle pressure, intensity, and change. The Surge Signature Quiz takes 3 minutes and reveals whether you're an Accelerator, Stabiliser, or Defuser. Each type has distinct strengths, blind spots, and growth edges that directly connect to the Performance to Presence Method.</p>",
         "button_label": "Take the Free Quiz",
         "button_link": "/pages/surge-signature",
-        "card_on": true,
-        "bg_color": "#EAF4F3",
+        "bg_color": "#eaf4f3",
         "text_color": "#223238",
         "button_color": "#0b656e",
         "button_hover_color": "#07494f",
@@ -336,7 +336,6 @@
         "pad_bottom": 12
       }
     },
-
     "faq": {
       "type": "nb-faq",
       "blocks": {
@@ -405,16 +404,28 @@
           }
         }
       },
-      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6", "faq_7", "faq_8"],
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6",
+        "faq_7",
+        "faq_8"
+      ],
       "settings": {
         "title": "Frequently Asked Questions",
         "width": "normal",
         "wrap_shell": true,
         "single_open": true,
+        "ink": "#223238",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
         "emit_jsonld": true
       }
     },
-
     "final_cta": {
       "type": "nb-cta-banner",
       "settings": {
@@ -425,7 +436,7 @@
         "card_on": true,
         "bg_color": "#223238",
         "text_color": "#ffffff",
-        "button_color": "#C86B2A",
+        "button_color": "#c86b2a",
         "button_hover_color": "#a8571f",
         "button_text_color": "#ffffff",
         "pad_top": 12,
