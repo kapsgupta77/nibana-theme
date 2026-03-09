@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -7,45 +16,100 @@
           "type": "text",
           "settings": {
             "text": "<h1>The Performance to Presence Method</h1>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
             "type_preset": "h1",
-            "max_width": "narrow"
-          }
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
         "subheadline": {
           "type": "text",
           "settings": {
             "text": "<p>A proven framework for high-achievers who have built impressive lives on the outside but feel something essential is missing on the inside.</p>",
+            "width": "fit-content",
             "max_width": "narrow",
-            "padding-block-end": 32
-          }
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 32,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
         "cta": {
           "type": "button",
           "settings": {
             "label": "Book a Free Call",
-            "link": "/pages/book-a-call"
-          }
+            "link": "/pages/book-a-call",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
         }
       },
-      "block_order": ["heading", "subheadline", "cta"],
+      "block_order": [
+        "heading",
+        "subheadline",
+        "cta"
+      ],
       "settings": {
         "media_type_1": "image",
+        "image_1": "shopify://shop_images/Kapil-headshot1.jpg",
+        "media_type_2": "image",
+        "link": "",
+        "open_in_new_tab": false,
         "content_direction": "column",
-        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 16,
         "section_width": "full-width",
         "section_height": "large",
+        "section_height_custom": 50,
         "color_scheme": "scheme-5",
         "toggle_overlay": true,
         "overlay_color": "#00000080",
         "overlay_style": "gradient",
         "gradient_direction": "to top",
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
         "padding-block-start": 40,
         "padding-block-end": 40
       }
     },
-
     "problem": {
       "type": "nb-rich-text",
       "settings": {
@@ -53,11 +117,11 @@
         "body": "<p>You hit the targets. Got the promotion. Built the business. Earned the respect.</p><p>And yet, somewhere beneath the achievements, there's a quiet restlessness. A sense that life feels good on paper but hollow in practice.</p><p>You keep performing. Keep pushing. Keep proving. Because stopping feels dangerous, and slowing down feels like losing ground.</p><p>This is the trap that most high-achievers never talk about. The external world rewards performance. It rewards output, speed, and certainty. But the qualities that made you successful are often the same ones keeping you disconnected from the people and experiences that matter most.</p><p>You may notice it in your relationships, where real intimacy feels harder than closing a deal. Or in your body, where tension has become so familiar you barely register it anymore. Or in those rare quiet moments when you wonder: is there more to life than just this?</p><p>You are not broken. You are not ungrateful. You are simply operating from a system that was never designed to help you feel alive.</p><p>The Performance to Presence Method is what comes next.</p>",
         "max_width": "normal",
         "panel_on": false,
+        "panel_color": "#f3faf8",
         "pad_top": 40,
         "pad_bottom": 20
       }
     },
-
     "quadrants": {
       "type": "cards-multicol-list-nibana",
       "blocks": {
@@ -94,18 +158,22 @@
           }
         }
       },
-      "block_order": ["card_identity", "card_skills", "card_philosophy", "card_practices"],
+      "block_order": [
+        "card_identity",
+        "card_skills",
+        "card_philosophy",
+        "card_practices"
+      ],
       "settings": {
         "heading": "The Four Quadrants of Transformation",
         "subheading": "The Performance to Presence Method is built around four interconnected quadrants. Each one addresses a different dimension of who you are and how you move through the world. Together, they form a complete map for lasting, embodied change.",
-        "columns": 4,
         "bg": "soft",
+        "columns": 4,
         "cards": true,
         "equal": true,
         "list_style": "none"
       }
     },
-
     "deep_identity": {
       "type": "nb-rich-text",
       "settings": {
@@ -113,11 +181,11 @@
         "body": "<p>Most of us build our identities around what we do rather than who we are. We absorb beliefs from our families, cultures, and workplaces without questioning whether those beliefs still serve us. Over time, the gap between who we present to the world and who we actually are becomes a source of chronic tension.</p><p>Identity Work is the foundation of the Performance to Presence Method. It addresses the patterns, beliefs, and conditioning that keep you stuck in cycles that no longer serve you.</p><p>This quadrant explores:</p><ul><li><strong>Core Beliefs</strong> — the deep, often invisible assumptions that shape your decisions, relationships, and self-worth</li><li><strong>Shadow Work</strong> — meeting the parts of yourself you've learned to hide, reject, or suppress</li><li><strong>Archetypes and Inner Child</strong> — understanding the recurring roles you play and the younger parts of you that still drive your behaviour</li><li><strong>Boundaries</strong> — learning where you end and other people begin, without guilt or rigidity</li><li><strong>Cultural Conditioning</strong> — examining the scripts you inherited about success, masculinity, relationships, and worthiness</li><li><strong>Victim Consciousness</strong> — recognising the ways you unconsciously give away your power, and reclaiming it</li></ul><p>This is not about positive thinking or reframing. It is about honest, sometimes uncomfortable self-enquiry. When you stop editing your inner world to meet external standards, you reclaim the freedom to live authentically.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/authenticity-owning-all-of-who-you-are\">Authenticity: Owning All of Who You Are</a> | <a href=\"/blogs/news/role-of-archetypes-in-understanding-ourselves\">The Role of Archetypes in Understanding Ourselves</a></p>",
         "max_width": "normal",
         "panel_on": false,
+        "panel_color": "#f3faf8",
         "pad_top": 20,
         "pad_bottom": 20
       }
     },
-
     "deep_skills": {
       "type": "nb-rich-text",
       "settings": {
@@ -125,12 +193,11 @@
         "body": "<p>High-performers are rarely short on external skills. Strategy, execution, discipline: these come naturally. But the internal skills that sustain presence, connection, and emotional fluency are often underdeveloped, not because of weakness, but because nobody taught them.</p><p>Inner Skills is the operational quadrant of the method. It builds the capacity to stay grounded when things get intense, to listen deeply rather than react, and to manage your energy with the same care you'd give your finances.</p><p>This quadrant develops:</p><ul><li><strong>Presence</strong> — the ability to be fully here, rather than mentally rehearsing the future or replaying the past</li><li><strong>Energy Accounting</strong> — understanding how you generate and spend your life force, and learning to invest it wisely rather than haemorrhage it</li><li><strong>Attuned Attention</strong> — training your awareness to notice what's actually happening, in your body, your relationships, and your environment</li><li><strong>Deep Listening</strong> — hearing what's beneath the words, both in yourself and in others</li><li><strong>Reactivity vs Response</strong> — creating space between stimulus and reaction, so you can choose how you show up</li><li><strong>Feelings and Intuition</strong> — reconnecting with the intelligence that lives in your body, not just your head</li></ul><p>These are not soft skills. They are the foundation of the kind of leadership, partnership, and self-understanding that performance alone cannot deliver.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/listen-to-the-fear-at-a-whisper\">Listen to the Fear at a Whisper</a> | <a href=\"/blogs/news/your-sensitivity-is-what-will-heal-the-world\">Your Sensitivity Is What Will Heal the World</a></p>",
         "max_width": "normal",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "pad_top": 20,
         "pad_bottom": 20
       }
     },
-
     "deep_philosophy": {
       "type": "nb-rich-text",
       "settings": {
@@ -138,11 +205,11 @@
         "body": "<p>Somewhere along the way, life became serious. Strategic. Optimised. The qualities that once came naturally, curiosity, spontaneity, desire, pleasure, got pushed aside in favour of productivity and control.</p><p>Philosophy and Play is the quadrant that challenges this. It asks: what if your compass isn't your to-do list but your desire? What if growth doesn't always require grinding? What if the most profound shifts happen when you let yourself play?</p><p>This quadrant explores:</p><ul><li><strong>Desire-Based Living</strong> — replacing goal-obsession with a deeper attunement to what you genuinely want, not what you think you should want</li><li><strong>The Finite and Infinite Game</strong> — understanding the difference between playing to win and playing to keep playing</li><li><strong>Feminine and Masculine Dynamics</strong> — exploring how these energies show up in your relationships, your leadership, and your inner world</li><li><strong>Thriving in Discomfort</strong> — building the capacity to stay open when every instinct says to contract</li><li><strong>The Power of Vulnerability</strong> — discovering that what you've been hiding is often what creates the deepest connection</li><li><strong>Truth, No Matter What</strong> — committing to radical honesty as a way of life, starting with yourself</li></ul><p>This is where coaching moves beyond problem-solving and into something more expansive. It is not about fixing what's wrong. It is about reconnecting with what's been missing.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/desire-as-your-compass\">Desire as Your Compass</a> | <a href=\"/blogs/news/congruence-is-ultimately-what-we-crave\">Congruence Is Ultimately What We Crave</a></p>",
         "max_width": "normal",
         "panel_on": false,
+        "panel_color": "#f3faf8",
         "pad_top": 20,
         "pad_bottom": 20
       }
     },
-
     "deep_practices": {
       "type": "nb-rich-text",
       "settings": {
@@ -150,12 +217,11 @@
         "body": "<p>Awareness without practice is just interesting conversation. The Practices quadrant is where everything else lands. It is the daily, embodied work that turns understanding into transformation.</p><p>This is not about adding more tasks to your morning routine. It is about building a relationship with yourself that is ongoing, physical, and real.</p><p>This quadrant includes:</p><ul><li><strong>Communication: Resonance and Calibration</strong> — learning to speak and listen in a way that creates genuine connection rather than performance</li><li><strong>Slow vs Flow</strong> — calibrating between intentional slowness and natural momentum, and noticing the feedback loops in your life</li><li><strong>Discipline as Devotion</strong> — reframing discipline not as punishment but as care for the life you're building</li><li><strong>Intimacy and Connection</strong> — practising depth in your relationships, including your relationship with yourself</li><li><strong>Service</strong> — engaging with something larger than your own story</li></ul><p>Practices are not prescribed as a one-size-fits-all programme. They are co-created in coaching based on where you are, what you need, and what quadrant requires the most attention.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/men-s-mental-health-at-work-why-emotional-connection-beats-i-m-fine-culture\">Men's Mental Health at Work</a> | <a href=\"/blogs/news/what-s-your-strategy-to-get-the-love-you-want\">What's Your Strategy to Get the Love You Want?</a></p>",
         "max_width": "normal",
         "panel_on": true,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "pad_top": 20,
         "pad_bottom": 20
       }
     },
-
     "how_it_works": {
       "type": "about-how",
       "settings": {
@@ -167,12 +233,12 @@
         "cta_label": "",
         "cta_link": "",
         "panel_on": true,
-        "panel_color": "#EAF4F3",
+        "panel_color": "#eaf4f3",
+        "color_scheme": "",
         "pad_top": 20,
         "pad_bottom": 20
       }
     },
-
     "who_for": {
       "type": "cards-multicol-list-nibana",
       "blocks": {
@@ -209,34 +275,45 @@
           }
         }
       },
-      "block_order": ["founders", "leaders", "men", "couples"],
+      "block_order": [
+        "founders",
+        "leaders",
+        "men",
+        "couples"
+      ],
       "settings": {
         "heading": "Who This Method Is For",
         "subheading": "",
-        "columns": 4,
         "bg": "soft",
+        "columns": 4,
         "cards": true,
         "equal": true,
         "list_style": "none"
       }
     },
-
     "testimonials": {
       "type": "testimonials",
       "settings": {
         "heading": "What Clients Say",
         "subheading": "-",
         "source": "metaobject",
+        "mo_list": [
+          "tanuj-kalia",
+          "bhavesh-dhaka",
+          "christopher-thomas"
+        ],
         "limit": 5,
+        "tag_filter": "All",
+        "show_filter": false,
         "carousel": true,
         "per_view": 3,
         "cta_label": "",
         "cta_link": "",
+        "color_scheme": "",
         "padding-block-start": 20,
         "padding-block-end": 20
       }
     },
-
     "quiz_cta": {
       "type": "nb-cta-banner",
       "settings": {
@@ -244,14 +321,13 @@
         "body": "<p>Before we work together, discover how you naturally handle pressure, intensity, and change. The Surge Signature Quiz takes 3 minutes and reveals whether you're an Accelerator, Stabiliser, or Defuser. Each type has distinct strengths, blind spots, and growth edges that directly connect to the Performance to Presence Method.</p>",
         "button_label": "Take the Free Quiz",
         "button_link": "/pages/surge-signature",
-        "bg_color": "#EAF4F3",
+        "bg_color": "#eaf4f3",
         "text_color": "#223238",
         "button_color": "#0b656e",
         "button_hover_color": "#07494f",
         "button_text_color": "#ffffff"
       }
     },
-
     "faq": {
       "type": "nb-faq",
       "blocks": {
@@ -320,16 +396,28 @@
           }
         }
       },
-      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6", "faq_7", "faq_8"],
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6",
+        "faq_7",
+        "faq_8"
+      ],
       "settings": {
         "title": "Frequently Asked Questions",
         "width": "normal",
         "wrap_shell": true,
         "single_open": true,
+        "ink": "#223238",
+        "teal": "#0f5b59",
+        "shell_col": "#e5e8e1",
+        "answer": "#eaf4f3",
         "emit_jsonld": true
       }
     },
-
     "final_cta": {
       "type": "nb-cta-banner",
       "settings": {
@@ -339,7 +427,7 @@
         "button_link": "/pages/book-a-call",
         "bg_color": "#223238",
         "text_color": "#ffffff",
-        "button_color": "#C86B2A",
+        "button_color": "#c86b2a",
         "button_hover_color": "#a8571f",
         "button_text_color": "#ffffff"
       }
