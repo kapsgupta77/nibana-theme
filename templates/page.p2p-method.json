@@ -9,11 +9,11 @@
  */
 {
   "sections": {
-    "hero_wrapper": {
-      "type": "_blocks",
+    "hero": {
+      "type": "hero",
       "blocks": {
-        "banner": {
-          "type": "ai_gen_block_7e689f9",
+        "heading": {
+          "type": "text",
           "settings": {
             "text": "<h1>The Performance to Presence Method</h1>",
             "width": "fit-content",
@@ -116,8 +116,6 @@
         "heading": "You've done everything right. So why doesn't it feel like enough?",
         "body": "<p>You hit the targets. Got the promotion. Built the business. Earned the respect.</p><p>And yet, somewhere beneath the achievements, there's a quiet restlessness. A sense that life feels good on paper but hollow in practice.</p><p>You keep performing. Keep pushing. Keep proving. Because stopping feels dangerous, and slowing down feels like losing ground.</p><p>This is the trap that most high-achievers never talk about. The external world rewards performance. It rewards output, speed, and certainty. But the qualities that made you successful are often the same ones keeping you disconnected from the people and experiences that matter most.</p><p>You may notice it in your relationships, where real intimacy feels harder than closing a deal. Or in your body, where tension has become so familiar you barely register it anymore. Or in those rare quiet moments when you wonder: is there more to life than just this?</p><p>You are not broken. You are not ungrateful. You are simply operating from a system that was never designed to help you feel alive.</p><p>The Performance to Presence Method is what comes next.</p>",
         "max_width": "normal",
-        "card_on": true,
-        "card_bg": "#ffffff",
         "panel_on": false,
         "panel_color": "#f3faf8",
         "pad_top": 40,
@@ -182,8 +180,6 @@
         "heading": "Identity Work: Who Are You When You Stop Performing?",
         "body": "<p>Most of us build our identities around what we do rather than who we are. We absorb beliefs from our families, cultures, and workplaces without questioning whether those beliefs still serve us. Over time, the gap between who we present to the world and who we actually are becomes a source of chronic tension.</p><p>Identity Work is the foundation of the Performance to Presence Method. It addresses the patterns, beliefs, and conditioning that keep you stuck in cycles that no longer serve you.</p><p>This quadrant explores:</p><ul><li><strong>Core Beliefs</strong> — the deep, often invisible assumptions that shape your decisions, relationships, and self-worth</li><li><strong>Shadow Work</strong> — meeting the parts of yourself you've learned to hide, reject, or suppress</li><li><strong>Archetypes and Inner Child</strong> — understanding the recurring roles you play and the younger parts of you that still drive your behaviour</li><li><strong>Boundaries</strong> — learning where you end and other people begin, without guilt or rigidity</li><li><strong>Cultural Conditioning</strong> — examining the scripts you inherited about success, masculinity, relationships, and worthiness</li><li><strong>Victim Consciousness</strong> — recognising the ways you unconsciously give away your power, and reclaiming it</li></ul><p>This is not about positive thinking or reframing. It is about honest, sometimes uncomfortable self-enquiry. When you stop editing your inner world to meet external standards, you reclaim the freedom to live authentically.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/authenticity-owning-all-of-who-you-are\">Authenticity: Owning All of Who You Are</a> | <a href=\"/blogs/news/role-of-archetypes-in-understanding-ourselves\">The Role of Archetypes in Understanding Ourselves</a></p>",
         "max_width": "normal",
-        "card_on": true,
-        "card_bg": "#F3FAF8",
         "panel_on": false,
         "panel_color": "#f3faf8",
         "pad_top": 20,
@@ -208,8 +204,6 @@
         "heading": "Philosophy and Play: Rediscovering What Makes You Come Alive",
         "body": "<p>Somewhere along the way, life became serious. Strategic. Optimised. The qualities that once came naturally, curiosity, spontaneity, desire, pleasure, got pushed aside in favour of productivity and control.</p><p>Philosophy and Play is the quadrant that challenges this. It asks: what if your compass isn't your to-do list but your desire? What if growth doesn't always require grinding? What if the most profound shifts happen when you let yourself play?</p><p>This quadrant explores:</p><ul><li><strong>Desire-Based Living</strong> — replacing goal-obsession with a deeper attunement to what you genuinely want, not what you think you should want</li><li><strong>The Finite and Infinite Game</strong> — understanding the difference between playing to win and playing to keep playing</li><li><strong>Feminine and Masculine Dynamics</strong> — exploring how these energies show up in your relationships, your leadership, and your inner world</li><li><strong>Thriving in Discomfort</strong> — building the capacity to stay open when every instinct says to contract</li><li><strong>The Power of Vulnerability</strong> — discovering that what you've been hiding is often what creates the deepest connection</li><li><strong>Truth, No Matter What</strong> — committing to radical honesty as a way of life, starting with yourself</li></ul><p>This is where coaching moves beyond problem-solving and into something more expansive. It is not about fixing what's wrong. It is about reconnecting with what's been missing.</p><p><strong>Related reading:</strong> <a href=\"/blogs/news/desire-as-your-compass\">Desire as Your Compass</a> | <a href=\"/blogs/news/congruence-is-ultimately-what-we-crave\">Congruence Is Ultimately What We Crave</a></p>",
         "max_width": "normal",
-        "card_on": true,
-        "card_bg": "#F3FAF8",
         "panel_on": false,
         "panel_color": "#f3faf8",
         "pad_top": 20,
@@ -331,9 +325,7 @@
         "text_color": "#223238",
         "button_color": "#0b656e",
         "button_hover_color": "#07494f",
-        "button_text_color": "#ffffff",
-        "pad_top": 12,
-        "pad_bottom": 12
+        "button_text_color": "#ffffff"
       }
     },
     "faq": {
@@ -433,19 +425,16 @@
         "body": "<p>This work is private, personal, and built entirely around you. It begins with a conversation.</p>",
         "button_label": "Book Your Free 20-Minute Call",
         "button_link": "/pages/book-a-call",
-        "card_on": true,
         "bg_color": "#223238",
         "text_color": "#ffffff",
         "button_color": "#c86b2a",
         "button_hover_color": "#a8571f",
-        "button_text_color": "#ffffff",
-        "pad_top": 12,
-        "pad_bottom": 28
+        "button_text_color": "#ffffff"
       }
     }
   },
   "order": [
-    "hero_wrapper",
+    "hero",
     "problem",
     "quadrants",
     "deep_identity",
