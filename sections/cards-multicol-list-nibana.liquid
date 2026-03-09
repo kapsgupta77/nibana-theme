@@ -47,6 +47,11 @@
       margin: 0 auto;
       padding: clamp(24px, 3vw, 48px);
     }
+    #nbm-{{ section.id }}{
+      max-width: var(--page-width, 1200px);
+      margin-inline: auto;
+      border-radius: 20px;
+    }
     #nbm-{{ section.id }}.nbm-bg--soft{ background:#eaf5f4; }
     #nbm-{{ section.id }}.nbm-bg--gainsboro{ background: var(--nb-gainsboro, #f1f1ec); }
 
@@ -86,17 +91,6 @@
     #nbm-{{ section.id }} .nbm-list--check li::before{
       content:"✓"; position:absolute; left:0; top:0; color:var(--nb-teal-700, #10636c); font-weight:800;
     }
-    /* Full-bleed background: paint the outer Shopify wrapper */
-{% if section.settings.bg == 'soft' %}
-#shopify-section-{{ section.id }}{ background:#eaf5f4; }
-{% elsif section.settings.bg == 'gainsboro' %}
-#shopify-section-{{ section.id }}{ background: var(--nb-gainsboro, #f1f1ec); }
-{% endif %}
-
-/* Optional: add vertical spacing to the band itself */
-#shopify-section-{{ section.id }}{
-  padding-block: clamp(24px, 3vw, 48px);
-}
   {% endstyle %}
 
   {% schema %}
