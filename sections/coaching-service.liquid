@@ -1121,6 +1121,19 @@
 
   /* General RTE tweaks inside the tray */
   .nb-method__rte p{ color:var(--nb-muted); line-height:1.65; }
+
+  .nb-method__learn-more{
+    margin-top: clamp(14px, 2.4vw, 20px);
+  }
+  .nb-method__learn-link{
+    font-weight: 700;
+    color: var(--m-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .nb-method__learn-link:hover{
+    color: color-mix(in oklab, var(--m-accent), #000 14%);
+  }
 </style>
 
 <section class="nb-method-lite {{ method_tone_class }}">
@@ -1159,6 +1172,12 @@
           <p>Straight, respectful conversations. No fluff. We go at the pace of truth—and we make room for play and mystery along the way.</p>
         </div>
       {%- endif -%}
+
+      <p class="nb-method__learn-more">
+        <a class="nb-method__learn-link" href="/pages/the-performance-to-presence-method">
+          Learn more about the Performance to Presence Method
+        </a>
+      </p>
 
       <!-- Mid-page CTA (below Method tray) -->
       <div class="nb-midcta nb-midcta--method">
@@ -1508,7 +1527,6 @@
   ]
 }
 {% endschema %}
-
 
 
 
