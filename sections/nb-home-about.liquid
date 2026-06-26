@@ -1,0 +1,75 @@
+<section id="nb-home-about-{{ section.id }}" class="nb-home-about color-{{ section.settings.color_scheme }}">
+  <div class="nb-home-about__wrap">
+    <div class="nb-home-about__media">{% if section.settings.image != blank %}{{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 36vw, 100vw', class: 'nb-home-about__image' }}{% endif %}</div>
+    <div class="nb-home-about__copy">
+      {% if section.settings.overline != blank %}<p class="nb-home-about__overline">{{ section.settings.overline }}</p>{% endif %}
+      {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
+      <div class="nb-home-about__body">{{ section.settings.body }}</div>
+      <div class="nb-home-about__credentials">{% for block in section.blocks %}<span {{ block.shopify_attributes }}>{{ block.settings.label }}</span>{% endfor %}</div>
+    </div>
+  </div>
+</section>
+{% style %}
+#nb-home-about-{{ section.id }}{background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(72px,9vw,132px) 20px;}
+#nb-home-about-{{ section.id }} .nb-home-about__wrap{max-width:980px;margin:0 auto;display:grid;grid-template-columns:.78fr 1.22fr;gap:clamp(44px,7vw,96px);align-items:center;}
+#nb-home-about-{{ section.id }} .nb-home-about__image{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;}
+#nb-home-about-{{ section.id }} .nb-home-about__overline{margin:0 0 10px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.68;}
+#nb-home-about-{{ section.id }} h2{margin:0 0 22px;font-family:var(--font-heading--family);font-size:clamp(3.2rem,4vw,5.6rem);line-height:1;letter-spacing:-.035em;}
+#nb-home-about-{{ section.id }} .nb-home-about__body{font-size:1.48rem;line-height:1.7;max-width:62ch;}
+#nb-home-about-{{ section.id }} .nb-home-about__body p{margin:0 0 1em;}
+#nb-home-about-{{ section.id }} .nb-home-about__credentials{border-top:1px solid rgba(var(--color-foreground),.14);margin-top:28px;padding-top:18px;display:flex;gap:10px 22px;flex-wrap:wrap;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;opacity:.72;}
+@media(max-width:749px){#nb-home-about-{{ section.id }} .nb-home-about__wrap{grid-template-columns:1fr;}#nb-home-about-{{ section.id }} .nb-home-about__media{max-width:360px;} }
+{% endstyle %}
+{% schema %}
+{
+  "name": "NB — Home about",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "Kapil Gupta"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "credential",
+      "name": "Credential",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NB — Home about"
+    }
+  ]
+}
+{% endschema %}
