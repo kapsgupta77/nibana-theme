@@ -1,0 +1,98 @@
+<section id="nb-pp-{{ section.id }}" class="nb-pp color-{{ section.settings.color_scheme }}">
+  <div class="nb-pp__wrap">
+    {% if section.settings.overline != blank %}<p class="nb-pp__overline">{{ section.settings.overline }}</p>{% endif %}
+    {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
+    <div class="nb-pp__body">{{ section.settings.body }}</div>
+    <div class="nb-pp__model" role="list">
+      {% for block in section.blocks %}<article class="nb-pp__stage" role="listitem" {{ block.shopify_attributes }}><span class="nb-pp__dot"></span><h3>{{ block.settings.title }}</h3><p>{{ block.settings.text }}</p></article>{% endfor %}
+    </div>
+    {% if section.settings.bridge != blank %}<p class="nb-pp__bridge">{{ section.settings.bridge }}</p>{% endif %}
+    {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}<a class="button" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a>{% endif %}
+  </div>
+</section>
+{% style %}
+#nb-pp-{{ section.id }}{background:var(--color-background);color:var(--color-foreground);padding:clamp(84px,10vw,150px) 20px;}
+#nb-pp-{{ section.id }} .nb-pp__wrap{max-width:1120px;margin:0 auto;}
+#nb-pp-{{ section.id }} .nb-pp__overline{margin:0 0 10px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.68;}
+#nb-pp-{{ section.id }} h2{margin:0 0 20px;font-family:var(--font-heading--family);font-size:clamp(3.3rem,4.8vw,6.4rem);line-height:1;letter-spacing:-.035em;}
+#nb-pp-{{ section.id }} .nb-pp__body{max-width:66ch;font-size:1.55rem;line-height:1.72;}
+#nb-pp-{{ section.id }} .nb-pp__body p{margin:0 0 1em;}
+#nb-pp-{{ section.id }} .nb-pp__model{position:relative;display:grid;grid-template-columns:repeat({{ section.blocks.size | at_least: 1 }},1fr);gap:clamp(22px,2.8vw,42px);margin:clamp(60px,8vw,96px) 0 30px;}
+#nb-pp-{{ section.id }} .nb-pp__model:before{content:"";position:absolute;left:0;right:0;top:14px;height:2px;background:rgb(var(--color-foreground-rgb) / 0.24);}
+#nb-pp-{{ section.id }} .nb-pp__stage{position:relative;padding-top:48px;}
+#nb-pp-{{ section.id }} .nb-pp__dot{position:absolute;left:0;top:6px;width:17px;height:17px;border-radius:50%;background:var(--nb-teal,#10636c);box-shadow:0 0 0 10px var(--color-background);}
+#nb-pp-{{ section.id }} h3{margin:0 0 10px;font-size:1.75rem;font-weight:650;}
+#nb-pp-{{ section.id }} .nb-pp__stage p{margin:0;font-size:1.34rem;line-height:1.55;opacity:.82;}
+#nb-pp-{{ section.id }} .nb-pp__bridge{max-width:72ch;margin:30px 0 0;font-size:1.42rem;line-height:1.65;opacity:.78;}
+#nb-pp-{{ section.id }} .button{margin-top:26px;background:var(--nb-teal,#10636c);color:#fff;}
+@media(max-width:749px){#nb-pp-{{ section.id }} .nb-pp__model{display:block;margin-top:40px;}#nb-pp-{{ section.id }} .nb-pp__model:before{left:6px;right:auto;top:0;bottom:0;width:1px;height:auto;}#nb-pp-{{ section.id }} .nb-pp__stage{padding:0 0 30px 34px;}#nb-pp-{{ section.id }} .nb-pp__dot{left:0;top:2px;} }
+{% endstyle %}
+{% schema %}
+{
+  "name": "NB — Performance Presence",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "The Method"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body"
+    },
+    {
+      "type": "text",
+      "id": "bridge",
+      "label": "Bridge line"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Optional CTA label"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Optional CTA link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stage",
+      "name": "Stage",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Descriptor"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "NB — Performance to Presence"
+    }
+  ]
+}
+{% endschema %}

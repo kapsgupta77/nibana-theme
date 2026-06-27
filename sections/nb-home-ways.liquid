@@ -1,0 +1,98 @@
+<section id="nb-home-ways-{{ section.id }}" class="nb-home-ways color-{{ section.settings.color_scheme }}">
+  <div class="nb-home-ways__wrap">
+    {% if section.settings.overline != blank %}<p class="nb-home-ways__overline">{{ section.settings.overline }}</p>{% endif %}
+    <h2>{{ section.settings.heading }}</h2>
+    <p class="nb-home-ways__intro">{{ section.settings.intro }}</p>
+    <div class="nb-home-ways__grid">{% for block in section.blocks %}<article class="nb-home-ways__card" {{ block.shopify_attributes }}><h3>{{ block.settings.title }}</h3><p>{{ block.settings.text }}</p>{% if block.settings.link_label != blank and block.settings.link != blank %}<a href="{{ block.settings.link }}">{{ block.settings.link_label }}</a>{% endif %}</article>{% endfor %}</div>
+    {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}<div class="nb-home-ways__cta"><a class="button" href="{{ section.settings.cta_link }}">{{ section.settings.cta_label }}</a></div>{% endif %}
+  </div>
+</section>
+{% style %}
+#nb-home-ways-{{ section.id }}{background:var(--color-background);color:var(--color-foreground);padding:clamp(76px,9vw,132px) 20px;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__wrap{max-width:1040px;margin:0 auto;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__overline{margin:0 0 10px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.68;}
+#nb-home-ways-{{ section.id }} h2{margin:0;font-family:var(--font-heading--family);font-size:clamp(3.3rem,4.8vw,6.2rem);line-height:1;letter-spacing:-.035em;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__intro{margin:12px 0 34px;font-style:italic;font-size:1.45rem;opacity:.75;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__grid{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid rgb(var(--color-foreground-rgb) / 0.22);}
+#nb-home-ways-{{ section.id }} .nb-home-ways__card{min-height:275px;padding:clamp(26px,4vw,52px);border-right:1px solid rgb(var(--color-foreground-rgb) / 0.18);border-bottom:1px solid rgb(var(--color-foreground-rgb) / 0.18);display:flex;flex-direction:column;align-items:flex-start;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__card:nth-child(2n){border-right:0;}#nb-home-ways-{{ section.id }} .nb-home-ways__card:nth-last-child(-n+2){border-bottom:0;}
+#nb-home-ways-{{ section.id }} h3{margin:0 0 18px;font-size:1.2rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;opacity:.76;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__card p{margin:0 0 22px;font-family:var(--font-heading--family);font-size:clamp(1.85rem,2vw,2.55rem);line-height:1.22;letter-spacing:-.02em;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__card a{margin-top:auto;color:currentColor;font-size:1.28rem;font-weight:650;text-underline-offset:5px;}
+#nb-home-ways-{{ section.id }} .nb-home-ways__cta{display:flex;justify-content:center;margin-top:34px;}#nb-home-ways-{{ section.id }} .button{background:var(--nb-teal,#10636c);color:#fff;}
+@media(max-width:749px){#nb-home-ways-{{ section.id }} .nb-home-ways__grid{grid-template-columns:1fr;}#nb-home-ways-{{ section.id }} .nb-home-ways__card,#nb-home-ways-{{ section.id }} .nb-home-ways__card:nth-child(2n),#nb-home-ways-{{ section.id }} .nb-home-ways__card:nth-last-child(-n+2){border-right:0;border-bottom:1px solid rgb(var(--color-foreground-rgb) / 0.18);}#nb-home-ways-{{ section.id }} .nb-home-ways__card:last-child{border-bottom:0;}}
+{% endstyle %}
+{% schema %}
+{
+  "name": "NB — Home ways",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "Ways in"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Protective line"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "way",
+      "name": "Way",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Copy"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "NB — Home ways"
+    }
+  ]
+}
+{% endschema %}
