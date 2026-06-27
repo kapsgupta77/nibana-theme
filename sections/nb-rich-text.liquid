@@ -13,11 +13,12 @@
   assign max_w      = section.settings.max_width | default: 'normal'
   assign card_on    = section.settings.card_on
   assign card_bg    = section.settings.card_bg | default: '#ffffff'
+  assign tone       = section.settings.tone | default: 'scheme'
 -%}
 
 <section
   id="nb-rt-{{ section.id }}"
-  class="nb-rt color-{{ section.settings.color_scheme }} {% if panel_on %}nb-rt--panel{% endif %} {% if card_on %}nb-rt--card{% endif %} nb-rt--align-{{ section.settings.alignment }} {% if section.settings.editorial_text %}nb-rt--editorial{% endif %}"
+  class="nb-rt color-{{ section.settings.color_scheme }} {% if panel_on %}nb-rt--panel{% endif %} {% if card_on %}nb-rt--card{% endif %} nb-rt--align-{{ section.settings.alignment }} {% if section.settings.editorial_text %}nb-rt--editorial{% endif %} nb-rt--tone-{{ tone }}"
   style="
     --nb-rt-panel: {{ panel_col }};
     --nb-rt-card-bg: {{ card_bg }};
@@ -53,6 +54,14 @@
     background: {% if panel_on %}var(--nb-rt-panel, var(--nb-mist, #F3FAF8)){% else %}rgb(var(--color-background)){% endif %};
     color: rgb(var(--color-foreground));
   }
+  #nb-rt-{{ section.id }}.nb-rt--tone-dark{
+    background:#223238;
+    color:#f7f1e8;
+  }
+  #nb-rt-{{ section.id }}.nb-rt--tone-sage{
+    background:#e8eee8;
+    color:#223238;
+  }
 
   #nb-rt-{{ section.id }} .nb-rt__shell{
     margin: 0 auto;
@@ -63,7 +72,7 @@
   #nb-rt-{{ section.id }} .nb-rt__shell--wide{ max-width: 1120px; }
 
   #nb-rt-{{ section.id }} .nb-rt__heading{
-    color: rgb(var(--color-foreground));
+    color: currentColor;
     font-weight: 800;
     letter-spacing: -0.015em;
     text-wrap: balance;
@@ -71,7 +80,7 @@
   }
 
   #nb-rt-{{ section.id }} .nb-rt__body{
-    color: rgb(var(--color-foreground));
+    color: currentColor;
     line-height: 1.72;
     font-size: 1.05rem;
   }
@@ -83,7 +92,9 @@
   }
   #nb-rt-{{ section.id }}.nb-rt--align-center .nb-rt__shell{ text-align:center; }
   #nb-rt-{{ section.id }}.nb-rt--align-left .nb-rt__shell{ text-align:left; }
-  #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body{ font-size:clamp(1.65rem,1.6vw,2.05rem); line-height:1.72; }
+  #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body{ font-size:clamp(1.75rem,1.85vw,2.35rem); line-height:1.68; }
+  #nb-rt-{{ section.id }}.nb-rt--tone-dark .nb-rt__shell{ padding-block:clamp(30px,4vw,56px); }
+  #nb-rt-{{ section.id }}.nb-rt--tone-dark .nb-rt__body em{ color:#f2ded0; }
   #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body p + p{ margin-top:1.15em; }
   #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body hr{ border:0; border-top:1px solid rgba(var(--color-foreground),.18); margin:2.2em 0 1.4em; }
 
@@ -120,7 +131,7 @@
 
   /* Bold text */
   #nb-rt-{{ section.id }} .nb-rt__body strong{
-    color: var(--nb-ink, #223238);
+    color: currentColor;
     font-weight: 700;
   }
 {% endstyle %}
@@ -136,6 +147,17 @@
       "id": "color_scheme",
       "label": "Color scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Homepage tone fallback",
+      "default": "scheme",
+      "options": [
+        { "value": "scheme", "label": "Use color scheme" },
+        { "value": "dark", "label": "Dark slate" },
+        { "value": "sage", "label": "Pale sage" }
+      ]
     },
     {
       "type": "text",
