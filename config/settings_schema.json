@@ -1360,7 +1360,7 @@
       "max": 88,
       "step": 1,
       "unit": "px",
-      "default": 56
+      "default": 40
     },
     {
       "type": "range",
