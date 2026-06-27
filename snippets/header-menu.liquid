@@ -23,47 +23,54 @@
 %}
 
 {% capture children %}
-  {% for link in block.settings.menu.links %}
-    <li
-      role="presentation"
-      class="menu-list__list-item"
-      on:focus="/activate"
-      on:blur="/deactivate"
-      on:pointerenter="/activate"
-      on:pointerleave="/deactivate"
-    >
-      <a
-        href="{{ link.url }}"
-        class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-        {%- if link.links != blank -%}
-          aria-controls="submenu-{{ forloop.index }}"
-          aria-haspopup="true"
-          aria-expanded="false"
-        {%- endif -%}
-        ref="menuitem"
-      >
-        <span class="menu-list__link-title">{{- link.title -}}</span>
-      </a>
-      {%- if link.links != blank -%}
-        <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
-          <div
-            id="submenu-{{ forloop.index }}"
-            class="menu-list__submenu-inner"
-            style="{% render 'submenu-font-styles', settings: block.settings %}"
-          >
-            {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
-            {% render 'mega-menu',
-              parent_link: link,
-              id: list_id,
-              menu_content_type: menu_content_type,
-              content_aspect_ratio: ratio,
-              image_border_radius: image_border_radius
-            %}
-          </div>
-        </div>
-      {%- endif -%}
-    </li>
-  {% endfor %}
+  <li
+    role="presentation"
+    class="menu-list__list-item"
+    on:focus="/activate"
+    on:blur="/deactivate"
+    on:pointerenter="/activate"
+    on:pointerleave="/deactivate"
+  >
+    <a href="/pages/transformational-life-coaching" class="menu-list__link" ref="menuitem">
+      <span class="menu-list__link-title">Work With Me</span>
+    </a>
+  </li>
+  <li
+    role="presentation"
+    class="menu-list__list-item"
+    on:focus="/activate"
+    on:blur="/deactivate"
+    on:pointerenter="/activate"
+    on:pointerleave="/deactivate"
+  >
+    <a href="/pages/the-performance-to-presence-method" class="menu-list__link" ref="menuitem">
+      <span class="menu-list__link-title">The Method</span>
+    </a>
+  </li>
+  <li
+    role="presentation"
+    class="menu-list__list-item"
+    on:focus="/activate"
+    on:blur="/deactivate"
+    on:pointerenter="/activate"
+    on:pointerleave="/deactivate"
+  >
+    <a href="/blogs/news" class="menu-list__link" ref="menuitem">
+      <span class="menu-list__link-title">Writing</span>
+    </a>
+  </li>
+  <li
+    role="presentation"
+    class="menu-list__list-item"
+    on:focus="/activate"
+    on:blur="/deactivate"
+    on:pointerenter="/activate"
+    on:pointerleave="/deactivate"
+  >
+    <a href="/pages/about-us" class="menu-list__link" ref="menuitem">
+      <span class="menu-list__link-title">About</span>
+    </a>
+  </li>
   <li
     class="menu-list__list-item"
     role="presentation"
