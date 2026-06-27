@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -10,9 +19,9 @@
         "primary_label": "Book a private conversation",
         "primary_link": "shopify://pages/book-a-call",
         "secondary_label": "Explore the work",
-        "secondary_link": "shopify://pages/services",
+        "secondary_link": "shopify://pages/transformational-life-coaching",
         "microcopy": "For people who are done performing a life that no longer feels fully true.",
-        "image": "shopify://shop_images/AJS_20190130_Kapil_0973-700x750_1.webp",
+        "image": "shopify://shop_images/kapil-gupta.jpg",
         "image_position": "center center"
       }
     },
@@ -20,19 +29,19 @@
       "type": "nb-rich-text",
       "settings": {
         "color_scheme": "scheme-5",
+        "tone": "dark",
+        "style_mode": "default",
         "heading": "",
-        "body": "<p>You may have built a life that works.</p><p>The work. The relationship. The reputation. The competence. The role people know you for.</p><p>And still, something underneath may be asking for your attention.</p><p>Not always as a crisis. Sometimes as dullness. Restlessness. Disconnection. A repeating pattern. A loss of desire. A private sense that the outer life is functioning, while the inner life is no longer telling the truth.</p><p><em>This is where the work begins.</em></p>",
-        "alignment": "center",
+        "body": "<h4>You may have built a life that works.</h4><h4>The work. The relationship. The reputation. The competence. The role people know you for.</h4><h4>And still, something underneath may be asking for your attention.</h4><h4>Not always as a crisis. Sometimes as dullness. Restlessness. Disconnection. A repeating pattern. A loss of desire. A private sense that the outer life is functioning, while the inner life is no longer telling the truth.</h4><h4><em>This is where the work begins.</em></h4>",
+        "alignment": "left",
         "editorial_text": true,
         "max_width": "narrow",
         "card_on": false,
         "card_bg": "#ffffff",
         "panel_on": false,
-        "panel_color": "#F3FAF8",
+        "panel_color": "#f3faf8",
         "pad_top": 96,
-        "pad_bottom": 96,
-        "tone": "dark",
-        "style_mode": "recognition"
+        "pad_bottom": 96
       }
     },
     "about": {
@@ -132,13 +141,13 @@
       ],
       "settings": {
         "color_scheme": "scheme-3",
+        "tone": "sage",
         "overline": "The Method",
         "heading": "From Performance to Presence",
         "body": "<p>Most people do not lose themselves all at once.</p><p>They adapt. They achieve. They become useful. They become impressive. They become who life, family, work, success, or survival required them to become.</p><p>Performance is not the enemy. It is often how we survive, build, lead, love, and belong.</p><p>But at some point, the performed life starts to cost too much.</p><p>The Performance to Presence Method is a way of seeing what has been running beneath the surface, meeting it honestly, and learning to live from a deeper centre.</p>",
         "bridge": "This journey is supported by four areas of work: Identity Work, Inner Skills, Philosophy & Play, and Practices.",
         "cta_label": "",
-        "cta_link": "",
-        "tone": "sage"
+        "cta_link": ""
       }
     },
     "ways": {
@@ -239,6 +248,7 @@
         "heading": "What people say about the work",
         "subheading": "-",
         "source": "blocks",
+        "mo_list": [],
         "limit": 3,
         "tag_filter": "All",
         "show_filter": false,
@@ -247,15 +257,17 @@
         "cta_label": "Read more testimonials",
         "cta_link": "/pages/testimonial",
         "color_scheme": "scheme-5",
+        "style_mode": "editorial-dark",
         "padding-block-start": 0,
-        "padding-block-end": 0,
-        "style_mode": "editorial-dark"
+        "padding-block-end": 0
       }
     },
     "newsletter": {
       "type": "nb-home-newsletter",
       "settings": {
         "color_scheme": "scheme-3ebe16fe-aa87-43e2-b814-21ae468488fb",
+        "background_color": "#0f6970",
+        "text_color": "#f7f1e8",
         "overline": "Nibana Notes",
         "heading": "Essays on self-awareness, desire, identity, relationships, and presence.",
         "body": "<p>For people who want to understand themselves before life has to force the lesson.</p>",
@@ -263,9 +275,7 @@
         "email_placeholder": "Your email address",
         "button_label": "Join the list",
         "microcopy": "No hacks. No motivational noise. Just honest writing for the deeper conversation.",
-        "success_message": "Thank you for joining Nibana Notes.",
-        "background_color": "#0f6970",
-        "text_color": "#f7f1e8"
+        "success_message": "Thank you for joining Nibana Notes."
       }
     },
     "final_cta": {
@@ -276,14 +286,14 @@
         "button_label": "Book a private conversation",
         "button_link": "shopify://pages/book-a-call",
         "card_on": false,
+        "editorial_style": true,
         "bg_color": "#223238",
         "text_color": "#f7f1e8",
         "button_color": "#10636c",
         "button_hover_color": "#0b4f56",
         "button_text_color": "#ffffff",
         "pad_top": 0,
-        "pad_bottom": 0,
-        "editorial_style": true
+        "pad_bottom": 0
       }
     }
   },
