@@ -14,11 +14,12 @@
   assign card_on    = section.settings.card_on
   assign card_bg    = section.settings.card_bg | default: '#ffffff'
   assign tone       = section.settings.tone | default: 'scheme'
+  assign style_mode = section.settings.style_mode | default: 'default'
 -%}
 
 <section
   id="nb-rt-{{ section.id }}"
-  class="nb-rt color-{{ section.settings.color_scheme }} {% if panel_on %}nb-rt--panel{% endif %} {% if card_on %}nb-rt--card{% endif %} nb-rt--align-{{ section.settings.alignment }} {% if section.settings.editorial_text %}nb-rt--editorial{% endif %} nb-rt--tone-{{ tone }}"
+  class="nb-rt color-{{ section.settings.color_scheme }} {% if panel_on %}nb-rt--panel{% endif %} {% if card_on %}nb-rt--card{% endif %} nb-rt--align-{{ section.settings.alignment }} {% if section.settings.editorial_text %}nb-rt--editorial{% endif %} nb-rt--tone-{{ tone }} nb-rt--style-{{ style_mode }}"
   style="
     --nb-rt-panel: {{ panel_col }};
     --nb-rt-card-bg: {{ card_bg }};
@@ -51,6 +52,8 @@
 
 {% style %}
   #nb-rt-{{ section.id }}{
+    --nb-home-ink:#223238;--nb-home-cream:#f7f1e8;--nb-home-teal:#10636c;
+    --nb-home-display:clamp(3.2rem,3.8vw,5.4rem);--nb-home-body:clamp(1.34rem,1.12vw,1.58rem);--nb-home-editorial:clamp(1.75rem,1.7vw,2.18rem);
     background: {% if panel_on %}var(--nb-rt-panel, var(--nb-mist, #F3FAF8)){% else %}rgb(var(--color-background)){% endif %};
     color: rgb(var(--color-foreground));
   }
@@ -73,8 +76,11 @@
 
   #nb-rt-{{ section.id }} .nb-rt__heading{
     color: currentColor;
-    font-weight: 800;
-    letter-spacing: -0.015em;
+    font-family:var(--font-heading--family);
+    font-size:var(--nb-home-display);
+    line-height:1.03;
+    font-weight:500;
+    letter-spacing: -0.032em;
     text-wrap: balance;
     margin: 0 0 0.75em;
   }
@@ -82,7 +88,7 @@
   #nb-rt-{{ section.id }} .nb-rt__body{
     color: currentColor;
     line-height: 1.72;
-    font-size: 1.05rem;
+    font-size: var(--nb-home-body);
   }
   #nb-rt-{{ section.id }} .nb-rt__body p{
     margin: 0 0 1em;
@@ -92,7 +98,11 @@
   }
   #nb-rt-{{ section.id }}.nb-rt--align-center .nb-rt__shell{ text-align:center; }
   #nb-rt-{{ section.id }}.nb-rt--align-left .nb-rt__shell{ text-align:left; }
-  #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body{ font-size:clamp(1.75rem,1.85vw,2.35rem); line-height:1.68; }
+  #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body{ font-size:var(--nb-home-editorial); line-height:1.62; letter-spacing:-.01em; }
+  #nb-rt-{{ section.id }}.nb-rt--style-recognition{background:var(--nb-home-ink);color:var(--nb-home-cream);padding-block-start:0!important;padding-block-end:0!important;}
+  #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__shell{max-width:780px;padding:clamp(78px,8vw,112px) clamp(24px,4vw,40px);}
+  #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body{font-size:clamp(1.75rem,1.65vw,2.12rem);line-height:1.62;color:currentColor;}
+  #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body em{color:#f2ded0;}
   #nb-rt-{{ section.id }}.nb-rt--tone-dark .nb-rt__shell{ padding-block:clamp(30px,4vw,56px); }
   #nb-rt-{{ section.id }}.nb-rt--tone-dark .nb-rt__body em{ color:#f2ded0; }
   #nb-rt-{{ section.id }}.nb-rt--editorial .nb-rt__body p + p{ margin-top:1.15em; }
@@ -157,6 +167,16 @@
         { "value": "scheme", "label": "Use color scheme" },
         { "value": "dark", "label": "Dark slate" },
         { "value": "sage", "label": "Pale sage" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "style_mode",
+      "label": "Style mode",
+      "default": "default",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "recognition", "label": "Homepage recognition" }
       ]
     },
     {
