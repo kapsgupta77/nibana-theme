@@ -1331,161 +1331,179 @@
         ],
         "default": "none"
       },
-    {
-      "type": "checkbox",
-      "id": "enable_nb_typography",
-      "label": "Use Nibana typography & CTAs sitewide",
-      "default": true,
-      "info": "Makes headings/subheads/eyebrows + CTA buttons use the same look as the Home hero. No changes to images, videos or backgrounds."
-    },
-    {
-      "type": "header",
-      "content": "Homepage hero typography"
-    },
-    {
-      "type": "range",
-      "id": "nb_home_hero_overline_font_size",
-      "label": "Homepage hero overline max size",
-      "min": 11,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "nb_home_hero_heading_desktop_font_size",
-      "label": "Homepage hero heading desktop max size",
-      "min": 58,
-      "max": 112,
-      "step": 1,
-      "unit": "px",
-      "default": 58
-    },
-    {
-      "type": "range",
-      "id": "nb_home_hero_subheading_font_size",
-      "label": "Homepage hero subheading max size",
-      "min": 20,
-      "max": 36,
-      "step": 1,
-      "unit": "px",
-      "default": 26
-    },
-    {
-      "type": "range",
-      "id": "nb_home_hero_button_font_size",
-      "label": "Homepage hero button max size",
-      "min": 13,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
-      "default": 21
-    },
-    {
-      "type": "range",
-      "id": "nb_home_hero_microcopy_font_size",
-      "label": "Homepage hero microcopy max size",
-      "min": 11,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 17
-    },
-    {
-      "type": "header",
-      "content": "Homepage section typography"
-    },
-    {
-      "type": "range",
-      "id": "nb_home_overline_font_size",
-      "label": "Homepage section overline max size",
-      "min": 11,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "nb_home_section_heading_font_size",
-      "label": "Homepage section heading max size",
-      "min": 32,
-      "max": 64,
-      "step": 1,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "nb_home_editorial_body_font_size",
-      "label": "Homepage editorial body max size",
-      "min": 24,
-      "max": 44,
-      "step": 1,
-      "unit": "px",
-      "default": 34
-    },
-    {
-      "type": "range",
-      "id": "nb_home_body_font_size",
-      "label": "Homepage section body max size",
-      "min": 16,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
-      "default": 18
-    },
-    {
-      "type": "range",
-      "id": "nb_home_card_body_font_size",
-      "label": "Homepage card body max size",
-      "min": 20,
-      "max": 38,
-      "step": 1,
-      "unit": "px",
-      "default": 30
-    },
-    {
-      "type": "range",
-      "id": "nb_home_quote_font_size",
-      "label": "Homepage quote max size",
-      "min": 22,
-      "max": 42,
-      "step": 1,
-      "unit": "px",
-      "default": 32
-    },
-    {
-      "type": "range",
-      "id": "nb_home_credentials_font_size",
-      "label": "Homepage credentials max size",
-      "min": 10,
-      "max": 18,
-      "step": 1,
-      "unit": "px",
-      "default": 13
-    },
-    {
-      "type": "range",
-      "id": "nb_home_button_font_size",
-      "label": "Homepage section button max size",
-      "min": 13,
-      "max": 22,
-      "step": 1,
-      "unit": "px",
-      "default": 17
-    },
-    {
-      "type": "range",
-      "id": "nb_home_microcopy_font_size",
-      "label": "Homepage section microcopy max size",
-      "min": 11,
-      "max": 19,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    }
+      {
+        "type": "checkbox",
+        "id": "enable_nb_typography",
+        "label": "Use Nibana typography & CTAs sitewide",
+        "default": true,
+        "info": "Makes headings/subheads/eyebrows + CTA buttons use the same look as the Home hero. No changes to images, videos or backgrounds."
+      },
+      {
+        "type": "header",
+        "content": "Homepage hero typography"
+      },
+      {
+        "type": "range",
+        "id": "nb_home_hero_overline_font_size",
+        "label": "Hero eyebrow size",
+        "info": "Controls the small uppercase text above the hero heading.",
+        "min": 11,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "nb_home_hero_heading_desktop_font_size",
+        "label": "Hero heading desktop size",
+        "info": "Controls the desktop/tablet hero heading. Mobile heading protection is handled automatically.",
+        "min": 58,
+        "max": 112,
+        "step": 1,
+        "unit": "px",
+        "default": 58
+      },
+      {
+        "type": "range",
+        "id": "nb_home_hero_subheading_font_size",
+        "label": "Hero subheading size",
+        "info": "Controls the hero paragraph below the main heading.",
+        "min": 20,
+        "max": 36,
+        "step": 1,
+        "unit": "px",
+        "default": 26
+      },
+      {
+        "type": "range",
+        "id": "nb_home_hero_button_font_size",
+        "label": "Hero button size",
+        "info": "Controls both hero actions.",
+        "min": 13,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 21
+      },
+      {
+        "type": "range",
+        "id": "nb_home_hero_microcopy_font_size",
+        "label": "Hero microcopy size",
+        "info": "Controls the small italic text below the hero actions.",
+        "min": 11,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 17
+      },
+      {
+        "type": "header",
+        "content": "Homepage section typography — common text"
+      },
+      {
+        "type": "range",
+        "id": "nb_home_overline_font_size",
+        "label": "Section eyebrow size",
+        "info": "Controls small uppercase labels below the hero.",
+        "min": 11,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      },
+      {
+        "type": "range",
+        "id": "nb_home_section_heading_font_size",
+        "label": "Section heading size",
+        "info": "Controls main headings in homepage sections below the hero.",
+        "min": 32,
+        "max": 64,
+        "step": 1,
+        "unit": "px",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "nb_home_body_font_size",
+        "label": "Standard section paragraph size",
+        "info": "Controls normal paragraphs in sections like About, Method, Newsletter, and CTA. Does not control opening editorial text, card text, or testimonial quotes.",
+        "min": 16,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "nb_home_button_font_size",
+        "label": "Section button / link CTA size",
+        "info": "Controls non-hero homepage buttons and CTA links.",
+        "min": 13,
+        "max": 22,
+        "step": 1,
+        "unit": "px",
+        "default": 17
+      },
+      {
+        "type": "header",
+        "content": "Homepage section typography — special areas"
+      },
+      {
+        "type": "range",
+        "id": "nb_home_editorial_body_font_size",
+        "label": "Opening editorial text size",
+        "info": "Controls the large opening editorial/recognition text below the hero.",
+        "min": 24,
+        "max": 44,
+        "step": 1,
+        "unit": "px",
+        "default": 34
+      },
+      {
+        "type": "range",
+        "id": "nb_home_card_body_font_size",
+        "label": "“Ways in” card text size",
+        "info": "Controls paragraph text inside the “Ways this work often begins” cards.",
+        "min": 20,
+        "max": 38,
+        "step": 1,
+        "unit": "px",
+        "default": 30
+      },
+      {
+        "type": "range",
+        "id": "nb_home_quote_font_size",
+        "label": "Testimonial quote size",
+        "info": "Controls quote text in the testimonials section.",
+        "min": 22,
+        "max": 42,
+        "step": 1,
+        "unit": "px",
+        "default": 32
+      },
+      {
+        "type": "range",
+        "id": "nb_home_credentials_font_size",
+        "label": "About credentials row size",
+        "info": "Controls the small credentials row in the About section.",
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "default": 13
+      },
+      {
+        "type": "range",
+        "id": "nb_home_microcopy_font_size",
+        "label": "Small supporting text size",
+        "info": "Controls small supporting text such as method stage copy and newsletter microcopy.",
+        "min": 11,
+        "max": 19,
+        "step": 1,
+        "unit": "px",
+        "default": 15
+      }
     ]
   },
   {
