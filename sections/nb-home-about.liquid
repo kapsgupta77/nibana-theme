@@ -1,14 +1,16 @@
 <section id="nb-home-about-{{ section.id }}" class="nb-home-about color-{{ section.settings.color_scheme }}">
   <div class="nb-home-about__wrap">
     <div class="nb-home-about__media">
-      <iframe
-        class="nb-home-about__video"
-        src="https://www.youtube.com/embed/sdTy9IZR87k?start=18&rel=0&modestbranding=1"
-        title="Why I do this work video"
-        loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
+      <div
+        class="nb-home-about__video-facade"
+        role="button"
+        tabindex="0"
+        aria-label="Play Dare to be Sensitive — TEDxLambeth video"
+        data-video-src="https://www.youtube.com/embed/sdTy9IZR87k?start=18&rel=0&modestbranding=1&autoplay=1"
+      >
+        <span class="nb-home-about__play" aria-hidden="true"></span>
+      </div>
+      <p class="nb-home-about__caption">Dare to be Sensitive — TEDxLambeth</p>
     </div>
     <div class="nb-home-about__copy">
       {% if section.settings.overline != blank %}<p class="nb-home-about__overline">{{ section.settings.overline }}</p>{% endif %}
@@ -21,7 +23,11 @@
 {% style %}
 #nb-home-about-{{ section.id }}{--nb-home-ink:#223238;--nb-home-teal:#10636c;background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(72px,7.8vw,112px) 20px;}
 #nb-home-about-{{ section.id }} .nb-home-about__wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(360px,1.05fr) minmax(0,.95fr);gap:clamp(56px,7vw,96px);align-items:center;}
-#nb-home-about-{{ section.id }} .nb-home-about__video{width:100%;height:auto;aspect-ratio:16/9;display:block;border:0;box-shadow:none;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade,#nb-home-about-{{ section.id }} .nb-home-about__video{width:100%;height:auto;aspect-ratio:16/9;display:block;border:0;box-shadow:none;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade{position:relative;background-image:url('https://cdn.shopify.com/s/files/1/0697/9593/8495/files/Kapil-TEDxLambeth.jpg?v=1756838868');background-size:cover;background-position:center;cursor:pointer;}
+#nb-home-about-{{ section.id }} .nb-home-about__play{position:absolute;top:50%;left:50%;width:60px;height:60px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(16,99,108,.85);display:flex;align-items:center;justify-content:center;}
+#nb-home-about-{{ section.id }} .nb-home-about__play::before{content:"";display:block;margin-left:5px;border-top:13px solid transparent;border-bottom:13px solid transparent;border-left:20px solid #fff;}
+#nb-home-about-{{ section.id }} .nb-home-about__caption{margin:10px 0 0;font-family:Montserrat,var(--font-body--family),sans-serif;font-size:13px;font-weight:300;line-height:1.4;color:rgba(var(--color-foreground),.62);text-align:left;}
 #nb-home-about-{{ section.id }} .nb-home-about__overline{margin:0 0 10px;font-size:var(--nb-home-type-overline);letter-spacing:.13em;text-transform:uppercase;opacity:.64;line-height:1.35;}
 #nb-home-about-{{ section.id }} h2{margin:0 0 22px;font-family:var(--font-heading--family);font-size:var(--nb-home-type-section-heading);line-height:1.03;letter-spacing:-.032em;font-weight:500;}
 #nb-home-about-{{ section.id }} .nb-home-about__body{font-size:var(--nb-home-type-body);line-height:1.7;max-width:58ch;}
@@ -29,6 +35,39 @@
 #nb-home-about-{{ section.id }} .nb-home-about__credentials{border-top:1px solid rgba(var(--color-foreground),.14);margin-top:28px;padding-top:18px;display:flex;gap:10px 22px;flex-wrap:wrap;font-size:var(--nb-home-type-credential);letter-spacing:.1em;text-transform:uppercase;opacity:.82;line-height:1.45;}
 @media(max-width:749px){#nb-home-about-{{ section.id }} .nb-home-about__wrap{grid-template-columns:1fr;}#nb-home-about-{{ section.id }} .nb-home-about__media{max-width:360px;} }
 {% endstyle %}
+
+<script>
+  (() => {
+    const section = document.getElementById('nb-home-about-{{ section.id }}');
+    const facade = section?.querySelector('.nb-home-about__video-facade');
+
+    if (!facade) return;
+
+    let isLoaded = false;
+
+    const loadVideo = () => {
+      if (isLoaded) return;
+      isLoaded = true;
+
+      const iframe = document.createElement('iframe');
+      iframe.className = 'nb-home-about__video';
+      iframe.src = facade.dataset.videoSrc;
+      iframe.title = 'Why I do this work video';
+      iframe.loading = 'lazy';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      facade.replaceWith(iframe);
+    };
+
+    facade.addEventListener('click', loadVideo, { once: true });
+    facade.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        loadVideo();
+      }
+    });
+  })();
+</script>
 {% schema %}
 {
   "name": "NB — Home about",
