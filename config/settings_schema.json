@@ -1356,21 +1356,21 @@
       "type": "range",
       "id": "nb_home_hero_heading_font_size",
       "label": "Homepage hero heading max size",
-      "min": 56,
-      "max": 112,
+      "min": 40,
+      "max": 88,
       "step": 1,
       "unit": "px",
-      "default": 88
+      "default": 56
     },
     {
       "type": "range",
       "id": "nb_home_section_heading_font_size",
       "label": "Homepage section heading max size",
-      "min": 36,
-      "max": 76,
+      "min": 32,
+      "max": 64,
       "step": 1,
       "unit": "px",
-      "default": 52
+      "default": 40
     },
     {
       "type": "range",
@@ -1387,10 +1387,10 @@
       "id": "nb_home_body_font_size",
       "label": "Homepage body max size",
       "min": 16,
-      "max": 26,
+      "max": 24,
       "step": 1,
       "unit": "px",
-      "default": 20
+      "default": 18
     },
     {
       "type": "range",
