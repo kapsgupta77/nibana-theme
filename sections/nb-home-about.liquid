@@ -1,6 +1,15 @@
 <section id="nb-home-about-{{ section.id }}" class="nb-home-about color-{{ section.settings.color_scheme }}">
   <div class="nb-home-about__wrap">
-    <div class="nb-home-about__media">{% if section.settings.image != blank %}{{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 36vw, 100vw', class: 'nb-home-about__image' }}{% endif %}</div>
+    <div class="nb-home-about__media">
+      <iframe
+        class="nb-home-about__video"
+        src="https://www.youtube.com/embed/sdTy9IZR87k?start=18&rel=0&modestbranding=1"
+        title="Why I do this work video"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
     <div class="nb-home-about__copy">
       {% if section.settings.overline != blank %}<p class="nb-home-about__overline">{{ section.settings.overline }}</p>{% endif %}
       {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
@@ -12,7 +21,7 @@
 {% style %}
 #nb-home-about-{{ section.id }}{--nb-home-ink:#223238;--nb-home-teal:#10636c;background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(72px,7.8vw,112px) 20px;}
 #nb-home-about-{{ section.id }} .nb-home-about__wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(360px,1.05fr) minmax(0,.95fr);gap:clamp(56px,7vw,96px);align-items:center;}
-#nb-home-about-{{ section.id }} .nb-home-about__image{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+#nb-home-about-{{ section.id }} .nb-home-about__video{width:100%;height:auto;aspect-ratio:16/9;display:block;border:0;box-shadow:none;}
 #nb-home-about-{{ section.id }} .nb-home-about__overline{margin:0 0 10px;font-size:var(--nb-home-type-overline);letter-spacing:.13em;text-transform:uppercase;opacity:.64;line-height:1.35;}
 #nb-home-about-{{ section.id }} h2{margin:0 0 22px;font-family:var(--font-heading--family);font-size:var(--nb-home-type-section-heading);line-height:1.03;letter-spacing:-.032em;font-weight:500;}
 #nb-home-about-{{ section.id }} .nb-home-about__body{font-size:var(--nb-home-type-body);line-height:1.7;max-width:58ch;}
