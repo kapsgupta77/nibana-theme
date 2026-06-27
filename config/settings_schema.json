@@ -1340,17 +1340,17 @@
     },
     {
       "type": "header",
-      "content": "Homepage typography"
+      "content": "Homepage hero typography"
     },
     {
       "type": "range",
-      "id": "nb_home_overline_font_size",
-      "label": "Homepage overline max size",
+      "id": "nb_home_hero_overline_font_size",
+      "label": "Homepage hero overline max size",
       "min": 11,
       "max": 20,
       "step": 1,
       "unit": "px",
-      "default": 14
+      "default": 16
     },
     {
       "type": "range",
@@ -1361,6 +1361,50 @@
       "step": 1,
       "unit": "px",
       "default": 88
+    },
+    {
+      "type": "range",
+      "id": "nb_home_hero_subheading_font_size",
+      "label": "Homepage hero subheading max size",
+      "min": 20,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "nb_home_hero_button_font_size",
+      "label": "Homepage hero button max size",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 21
+    },
+    {
+      "type": "range",
+      "id": "nb_home_hero_microcopy_font_size",
+      "label": "Homepage hero microcopy max size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "header",
+      "content": "Homepage section typography"
+    },
+    {
+      "type": "range",
+      "id": "nb_home_overline_font_size",
+      "label": "Homepage section overline max size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
     },
     {
       "type": "range",
@@ -1385,7 +1429,7 @@
     {
       "type": "range",
       "id": "nb_home_body_font_size",
-      "label": "Homepage body max size",
+      "label": "Homepage section body max size",
       "min": 16,
       "max": 24,
       "step": 1,
@@ -1425,7 +1469,7 @@
     {
       "type": "range",
       "id": "nb_home_button_font_size",
-      "label": "Homepage button max size",
+      "label": "Homepage section button max size",
       "min": 13,
       "max": 22,
       "step": 1,
@@ -1435,7 +1479,7 @@
     {
       "type": "range",
       "id": "nb_home_microcopy_font_size",
-      "label": "Homepage microcopy max size",
+      "label": "Homepage section microcopy max size",
       "min": 11,
       "max": 19,
       "step": 1,
