@@ -82,7 +82,7 @@
   #nb-cta-banner-{{ section.id }} .nb-cta-banner__body{
     color: var(--nb-ctab-txt);
     line-height: 1.7;
-    font-size: 1.05rem;
+    font-size: var(--nb-home-type-body);
     margin: 0 0 1.5em;
     opacity: 0.9;
   }
@@ -96,7 +96,7 @@
     color: var(--nb-ctab-btn-txt);
     min-height:48px;
     padding: 0 24px;
-    font-size: 1.28rem;
+    font-size: var(--nb-home-type-button);
     display:inline-flex;
     align-items:center;
     font-weight: 700;
@@ -115,13 +115,13 @@
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__inner{ max-width: 760px; }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__heading{
     font-family: var(--font-heading--family);
-    font-size: clamp(3.2rem, 3.85vw, 5.45rem);
+    font-size: var(--nb-home-type-section-heading);
     line-height: 1.03;
     letter-spacing: -0.032em;
     font-weight: 500;
   }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__body{
-    font-size: clamp(1.32rem, 1.08vw, 1.56rem);
+    font-size: var(--nb-home-type-body);
   }
 {% endstyle %}
 
