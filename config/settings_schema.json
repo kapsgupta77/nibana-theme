@@ -1356,11 +1356,11 @@
       "type": "range",
       "id": "nb_home_hero_heading_font_size",
       "label": "Homepage hero heading max size",
-      "min": 40,
-      "max": 88,
+      "min": 56,
+      "max": 112,
       "step": 1,
       "unit": "px",
-      "default": 40
+      "default": 88
     },
     {
       "type": "range",
