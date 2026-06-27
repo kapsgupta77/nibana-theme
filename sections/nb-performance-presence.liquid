@@ -3,7 +3,7 @@
     {% if section.settings.overline != blank %}<p class="nb-pp__overline">{{ section.settings.overline }}</p>{% endif %}
     {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
     <div class="nb-pp__body">{{ section.settings.body }}</div>
-    <div class="nb-pp__model" role="list">
+    <div class="nb-pp__model" role="list" style="--nb-pp-stage-count: {{ section.blocks.size | at_least: 1 }};">
       {% for block in section.blocks %}<article class="nb-pp__stage" role="listitem" {{ block.shopify_attributes }}><span class="nb-pp__dot"></span><h3>{{ block.settings.title }}</h3><p>{{ block.settings.text }}</p></article>{% endfor %}
     </div>
     {% if section.settings.bridge != blank %}<p class="nb-pp__bridge">{{ section.settings.bridge }}</p>{% endif %}
