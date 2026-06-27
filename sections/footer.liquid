@@ -47,21 +47,28 @@
           {%- endif -%}
         </a>
         <p class="nb-footer__tagline">From Performance to Presence</p>
+        <p class="nb-footer__statement">
+          Bespoke coaching for leaders, men, and seekers ready to move with more clarity, intimacy, and presence.
+        </p>
       </div>
 
       <nav class="nb-footer__nav" aria-label="Footer navigation">
-        <div class="nb-footer__column">
+        <div class="nb-footer__column nb-footer__column--work">
           <h2 class="nb-footer__heading">The work</h2>
-          <ul class="nb-footer__links list-unstyled">
-            <li><a href="/pages/executive-coaching">Executive Coaching</a></li>
-            <li><a href="/pages/mens-coaching">Men's Coaching</a></li>
-            <li><a href="/pages/relationship-coaching">Relationship Coaching</a></li>
-            <li><a href="/pages/eros-orgasmic-meditation">Eros &amp; Orgasmic Meditation</a></li>
-            <li><a href="/pages/stress-management-coaching">Stress Management</a></li>
-            <li><a href="/pages/self-discovery-transformational-coaching">Self Discovery</a></li>
-            <li><a href="/pages/transformational-life-coaching">Transformational Life Coaching</a></li>
-            <li><a href="/quiz">Take the Quiz</a></li>
-          </ul>
+          <div class="nb-footer__work-grid">
+            <ul class="nb-footer__links list-unstyled">
+              <li><a href="/pages/executive-coaching">Executive Coaching</a></li>
+              <li><a href="/pages/mens-coaching">Men's Coaching</a></li>
+              <li><a href="/pages/relationship-coaching">Relationship Coaching</a></li>
+              <li><a href="/pages/eros-orgasmic-meditation">Eros &amp; Orgasmic Meditation</a></li>
+            </ul>
+            <ul class="nb-footer__links list-unstyled">
+              <li><a href="/pages/stress-management-coaching">Stress Management</a></li>
+              <li><a href="/pages/self-discovery-transformational-coaching">Self Discovery</a></li>
+              <li><a href="/pages/transformational-life-coaching">Transformational Life Coaching</a></li>
+              <li><a href="/quiz">Take the Quiz</a></li>
+            </ul>
+          </div>
         </div>
 
         <div class="nb-footer__column">
@@ -98,12 +105,33 @@
   .footer_new .section-content-wrapper {
     display: flex;
     flex-direction: column;
+    height: auto;
+    min-height: 0;
     width: 100%;
+  }
+
+  .footer_new .section {
+    min-height: auto;
   }
 
 
   .nb-footer__legacy-blocks {
+    margin: clamp(42px, 5vw, 72px) auto 0;
+    max-width: 1320px;
+    padding-top: clamp(18px, 2vw, 26px);
+    position: relative;
     width: 100%;
+  }
+
+  .nb-footer__legacy-blocks::before {
+    background: linear-gradient(90deg, rgba(227, 228, 220, 0.42), rgba(209, 108, 40, 0.28), rgba(227, 228, 220, 0.08));
+    content: "";
+    height: 1px;
+    left: 0;
+    opacity: 0.72;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 
   .nb-footer__legacy-blocks > :not(.footer-utilities) {
@@ -111,14 +139,24 @@
   }
 
   .nb-footer__legacy-blocks .footer-utilities {
-    justify-content: flex-start;
-    text-align: left;
+    border-top: 0;
+    justify-content: center;
+    padding-top: 0;
+    text-align: center;
   }
 
   .nb-footer__legacy-blocks .footer-utilities__group--left {
-    align-items: flex-start;
-    justify-content: flex-start;
-    text-align: left;
+    align-items: center;
+    gap: 8px 28px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .nb-footer__legacy-blocks .footer-utilities__text,
+  .nb-footer__legacy-blocks .footer-utilities a {
+    color: rgba(227, 228, 220, 0.62);
+    font-size: 0.75rem;
+    line-height: 1.5;
   }
 
   .nb-footer__legacy-blocks .footer-utilities__group--right {
@@ -127,18 +165,20 @@
 
   .nb-footer__main {
     align-items: flex-start;
-    display: flex;
-    gap: clamp(32px, 5vw, 72px);
-    justify-content: space-between;
+    display: grid;
+    gap: clamp(52px, 7vw, 120px);
+    grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+    margin-inline: auto;
+    max-width: 1320px;
+    padding-top: clamp(52px, 6vw, 84px);
     width: 100%;
   }
 
   .nb-footer__brand {
     align-items: flex-start;
     display: flex;
-    flex: 1.5 1 0;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     min-width: 0;
   }
 
@@ -151,7 +191,7 @@
   .nb-footer__logo {
     display: block;
     height: auto;
-    max-width: 160px;
+    max-width: clamp(150px, 11vw, 190px);
   }
 
   .nb-footer__logo-text {
@@ -162,39 +202,66 @@
   }
 
   .nb-footer__tagline {
-    color: var(--color-foreground-muted);
+    color: rgba(245, 246, 244, 0.78);
     font-family: Montserrat, var(--font-body--family), sans-serif;
-    font-size: 0.8125rem;
+    font-size: 0.82rem;
     font-weight: 300;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.08em;
     line-height: 1.5;
     margin: 0;
+    text-transform: uppercase;
+  }
+
+  .nb-footer__statement {
+    color: rgba(245, 246, 244, 0.68);
+    font-size: clamp(0.9rem, 0.95vw, 1rem);
+    line-height: 1.65;
+    margin: 8px 0 0;
+    max-width: 30ch;
   }
 
   .nb-footer__column {
-    flex: 1 1 0;
     min-width: 0;
   }
 
   .nb-footer__nav {
-    display: flex;
-    flex: 3 1 0;
-    gap: clamp(32px, 5vw, 72px);
-    justify-content: space-between;
+    display: grid;
+    gap: clamp(32px, 4vw, 70px);
+    grid-template-columns: minmax(410px, 1.65fr) minmax(130px, 0.7fr) minmax(130px, 0.7fr);
     min-width: 0;
     width: 100%;
   }
 
   .nb-footer__heading {
-    color: var(--color-foreground-muted);
+    color: rgba(227, 228, 220, 0.72);
     font-family: Montserrat, var(--font-body--family), sans-serif;
     font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     line-height: 1.4;
-    margin: 0 0 14px;
+    margin: 0 0 18px;
+    padding-bottom: 13px;
+    position: relative;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+
+  .nb-footer__heading::after {
+    background: linear-gradient(90deg, var(--nb-chocolate, #d16c28), rgba(227, 228, 220, 0));
+    border-radius: 999px;
+    bottom: 0;
+    content: "";
+    height: 1px;
+    left: 0;
+    opacity: 0.72;
+    position: absolute;
+    width: 44px;
+  }
+
+  .nb-footer__work-grid {
+    display: grid;
+    gap: clamp(24px, 3vw, 42px);
+    grid-template-columns: repeat(2, minmax(175px, 1fr));
   }
 
   .nb-footer__links {
@@ -206,24 +273,31 @@
   }
 
   .nb-footer__links a {
-    color: var(--color-foreground);
+    color: rgba(255, 255, 255, 0.9);
+    display: inline;
     font-size: 0.9375rem;
-    line-height: 1.45;
+    line-height: 1.5;
+    text-decoration-color: transparent;
     text-decoration: none;
+    text-underline-offset: 0.26em;
+    transition: color 180ms ease, text-decoration-color 180ms ease;
   }
 
   .nb-footer__links a:hover {
-    color: var(--color-foreground-muted);
+    color: var(--nb-gainsboro, #e3e4dc);
+    text-decoration: underline;
+    text-decoration-color: rgba(209, 108, 40, 0.78);
   }
 
   @media only screen and (max-width: 989px) {
     .nb-footer__main {
-      flex-direction: column;
+      grid-template-columns: 1fr;
+      gap: clamp(34px, 6vw, 48px);
+      padding-top: clamp(44px, 8vw, 72px);
     }
 
-    .nb-footer__brand,
     .nb-footer__nav {
-      flex: 1 1 auto;
+      grid-template-columns: minmax(0, 1.4fr) minmax(130px, 0.8fr) minmax(130px, 0.8fr);
     }
   }
 
@@ -235,8 +309,12 @@
     }
 
     .nb-footer__nav {
-      flex-direction: column;
+      grid-template-columns: 1fr;
       gap: 28px;
+    }
+
+    .nb-footer__work-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
