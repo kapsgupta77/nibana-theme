@@ -44,6 +44,7 @@
     "nb_home_hero_heading_font_size": 56,
     "nb_home_section_heading_font_size": 40,
     "nb_home_editorial_body_font_size": 34,
+    "nb_home_body_font_size": 18,
     "page_width": "narrow",
     "page_transition_enabled": false,
     "transition_to_main_product": false,
