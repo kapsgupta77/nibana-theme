@@ -31,7 +31,8 @@
         "panel_color": "#F3FAF8",
         "pad_top": 96,
         "pad_bottom": 96,
-        "tone": "dark"
+        "tone": "dark",
+        "style_mode": "recognition"
       }
     },
     "about": {

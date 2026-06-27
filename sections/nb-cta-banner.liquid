@@ -94,9 +94,12 @@
     display: inline-block;
     background: var(--nb-ctab-btn);
     color: var(--nb-ctab-btn-txt);
-    padding: 14px 36px;
-    font-size: 1rem;
-    font-weight: 600;
+    min-height:48px;
+    padding: 0 24px;
+    font-size: 1.28rem;
+    display:inline-flex;
+    align-items:center;
+    font-weight: 700;
     border: none;
     border-radius: 9999px;
     text-decoration: none;
@@ -112,13 +115,13 @@
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__inner{ max-width: 760px; }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__heading{
     font-family: var(--font-heading--family);
-    font-size: clamp(3.4rem, 4.4vw, 6.2rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
+    font-size: clamp(3.2rem, 3.85vw, 5.45rem);
+    line-height: 1.03;
+    letter-spacing: -0.032em;
     font-weight: 500;
   }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__body{
-    font-size: clamp(1.35rem, 1.25vw, 1.65rem);
+    font-size: clamp(1.32rem, 1.08vw, 1.56rem);
   }
 {% endstyle %}
 
