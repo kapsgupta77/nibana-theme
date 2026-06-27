@@ -11,22 +11,22 @@
   </div>
 </section>
 {% style %}
-#nb-pp-{{ section.id }}{--nb-home-ink:#223238;--nb-home-teal:#10636c;--nb-home-eyebrow:clamp(1.05rem,.72vw,1.18rem);--nb-home-display:clamp(3.2rem,3.85vw,5.45rem);--nb-home-body:clamp(1.34rem,1.12vw,1.58rem);background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(92px,9.5vw,140px) 20px;}
+#nb-pp-{{ section.id }}{--nb-home-ink:#223238;--nb-home-teal:#10636c;background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(92px,9.5vw,140px) 20px;}
 #nb-pp-{{ section.id }}.nb-pp--tone-sage{background:#e4ebe4;color:var(--nb-home-ink);}
 #nb-pp-{{ section.id }} .nb-pp__wrap{max-width:1160px;margin:0 auto;}
-#nb-pp-{{ section.id }} .nb-pp__overline{margin:0 0 10px;font-size:var(--nb-home-eyebrow);letter-spacing:.13em;text-transform:uppercase;opacity:.64;line-height:1.35;}
-#nb-pp-{{ section.id }} h2{margin:0 0 20px;font-family:var(--font-heading--family);font-size:var(--nb-home-display);line-height:1.03;letter-spacing:-.032em;font-weight:500;}
-#nb-pp-{{ section.id }} .nb-pp__body{max-width:66ch;font-size:var(--nb-home-body);line-height:1.7;}
+#nb-pp-{{ section.id }} .nb-pp__overline{margin:0 0 10px;font-size:var(--nb-home-type-overline);letter-spacing:.13em;text-transform:uppercase;opacity:.64;line-height:1.35;}
+#nb-pp-{{ section.id }} h2{margin:0 0 20px;font-family:var(--font-heading--family);font-size:var(--nb-home-type-section-heading);line-height:1.03;letter-spacing:-.032em;font-weight:500;}
+#nb-pp-{{ section.id }} .nb-pp__body{max-width:66ch;font-size:var(--nb-home-type-body);line-height:1.7;}
 #nb-pp-{{ section.id }} .nb-pp__body p{margin:0 0 1em;}
 #nb-pp-{{ section.id }} .nb-pp__model{position:relative;display:grid;grid-template-columns:repeat({{ section.blocks.size | at_least: 1 }},1fr);gap:0;margin:clamp(62px,7vw,92px) 0 34px;border-top:1px solid rgba(var(--color-foreground),.22);border-bottom:1px solid rgba(var(--color-foreground),.22);}
 #nb-pp-{{ section.id }} .nb-pp__model:before{content:"";position:absolute;left:clamp(22px,2.4vw,30px);right:clamp(22px,2.4vw,30px);top:30px;height:1px;background:rgba(var(--color-foreground),.24);}
 #nb-pp-{{ section.id }} .nb-pp__stage{position:relative;padding:72px clamp(18px,2.3vw,34px) clamp(34px,3.2vw,44px);}
 #nb-pp-{{ section.id }} .nb-pp__stage + .nb-pp__stage{border-left:1px solid rgba(var(--color-foreground),.16);}
 #nb-pp-{{ section.id }} .nb-pp__dot{position:absolute;left:clamp(16px,2vw,28px);top:23px;width:15px;height:15px;border-radius:50%;background:var(--nb-home-teal);box-shadow:0 0 0 9px #e4ebe4;}
-#nb-pp-{{ section.id }} h3{margin:0 0 10px;font-size:clamp(1.28rem,1.05vw,1.5rem);letter-spacing:.08em;text-transform:uppercase;font-weight:800;}
-#nb-pp-{{ section.id }} .nb-pp__stage p{margin:0;font-size:clamp(1.14rem,.95vw,1.28rem);line-height:1.58;opacity:.82;}
-#nb-pp-{{ section.id }} .nb-pp__bridge{max-width:72ch;margin:34px 0 0;font-size:1.22rem;line-height:1.62;opacity:.74;}
-#nb-pp-{{ section.id }} .button{min-height:48px;padding:0 24px;border-radius:999px;margin-top:26px;background:var(--nb-home-teal);color:#fff;font-size:1.28rem;font-weight:700;}
+#nb-pp-{{ section.id }} h3{margin:0 0 10px;font-size:var(--nb-home-type-overline);letter-spacing:.08em;text-transform:uppercase;font-weight:800;}
+#nb-pp-{{ section.id }} .nb-pp__stage p{margin:0;font-size:var(--nb-home-type-microcopy);line-height:1.58;opacity:.82;}
+#nb-pp-{{ section.id }} .nb-pp__bridge{max-width:72ch;margin:34px 0 0;font-size:var(--nb-home-type-microcopy);line-height:1.62;opacity:.74;}
+#nb-pp-{{ section.id }} .button{min-height:48px;padding:0 24px;border-radius:999px;margin-top:26px;background:var(--nb-home-teal);color:#fff;font-size:var(--nb-home-type-button);font-weight:700;}
 @media(max-width:749px){#nb-pp-{{ section.id }} .nb-pp__model{display:block;margin-top:40px;border:0;background:transparent;}#nb-pp-{{ section.id }} .nb-pp__model:before{left:8px;right:auto;top:0;bottom:0;width:1px;height:auto;}#nb-pp-{{ section.id }} .nb-pp__stage,#nb-pp-{{ section.id }} .nb-pp__stage + .nb-pp__stage{padding:0 0 32px 38px;border-left:0;}#nb-pp-{{ section.id }} .nb-pp__dot{left:0;top:2px;width:15px;height:15px;} }
 {% endstyle %}
 {% schema %}
