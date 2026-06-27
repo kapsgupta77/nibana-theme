@@ -28,19 +28,217 @@
       {%  render 'spacing-style', settings: section.settings %}
     "
   >
-    {% content_for 'blocks' %}
+    <div class="nb-footer__main">
+      <div class="nb-footer__brand">
+        <a href="{{ routes.root_url }}" class="nb-footer__logo-link" aria-label="{{ shop.name | escape }}">
+          {%- if settings.logo != blank -%}
+            {{
+              settings.logo
+              | image_url: width: 480
+              | image_tag:
+                width: settings.logo.width,
+                height: settings.logo.height,
+                widths: '160, 240, 320, 480',
+                class: 'nb-footer__logo',
+                alt: shop.name
+            }}
+          {%- else -%}
+            <span class="nb-footer__logo-text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+        <p class="nb-footer__tagline">From Performance to Presence</p>
+      </div>
+
+      <nav class="nb-footer__nav" aria-label="Footer navigation">
+        <div class="nb-footer__column">
+          <h2 class="nb-footer__heading">The work</h2>
+          <ul class="nb-footer__links list-unstyled">
+            <li><a href="/pages/executive-coaching">Executive Coaching</a></li>
+            <li><a href="/pages/mens-coaching">Men's Coaching</a></li>
+            <li><a href="/pages/relationship-coaching">Relationship Coaching</a></li>
+            <li><a href="/pages/eros-orgasmic-meditation">Eros &amp; Orgasmic Meditation</a></li>
+            <li><a href="/pages/stress-management-coaching">Stress Management</a></li>
+            <li><a href="/pages/self-discovery-transformational-coaching">Self Discovery</a></li>
+            <li><a href="/pages/transformational-life-coaching">Transformational Life Coaching</a></li>
+            <li><a href="/quiz">Take the Quiz</a></li>
+          </ul>
+        </div>
+
+        <div class="nb-footer__column">
+          <h2 class="nb-footer__heading">About</h2>
+          <ul class="nb-footer__links list-unstyled">
+            <li><a href="/pages/about-us">About Kapil</a></li>
+            <li><a href="/pages/media">Media &amp; Press</a></li>
+            <li><a href="/pages/testimonial">Testimonials</a></li>
+            <li><a href="/blogs/news">Writing</a></li>
+            <li><a href="/pages/contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="nb-footer__column">
+          <h2 class="nb-footer__heading">Connect</h2>
+          <ul class="nb-footer__links list-unstyled">
+            <li><a href="https://www.linkedin.com/in/kapilgupta/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a href="https://www.instagram.com/kapsgupta/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            <li><a href="https://nibananotes.substack.com/" target="_blank" rel="noopener noreferrer">Substack</a></li>
+            <li><a href="https://www.youtube.com/@kapil-gupta" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+            <li><a href="https://www.tiktok.com/@kapilguptacoach" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="nb-footer__legacy-blocks">
+      {% content_for 'blocks' %}
+    </div>
   </div>
 </div>
 
 <style>
-   
-  @media only screen and (max-width: 768px) {
-  .footer_new .spacing-style.layout-panel-flex.layout-panel-flex--row.section-content-wrapper.mobile-column{
-     display:flex;
-     flex-direction:column;
-     width:100%;
+  .footer_new .section-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
-}
+
+
+  .nb-footer__legacy-blocks {
+    width: 100%;
+  }
+
+  .nb-footer__legacy-blocks > :not(.footer-utilities) {
+    display: none;
+  }
+
+  .nb-footer__legacy-blocks .footer-utilities {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .nb-footer__legacy-blocks .footer-utilities__group--left {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .nb-footer__legacy-blocks .footer-utilities__group--right {
+    display: none;
+  }
+
+  .nb-footer__main {
+    align-items: flex-start;
+    display: flex;
+    gap: clamp(32px, 5vw, 72px);
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .nb-footer__brand {
+    align-items: flex-start;
+    display: flex;
+    flex: 1.5 1 0;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .nb-footer__logo-link {
+    color: inherit;
+    display: inline-flex;
+    text-decoration: none;
+  }
+
+  .nb-footer__logo {
+    display: block;
+    height: auto;
+    max-width: 160px;
+  }
+
+  .nb-footer__logo-text {
+    font-family: var(--font-heading--family, Montserrat, sans-serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .nb-footer__tagline {
+    color: var(--color-foreground-muted);
+    font-family: Montserrat, var(--font-body--family), sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .nb-footer__column {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .nb-footer__nav {
+    display: flex;
+    flex: 3 1 0;
+    gap: clamp(32px, 5vw, 72px);
+    justify-content: space-between;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .nb-footer__heading {
+    color: var(--color-foreground-muted);
+    font-family: Montserrat, var(--font-body--family), sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nb-footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nb-footer__links a {
+    color: var(--color-foreground);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    text-decoration: none;
+  }
+
+  .nb-footer__links a:hover {
+    color: var(--color-foreground-muted);
+  }
+
+  @media only screen and (max-width: 989px) {
+    .nb-footer__main {
+      flex-direction: column;
+    }
+
+    .nb-footer__brand,
+    .nb-footer__nav {
+      flex: 1 1 auto;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .footer_new .spacing-style.layout-panel-flex.layout-panel-flex--row.section-content-wrapper.mobile-column {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .nb-footer__nav {
+      flex-direction: column;
+      gap: 28px;
+    }
+  }
 </style>
 
 {% schema %}
