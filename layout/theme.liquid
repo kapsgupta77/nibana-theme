@@ -48,6 +48,7 @@ DNS prefetch is cheap site-wide; preconnect opens TLS early where it matters.
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
+    {%- render 'nb-home-typography' -%}
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
@@ -111,33 +112,6 @@ Runs only when template = page.book-call.
   }
   </script>
 
-<!-- Organization -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "{{ request.origin }}/#org",
-  "name": {{ shop.name | json }},
-  "url": {{ request.origin | json }}
-}
-</script>
-
-<!-- WebSite -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": "{{ request.origin }}/#website",
-  "url": {{ request.origin | json }},
-  "name": {{ shop.name | json }},
-  "publisher": { "@id": "{{ request.origin }}/#org" },
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "{{ routes.search_url }}?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
 
   <!-- FAQ from .nb-faq blocks on this page -->
   <script>
@@ -194,6 +168,59 @@ Runs only when template = page.book-call.
   </script>
 {%- endif -%}
 
+{%- comment -%}
+NIBANA — Site-wide JSON-LD (Organization + Person + WebSite)
+{%- endcomment -%}
+
+<!-- Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "{{ request.origin }}/#org",
+  "name": {{ shop.name | json }},
+  "url": {{ request.origin | json }},
+  "founder": { "@id": "https://nibana.life/#kapil" },
+  "description": "Private 1:1 coaching for people ready to meet the truth beneath the life they’ve built. Work with identity, desire, relationships, purpose, and presence."
+}
+</script>
+
+<!-- Person -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://nibana.life/#kapil",
+  "name": "Kapil Gupta",
+  "url": "https://nibana.life",
+  "jobTitle": "Transformational Coach",
+  "description": "Founder of Nibana and creator of the Performance to Presence Method. Works 1:1 with founders, executives, and couples globally via Zoom.",
+  "worksFor": { "@id": "https://nibana.life/#org" },
+  "hasCredential": ["Fellow of the Royal Society of Arts (FRSA)", "TEDx Speaker"],
+  "sameAs": [
+    "https://www.linkedin.com/in/kapilgupta/",
+    "https://nibana.substack.com",
+    "https://www.youtube.com/@kapil-gupta"
+  ]
+}
+</script>
+
+<!-- WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "{{ request.origin }}/#website",
+  "url": {{ request.origin | json }},
+  "name": {{ shop.name | json }},
+  "publisher": { "@id": "{{ request.origin }}/#org" },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ routes.search_url }}?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 
 
   {% render 'nb-surge-meta' %}

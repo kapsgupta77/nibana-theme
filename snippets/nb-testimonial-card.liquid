@@ -8,6 +8,7 @@ Notes:
 {%- endcomment -%}
 
 {%- assign _tags = tags | default: '' | strip -%}
+{%- assign _variant = variant | default: 'cards' | strip -%}
 
 {%- capture __quote_html -%}
   {%- if quote and quote.value -%}
@@ -17,7 +18,7 @@ Notes:
   {%- endif -%}
 {%- endcapture -%}
 
-<article class="nb-tcard" data-tags="{{ _tags | downcase | escape }}">
+<article class="nb-tcard nb-tcard--{{ _variant }}" data-tags="{{ _tags | downcase | escape }}">
   <span class="nb-tcard__accent" aria-hidden="true"></span>
   <span class="nb-tcard__qmark" aria-hidden="true">“</span>
 

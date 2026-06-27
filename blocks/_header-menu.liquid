@@ -44,20 +44,18 @@
             class="menu-list__list list-unstyled"
             role="list"
           >
-            {% for link in block.settings.menu.links %}
-              <li>
-                <a
-                  href="{{ link.url }}"
-                  id="MenuItem-{{ link.handle }}"
-                  class="menu-list__item"
-                  {% if link.current %}
-                    aria-current="page"
-                  {% endif %}
-                >
-                  {{- link.title -}}
-                </a>
-              </li>
-            {% endfor %}
+            <li>
+              <a href="/pages/transformational-life-coaching" id="MenuItem-work-with-me" class="menu-list__item">Work With Me</a>
+            </li>
+            <li>
+              <a href="/pages/the-performance-to-presence-method" id="MenuItem-the-method" class="menu-list__item">The Method</a>
+            </li>
+            <li>
+              <a href="/blogs/news" id="MenuItem-writing" class="menu-list__item">Writing</a>
+            </li>
+            <li>
+              <a href="/pages/about-us" id="MenuItem-about" class="menu-list__item">About</a>
+            </li>
           </ul>
         </div>
       </div>

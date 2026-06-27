@@ -20,7 +20,7 @@
 
 <section
   id="nb-cta-banner-{{ section.id }}"
-  class="nb-cta-banner {% if card_on %}nb-cta-banner--card{% endif %}"
+  class="nb-cta-banner {% if card_on %}nb-cta-banner--card{% endif %} {% if section.settings.editorial_style %}nb-cta-banner--editorial{% endif %}"
   style="
     --nb-ctab-bg: {{ bg }};
     --nb-ctab-txt: {{ txt }};
@@ -82,7 +82,7 @@
   #nb-cta-banner-{{ section.id }} .nb-cta-banner__body{
     color: var(--nb-ctab-txt);
     line-height: 1.7;
-    font-size: 1.05rem;
+    font-size: var(--nb-home-type-body);
     margin: 0 0 1.5em;
     opacity: 0.9;
   }
@@ -94,9 +94,12 @@
     display: inline-block;
     background: var(--nb-ctab-btn);
     color: var(--nb-ctab-btn-txt);
-    padding: 14px 36px;
-    font-size: 1rem;
-    font-weight: 600;
+    min-height:48px;
+    padding: 0 24px;
+    font-size: var(--nb-home-type-button);
+    display:inline-flex;
+    align-items:center;
+    font-weight: 700;
     border: none;
     border-radius: 9999px;
     text-decoration: none;
@@ -105,6 +108,20 @@
   }
   #nb-cta-banner-{{ section.id }} .nb-cta-banner__btn:hover{
     background: var(--nb-ctab-btn-hover);
+  }
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__wrap{
+    padding: clamp(70px, 8vw, 118px) clamp(20px, 4vw, 40px);
+  }
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__inner{ max-width: 760px; }
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__heading{
+    font-family: var(--font-heading--family);
+    font-size: var(--nb-home-type-section-heading);
+    line-height: 1.03;
+    letter-spacing: -0.032em;
+    font-weight: 500;
+  }
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__body{
+    font-size: var(--nb-home-type-body);
   }
 {% endstyle %}
 
@@ -121,6 +138,7 @@
 
     { "type": "header", "content": "Floating card container" },
     { "type": "checkbox", "id": "card_on", "label": "Wrap in floating card", "default": false },
+    { "type": "checkbox", "id": "editorial_style", "label": "Use editorial homepage typography", "default": false },
 
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#EAF4F3" },
