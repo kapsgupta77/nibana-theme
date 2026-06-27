@@ -169,7 +169,7 @@ Runs only when template = page.book-call.
 {%- endif -%}
 
 {%- comment -%}
-NIBANA — Site-wide JSON-LD (Organization + WebSite)
+NIBANA — Site-wide JSON-LD (Organization + Person + WebSite)
 {%- endcomment -%}
 
 <!-- Organization -->
@@ -179,7 +179,29 @@ NIBANA — Site-wide JSON-LD (Organization + WebSite)
   "@type": "Organization",
   "@id": "{{ request.origin }}/#org",
   "name": {{ shop.name | json }},
-  "url": {{ request.origin | json }}
+  "url": {{ request.origin | json }},
+  "founder": { "@id": "https://nibana.life/#kapil" },
+  "description": "Private 1:1 coaching for people ready to meet the truth beneath the life they’ve built. Work with identity, desire, relationships, purpose, and presence."
+}
+</script>
+
+<!-- Person -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://nibana.life/#kapil",
+  "name": "Kapil Gupta",
+  "url": "https://nibana.life",
+  "jobTitle": "Transformational Coach",
+  "description": "Founder of Nibana and creator of the Performance to Presence Method. Works 1:1 with founders, executives, and couples globally via Zoom.",
+  "worksFor": { "@id": "https://nibana.life/#org" },
+  "hasCredential": ["Fellow of the Royal Society of Arts (FRSA)", "TEDx Speaker"],
+  "sameAs": [
+    "https://www.linkedin.com/in/kapilgupta/",
+    "https://nibana.substack.com",
+    "https://www.youtube.com/@kapil-gupta"
+  ]
 }
 </script>
 
