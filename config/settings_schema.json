@@ -1354,13 +1354,13 @@
     },
     {
       "type": "range",
-      "id": "nb_home_hero_heading_font_size",
-      "label": "Homepage hero heading max size",
-      "min": 56,
+      "id": "nb_home_hero_heading_desktop_font_size",
+      "label": "Homepage hero heading desktop max size",
+      "min": 58,
       "max": 112,
       "step": 1,
       "unit": "px",
-      "default": 88
+      "default": 58
     },
     {
       "type": "range",
