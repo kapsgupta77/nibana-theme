@@ -22,15 +22,16 @@
         "color_scheme": "scheme-5",
         "heading": "",
         "body": "<p>You may have built a life that works.</p><p>The work. The relationship. The reputation. The competence. The role people know you for.</p><p>And still, something underneath may be asking for your attention.</p><p>Not always as a crisis. Sometimes as dullness. Restlessness. Disconnection. A repeating pattern. A loss of desire. A private sense that the outer life is functioning, while the inner life is no longer telling the truth.</p><p><em>This is where the work begins.</em></p>",
-        "alignment": "left",
+        "alignment": "center",
         "editorial_text": true,
         "max_width": "narrow",
         "card_on": false,
         "card_bg": "#ffffff",
         "panel_on": false,
         "panel_color": "#F3FAF8",
-        "pad_top": 88,
-        "pad_bottom": 88
+        "pad_top": 96,
+        "pad_bottom": 96,
+        "tone": "dark"
       }
     },
     "about": {
@@ -135,7 +136,8 @@
         "body": "<p>Most people do not lose themselves all at once.</p><p>They adapt. They achieve. They become useful. They become impressive. They become who life, family, work, success, or survival required them to become.</p><p>Performance is not the enemy. It is often how we survive, build, lead, love, and belong.</p><p>But at some point, the performed life starts to cost too much.</p><p>The Performance to Presence Method is a way of seeing what has been running beneath the surface, meeting it honestly, and learning to live from a deeper centre.</p>",
         "bridge": "This journey is supported by four areas of work: Identity Work, Inner Skills, Philosophy & Play, and Practices.",
         "cta_label": "",
-        "cta_link": ""
+        "cta_link": "",
+        "tone": "sage"
       }
     },
     "ways": {
@@ -244,8 +246,9 @@
         "cta_label": "Read more testimonials",
         "cta_link": "/pages/testimonial",
         "color_scheme": "scheme-5",
-        "padding-block-start": 80,
-        "padding-block-end": 80
+        "padding-block-start": 0,
+        "padding-block-end": 0,
+        "style_mode": "editorial-dark"
       }
     },
     "newsletter": {
@@ -259,7 +262,9 @@
         "email_placeholder": "Your email address",
         "button_label": "Join the list",
         "microcopy": "No hacks. No motivational noise. Just honest writing for the deeper conversation.",
-        "success_message": "Thank you for joining Nibana Notes."
+        "success_message": "Thank you for joining Nibana Notes.",
+        "background_color": "#0f6970",
+        "text_color": "#f7f1e8"
       }
     },
     "final_cta": {
@@ -270,13 +275,14 @@
         "button_label": "Book a private conversation",
         "button_link": "shopify://pages/book-a-call",
         "card_on": false,
-        "bg_color": "#333333",
-        "text_color": "#ffffff",
+        "bg_color": "#223238",
+        "text_color": "#f7f1e8",
         "button_color": "#10636c",
         "button_hover_color": "#0b4f56",
         "button_text_color": "#ffffff",
         "pad_top": 0,
-        "pad_bottom": 0
+        "pad_bottom": 0,
+        "editorial_style": true
       }
     }
   },
