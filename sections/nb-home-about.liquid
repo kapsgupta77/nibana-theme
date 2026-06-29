@@ -1,16 +1,26 @@
+{%- liquid
+  assign video_thumbnail = section.settings.image
+  assign video_thumbnail_url = 'https://cdn.shopify.com/s/files/1/0697/9593/8495/files/Kapil-TEDxLambeth.jpg?v=1756838868'
+  if video_thumbnail != blank
+    assign video_thumbnail_url = video_thumbnail | image_url: width: 1600
+  endif
+-%}
 <section id="nb-home-about-{{ section.id }}" class="nb-home-about color-{{ section.settings.color_scheme }}">
   <div class="nb-home-about__wrap">
     <div class="nb-home-about__media">
-      <div
-        class="nb-home-about__video-facade"
-        role="button"
-        tabindex="0"
-        aria-label="Play Dare to be Sensitive — TEDxLambeth video"
-        data-video-src="https://www.youtube.com/embed/sdTy9IZR87k?start=18&rel=0&modestbranding=1&autoplay=1"
-      >
-        <span class="nb-home-about__play" aria-hidden="true"></span>
+      <div class="nb-home-about__media-card">
+        <div
+          class="nb-home-about__video-facade"
+          role="button"
+          tabindex="0"
+          aria-label="Play Dare to be Sensitive — TEDxLambeth video"
+          data-video-src="https://www.youtube.com/embed/sdTy9IZR87k?start=18&rel=0&modestbranding=1&autoplay=1"
+          style="--nb-home-about-thumbnail: url('{{ video_thumbnail_url }}');"
+        >
+          <span class="nb-home-about__play" aria-hidden="true"></span>
+        </div>
+        <p class="nb-home-about__caption">Dare to be Sensitive — TEDxLambeth</p>
       </div>
-      <p class="nb-home-about__caption">Dare to be Sensitive — TEDxLambeth</p>
     </div>
     <div class="nb-home-about__copy">
       {% if section.settings.overline != blank %}<p class="nb-home-about__overline">{{ section.settings.overline }}</p>{% endif %}
@@ -21,19 +31,31 @@
   </div>
 </section>
 {% style %}
-#nb-home-about-{{ section.id }}{--nb-home-ink:#223238;--nb-home-teal:#10636c;background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(72px,7.8vw,112px) 20px;}
-#nb-home-about-{{ section.id }} .nb-home-about__wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:minmax(420px,1.1fr) minmax(0,.9fr);gap:clamp(56px,7vw,96px);align-items:start;}
-#nb-home-about-{{ section.id }} .nb-home-about__video-facade,#nb-home-about-{{ section.id }} .nb-home-about__video{width:100%;height:auto;aspect-ratio:4/3;display:block;border:0;box-shadow:none;}
-#nb-home-about-{{ section.id }} .nb-home-about__video-facade{position:relative;background-image:url('https://cdn.shopify.com/s/files/1/0697/9593/8495/files/Kapil-TEDxLambeth.jpg?v=1756838868');background-size:cover;background-position:center bottom;cursor:pointer;}
-#nb-home-about-{{ section.id }} .nb-home-about__play{position:absolute;top:50%;left:50%;width:60px;height:60px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(16,99,108,.85);display:flex;align-items:center;justify-content:center;}
-#nb-home-about-{{ section.id }} .nb-home-about__play::before{content:"";display:block;margin-left:5px;border-top:13px solid transparent;border-bottom:13px solid transparent;border-left:20px solid #fff;}
-#nb-home-about-{{ section.id }} .nb-home-about__caption{margin:10px 0 0;font-family:Montserrat,var(--font-body--family),sans-serif;font-size:13px;font-weight:300;line-height:1.4;color:rgba(var(--color-foreground),.62);text-align:left;}
-#nb-home-about-{{ section.id }} .nb-home-about__overline{margin:0 0 10px;font-size:var(--nb-home-type-overline);letter-spacing:.13em;text-transform:uppercase;opacity:.64;line-height:1.35;}
-#nb-home-about-{{ section.id }} h2{margin:0 0 22px;font-family:var(--font-heading--family);font-size:var(--nb-home-type-section-heading);line-height:1.03;letter-spacing:-.032em;font-weight:500;}
-#nb-home-about-{{ section.id }} .nb-home-about__body{font-size:var(--nb-home-type-body);line-height:1.7;max-width:58ch;}
-#nb-home-about-{{ section.id }} .nb-home-about__body p{margin:0 0 1em;}
-#nb-home-about-{{ section.id }} .nb-home-about__credentials{border-top:1px solid rgba(var(--color-foreground),.14);margin-top:28px;padding-top:18px;display:flex;gap:10px 22px;flex-wrap:wrap;font-size:var(--nb-home-type-credential);letter-spacing:.1em;text-transform:uppercase;opacity:.82;line-height:1.45;}
-@media(max-width:749px){#nb-home-about-{{ section.id }} .nb-home-about__wrap{grid-template-columns:1fr;}#nb-home-about-{{ section.id }} .nb-home-about__media{width:100%;} }
+#nb-home-about-{{ section.id }}{--nb-home-ink:#223238;--nb-home-teal:#10636c;--nb-home-stone:#f6f1ea;--nb-home-stone-deep:#ebe3d8;background:rgb(var(--color-background));color:rgb(var(--color-foreground));padding:clamp(72px,7.8vw,112px) 20px;}
+#nb-home-about-{{ section.id }} .nb-home-about__wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:minmax(420px,1.08fr) minmax(0,.92fr);gap:clamp(56px,7vw,96px);align-items:center;}
+#nb-home-about-{{ section.id }} .nb-home-about__media{position:relative;}
+#nb-home-about-{{ section.id }} .nb-home-about__media::before{content:"";position:absolute;inset:clamp(18px,3vw,34px) clamp(-10px,-1vw,-4px) clamp(-18px,-2.4vw,-10px) clamp(24px,4vw,48px);border:1px solid rgba(var(--color-foreground),.08);border-radius:30px;background:rgba(255,255,255,.18);pointer-events:none;}
+#nb-home-about-{{ section.id }} .nb-home-about__media-card{position:relative;padding:clamp(14px,2.2vw,24px);border:1px solid rgba(var(--color-foreground),.10);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(246,241,234,.94));box-shadow:0 26px 70px rgba(34,50,56,.13),0 2px 12px rgba(34,50,56,.06);}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade,#nb-home-about-{{ section.id }} .nb-home-about__video{width:100%;height:auto;aspect-ratio:4/3;display:block;border:0;border-radius:20px;box-shadow:none;overflow:hidden;background-color:#1d2426;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade{position:relative;background-image:var(--nb-home-about-thumbnail);background-size:cover;background-position:center bottom;cursor:pointer;isolation:isolate;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(246,241,234,.18),rgba(16,99,108,.22) 48%,rgba(25,23,20,.20));z-index:0;transition:opacity .28s ease;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade::after{content:"";position:absolute;inset:1px;border:1px solid rgba(255,255,255,.30);border-radius:19px;pointer-events:none;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade:hover::before,#nb-home-about-{{ section.id }} .nb-home-about__video-facade:focus-visible::before{opacity:.82;}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade:focus-visible{outline:2px solid rgba(16,99,108,.50);outline-offset:4px;}
+#nb-home-about-{{ section.id }} .nb-home-about__play{position:absolute;top:50%;left:50%;width:68px;height:68px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.60);border-radius:50%;background:rgba(246,241,234,.88);box-shadow:0 16px 40px rgba(0,0,0,.22),inset 0 0 0 8px rgba(255,255,255,.24);display:flex;align-items:center;justify-content:center;z-index:1;transition:transform .28s ease,background .28s ease,box-shadow .28s ease;}
+#nb-home-about-{{ section.id }} .nb-home-about__play::before{content:"";display:block;margin-left:5px;border-top:11px solid transparent;border-bottom:11px solid transparent;border-left:17px solid var(--nb-home-teal);}
+#nb-home-about-{{ section.id }} .nb-home-about__video-facade:hover .nb-home-about__play,#nb-home-about-{{ section.id }} .nb-home-about__video-facade:focus-visible .nb-home-about__play{transform:translate(-50%,-50%) scale(1.04);background:rgba(255,255,255,.94);box-shadow:0 18px 46px rgba(0,0,0,.25),inset 0 0 0 8px rgba(246,241,234,.48);}
+#nb-home-about-{{ section.id }} .nb-home-about__caption{margin:14px 4px 0;font-family:var(--font-body--family);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;line-height:1.55;color:rgba(var(--color-foreground),.52);text-align:left;}
+#nb-home-about-{{ section.id }} .nb-home-about__copy{max-width:600px;}
+#nb-home-about-{{ section.id }} .nb-home-about__overline{margin:0 0 12px;font-family:var(--font-body--family);font-size:var(--nb-home-type-overline);font-weight:650;letter-spacing:.16em;text-transform:uppercase;opacity:.62;line-height:1.35;}
+#nb-home-about-{{ section.id }} h2{margin:0 0 24px;font-family:var(--font-heading--family);font-size:clamp(var(--nb-home-type-section-heading),4.3vw,66px);line-height:.98;letter-spacing:-.035em;font-weight:500;}
+#nb-home-about-{{ section.id }} .nb-home-about__body{font-family:var(--font-body--family);font-size:var(--nb-home-type-body);line-height:1.76;max-width:56ch;color:rgba(var(--color-foreground),.80);}
+#nb-home-about-{{ section.id }} .nb-home-about__body p{margin:0 0 1.08em;}
+#nb-home-about-{{ section.id }} .nb-home-about__body p:last-child{margin-bottom:0;}
+#nb-home-about-{{ section.id }} .nb-home-about__credentials{border-top:1px solid rgba(var(--color-foreground),.13);margin-top:clamp(28px,3.4vw,40px);padding-top:clamp(18px,2.2vw,24px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px clamp(22px,3vw,36px);font-family:var(--font-body--family);font-size:var(--nb-home-type-credential);font-weight:650;letter-spacing:.15em;text-transform:uppercase;color:rgba(var(--color-foreground),.58);line-height:1.45;}
+#nb-home-about-{{ section.id }} .nb-home-about__credentials span{display:block;}
+@media(max-width:989px){#nb-home-about-{{ section.id }} .nb-home-about__wrap{grid-template-columns:1fr;gap:44px;}#nb-home-about-{{ section.id }} .nb-home-about__copy{max-width:680px;}}
+@media(max-width:749px){#nb-home-about-{{ section.id }}{padding:clamp(56px,14vw,76px) 18px;}#nb-home-about-{{ section.id }} .nb-home-about__media{width:100%;}#nb-home-about-{{ section.id }} .nb-home-about__media::before{display:none;}#nb-home-about-{{ section.id }} .nb-home-about__media-card{padding:10px;border-radius:22px;box-shadow:0 18px 44px rgba(34,50,56,.12),0 1px 8px rgba(34,50,56,.05);}#nb-home-about-{{ section.id }} .nb-home-about__video-facade,#nb-home-about-{{ section.id }} .nb-home-about__video{border-radius:16px;}#nb-home-about-{{ section.id }} .nb-home-about__video-facade::after{border-radius:15px;}#nb-home-about-{{ section.id }} .nb-home-about__play{width:58px;height:58px;}#nb-home-about-{{ section.id }} .nb-home-about__credentials{grid-template-columns:1fr;gap:10px;} }
 {% endstyle %}
 
 <script>
