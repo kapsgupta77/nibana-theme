@@ -108,14 +108,13 @@
     padding-block-end:0!important;
   }
   #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__shell{
-    max-width:780px;
-    margin-left:max(0px, calc((100vw - 1180px) / 2));
-    margin-right:auto;
+    max-width:1040px;
+    margin-inline:auto;
     padding:clamp(92px,10vw,156px) clamp(26px,5vw,64px);
     text-align:left;
   }
   #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body{
-    max-width:21.5em;
+    max-width:23em;
     color:currentColor;
     font-family:var(--font-heading--family);
     /* Recognition intentionally honors the Theme Editor desktop value exactly;
@@ -127,13 +126,16 @@
   }
   #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body p{
     max-width:none;
-    margin:0 0 clamp(30px,3.2vw,46px);
+    font-size:inherit;
+    line-height:inherit;
+    letter-spacing:inherit;
+    margin:0 0 clamp(18px,2vw,28px);
   }
   #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body p:nth-child(4){
     color:rgba(243,234,220,.84);
   }
   #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body p:last-child{
-    margin-top:clamp(38px,4.4vw,62px);
+    margin-top:clamp(24px,3vw,38px);
     margin-bottom:0;
     color:var(--nb-home-sage);
   }
@@ -142,7 +144,7 @@
     display:block;
     width:min(220px,46vw);
     height:1px;
-    margin:0 0 clamp(28px,3vw,40px);
+    margin:0 0 clamp(20px,2.2vw,30px);
     background:rgba(243,234,220,.22);
   }
   #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body em{
@@ -172,7 +174,7 @@
       letter-spacing:-.012em;
     }
     #nb-rt-{{ section.id }}.nb-rt--style-recognition .nb-rt__body p{
-      margin-bottom:clamp(24px,7vw,34px);
+      margin-bottom:clamp(18px,5vw,26px);
     }
   }
 
