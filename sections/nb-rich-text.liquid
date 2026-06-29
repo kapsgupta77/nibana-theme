@@ -118,7 +118,9 @@
     max-width:21.5em;
     color:currentColor;
     font-family:var(--font-heading--family);
-    font-size:clamp(28px,2.55vw,42px);
+    /* Recognition intentionally honors the Theme Editor desktop value exactly;
+       mobile gets a separate override below to prevent awkward wrapping. */
+    font-size:{{ settings.nb_home_editorial_body_font_size | default: 34 }}px;
     font-weight:500;
     letter-spacing:-.018em;
     line-height:1.34;
