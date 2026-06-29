@@ -32,7 +32,7 @@
         "tone": "dark",
         "style_mode": "default",
         "heading": "",
-        "body": "<p>You may have built a life that works.</p><p>The work. The relationship. The reputation. The competence. The role people know you for.</p><p>And still, something underneath may be asking for your attention.</p><p>Not always as a crisis. Sometimes as dullness. Restlessness. Disconnection. A repeating pattern. A loss of desire. A private sense that the outer life is functioning, while the inner life is no longer telling the truth.</p><p><em>This is where the work begins.</em></p>",
+        "body": "<p>You may have built a life that works.</p><p>The work. The relationship. The reputation. The competence. The role people know you for.</p><p>And still, something underneath may be asking for your attention.</p><p>Not always as a crisis. Sometimes as dullness. Restlessness. Disconnection. A repeating pattern. A loss of desire. A private sense that the outer life is functioning, while the inner life is no longer telling the truth.</p><p>What is underneath is almost never more success, more clarity, or more certainty. It is aliveness.</p><p><em>This is where the work begins.</em></p>",
         "alignment": "left",
         "editorial_text": true,
         "max_width": "narrow",
@@ -144,7 +144,7 @@
         "tone": "sage",
         "overline": "The Method",
         "heading": "From Performance to Presence",
-        "body": "<p>Most people do not lose themselves all at once.</p><p>They adapt. They achieve. They become useful. They become impressive. They become who life, family, work, success, or survival required them to become.</p><p>Performance is not the enemy. It is often how we survive, build, lead, love, and belong.</p><p>But at some point, the performed life starts to cost too much.</p><p>The Performance to Presence Method is a way of seeing what has been running beneath the surface, meeting it honestly, and learning to live from a deeper centre.</p>",
+        "body": "<p>Most people do not lose themselves all at once.</p><p>They adapt. They achieve. They become useful. They become impressive. They become who life, family, work, success, or survival required them to become.</p><p>Performance is not the enemy. It is the self you have learned to manage, protect, and present. For a long time, it works. It is often how we survive, build, lead, love, and belong.</p><p>But at some point, the performed life starts to cost too much.</p><p>The Performance to Presence Method is a way of seeing what has been running beneath the surface, meeting it honestly, and learning to live from a deeper centre.</p>",
         "bridge": "This journey is supported by four areas of work: Identity Work, Inner Skills, Philosophy & Play, and Practices.",
         "secondary_cta_label": "Read about the method",
         "secondary_cta_link": "/pages/the-performance-to-presence-method",
@@ -202,7 +202,7 @@
         "color_scheme": "scheme-3",
         "overline": "Ways in",
         "heading": "Ways this work often begins",
-        "intro": "This is one body of work. These are simply different places people often enter from.",
+        "intro": "This is one body of work. The entry point changes. What is being developed does not.",
         "cta_label": "Book a private conversation",
         "cta_link": "shopify://pages/book-a-call"
       }
