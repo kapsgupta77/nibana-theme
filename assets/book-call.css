@@ -1,140 +1,316 @@
 /* ===========================
-   NIBANA — Book a Call visual harmonisation
-   Scoped to templates/page.book-call.json via main[data-template].
+   NIBANA — Book a Call (scoped)
+   Loads only on this page via the <link> you added.
    =========================== */
 
 main[data-template="page.book-call"]{
-  --nb-book-ink:#223238;
-  --nb-book-muted:#55656c;
-  --nb-book-cream:#f7f1e8;
-  --nb-book-stone:#ebe3d8;
-  --nb-book-sage:#eaf4f3;
-  --nb-book-shell:#e5e8e1;
-  --nb-book-deep:#223238;
-  --nb-book-teal:#10636c;
-  --nb-book-chocolate:var(--nb-chocolate,#c86b2a);
-  --nb-book-chocolate-dark:var(--nb-choc-600,#9e4e19);
-  --nb-book-shell-w:min(1160px,94vw);
-  --nb-book-radius:28px;
-  --nb-book-card-radius:18px;
-  --nb-book-hairline:rgba(34,50,56,.13);
-  --nb-book-shadow:0 26px 70px rgba(34,50,56,.13),0 2px 12px rgba(34,50,56,.06);
-  background:var(--nb-book-cream);
-  color:var(--nb-book-ink);
+  /* tokens */
+  --nb-card-bg: #ffffff;
+  --nb-card-radius: 16px;
+  --nb-card-shadow: 0 10px 28px rgba(0,0,0,.06);
+  --nb-card-shadow-2: 0 6px 20px rgba(0,0,0,.10);
+  --nb-pill: 9999px;
+  --nb-teal: var(--nb-teal, #0c5e63);
+  --nb-choc: var(--nb-chocolate, #c86b2a);
+  --nb-choc-600: var(--nb-choc-600, #a8561e);
+  --nb-pebble: var(--color-base-background-2, #e6ece9);
 }
 
-main[data-template="page.book-call"] .shopify-section{ overflow:clip; }
-main[data-template="page.book-call"] :is(h1,h2,.nb-title,.nb-h2){ font-family:var(--font-heading--family); letter-spacing:-.035em; font-weight:500; }
-main[data-template="page.book-call"] :is(p,li,.rte){ line-height:1.7; }
-main[data-template="page.book-call"] :is(a.button,button.button,.btn,.nb-cta){
-  min-height:48px; padding:0 24px !important; border-radius:999px !important; display:inline-flex; align-items:center; justify-content:center;
-  background:var(--nb-book-chocolate) !important; border:1px solid var(--nb-book-chocolate) !important; color:#fff !important;
-  font-family:var(--font-body--family); font-size:var(--nb-home-type-button,15px); font-weight:700; text-decoration:none; box-shadow:none !important;
-  transition:background-color .18s ease, border-color .18s ease, transform .18s ease;
+/* 1) HERO — keep section full-bleed; chocolate CTA */
+main[data-template="page.book-call"] .hero-wrapper,
+main[data-template="page.book-call"] .section.hero-wrapper{
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+  max-width: 100vw;
 }
-main[data-template="page.book-call"] :is(a.button,button.button,.btn,.nb-cta):hover{ background:var(--nb-book-chocolate-dark) !important; border-color:var(--nb-book-chocolate-dark) !important; transform:translateY(-1px); }
 
-/* Hero: editorial split, existing Kapil image retained. */
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"]{ background:var(--nb-book-deep) !important; padding:0 !important; }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] .hero-wrapper,
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] .hero{ max-width:var(--nb-book-shell-w); margin-inline:auto; min-height:clamp(540px,66vw,720px); }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] :is(.hero__container,.hero__content,.group-block){ padding:clamp(44px,7vw,96px) clamp(20px,4vw,56px) !important; }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] :is(img,picture,video){ border-radius:0; filter:saturate(.88) contrast(.95) brightness(.82); }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] :is(.hero__media,.media){ position:relative; }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] :is(.hero__media,.media)::after{ content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(247,241,232,.10),rgba(16,99,108,.18) 48%,rgba(25,23,20,.24)); pointer-events:none; }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] h1,
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] [class*="text"] strong{ color:var(--nb-book-cream); font-family:var(--font-heading--family); font-size:clamp(44px,5vw,76px); line-height:.96; letter-spacing:-.045em; font-weight:500; }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] p{ color:rgba(247,241,232,.82); max-width:42ch; font-size:var(--nb-home-type-body,17px); }
-main[data-template="page.book-call"] [id$="__hero_AqTf8H"] .button::after{ content:"No pressure. No pitch."; margin-left:18px; color:rgba(247,241,232,.68); font-size:13px; font-weight:600; }
-
-/* Section rhythm and editorial cards. */
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"],
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"],
-main[data-template="page.book-call"] [id$="__custom_liquid_KVph3d"],
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"],
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"],
-main[data-template="page.book-call"] [id$="__section_keMyKD"]{ padding:clamp(72px,8vw,120px) 20px !important; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"]{ background:var(--nb-book-cream) !important; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-multicol{ max-width:var(--nb-book-shell-w); margin-inline:auto; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-multicol__header{ max-width:520px; margin:0 0 clamp(32px,4vw,52px); text-align:left; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-overline,
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-sub{ color:rgba(34,50,56,.58); letter-spacing:.16em; text-transform:uppercase; font-size:var(--nb-home-type-overline,12px); font-weight:650; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-title{ color:var(--nb-book-ink); font-size:clamp(var(--nb-home-type-section-heading,32px),4vw,58px); line-height:.98; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-grid{ max-width:var(--nb-book-shell-w); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; border:1px solid var(--nb-book-hairline); background:transparent !important; border-radius:0; box-shadow:none; padding:0; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-card{ background:transparent !important; border:0; border-right:1px solid var(--nb-book-hairline); border-radius:0; box-shadow:none !important; padding:clamp(28px,3.4vw,46px) !important; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-card:last-child{ border-right:0; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-card::before{ counter-increment:book-step; content:"0" counter(book-step); display:block; margin-bottom:clamp(34px,4vw,54px); color:rgba(34,50,56,.28); font-family:var(--font-heading--family); font-size:18px; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-grid{ counter-reset:book-step; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-card__title{ color:var(--nb-book-ink); font-family:var(--font-heading--family); font-size:clamp(22px,2vw,30px); line-height:1.08; font-weight:500; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] ul{ margin-top:18px !important; padding-left:1.1em !important; list-style:disc !important; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] li{ padding:0 !important; margin:.45em 0; }
-main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] li::before{ content:none !important; }
-
-/* Calendly: intentional tray without changing embed/tracking. */
-main[data-template="page.book-call"] [id$="__custom_liquid_KVph3d"]{ background:var(--nb-book-stone) !important; }
-main[data-template="page.book-call"] .nb-cal-wrap{ max-width:var(--nb-book-shell-w); margin-inline:auto; padding:clamp(14px,2vw,24px); border:1px solid rgba(34,50,56,.10); border-radius:var(--nb-book-radius); background:rgba(247,241,232,.76); box-shadow:var(--nb-book-shadow); }
-main[data-template="page.book-call"] .calendly-inline-widget{ width:100% !important; min-width:0 !important; height:740px !important; margin:0 !important; background:#fff; border-radius:20px; overflow:hidden; }
-main[data-template="page.book-call"] .calendly-inline-widget iframe{ border-radius:20px; }
-
-/* Suitability: deep calm section, checklist + featured quote feel without new markup. */
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"]{ background:var(--nb-book-deep) !important; color:var(--nb-book-cream); }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"]{ max-width:none !important; border-radius:0 !important; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-wrap{ max-width:var(--nb-book-shell-w); margin-inline:auto; padding:0; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-grid{ display:grid; grid-template-columns:minmax(0,.95fr) minmax(320px,.75fr); gap:clamp(42px,7vw,92px); align-items:center; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-h2{ color:var(--nb-book-cream); font-size:clamp(var(--nb-home-type-section-heading,32px),4.2vw,64px); line-height:1; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-card{ background:transparent !important; border:0; box-shadow:none !important; padding:0 !important; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-list{ margin:clamp(28px,3vw,44px) 0 0 !important; padding:0 !important; list-style:none !important; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-list li{ color:rgba(247,241,232,.82); border-top:1px solid rgba(247,241,232,.12); padding:16px 0 16px 30px !important; position:relative; }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-list li::before{ content:"✓" !important; position:absolute; left:0; color:rgba(247,241,232,.56); }
-main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-grid::after{ content:"“The sessions have made me unshakeable, and have given me a mature worldview on relationships.”\A\A TANUJ KALIA · CEO, LAVOWORLD · INDIA"; white-space:pre-line; display:block; align-self:center; padding:clamp(28px,4vw,52px); border-top:1px solid rgba(247,241,232,.18); color:var(--nb-book-cream); font-family:var(--font-heading--family); font-size:clamp(22px,2.2vw,34px); line-height:1.38; }
-
-/* Testimonials: use existing homepage editorial-dark treatment/source. */
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"]{ background:var(--nb-book-cream) !important; padding-inline:0 !important; }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark{ background:transparent; color:var(--nb-book-ink); padding:0 20px; }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark .nb-testimonials__title{ color:var(--nb-book-ink); max-width:760px; margin-inline:auto; }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark .nb-tgrid{ border-color:var(--nb-book-hairline) !important; }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark .nb-tcard{ color:var(--nb-book-ink); border-color:var(--nb-book-hairline) !important; }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark .nb-tcard__quote{ color:var(--nb-book-ink); }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark .nb-tcard__meta{ border-color:var(--nb-book-hairline); }
-main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"] .nb-testimonials--editorial-dark :is(.nb-tcard__name,.nb-tcard__title,.nb-tcard__loc){ color:rgba(34,50,56,.68); }
-
-/* FAQ: keep nb-faq mechanism; only contextual spacing/surface. */
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"]{ background:var(--nb-book-stone) !important; }
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__wrap--tray{ display:grid; grid-template-columns:minmax(260px,.55fr) 1fr; gap:clamp(34px,6vw,88px); background:transparent; box-shadow:none; padding:0; border-radius:0; }
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__title{ text-align:left; margin:0; color:var(--nb-book-ink); font-size:clamp(var(--nb-home-type-section-heading,32px),3.5vw,54px); line-height:1; }
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__item{ background:transparent; border-bottom:1px solid rgba(34,50,56,.14); border-radius:0; box-shadow:none; margin:0; }
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__q{ background:transparent; color:var(--nb-book-ink); border-radius:0; box-shadow:none; padding:22px 48px 22px 0; }
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__q:hover{ background:transparent; }
-main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__a{ margin:0 0 20px; background:rgba(247,241,232,.55); border:1px solid rgba(34,50,56,.08); }
-
-/* Final CTA: grounded split panel with existing image. */
-main[data-template="page.book-call"] [id$="__section_keMyKD"]{ background:var(--nb-book-deep) !important; color:var(--nb-book-cream); }
-main[data-template="page.book-call"] [id$="__section_keMyKD"] > :first-child{ max-width:var(--nb-book-shell-w); margin-inline:auto; display:grid; grid-template-columns:minmax(300px,.9fr) 1fr; gap:0; align-items:stretch; border-left:1px solid rgba(247,241,232,.10); border-right:1px solid rgba(247,241,232,.10); }
-main[data-template="page.book-call"] [id$="__section_keMyKD"] :is(.image-block,[class*="image-block"]){ min-height:360px; background:#0f1416; }
-main[data-template="page.book-call"] [id$="__section_keMyKD"] :is(.image-block,[class*="image-block"]) img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.82) brightness(.70); }
-main[data-template="page.book-call"] [id$="__section_keMyKD"] :is(.group-block,[class*="group"]){ padding:clamp(44px,7vw,92px) !important; align-self:center; }
-main[data-template="page.book-call"] [id$="__section_keMyKD"] h2{ color:var(--nb-book-cream); font-size:clamp(42px,4.6vw,72px); line-height:.98; }
-
-@media (max-width: 989px){
-  main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-grid,
-  main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-grid,
-  main[data-template="page.book-call"] [id$="__nb_faq_drwekh"] .nb-faq__wrap--tray,
-  main[data-template="page.book-call"] [id$="__section_keMyKD"] > :first-child{ grid-template-columns:1fr; }
-  main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-card{ border-right:0; border-bottom:1px solid var(--nb-book-hairline); }
-  main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"] .nb-card:last-child{ border-bottom:0; }
-  main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-grid::after{ margin-top:16px; }
-  main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"] .nbm-grid{ grid-template-columns:1fr; }
+main[data-template="page.book-call"] .hero-wrapper :is(a.button, .btn, button){
+  background: var(--nb-choc) !important;
+  color: #fff !important;
+  border: 2px solid var(--nb-choc) !important;
+  border-radius: var(--nb-pill) !important;
+  padding: 10px 22px !important;
+  box-shadow: var(--nb-card-shadow) !important;
+  transition: transform .08s ease, box-shadow .2s ease, background-color .15s ease;
 }
+main[data-template="page.book-call"] .hero-wrapper :is(a.button, .btn, button):hover{
+  background: var(--nb-choc-600) !important;
+  border-color: var(--nb-choc-600) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--nb-card-shadow-2) !important;
+}
+
+/* 2) MULTICOLUMN SECTIONS — clear rhythm + cards */
+main[data-template="page.book-call"] [id*="__nb_multicol_"]{
+  padding-top: clamp(28px, 4vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 56px);
+  background: transparent; /* default */
+}
+/* alternate background for visual rhythm */
+main[data-template="page.book-call"] [id*="__nb_multicol_"]:nth-of-type(odd){
+  background: var(--nb-pebble);
+}
+
+/* card surface inside multicol */
+main[data-template="page.book-call"] [id*="__nb_multicol_"] :is(.card, .multicolumn-card, .column, .block){
+  background: var(--nb-card-bg);
+  border-radius: var(--nb-card-radius);
+  box-shadow: var(--nb-card-shadow);
+  overflow: hidden;
+}
+
+/* Headline colour for these blocks */
+main[data-template="page.book-call"] [id*="__nb_multicol_"] :is(h2,.title){
+  color: var(--nb-teal);
+}
+
+/* 3) “IS THIS FOR YOU?” — simple checklist, no mini pills */
+main[data-template="page.book-call"] [id*="__nb_multicol_"] ul{
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+main[data-template="page.book-call"] [id*="__nb_multicol_"] ul li{
+  background: transparent;           /* revert from pill look */
+  border-radius: 0;
+  box-shadow: none;
+  padding: 10px 8px 10px 28px;
+  position: relative;
+}
+main[data-template="page.book-call"] [id*="__nb_multicol_"] ul li::before{
+  content: "✔";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  opacity: .6;
+}
+
+/* 4) CALENDLY — responsive white card (no forced desktop) */
+main[data-template="page.book-call"] .calendly-inline-widget{
+  width: 100%;
+  max-width: min(1040px, 94vw);
+  margin: 32px auto;
+  background: #fff;
+  border-radius: var(--nb-card-radius);
+  box-shadow: var(--nb-card-shadow);
+  min-height: 760px;
+  overflow: hidden;
+  min-width: 0; /* critical: allow Calendly to switch to mobile layout */
+}
+
+/* Ensure the embed iframe fills and inherits rounding */
+main[data-template="page.book-call"] .calendly-inline-widget iframe{
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--nb-card-radius);
+}
+
 @media (max-width: 749px){
-  main[data-template="page.book-call"] [id$="__hero_AqTf8H"] .hero-wrapper,
-  main[data-template="page.book-call"] [id$="__hero_AqTf8H"] .hero{ min-height:auto; }
-  main[data-template="page.book-call"] [id$="__hero_AqTf8H"] .button::after{ display:none; }
-  main[data-template="page.book-call"] [id$="__nb_multicol_tQXMEW"],
-  main[data-template="page.book-call"] [id$="__cards_multicol_list_nibana_E8DyQJ"],
-  main[data-template="page.book-call"] [id$="__custom_liquid_KVph3d"],
-  main[data-template="page.book-call"] [id$="__testimonials_BWp3qd"],
-  main[data-template="page.book-call"] [id$="__nb_faq_drwekh"],
-  main[data-template="page.book-call"] [id$="__section_keMyKD"]{ padding:clamp(54px,13vw,76px) 18px !important; }
-  main[data-template="page.book-call"] .calendly-inline-widget{ height:980px !important; }
-  main[data-template="page.book-call"] [id$="__section_keMyKD"] :is(.image-block,[class*="image-block"]){ min-height:260px; }
+  main[data-template="page.book-call"] .calendly-inline-widget{
+    min-height: 1000px;
+  }
+}
+
+/* 5) TESTIMONIALS — contained, no arrows if 3 fit */
+main[data-template="page.book-call"] [id*="__testimonials_"]{
+  background: var(--nb-pebble);
+  padding-top: 36px;
+  padding-bottom: 40px;
+}
+main[data-template="page.book-call"] [id*="__testimonials_"] .page-width,
+main[data-template="page.book-call"] [id*="__testimonials_"] .content,
+main[data-template="page.book-call"] [id*="__testimonials_"] > div{
+  max-width: 1200px;
+  margin-inline: auto;
+}
+main[data-template="page.book-call"] [id*="__testimonials_"] :is(.slider-buttons, [class*="slider-button"], [class*="flickity-button"], [class*="swiper-button"]){
+  display: none !important;
+}
+main[data-template="page.book-call"] [id*="__testimonials_"] :is(.testimonial, .card){
+  background: #fff;
+  border-radius: var(--nb-card-radius);
+  box-shadow: var(--nb-card-shadow);
+}
+
+/* 6) FAQ — pill cards similar to home */
+main[data-template="page.book-call"] details{
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--nb-card-shadow);
+  margin: 10px 0;
+  overflow: hidden;
+}
+main[data-template="page.book-call"] details > summary{
+  cursor: pointer;
+  padding: 16px 18px;
+  font-weight: 600;
+}
+main[data-template="page.book-call"] details[open] > summary{
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+main[data-template="page.book-call"] details > *:not(summary){
+  padding: 16px 18px;
+}
+/* 7) READY TO TALK — chocolate CTA, contained section */
+main[data-template="page.book-call"] [id*="__image_with_text"],
+main[data-template="page.book-call"] [id*="__section_keMyKD"]{
+  background: var(--nb-pebble);
+}
+main[data-template="page.book-call"] [id*="__image_with_text"] :is(a.button, .btn, button),
+main[data-template="page.book-call"] [id*="__section_keMyKD"] :is(a.button, .btn, button){
+  background: var(--nb-choc) !important;
+  color: #fff !important;
+  border: 2px solid var(--nb-choc) !important;
+  border-radius: var(--nb-pill) !important;
+  padding: 10px 22px !important;
+  box-shadow: var(--nb-card-shadow) !important;
+}
+/* ===========================
+   BOOK-A-CALL — READY TO TALK (robust selectors)
+   Works whether the outer wrapper is <div> or <section>.
+   =========================== */
+
+/* Kill full-bleed bg + add vertical rhythm */
+[id$="__section_keMyKD"]{
+  background: transparent !important;
+  padding: clamp(32px,4vw,64px) 0 !important;
+}
+
+/* Target the content container inside the section.
+   1) Prefer the standard .image-with-text wrapper
+   2) Fallback to the first direct child if your theme wraps it differently */
+[id$="__section_keMyKD"] .image-with-text,
+[id$="__section_keMyKD"] > :first-child{
+  max-width: min(1160px, 94vw) !important;
+  margin-inline: auto !important;
+
+  background: #E6ECEA !important;               /* soft tray */
+  border-radius: 18px !important;
+  box-shadow: 0 14px 36px rgba(0,0,0,.08) !important;
+  padding: clamp(24px,3vw,36px) !important;
+}
+
+/* Align the two columns nicely across theme variants */
+[id$="__section_keMyKD"] :is(.image-with-text__grid, .grid, .grid--2-col, .grid--2-col-tablet){
+  align-items: center !important;
+  gap: clamp(16px,2.5vw,32px) !important;
+}
+
+/* Media polish */
+[id$="__section_keMyKD"] :is(.image-with-text__media, .media){
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.06) !important;
+}
+[id$="__section_keMyKD"] :is(.image-with-text__media, .media) img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Typography stays in Ink */
+[id$="__section_keMyKD"] :is(h2, .image-with-text__heading){
+  color: #21323A !important;
+  margin-bottom: .5rem !important;
+}
+[id$="__section_keMyKD"] .image-with-text__text{
+  color: #384B53 !important;
+}
+
+/* ===========================
+   READY-TO-TALK CTA (book-call)
+   Round image + Hero-sized CTA
+   =========================== */
+
+/* Round & clip the image inside the builder's image-block */
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) picture,
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) img.image_block__image,
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) img.image-block__image{
+  border-radius: 18px !important;
+  overflow: hidden !important;     /* ensures corners are clipped */
+  display: block !important;
+}
+
+/* Optional soft lift on the photo */
+main[data-template="page.book-call"] :is(.image-block, [class*="image-block"], [class*="image_block"]) picture{
+  box-shadow: 0 10px 28px rgba(0,0,0,.08);
+}
+
+/* Make the CTA button match the Hero size/style */
+main[data-template="page.book-call"] :is(a,button)[class*="button"],
+main[data-template="page.book-call"] .btn{
+  font-size: clamp(17px, 2.1vw, 19px) !important;  /* same as Hero */
+  padding: 12px 24px !important;
+  border-radius: 9999px !important;
+  background: var(--nb-chocolate, #C86B2A) !important;
+  border-color: var(--nb-chocolate, #C86B2A) !important;
+  color: #fff !important;
+  line-height: 1.1 !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,.10) !important;
+  transition: background-color .15s ease, box-shadow .2s ease, transform .08s ease !important;
+}
+main[data-template="page.book-call"] :is(a,button)[class*="button"]:hover,
+main[data-template="page.book-call"] .btn:hover{
+  background: var(--nb-choc-600, #9E4E19) !important;
+  border-color: var(--nb-choc-600, #9E4E19) !important;
+  transform: translateY(-1px);
+}
+
+/* === CTA: small-screen niceties (stack + spacing) === */
+@media (max-width: 900px){
+  main[data-template="page.book-call"] .mobile--column{
+    gap: clamp(16px, 3vw, 24px) !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  main[data-template="page.book-call"] :is(a,button)[class*="button"], 
+  main[data-template="page.book-call"] .btn{
+    /* breathe a touch more on mobile */
+    padding: 13px 26px !important;
+  }
+  /* make sure the CTA image scales nicely */
+  main[data-template="page.book-call"] :is(.image-block, [class*="image-block"]) img{
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+}
+
+/* === Testimonials: hide nav arrows/dots on this page === */
+main[data-template="page.book-call"] [id*="__testimonials_"] :is(.flickity-button,.flickity-prev-next-button,.flickity-page-dots){
+  display: none !important;
+}
+
+/* === Calendly: inline on desktop, popup on phones === */
+.nb-cal-embed { width: 100%; display: grid; place-items: center; }
+
+.nb-cal-desktop {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.nb-cal-mobile-btn {
+  display: none;
+}
+
+@media (max-width: 768px){
+  .nb-cal-desktop { display: none !important; }
+  .nb-cal-mobile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    background: var(--nb-chocolate, #C86B2A);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  }
 }
