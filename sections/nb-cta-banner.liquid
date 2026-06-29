@@ -117,9 +117,9 @@
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__inner{ max-width: 760px; }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__heading{
     font-family: var(--font-heading--family);
-    font-size: var(--nb-home-type-section-heading);
-    line-height: 1.03;
-    letter-spacing: -0.032em;
+    font-size: clamp(var(--nb-home-type-section-heading),4.3vw,66px);
+    line-height: .98;
+    letter-spacing: -0.035em;
     font-weight: 500;
   }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__body{
