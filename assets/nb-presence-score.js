@@ -25,13 +25,19 @@
     const screens={landing:root.querySelector('[data-screen="landing"]'),quiz:root.querySelector('[data-screen="quiz"]'),email:root.querySelector('[data-screen="email"]'),loading:root.querySelector('[data-screen="loading"]'),results:root.querySelector('[data-screen="results"]')};
     const qEl=root.querySelector('[data-presence-question]'); const pEl=root.querySelector('[data-presence-progress]');
     let questions=[]; let state={index:0,answers:[]};
-    const show=name=>Object.keys(screens).forEach(k=>{ screens[k].hidden=k!==name; });
+    const show=name=>Object.keys(screens).forEach(k=>{
+      const isActive=k===name;
+      screens[k].hidden=!isActive;
+      screens[k].classList.toggle('is-active',isActive);
+    });
+    show('landing');
     const data=await fetch(cfg.dataUrl,{credentials:'same-origin'}).then(r=>r.json()); questions=data.questions||[];
     try{ state.answers=JSON.parse(localStorage.getItem(KEYS.answers)||'[]'); }catch(_){ }
     const start=root.querySelector('[data-presence-start]');
     start&&start.addEventListener('click',()=>{ state={index:0,answers:[]}; try{localStorage.setItem(KEYS.started,new Date().toISOString());localStorage.setItem(KEYS.answers,'[]');}catch(_){} track('presence_score_started'); show('quiz'); renderQuestion(); });
     root.querySelector('[data-presence-back-email]')?.addEventListener('click',()=>{ state.index=7; show('quiz'); renderQuestion(); });
     root.querySelector('.nb-presence-score__form')?.addEventListener('submit',onEmail);
+    root.querySelector('[data-presence-skip-email]')?.addEventListener('click',skipEmail);
     function renderQuestion(){
       const q=questions[state.index]; if(!q)return;
       const pct=Math.round((state.index/questions.length)*100); pEl.style.width=pct+'%';
@@ -40,9 +46,23 @@
       qEl.querySelectorAll('[data-value]').forEach(btn=>btn.addEventListener('click',()=>{ state.answers[state.index]=Number(btn.dataset.value); try{localStorage.setItem(KEYS.answers,JSON.stringify(state.answers));}catch(_){} if(state.index===7){ show('email'); return; } if(state.index<questions.length-1){ state.index++; renderQuestion(); } else complete(); }));
     }
     function onEmail(e){
-      e.preventDefault(); const input=root.querySelector('[data-presence-email]'); if(!input.checkValidity()){ input.reportValidity(); return; }
-      const email=input.value.trim(); try{localStorage.setItem(KEYS.email,email);}catch(_){} track('presence_score_email_submitted',{email_domain:(email.split('@')[1]||'').toLowerCase()}); submitKit({email,quiz_started:'true'}); state.index=8; show('quiz'); renderQuestion();
+      e.preventDefault();
+      const input=root.querySelector('[data-presence-email]');
+      if(!input)return;
+      const email=input.value.trim();
+      if(!input.checkValidity()){ input.reportValidity(); return; }
+      try{localStorage.setItem(KEYS.email,email);}catch(_){}
+      track('presence_score_email_submitted',{email_domain:(email.split('@')[1]||'').toLowerCase()});
+      submitKit({email,quiz_started:'true'});
+      continueAfterEmail();
     }
+    function skipEmail(){
+      if(!cfg.allowSkipEmail)return;
+      try{localStorage.removeItem(KEYS.email);}catch(_){}
+      track('presence_score_email_skipped');
+      continueAfterEmail();
+    }
+    function continueAfterEmail(){ state.index=8; show('quiz'); renderQuestion(); }
     function calculate(){
       const a=state.answers.map(Number); const sum=(s,e)=>a.slice(s,e).reduce((x,y)=>x+(y||0),0);
       const identity=sum(0,4), presence=sum(4,8), desire=sum(8,12), aliveness=sum(12,15), raw=identity+presence+desire+aliveness;
