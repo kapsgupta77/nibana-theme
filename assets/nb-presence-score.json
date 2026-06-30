@@ -1,0 +1,409 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "dimension": "Identity",
+      "prompt": "When you snap, go cold, over-explain, or agree to something you already know you will resent, when do you usually see what is happening?",
+      "options": [
+        {
+          "value": 1,
+          "label": "I rarely see it at all."
+        },
+        {
+          "value": 2,
+          "label": "I usually see it much later."
+        },
+        {
+          "value": 3,
+          "label": "I see it once I have calmed down."
+        },
+        {
+          "value": 4,
+          "label": "I often see it while it is happening."
+        },
+        {
+          "value": 5,
+          "label": "I can usually see it and choose differently."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "Identity",
+      "prompt": "When you look at your ambition, standards, relationship patterns, and daily life, how often can you tell what is genuinely yours and what you inherited?",
+      "options": [
+        {
+          "value": 1,
+          "label": "I rarely question it. I mostly live what was expected."
+        },
+        {
+          "value": 2,
+          "label": "I can see some of it, usually after the fact."
+        },
+        {
+          "value": 3,
+          "label": "I can tell the difference in some areas."
+        },
+        {
+          "value": 4,
+          "label": "I can usually feel what is mine and what is inherited."
+        },
+        {
+          "value": 5,
+          "label": "I can see the inheritance clearly and choose from what is genuinely mine."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "Identity",
+      "prompt": "When the same difficulty keeps returning, where does your attention usually go first?",
+      "options": [
+        {
+          "value": 1,
+          "label": "To what other people are doing wrong."
+        },
+        {
+          "value": 2,
+          "label": "Mostly to blame, frustration, or defence."
+        },
+        {
+          "value": 3,
+          "label": "Some blame, some self-inquiry."
+        },
+        {
+          "value": 4,
+          "label": "To what is mine to see or change."
+        },
+        {
+          "value": 5,
+          "label": "To what is mine, what is theirs, and what reality is showing me."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "dimension": "Identity",
+      "prompt": "When there is no role to fill, no one to impress, and nothing to achieve, how clear are you about who is actually there?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Not clear. It feels uncomfortable."
+        },
+        {
+          "value": 2,
+          "label": "I get glimpses, but I avoid staying there."
+        },
+        {
+          "value": 3,
+          "label": "Somewhat clear."
+        },
+        {
+          "value": 4,
+          "label": "Mostly clear."
+        },
+        {
+          "value": 5,
+          "label": "Clear enough that I do not need performance to feel real."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "dimension": "Presence",
+      "prompt": "When someone says something that stings, how much space is there between what you feel and what you do next?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Almost none. I react immediately."
+        },
+        {
+          "value": 2,
+          "label": "Very little. I usually realise after."
+        },
+        {
+          "value": 3,
+          "label": "Some. I catch myself occasionally."
+        },
+        {
+          "value": 4,
+          "label": "Usually enough to pause."
+        },
+        {
+          "value": 5,
+          "label": "Enough to feel it, stay present, and choose my response."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "dimension": "Presence",
+      "prompt": "Before a difficult meeting, avoided conversation, or decision that feels wrong, how often do you notice what your body already knows?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Rarely. I push straight through."
+        },
+        {
+          "value": 2,
+          "label": "Occasionally."
+        },
+        {
+          "value": 3,
+          "label": "Sometimes."
+        },
+        {
+          "value": 4,
+          "label": "Often."
+        },
+        {
+          "value": 5,
+          "label": "Consistently. My body is part of how I read reality."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "dimension": "Presence",
+      "prompt": "When you sense something unspoken in someone close to you, what do you usually do?",
+      "options": [
+        {
+          "value": 1,
+          "label": "I miss it or ignore it."
+        },
+        {
+          "value": 2,
+          "label": "I sense something, but avoid naming it."
+        },
+        {
+          "value": 3,
+          "label": "I assume I know what is happening."
+        },
+        {
+          "value": 4,
+          "label": "I stay curious and check rather than assume."
+        },
+        {
+          "value": 5,
+          "label": "I can sense, check cleanly, and let them have their reality."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "dimension": "Presence",
+      "prompt": "In a high-stakes moment, how much of you is genuinely present rather than managing how you are coming across?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Almost all of me is managing the impression."
+        },
+        {
+          "value": 2,
+          "label": "More managing than being present."
+        },
+        {
+          "value": 3,
+          "label": "About half and half."
+        },
+        {
+          "value": 4,
+          "label": "Mostly present."
+        },
+        {
+          "value": 5,
+          "label": "I can stay real even when I am being watched or challenged."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "dimension": "Desire",
+      "prompt": "When you look at what you are chasing now, how much of it comes from genuine desire rather than proving something?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Almost all of it is about proving."
+        },
+        {
+          "value": 2,
+          "label": "More proving than genuine desire."
+        },
+        {
+          "value": 3,
+          "label": "About half and half."
+        },
+        {
+          "value": 4,
+          "label": "Mostly genuine desire."
+        },
+        {
+          "value": 5,
+          "label": "I can feel the difference and choose from what is true."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "dimension": "Desire",
+      "prompt": "In the last month, how much of your time, attention, and energy went toward what you actually want?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Very little. Most went to obligation, maintenance, or expectation."
+        },
+        {
+          "value": 2,
+          "label": "Some, but less than I would like."
+        },
+        {
+          "value": 3,
+          "label": "About half."
+        },
+        {
+          "value": 4,
+          "label": "Most of it."
+        },
+        {
+          "value": 5,
+          "label": "My time, attention, and energy are increasingly shaped by what is real for me."
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "dimension": "Desire",
+      "prompt": "When you complain about the pace, the relationship, the work, or the life you have built, what usually happens next?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Nothing. The complaint repeats."
+        },
+        {
+          "value": 2,
+          "label": "I vent, then return to the same pattern."
+        },
+        {
+          "value": 3,
+          "label": "I sometimes see what the complaint is pointing to."
+        },
+        {
+          "value": 4,
+          "label": "I often use it to find what I actually want or need to face."
+        },
+        {
+          "value": 5,
+          "label": "Complaint quickly becomes information, choice, or action."
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "dimension": "Desire",
+      "prompt": "When life interrupts your plan, what usually happens to your desire?",
+      "options": [
+        {
+          "value": 1,
+          "label": "I lose contact with it and go into survival."
+        },
+        {
+          "value": 2,
+          "label": "I become rigid and try to force the old plan."
+        },
+        {
+          "value": 3,
+          "label": "I adjust, but it costs me a lot."
+        },
+        {
+          "value": 4,
+          "label": "I stay connected to what matters and adapt."
+        },
+        {
+          "value": 5,
+          "label": "I let the interruption reveal a more honest desire."
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "dimension": "Aliveness",
+      "prompt": "After a long stretch of high output, what actually brings you back to yourself?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Nothing reliable. I just wait until I recover."
+        },
+        {
+          "value": 2,
+          "label": "Rest helps, but I do not feel truly restored."
+        },
+        {
+          "value": 3,
+          "label": "A few things help, but they are inconsistent."
+        },
+        {
+          "value": 4,
+          "label": "I have practices that reliably restore me."
+        },
+        {
+          "value": 5,
+          "label": "I know how to return to my body, energy, and clarity."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "dimension": "Aliveness",
+      "prompt": "You can probably name the pattern that keeps showing up under pressure. How often does knowing it actually change how you live?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Rarely. Knowing and changing feel separate."
+        },
+        {
+          "value": 2,
+          "label": "Occasionally."
+        },
+        {
+          "value": 3,
+          "label": "Sometimes."
+        },
+        {
+          "value": 4,
+          "label": "Often."
+        },
+        {
+          "value": 5,
+          "label": "Almost always. Insight moves into behaviour, body, and choice."
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "dimension": "Aliveness",
+      "prompt": "What happens to the resentment, grief, unfinished conversations, and old experiences you still carry?",
+      "options": [
+        {
+          "value": 1,
+          "label": "They mostly accumulate."
+        },
+        {
+          "value": 2,
+          "label": "Some fade, but little gets consciously cleared."
+        },
+        {
+          "value": 3,
+          "label": "Some gets worked through over time."
+        },
+        {
+          "value": 4,
+          "label": "Most of it gets faced and moved."
+        },
+        {
+          "value": 5,
+          "label": "I have reliable ways to clear what I carry."
+        }
+      ]
+    }
+  ]
+}

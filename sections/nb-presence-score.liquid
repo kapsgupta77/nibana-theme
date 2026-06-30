@@ -1,0 +1,97 @@
+{{ 'nb-presence-score.css' | asset_url | stylesheet_tag }}
+
+<section id="nb-presence-score-{{ section.id }}" class="nb-presence-score" data-section-id="{{ section.id }}">
+  <div class="nb-presence-score__app" data-presence-app>
+    <section class="nb-presence-score__screen nb-presence-score__landing" data-screen="landing">
+      <div class="nb-presence-score__landing-grid">
+        <div class="nb-presence-score__landing-copy">
+          <p class="nb-presence-score__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          <h1 class="nb-presence-score__title">{{ section.settings.title | escape }}</h1>
+          <p class="nb-presence-score__subhead">{{ section.settings.subhead | escape }}</p>
+          <div class="nb-presence-score__body rte">{{ section.settings.intro }}</div>
+          <button class="nb-presence-score__button" type="button" data-presence-start>{{ section.settings.start_label | escape }}</button>
+          <p class="nb-presence-score__note">{{ section.settings.footer_note | escape }}</p>
+        </div>
+        <aside class="nb-presence-score__receive" aria-label="What you will receive">
+          <p class="nb-presence-score__receive-kicker">What you will receive</p>
+          <h2>A score with four clear mirrors.</h2>
+          <ul>
+            <li><strong>Identity</strong><span>Scripts, roles, inherited standards, and protective strategies.</span></li>
+            <li><strong>Presence</strong><span>Your capacity to stay in contact under pressure.</span></li>
+            <li><strong>Desire</strong><span>What is genuinely wanted versus what is being proved.</span></li>
+            <li><strong>Aliveness</strong><span>How insight moves into body, rhythm, and restoration.</span></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="nb-presence-score__screen nb-presence-score__quiz" data-screen="quiz" hidden>
+      <div class="nb-presence-score__progress" aria-hidden="true"><span data-presence-progress></span></div>
+      <div class="nb-presence-score__panel" data-presence-question></div>
+    </section>
+
+    <section class="nb-presence-score__screen nb-presence-score__email" data-screen="email" hidden>
+      <div class="nb-presence-score__email-card">
+        <button class="nb-presence-score__back" type="button" data-presence-back-email>Back</button>
+        <p class="nb-presence-score__eyebrow">Halfway point</p>
+        <h2>You are halfway there.</h2>
+        <p>Where should we send your full breakdown?</p>
+        {% form 'customer', class: 'nb-presence-score__form' %}
+          <input type="hidden" name="contact[tags]" value="presence-score-quiz,quiz_started">
+          <input type="hidden" name="contact[note]" value="Presence Score quiz started">
+          <label class="visually-hidden" for="PresenceEmail-{{ section.id }}">Email address</label>
+          <input id="PresenceEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="Email address" required data-presence-email>
+          <button class="nb-presence-score__button" type="submit">Continue to my results</button>
+          {% if form.errors %}<div class="nb-presence-score__error">{{ form.errors | default_errors }}</div>{% endif %}
+        {% endform %}
+        <p class="nb-presence-score__subtext">Your score, your breakdown, and occasional writing worth reading. No spam. Unsubscribe any time.</p>
+      </div>
+    </section>
+
+    <section class="nb-presence-score__screen nb-presence-score__loading" data-screen="loading" hidden>
+      <div class="nb-presence-score__loading-inner">
+        <div class="nb-presence-score__loading-line"><span></span></div>
+        <p>Calculating your Presence Score...</p>
+      </div>
+    </section>
+
+    <section class="nb-presence-score__screen nb-presence-score__results" data-screen="results" hidden data-presence-results></section>
+  </div>
+
+  <script>
+    window.NB_PRESENCE_SCORE = window.NB_PRESENCE_SCORE || {};
+    window.NB_PRESENCE_SCORE['{{ section.id }}'] = {
+      dataUrl: {{ 'nb-presence-score.json' | asset_url | json }},
+      bookCallUrl: {{ section.settings.book_url | json }},
+      surgeUrl: {{ section.settings.surge_url | json }},
+      methodUrl: {{ section.settings.method_url | json }},
+      courseUrl: {{ section.settings.course_url | json }},
+      lifeWheelUrl: {{ section.settings.life_url | json }},
+      uneditedUrl: {{ section.settings.unedited_url | json }},
+      kitFormUrl: {{ section.settings.kit_url | json }}
+    };
+  </script>
+  <script src="{{ 'nb-presence-score.js' | asset_url }}" defer></script>
+</section>
+
+{% schema %}
+{
+  "name": "NB Presence Score",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Assessment" },
+    { "type": "text", "id": "title", "label": "Title", "default": "The Presence Score" },
+    { "type": "text", "id": "subhead", "label": "Subhead", "default": "Where is performance still running your life?" },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Fifteen questions. Seven minutes. You will get a clear score and a personalised breakdown across four dimensions of the Performance to Presence method.</p><p>This is not a personality type. It is a mirror for the places where performance is still running your life, and where something more honest is beginning to emerge.</p>" },
+    { "type": "text", "id": "start_label", "label": "Start label", "default": "Begin the assessment" },
+    { "type": "text", "id": "footer_note", "label": "Footer note", "default": "For founders, executives, and men doing real work on themselves. No personality type. No flattery. Just a clear mirror." },
+    { "type": "url", "id": "book_url", "label": "Book call URL", "default": "/pages/book-a-call" },
+    { "type": "url", "id": "surge_url", "label": "Surge URL", "default": "/pages/surge-signature" },
+    { "type": "url", "id": "method_url", "label": "P2P method URL", "default": "/pages/the-performance-to-presence-method" },
+    { "type": "url", "id": "course_url", "label": "P2P course URL" },
+    { "type": "url", "id": "life_url", "label": "Life Wheel URL" },
+    { "type": "url", "id": "unedited_url", "label": "Unedited Life URL" },
+    { "type": "url", "id": "kit_url", "label": "Kit form URL" }
+  ],
+  "presets": [{ "name": "NB Presence Score" }]
+}
+{% endschema %}
