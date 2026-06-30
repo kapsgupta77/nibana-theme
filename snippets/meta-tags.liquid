@@ -105,6 +105,18 @@
   <meta name="robots" content="noindex, follow">
 {%- endif -%}
 
+{%- if template == 'collection' and collection.handle == 'all' -%}
+  <meta name="robots" content="noindex, follow">
+{%- elsif template == 'page' and page.handle == 'surge-accelerator' -%}
+  <meta name="robots" content="noindex, follow">
+{%- elsif template == 'page' and page.handle == 'surge-defuser' -%}
+  <meta name="robots" content="noindex, follow">
+{%- elsif template == 'page' and page.handle == 'surge-stabiliser' -%}
+  <meta name="robots" content="noindex, follow">
+{%- elsif template == 'page' and page.handle == 'surge-signature-result' -%}
+  <meta name="robots" content="noindex, follow">
+{%- endif -%}
+
 {%- liquid
   assign effective_page_title = page_title
   if request.page_type == 'page' and template.suffix == 'contact'
