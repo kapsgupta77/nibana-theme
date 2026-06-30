@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "nb-presence-score",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
