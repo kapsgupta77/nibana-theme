@@ -7,6 +7,7 @@
 
 {%- liquid
   assign heading    = section.settings.heading | default: ''
+  assign overline   = section.settings.overline | default: ''
   assign body       = section.settings.body
   assign btn_label  = section.settings.button_label | default: ''
   assign btn_link   = section.settings.button_link | default: ''
@@ -16,11 +17,12 @@
   assign btn_hover  = section.settings.button_hover_color | default: '#07494f'
   assign btn_txt    = section.settings.button_text_color | default: '#ffffff'
   assign card_on    = section.settings.card_on
+  assign show_divider = section.settings.show_top_divider
 -%}
 
 <section
   id="nb-cta-banner-{{ section.id }}"
-  class="nb-cta-banner {% if card_on %}nb-cta-banner--card{% endif %} {% if section.settings.editorial_style %}nb-cta-banner--editorial{% endif %}"
+  class="nb-cta-banner {% if card_on %}nb-cta-banner--card{% endif %} {% if section.settings.editorial_style %}nb-cta-banner--editorial{% endif %} {% if show_divider %}nb-cta-banner--divider{% endif %}"
   style="
     --nb-ctab-bg: {{ bg }};
     --nb-ctab-txt: {{ txt }};
@@ -33,6 +35,9 @@
 >
   <div class="nb-cta-banner__wrap">
     <div class="nb-cta-banner__inner">
+      {%- if overline != blank -%}
+        <p class="nb-cta-banner__overline">{{ overline | escape }}</p>
+      {%- endif -%}
       {%- if heading != blank -%}
         <h2 class="nb-cta-banner__heading">{{ heading }}</h2>
       {%- endif -%}
@@ -111,10 +116,24 @@
   #nb-cta-banner-{{ section.id }} .nb-cta-banner__btn:hover{
     background: var(--nb-ctab-btn-hover);
   }
-  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__wrap{
-    padding: clamp(70px, 8vw, 118px) clamp(20px, 4vw, 40px);
+  #nb-cta-banner-{{ section.id }} .nb-cta-banner__overline{
+    font-family: var(--font-body--family);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #10636c;
+    margin: 0 0 20px;
   }
-  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__inner{ max-width: 760px; }
+
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--divider .nb-cta-banner__wrap{
+    border-top: 1px solid rgba(47,62,72,.18);
+  }
+
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__wrap{
+    padding: clamp(48px, 5.5vw, 80px) clamp(20px, 4vw, 40px);
+  }
+  #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__inner{ max-width: 640px; }
   #nb-cta-banner-{{ section.id }}.nb-cta-banner--editorial .nb-cta-banner__heading{
     font-family: var(--font-heading--family);
     font-size: clamp(var(--nb-home-type-section-heading),4.3vw,66px);
@@ -133,6 +152,7 @@
   "tag": "section",
   "class": "nb-cta-banner-section",
   "settings": [
+    { "type": "text", "id": "overline", "label": "Overline" },
     { "type": "text", "id": "heading", "label": "Heading" },
     { "type": "richtext", "id": "body", "label": "Body text" },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Book a Free Call" },
@@ -141,6 +161,7 @@
     { "type": "header", "content": "Floating card container" },
     { "type": "checkbox", "id": "card_on", "label": "Wrap in floating card", "default": false },
     { "type": "checkbox", "id": "editorial_style", "label": "Use editorial homepage typography", "default": false },
+    { "type": "checkbox", "id": "show_top_divider", "label": "Show top divider line", "default": false },
 
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#EAF4F3" },

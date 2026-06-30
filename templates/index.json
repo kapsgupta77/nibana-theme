@@ -155,12 +155,14 @@
     "presence_score_strip": {
       "type": "nb-cta-banner",
       "settings": {
+        "overline": "Assessment",
         "heading": "Find your position on the map",
         "body": "<p>The Presence Score gives you a clear read on where performance is still running your life. Fifteen questions. Seven minutes.</p>",
         "button_label": "Take the Assessment",
         "button_link": "/pages/presence-score",
         "card_on": false,
         "editorial_style": true,
+        "show_top_divider": true,
         "bg_color": "#e3e4dc",
         "text_color": "#2f3e48",
         "button_color": "#10636c",
