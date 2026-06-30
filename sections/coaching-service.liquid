@@ -561,6 +561,59 @@
 })();
 </script>
 
+{%- comment -%} ========= PAGE BODY (SEO prose — renders page.content if set) ========= {%- endcomment -%}
+{%- if page.content != blank -%}
+<style>
+  .nb-page-body{
+    padding: clamp(18px,3vw,32px) 0 clamp(10px,2vw,18px);
+  }
+  .nb-page-body__content{
+    max-width: 740px;
+    margin-inline: auto;
+    color: var(--nb-muted, #324247);
+    line-height: 1.7;
+    font-family: var(--font-body-family, inherit);
+  }
+  .nb-page-body__content h2{
+    font-family: var(--font-heading-family, inherit);
+    color: var(--nb-ink, #223238);
+    font-size: clamp(20px,2.4vw,26px);
+    font-weight: 800;
+    margin: 1.4em 0 0.4em;
+  }
+  .nb-page-body__content h3{
+    font-family: var(--font-heading-family, inherit);
+    color: var(--nb-ink, #223238);
+    font-size: clamp(17px,2vw,21px);
+    font-weight: 700;
+    margin: 1.2em 0 0.35em;
+  }
+  .nb-page-body__content p{
+    margin: 0 0 1em;
+  }
+  .nb-page-body__content ul,
+  .nb-page-body__content ol{
+    padding-left: 1.4rem;
+    margin: 0 0 1em;
+  }
+  .nb-page-body__content a{
+    color: var(--nb-deep, #0F5B59);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .nb-page-body__content a:hover{
+    color: var(--nb-teal, #10636c);
+  }
+</style>
+<section class="nb-page-body">
+  <div class="nb-shell">
+    <div class="nb-page-body__content rte">
+      {{ page.content }}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
 {%- comment -%} ========= MAIN PAGE CONTENT ========= {%- endcomment -%}
 <section data-coaching-service="{{ service.id | default: service.title | escape }}">
 
