@@ -1,12 +1,35 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "nb-presence-score",
-      "settings": {}
+      "settings": {
+        "eyebrow": "Assessment",
+        "title": "The Presence Score",
+        "subhead": "Where is performance still running your life?",
+        "intro": "<p>Fifteen questions. Seven minutes. You will get a clear score and a personalised breakdown across four dimensions of the Performance to Presence method.</p><p>This is not a personality type. It is a mirror for the places where performance is still running your life, and where something more honest is beginning to emerge.</p>",
+        "start_label": "Begin the assessment",
+        "footer_note": "For founders, executives, and men doing real work on themselves. No personality type. No flattery. Just a clear mirror.",
+        "book_url": "shopify://pages/book-a-call",
+        "surge_url": "shopify://pages/surge-signature",
+        "method_url": "shopify://pages/the-performance-to-presence-method",
+        "course_url": "",
+        "life_url": "",
+        "unedited_url": "https://nibananotes.substack.com/",
+        "kit_url": "",
+        "allow_skip_email": true
+      }
     }
   },
   "order": [
     "main"
   ]
 }
-

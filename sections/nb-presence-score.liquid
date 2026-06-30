@@ -2,7 +2,7 @@
 
 <section id="nb-presence-score-{{ section.id }}" class="nb-presence-score" data-section-id="{{ section.id }}">
   <div class="nb-presence-score__app" data-presence-app>
-    <section class="nb-presence-score__screen nb-presence-score__landing" data-screen="landing">
+    <section class="nb-presence-score__screen nb-presence-score__landing is-active" data-screen="landing">
       <div class="nb-presence-score__landing-grid">
         <div class="nb-presence-score__landing-copy">
           <p class="nb-presence-score__eyebrow">{{ section.settings.eyebrow | escape }}</p>
@@ -44,6 +44,9 @@
           <button class="nb-presence-score__button" type="submit">Continue to my results</button>
           {% if form.errors %}<div class="nb-presence-score__error">{{ form.errors | default_errors }}</div>{% endif %}
         {% endform %}
+        {% if section.settings.allow_skip_email %}
+          <button class="nb-presence-score__skip" type="button" data-presence-skip-email>Skip for testing</button>
+        {% endif %}
         <p class="nb-presence-score__subtext">Your score, your breakdown, and occasional writing worth reading. No spam. Unsubscribe any time.</p>
       </div>
     </section>
@@ -68,7 +71,8 @@
       courseUrl: {{ section.settings.course_url | json }},
       lifeWheelUrl: {{ section.settings.life_url | json }},
       uneditedUrl: {{ section.settings.unedited_url | json }},
-      kitFormUrl: {{ section.settings.kit_url | json }}
+      kitFormUrl: {{ section.settings.kit_url | json }},
+      allowSkipEmail: {{ section.settings.allow_skip_email | json }}
     };
   </script>
   <script src="{{ 'nb-presence-score.js' | asset_url }}" defer></script>
@@ -90,7 +94,8 @@
     { "type": "url", "id": "course_url", "label": "P2P course URL" },
     { "type": "url", "id": "life_url", "label": "Life Wheel URL" },
     { "type": "url", "id": "unedited_url", "label": "Unedited Life URL" },
-    { "type": "url", "id": "kit_url", "label": "Kit form URL" }
+    { "type": "url", "id": "kit_url", "label": "Kit form URL" },
+    { "type": "checkbox", "id": "allow_skip_email", "label": "Allow email skip", "default": false }
   ],
   "presets": [{ "name": "NB Presence Score" }]
 }
