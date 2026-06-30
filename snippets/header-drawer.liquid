@@ -129,6 +129,11 @@
           </li>
         </ul>
       </nav>
+      <div class="nb-drawer-ctas menu-drawer__animated-element" style="--menu-drawer-animation-index: 5;">
+        <a href="/pages/presence-score" class="nb-drawer-cta nb-drawer-cta--ghost">Take the Assessment</a>
+        <a href="/pages/book-a-call" class="nb-drawer-cta nb-drawer-cta--primary">Book a private conversation</a>
+      </div>
+
       <div
         class="menu-drawer__utility-links menu-drawer__animated-element"
         style="--menu-drawer-animation-index: 4;"
@@ -694,5 +699,49 @@
 
   .menu-drawer__menu-item > .svg-wrapper {
     flex-shrink: 0;
+  }
+
+  .nb-drawer-ctas {
+    display: grid;
+    gap: 10px;
+    padding: 20px 24px 4px;
+    border-top: 1px solid rgba(47,62,72,.12);
+    margin-top: 8px;
+  }
+
+  .nb-drawer-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    transition: background .15s ease, transform .12s ease;
+  }
+
+  .nb-drawer-cta--primary {
+    background: #10636c;
+    color: #fff;
+    border: 2px solid #10636c;
+  }
+
+  .nb-drawer-cta--primary:hover {
+    background: #0b4f57;
+    transform: translateY(-1px);
+  }
+
+  .nb-drawer-cta--ghost {
+    background: transparent;
+    color: #10636c;
+    border: 2px solid rgba(16,99,108,.45);
+  }
+
+  .nb-drawer-cta--ghost:hover {
+    background: rgba(16,99,108,.07);
+    border-color: #10636c;
   }
 {% endstylesheet %}

@@ -61,7 +61,7 @@
 
 capture actions
     render 'header-actions'
-    assign nbcta = '<a href="/pages/book-a-call" class="nb-cta" data-cta="header-cta" title="Book a private conversation">Book a private conversation</a>'
+    assign nbcta = '<a href="/pages/presence-score" class="nb-cta nb-cta--ghost" data-cta="header-cta-ghost" title="Take the Assessment">Take the Assessment</a><a href="/pages/book-a-call" class="nb-cta" data-cta="header-cta" title="Book a private conversation">Book a private conversation</a>'
     echo nbcta
   endcapture
 
@@ -644,6 +644,20 @@ body:has(> #header-group > header-component) {
 .header .nb-cta:hover{
   transform: translateY(-1px);
   box-shadow: 0 12px 26px rgba(0,0,0,.10);
+}
+
+/* Ghost CTA variant — outlined, quieter than primary */
+.header .nb-cta--ghost{
+  --_bg: transparent;
+  --_fg: #10636c;
+  background: transparent;
+  color: #10636c;
+  border-color: rgba(16,99,108,.45);
+  box-shadow: none;
+}
+.header .nb-cta--ghost:hover{
+  background: rgba(16,99,108,.07);
+  border-color: #10636c;
 }
 
 /* 4) Menu link rhythm + legibility */
