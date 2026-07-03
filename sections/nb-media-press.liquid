@@ -62,9 +62,30 @@
 
         <li class="nb-media-press__card">
           <div class="nb-media-press__pub">Good Men Project</div>
-          <div class="nb-media-press__topic">Regular contributor</div>
+          <div class="nb-media-press__topic">24 published articles</div>
           <div class="nb-media-press__date">2020+</div>
-          <a class="nb-media-press__link" href="https://goodmenproject.com/author/kapil-gupta/" target="_blank" rel="noopener">View articles &rarr;</a>
+          <ul class="nb-media-press__sublist">
+            <li>
+              <a href="https://goodmenproject.com/featured-content/from-busyness-to-being-a-practical-guide-to-stillness-without-losing-your-edge-kpkn/" target="_blank" rel="noopener">From Busyness to Being: A Practical Guide to Stillness (Without Losing Your Edge)</a>
+              <span class="nb-media-press__sublist-date">Feb 2026</span>
+            </li>
+            <li>
+              <a href="https://goodmenproject.com/guy-talk/stop-calling-preferences-boundaries-how-to-communicate-like-a-pro-without-taking-the-bait/" target="_blank" rel="noopener">Stop Calling Preferences "Boundaries": How to Communicate Like a Pro</a>
+              <span class="nb-media-press__sublist-date">Jun 2026</span>
+            </li>
+            <li>
+              <a href="https://goodmenproject.com/featured-content/the-two-emotions-men-are-allowed-to-feel-and-why-thats-a-problem-kpkn/" target="_blank" rel="noopener">The Two Emotions Men Are "Allowed" to Feel, and Why That's a Problem</a>
+              <span class="nb-media-press__sublist-date">Mar 2025</span>
+            </li>
+          </ul>
+          <a class="nb-media-press__link" href="https://goodmenproject.com/author/kapil-gupta/" target="_blank" rel="noopener">View all articles &rarr;</a>
+        </li>
+
+        <li class="nb-media-press__card">
+          <div class="nb-media-press__pub">The Unedited Life (Substack)</div>
+          <div class="nb-media-press__topic">Kapil's own publication, essays on presence, masculinity, and transformation</div>
+          <div class="nb-media-press__date">Ongoing</div>
+          <a class="nb-media-press__link" href="https://substack.com/@kapilgupta" target="_blank" rel="noopener">Read on Substack &rarr;</a>
         </li>
 
         <li class="nb-media-press__card">
@@ -201,6 +222,43 @@
       color: var(--nb-chocolate, #d16c28);
       text-decoration: none;
       transition: color .15s;
+    }
+
+    .nb-media-press__sublist {
+      list-style: none;
+      margin: 2px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nb-media-press__sublist li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .nb-media-press__sublist a {
+      color: var(--nb-ink, #2f3e48);
+      opacity: .75;
+      text-decoration: underline;
+      text-decoration-color: rgba(47,62,72,.25);
+      transition: opacity .15s;
+    }
+
+    .nb-media-press__sublist a:hover {
+      opacity: 1;
+    }
+
+    .nb-media-press__sublist-date {
+      font-size: 11px;
+      color: var(--nb-ink, #2f3e48);
+      opacity: .5;
+      white-space: nowrap;
     }
 
     .nb-media-press__link:hover {
