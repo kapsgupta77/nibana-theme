@@ -9,7 +9,10 @@
   padding-inline: max(1.25rem, calc((100vw - var(--wide-content-width, 1100px)) / 2));
 }
 
-.nb-related__heading {
+/* Specificity is bumped (element + two classes) to beat the theme's own
+   `.h2.h2` preset rule, which otherwise forces the default dark heading
+   color back on and makes this illegible against the Slate background. */
+h2.h2.nb-related__heading {
   margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
   text-align: center;
   color: rgba(255, 255, 255, 0.92);
@@ -56,7 +59,7 @@
 
 /* Card-in-card: alternate the three canonical light tones against the slate section */
 .nb-related__item--lux:nth-child(3n+1) .nb-related-card { background-color: var(--nb-gainsboro, #e3e4dc); }
-.nb-related__item--lux:nth-child(3n+2) .nb-related-card { background-color: var(--nb-pebble-warm, #d2cbc8); }
+.nb-related__item--lux:nth-child(3n+2) .nb-related-card { background-color: var(--nb-pebble, #d2cbc8); }
 .nb-related__item--lux:nth-child(3n+3) .nb-related-card { background-color: var(--nb-sage, #EAF4F3); }
 
 .nb-related-card__media {

@@ -22,8 +22,8 @@ body {
 
   /* Editorial neutrals (soft, luxe) */
   --nb-gainsboro:   #e3e4dc;  /* off-white canvas */
-  --nb-pebble:      #f5f6f4;  /* page background tint (NOTE: not the brand-spec "Pebble" swatch) */
-  --nb-pebble-warm: #d2cbc8;  /* canonical brand-spec Pebble #d2cbc8 — distinct from --nb-pebble above */
+  --nb-page-tint:   #f5f6f4;  /* near-white page background tint (previously misnamed --nb-pebble) */
+  --nb-pebble:      #d2cbc8;  /* canonical brand-spec Pebble */
   --nb-ink:         #2f3e48;  /* headline / body, canonical Slate */
 
   /* Warm accents (sparingly) */
@@ -140,7 +140,7 @@ body {
 /*
 body {
   color: var(--nb-ink);
-  background: var(--nb-pebble);
+  background: var(--nb-page-tint);
 }
 */
 
@@ -5362,7 +5362,7 @@ body.nb-typography{
 
 /* optional tones (explicit) */
 .nb-explainer.tone-white{ --tone-bg: var(--nb-white, #ffffff); }
-.nb-explainer.tone-pebble{ --tone-bg: var(--nb-pebble, #f5f6f4); }
+.nb-explainer.tone-pebble{ --tone-bg: var(--nb-page-tint, #f5f6f4); }
 .nb-explainer.tone-sage{ --tone-bg: var(--nb-sage, #eaf4f3); }
 
 /* shell + heading */
