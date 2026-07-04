@@ -31,8 +31,15 @@
      and give paragraphs deliberate breathing room. The generic .rte rule in
      base.css only sets heading/list margins, so there's no p+p margin at all
      without this. Scoped here, not on --font-paragraph--*, since that variable
-     also drives body text sitewide. */
+     also drives body text sitewide.
+
+     Font size: --font-paragraph--size resolves to a fixed 14px (type_size_paragraph:
+     "14", under the 48px fluid cutoff in theme-styles-variables.liquid, so it never
+     scales). That reads small for a long-form reading page, especially with the
+     looser rhythm above — bump to ~19-20px on desktop, clamped down gracefully on
+     mobile rather than shipping the larger size as a fixed value. */
   .blog-post-content.rte p {
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
     line-height: 1.7;
     margin-block-end: 1.2em;
   }
