@@ -34,6 +34,13 @@ body {
   /* Generic */
   --nb-white:       #ffffff;
   --nb-black:       #101214;
+
+  /* Blog post masthead / related-posts shared dark band.
+     Deliberately NOT --nb-ink (that's the global text-ink color used across
+     ~15 unrelated sections). This matches the homepage "recognition" section's
+     actual rendered background — #223238 from its .nb-rt--tone-dark override,
+     not its nominal scheme-5 setting (#333333), which is overridden and unused. */
+  --nb-masthead-bg: #223238;
 }
 
 :root{
