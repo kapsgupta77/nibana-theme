@@ -22,8 +22,9 @@ body {
 
   /* Editorial neutrals (soft, luxe) */
   --nb-gainsboro:   #e3e4dc;  /* off-white canvas */
-  --nb-pebble:      #f5f6f4;  /* page background tint */
-  --nb-ink:         #2f3e48;  /* headline / body */
+  --nb-pebble:      #f5f6f4;  /* page background tint (NOTE: not the brand-spec "Pebble" swatch) */
+  --nb-pebble-warm: #d2cbc8;  /* canonical brand-spec Pebble #d2cbc8 — distinct from --nb-pebble above */
+  --nb-ink:         #2f3e48;  /* headline / body, canonical Slate */
 
   /* Warm accents (sparingly) */
   --nb-chocolate:   #d16c28;  /* primary CTA, hovers */
