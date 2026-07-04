@@ -20,40 +20,82 @@
     </div>
 
     {%- liquid
-      assign nb_dek       = article.metafields.custom.dek | default: ''
+      assign nb_dek       = article.metafields.custom.dek | default: '' | strip
+      if nb_dek == blank
+        assign nb_dek = article.metafields.global.description_tag | default: '' | strip
+      endif
       assign nb_cover     = article.metafields.custom.cover_image
       assign nb_cta_label = article.metafields.custom.cta_label | default: ''
       assign nb_cta_link  = article.metafields.custom.cta_link  | default: ''
+      assign nb_category  = article.metafields.custom.primary_category | default: ''
+      assign _author_photo = article.metafields.custom.author_photo
+      assign _author_bio   = article.metafields.custom.author_bio | default: ''
 
       assign _words     = article.content | strip_html | split: ' ' | size
       assign _read_mins = _words | plus: 199 | divided_by: 200
+
+      assign nb_eyebrow_category = nb_category
+      if nb_eyebrow_category == '' and article.tags.size > 0
+        assign nb_eyebrow_category = article.tags | first
+      endif
     -%}
 
-    <header>
+    {%- comment -%} === Masthead (dark band, editorial "reading page" pattern) === {%- endcomment -%}
+    <div class="nb-masthead">
+      <div class="nb-masthead__inner">
+        <p class="nb-masthead__tagline">Dare to be sensitive in a desensitised world</p>
+        {%- if nb_category != '' -%}
+          <p class="nb-masthead__category">{{ nb_category }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <header class="nb-article-header">
+      <div class="nb-eyebrow">
+        {%- if nb_eyebrow_category != '' -%}
+          <span class="nb-eyebrow__cat">{{ nb_eyebrow_category }}</span>
+          <span class="nb-eyebrow__dot" aria-hidden="true">·</span>
+        {%- endif -%}
+        <span class="nb-eyebrow__read">{{ _read_mins }} min read</span>
+        <span class="nb-eyebrow__dot" aria-hidden="true">·</span>
+        <time class="nb-eyebrow__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: "%b %e, %Y" }}</time>
+      </div>
+
       {%- content_for 'block', id: 'blog-post-title', type: 'text' -%}
-      {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' -%}
-      <div class="nb-article-meta">
-        <div class="nb-article-meta__row">
-          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
-            {{ article.published_at | date: "%b %e, %Y" }}
-          </time>
-          <span aria-hidden="true">•</span>
-          <span>{{ _read_mins }} min read</span>
-        </div>
+
+      {%- if nb_dek != blank -%}
+        <p class="nb-article-dek">{{ nb_dek }}</p>
+      {%- endif -%}
+
+      <div class="nb-byline">
+        <span class="nb-byline__avatar" aria-hidden="true">
+          {%- if _author_photo != blank -%}
+            {{ _author_photo | image_url: width: 64 | image_tag: alt: '', class: 'nb-byline__avatar-img', sizes: '32px', widths: '32,64' }}
+          {%- else -%}
+            <span class="nb-byline__avatar-placeholder">{{ article.author | slice: 0 | upcase }}</span>
+          {%- endif -%}
+        </span>
+        <span class="nb-byline__author">{{ article.author }}</span>
+        <span class="nb-byline__dot" aria-hidden="true">·</span>
+        <time class="nb-byline__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: "%b %e, %Y" }}
+        </time>
+        <span class="nb-byline__dot" aria-hidden="true">·</span>
+        <button class="nb-byline__action" type="button" data-nb-share-toggle aria-expanded="false" aria-controls="nbShareRow">Share</button>
+        <span class="nb-byline__dot" aria-hidden="true">·</span>
+        <a class="nb-byline__action" href="{{ blog.url }}.atom">Subscribe</a>
+      </div>
+
+      <div class="nb-share" id="nbShareRow" hidden>
+        {% assign _share = article.url | absolute_url | url_encode %}
+        {% assign _text  = article.title | url_encode %}
+        <a class="nb-share__btn" rel="noopener" target="_blank"
+           href="https://www.linkedin.com/sharing/share-offsite/?url={{ _share }}">LinkedIn</a>
+        <a class="nb-share__btn" rel="noopener" target="_blank"
+           href="https://twitter.com/intent/tweet?url={{ _share }}&text={{ _text }}">X</a>
+        <button class="nb-share__btn" type="button" data-copy="{{ article.url | absolute_url }}">Copy link</button>
       </div>
     </header>
-
-    <nav class="nb-crumbs" aria-label="Breadcrumb">
-      <a href="/">Home</a>
-      <span aria-hidden="true">›</span>
-      <a href="{{ blog.url }}">{{ blog.title }}</a>
-      <span aria-hidden="true">›</span>
-      <span aria-current="page">{{ article.title }}</span>
-    </nav>
-
-    {% if nb_dek != blank %}
-      <p class="nb-article-dek">{{ nb_dek }}</p>
-    {% endif %}
 
     {% if nb_cover %}
       <figure class="nb-article-hero">
@@ -81,20 +123,7 @@
       </div>
     {% endif %}
 
-    <div class="nb-share">
-      <span class="nb-share__label">Share</span>
-      {% assign _share = article.url | absolute_url | url_encode %}
-      {% assign _text  = article.title | url_encode %}
-      <a class="nb-share__btn" rel="noopener" target="_blank"
-         href="https://www.linkedin.com/sharing/share-offsite/?url={{ _share }}">LinkedIn</a>
-      <a class="nb-share__btn" rel="noopener" target="_blank"
-         href="https://twitter.com/intent/tweet?url={{ _share }}&text={{ _text }}">X</a>
-      <button class="nb-share__btn" type="button" data-copy="{{ article.url | absolute_url }}">Copy link</button>
-    </div>
-
     {%- comment -%} === Author box (uses blog post metafields if present) === {%- endcomment -%}
-    {%- assign _author_photo = article.metafields.custom.author_photo -%}
-    {%- assign _author_bio   = article.metafields.custom.author_bio   | default: '' -%}
     <section class="nb-author">
       <div class="nb-author__media">
         {%- if _author_photo != blank -%}
@@ -210,6 +239,20 @@
 })();
 </script>
 
+<script>
+/* Byline: toggle the share row */
+(function(){
+  document.addEventListener('click', function(e){
+    var toggle = e.target.closest('[data-nb-share-toggle]'); if(!toggle) return;
+    var row = document.getElementById(toggle.getAttribute('aria-controls'));
+    if(!row) return;
+    var open = row.hasAttribute('hidden');
+    if(open){ row.removeAttribute('hidden'); } else { row.setAttribute('hidden',''); }
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }, {passive:true});
+})();
+</script>
+
 <script type="application/ld+json">
   {{ article | structured_data }}
 </script>
@@ -217,42 +260,139 @@
 {% stylesheet %}
   /* === Article polish (Nibana) === */
 
+  /* Masthead — full-width dark band, new "reading page" pattern (Option B).
+     The section wrapper is a flex column with its own `gap` (from the section's
+     spacing setting) applied between every direct child, including the 3px
+     sticky progress bar right above this — which otherwise reads as a stray
+     disconnected line floating in a cream gap. Cancel that one gap so the band
+     sits flush under the progress bar; the gap below (margin-bottom here) is
+     unaffected. */
+  .nb-masthead{
+    width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+    background: var(--nb-masthead-bg, #223238);
+    border-top:1px solid rgba(255,255,255,.08); /* keeps this from visually fusing with the site header above it */
+    padding: clamp(3rem, 6vw, 4rem) 1.25rem;
+    margin-top: calc(var(--gap, 0px) * -1);
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+    text-align:center;
+  }
+  .nb-masthead__inner{ max-width: var(--normal-content-width); margin:0 auto; }
+  .nb-masthead__tagline{
+    margin:0 0 1rem; color: rgba(255,255,255,.75); font-size:.9rem; font-weight:500;
+    letter-spacing:.04em; font-style:italic;
+  }
+  .nb-masthead__category{
+    margin:0 0 .9rem; color: rgba(255,255,255,.68); font-size:.8rem; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase;
+  }
+
+  /* Eyebrow — category · read time · date, above the H1 */
+  .nb-eyebrow{
+    margin:0 auto 10px; max-width:var(--normal-content-width);
+    color: var(--nb-saddle, #7d2921); font-size:.8rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; text-align:center;
+  }
+  .nb-eyebrow__dot{ opacity:.6; margin:0 .35em; }
+
   /* Progress */
   .nb-progress{position:sticky;top:0;left:0;right:0;height:3px;background:rgba(0,0,0,.06);z-index:20}
-  .nb-progress__bar{width:0;height:100%;background:var(--nb-chocolate,#C86B2A);transition:width .12s linear}
+  .nb-progress__bar{width:0;height:100%;background:var(--nb-teal,#10636c);transition:width .12s linear}
 
-  /* Meta row */
-  .nb-article-meta{margin:10px 0 14px}
-  .nb-article-meta__row{display:flex;gap:10px;align-items:center;color:var(--nb-muted,#324247);font-size:.95rem}
+  /* H1 — large serif, dominant visual element (Option B), fluid down to mobile.
+     Scoped structurally (`header .text-block.h2 h1`, specificity 0,2,2) rather than
+     via the block's static id class (`.text-block--blog-post-title`, previously
+     0,3,0). The class-based override should have won outright against the theme's
+     `.text-block.h2 > *` preset rule (0,2,0), but the title kept rendering in the
+     h2 preset's font regardless — meaning the id-class assumption was wrong (or at
+     least unverifiable without a live render), so this version no longer depends
+     on it: it wins purely on DOM structure inside <header>, where this is the only
+     h2-preset text block. */
+  header .text-block.h2,
+  header .text-block.h2 h1{
+    font-family: var(--font-h1--family, var(--font-heading--family));
+  }
+  header .text-block.h2 h1{
+    font-weight:500;
+    font-size: clamp(2rem, 1.35rem + 4vw, 4.75rem);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    color: var(--nb-ink, #2f3e48);
+  }
 
-  /* Dek + hero */
-  .nb-article-dek{max-width:var(--normal-content-width);margin:4px auto 14px;color:var(--nb-muted,#324247);font-size:1.075rem;line-height:1.6}
+  /* Header — extra breathing room before the hero image / body content
+     that follows it as a flex sibling (the flex `gap` setting alone reads
+     as too tight next to the taller header stack below). Scoped to a class
+     rather than the bare `header` tag — other sections on the site (e.g.
+     testimonials) also use a plain <header> element, and an unscoped tag
+     selector here would leak into any of those rendered on the same page. */
+  .nb-article-header{ margin-bottom: clamp(1.5rem, 3vw, 2rem); }
+
+  /* Dek — single display location, under the H1 (Option B) */
+  .nb-article-dek{
+    max-width: var(--normal-content-width);
+    margin: 1.25rem auto 0;
+    text-align:center;
+    font-family: var(--font-h1--family, var(--font-heading--family));
+    font-style:italic;
+    font-size: clamp(1.1rem, 1rem + .6vw, 1.35rem);
+    line-height:1.55;
+    color: var(--nb-muted, #51615d);
+  }
+
+  /* Byline — author, date, Share (toggles the share row below), Subscribe */
+  .nb-byline{
+    margin:1.75rem auto 0; max-width:var(--normal-content-width);
+    display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+    gap:.5rem; color:var(--nb-muted,#51615d); font-size:.95rem;
+  }
+  .nb-byline__avatar{ display:inline-flex; width:28px; height:28px; margin-right:.15rem; }
+  .nb-byline__avatar-img{ width:28px; height:28px; border-radius:50%; object-fit:cover; }
+  .nb-byline__avatar-placeholder{
+    width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
+    background: var(--nb-ink,#2f3e48); color:#fff; font-weight:700; font-size:.75rem;
+  }
+  .nb-byline__author{ color:var(--nb-ink,#2f3e48); font-weight:600; }
+  .nb-byline__dot{ opacity:.6; }
+  .nb-byline__action{
+    background:none; border:0; padding:0; margin:0; cursor:pointer;
+    color:var(--nb-teal,#10636c); text-decoration:underline; text-underline-offset:3px;
+    font-size:inherit; font-family:inherit;
+  }
+  .nb-byline__action:hover{ color:var(--nb-teal-700,#0f5b62); }
+
+  /* Hero (optional featured image) */
   .nb-article-hero{max-width:var(--wide-content-width, 1100px);margin:10px auto 18px}
-  .nb-article-hero__img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 16px 42px rgba(0,0,0,.10)}
+  .nb-article-hero__img{display:block;width:100%;height:auto;border-radius:var(--style-border-radius-sm, 10px)}
 
-  /* Pull-quote / blockquote inside content */
+  /* Pull-quote / blockquote — centred, hairline rules, typographic (Option B) */
   .rte blockquote{
-    margin:18px 0;padding:16px 18px;border-left:4px solid var(--nb-chocolate,#C86B2A);
-    border-radius:12px;background:#fff;box-shadow:0 8px 18px rgba(0,0,0,.06);color:var(--nb-ink,#223238)
+    margin: clamp(2rem, 4vw, 3rem) auto;
+    padding: 1.5rem 0;
+    max-width: 42ch;
+    text-align:center;
+    border:0;
+    border-top:1px solid var(--nb-saddle, #7d2921);
+    border-bottom:1px solid var(--nb-saddle, #7d2921);
+    border-radius:0;
+    background:none;
+    box-shadow:none;
+    font-family: var(--font-h1--family, var(--font-heading--family));
+    font-style:italic;
+    font-size: clamp(1.15rem, 1rem + 1vw, 1.5rem);
+    line-height:1.5;
+    color: var(--nb-ink, #2f3e48);
   }
   .rte blockquote p{margin:0}
   .rte blockquote em{font-style:normal}
   .rte blockquote strong{letter-spacing:.01em}
 
-  /* Author box */
-  .nb-author{display:grid;grid-template-columns:84px 1fr;gap:16px;align-items:center;margin:26px auto 10px;padding:16px;border:1px solid #e8ecef;border-radius:14px;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.06);max-width:var(--normal-content-width)}
+  /* Author box — flattened to match homepage's flat system */
+  .nb-author{display:grid;grid-template-columns:84px 1fr;gap:16px;align-items:center;margin:26px auto 10px;padding:16px;border:1px solid #e8ecef;border-radius:var(--style-border-radius-sm, 10px);background:#fff;box-shadow:none;max-width:var(--normal-content-width)}
   .nb-author__img{width:84px;height:84px;border-radius:50%;object-fit:cover}
-  .nb-author__placeholder{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:#f2f5f4;color:#67747a;font-weight:800}
+  .nb-author__placeholder{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:var(--nb-ink,#2f3e48);color:#fff;font-weight:800}
   .nb-author__name{margin:0 0 6px;font-weight:800}
   .nb-author__bio{margin:0;color:var(--nb-muted,#324247)}
   @media (max-width:720px){ .nb-author{grid-template-columns:64px 1fr} .nb-author__img,.nb-author__placeholder{width:64px;height:64px} }
-
-  /* Related posts */
-  .nb-related{margin:28px auto 10px;max-width:var(--wide-content-width, 1100px)}
-  .nb-related__heading{margin:0 0 12px;font-weight:800}
-  .nb-related__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-  @media (max-width:900px){ .nb-related__grid{grid-template-columns:1fr 1fr} }
-  @media (max-width:620px){ .nb-related__grid{grid-template-columns:1fr} }
 
   /* Existing comment styles retained */
   .blog-post-comments-container { width:100%; max-width:var(--normal-content-width); margin:0 auto; }
@@ -264,41 +404,36 @@
   .blog-post-comments-pagination .current, .blog-post-comments-pagination a { display:block; padding: var(--padding-2xs) var(--padding-xs); }
   .blog-post-comments-pagination .current, .blog-post-comments-pagination a:hover { border-bottom: 1px solid var(--color-foreground); }
 
-  /* Breadcrumbs */
-  .nb-crumbs{ max-width:var(--normal-content-width); margin:8px auto 10px; color:#6b7a80; font-size:.92rem; display:flex; gap:8px; flex-wrap:wrap; }
-  .nb-crumbs a{ color:inherit; text-decoration:none; }
-  .nb-crumbs a:hover{ text-decoration:underline; }
-
-  /* Tag chips */
+  /* Tag chips — flattened */
   .nb-article-tags{ max-width:var(--normal-content-width); margin:18px auto 8px; padding-top:10px; border-top:1px solid #eef3f2; display:flex; flex-wrap:wrap; gap:10px; }
   .nb-chip{
     display:inline-block; padding:.45rem .7rem; border-radius:999px;
     background:#fff; border:1px solid #eef3f2; color:inherit; text-decoration:none;
-    box-shadow:0 2px 8px rgba(0,0,0,.04);
-    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:none;
+    transition:border-color .15s ease;
     font-size:.95rem;
   }
-  .nb-chip:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.08); }
+  .nb-chip:hover{ border-color:#d7dedc; }
 
-  /* Share row */
-  .nb-share{ max-width:var(--normal-content-width); margin:6px auto 16px; display:flex; align-items:center; flex-wrap:wrap; gap:8px 10px; }
-  .nb-share__label{ color:#6b7a80; margin-right:4px; }
+  /* Share row — a small popover revealed by the byline's "Share" toggle */
+  .nb-share{ max-width:var(--normal-content-width); margin:10px auto 0; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px 10px; }
+  .nb-share[hidden]{ display:none; }
   .nb-share__btn{
     display:inline-flex; align-items:center; justify-content:center;
-    padding:.45rem .7rem; border-radius:10px; border:1px solid #eef3f2;
+    padding:.45rem .7rem; border-radius:var(--style-border-radius-sm, 8px); border:1px solid #eef3f2;
     background:#fff; cursor:pointer; text-decoration:none; color:inherit;
-    box-shadow:0 2px 8px rgba(0,0,0,.04); font-size:.95rem;
+    box-shadow:none; font-size:.95rem;
   }
-  .nb-share__btn:hover{ box-shadow:0 8px 18px rgba(0,0,0,.08); }
+  .nb-share__btn:hover{ border-color:#d7dedc; }
 
-  /* Prev/Next */
+  /* Prev/Next — flattened */
   .nb-article-nav{ max-width:var(--wide-content-width, 1100px); margin:20px auto 6px; display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap; }
   .nb-article-nav a{
     flex:1 1 320px; text-decoration:none; color:inherit;
-    background:#fff; border:1px solid #eef3f2; border-radius:14px; padding:10px 12px;
-    box-shadow:0 6px 16px rgba(0,0,0,.05);
+    background:#fff; border:1px solid #eef3f2; border-radius:var(--style-border-radius-sm, 10px); padding:10px 12px;
+    box-shadow:none;
   }
-  .nb-article-nav a:hover{ box-shadow:0 12px 24px rgba(0,0,0,.08); }
+  .nb-article-nav a:hover{ border-color:#d7dedc; }
   .nb-article-nav__prev{ text-align:left; }
   .nb-article-nav__next{ text-align:right; }
   .nb-article-nav__single{ text-align:center; flex:1 1 100%; }

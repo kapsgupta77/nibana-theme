@@ -22,8 +22,9 @@ body {
 
   /* Editorial neutrals (soft, luxe) */
   --nb-gainsboro:   #e3e4dc;  /* off-white canvas */
-  --nb-pebble:      #f5f6f4;  /* page background tint */
-  --nb-ink:         #2f3e48;  /* headline / body */
+  --nb-page-tint:   #f5f6f4;  /* near-white page background tint (previously misnamed --nb-pebble) */
+  --nb-pebble:      #d2cbc8;  /* canonical brand-spec Pebble */
+  --nb-ink:         #2f3e48;  /* headline / body, canonical Slate */
 
   /* Warm accents (sparingly) */
   --nb-chocolate:   #d16c28;  /* primary CTA, hovers */
@@ -33,6 +34,13 @@ body {
   /* Generic */
   --nb-white:       #ffffff;
   --nb-black:       #101214;
+
+  /* Blog post masthead / related-posts shared dark band.
+     Deliberately NOT --nb-ink (that's the global text-ink color used across
+     ~15 unrelated sections). This matches the homepage "recognition" section's
+     actual rendered background — #223238 from its .nb-rt--tone-dark override,
+     not its nominal scheme-5 setting (#333333), which is overridden and unused. */
+  --nb-masthead-bg: #223238;
 }
 
 :root{
@@ -139,7 +147,7 @@ body {
 /*
 body {
   color: var(--nb-ink);
-  background: var(--nb-pebble);
+  background: var(--nb-page-tint);
 }
 */
 
@@ -5361,7 +5369,7 @@ body.nb-typography{
 
 /* optional tones (explicit) */
 .nb-explainer.tone-white{ --tone-bg: var(--nb-white, #ffffff); }
-.nb-explainer.tone-pebble{ --tone-bg: var(--nb-pebble, #f5f6f4); }
+.nb-explainer.tone-pebble{ --tone-bg: var(--nb-page-tint, #f5f6f4); }
 .nb-explainer.tone-sage{ --tone-bg: var(--nb-sage, #eaf4f3); }
 
 /* shell + heading */

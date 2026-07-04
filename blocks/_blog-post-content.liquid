@@ -25,6 +25,40 @@
     max-width: var(--normal-content-width);
     margin: 0 auto;
   }
+
+  /* Body paragraph rhythm — sitewide --font-paragraph--line-height resolves to 1.6
+     (type_line_height_paragraph: "body-loose"); bump slightly for the article body
+     and give paragraphs deliberate breathing room. The generic .rte rule in
+     base.css only sets heading/list margins, so there's no p+p margin at all
+     without this. Scoped here, not on --font-paragraph--*, since that variable
+     also drives body text sitewide.
+
+     Font size: --font-paragraph--size resolves to a fixed 14px (type_size_paragraph:
+     "14", under the 48px fluid cutoff in theme-styles-variables.liquid, so it never
+     scales). That reads small for a long-form reading page, especially with the
+     looser rhythm above — bump to ~19-20px on desktop, clamped down gracefully on
+     mobile rather than shipping the larger size as a fixed value. */
+  .blog-post-content.rte p {
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    line-height: 1.7;
+    margin-block-end: 1.2em;
+  }
+
+  /* In-body H2/H3 — Shopify's RTE emits plain h2/h3 tags, which pick up
+     base.css's `h2 { font-family: var(--font-h2--family) }` rule. That variable
+     resolves to --font-accent--family (Inter, settings.type_font_h2: "accent"),
+     not the Cormorant serif the mockup uses — the same class of token-leaking-
+     into-the-wrong-context bug as the H1/masthead cascade fixes above. Reuse the
+     same --font-h1--family fallback chain rather than touching --font-h2--*
+     globally, since that variable also drives H2s elsewhere on the site.
+     type_case_h2 is already "none" (no uppercasing), so no text-transform
+     override is needed here. */
+  .blog-post-content.rte :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-h1--family, var(--font-heading--family));
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.3rem + 1vw, 1.85rem);
+    line-height: 1.3;
+  }
 {% endstylesheet %}
 
 {% schema %}
