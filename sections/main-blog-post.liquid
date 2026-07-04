@@ -21,6 +21,9 @@
 
     {%- liquid
       assign nb_dek       = article.metafields.custom.dek | default: '' | strip
+      if nb_dek == blank
+        assign nb_dek = article.metafields.global.description_tag | default: '' | strip
+      endif
       assign nb_cover     = article.metafields.custom.cover_image
       assign nb_cta_label = article.metafields.custom.cta_label | default: ''
       assign nb_cta_link  = article.metafields.custom.cta_link  | default: ''
@@ -44,9 +47,6 @@
         {%- if nb_category != '' -%}
           <p class="nb-masthead__category">{{ nb_category }}</p>
         {%- endif -%}
-        {%- if nb_dek != blank -%}
-          <p class="nb-masthead__strap">{{ nb_dek }}</p>
-        {%- endif -%}
       </div>
     </div>
 
@@ -62,6 +62,10 @@
       </div>
 
       {%- content_for 'block', id: 'blog-post-title', type: 'text' -%}
+
+      {%- if nb_dek != blank -%}
+        <p class="nb-article-dek">{{ nb_dek }}</p>
+      {%- endif -%}
 
       <div class="nb-byline">
         <span class="nb-byline__avatar" aria-hidden="true">
@@ -274,16 +278,6 @@
     margin:0 0 .9rem; color: rgba(255,255,255,.68); font-size:.8rem; font-weight:600;
     letter-spacing:.16em; text-transform:uppercase;
   }
-  .nb-masthead__strap{
-    margin:0;
-    /* var(--nb-saddle) alone is ~1.4:1 against the masthead's dark background —
-       nowhere near legible. Lighten it (mixed toward white, still on-hue) and
-       bump the weight; the plain hex is a fallback for browsers without color-mix(). */
-    color:#be9490;
-    color: color-mix(in srgb, var(--nb-saddle, #7d2921), white 50%);
-    font-family: var(--font-h1--family, var(--font-heading--family));
-    font-style:italic; font-weight:600; font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem); line-height:1.35;
-  }
 
   /* Eyebrow — category · read time · date, above the H1 */
   .nb-eyebrow{
@@ -316,6 +310,18 @@
     line-height:1.08;
     letter-spacing:-0.01em;
     color: var(--nb-ink, #2f3e48);
+  }
+
+  /* Dek — single display location, under the H1 (Option B) */
+  .nb-article-dek{
+    max-width: var(--normal-content-width);
+    margin: .75rem auto 0;
+    text-align:center;
+    font-family: var(--font-h1--family, var(--font-heading--family));
+    font-style:italic;
+    font-size: clamp(1.1rem, 1rem + .6vw, 1.35rem);
+    line-height:1.55;
+    color: var(--nb-muted, #51615d);
   }
 
   /* Byline — author, date, Share (toggles the share row below), Subscribe */
