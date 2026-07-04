@@ -25,6 +25,8 @@
       assign nb_cta_label = article.metafields.custom.cta_label | default: ''
       assign nb_cta_link  = article.metafields.custom.cta_link  | default: ''
       assign nb_category  = article.metafields.custom.primary_category | default: ''
+      assign _author_photo = article.metafields.custom.author_photo
+      assign _author_bio   = article.metafields.custom.author_bio | default: ''
 
       assign _words     = article.content | strip_html | split: ' ' | size
       assign _read_mins = _words | plus: 199 | divided_by: 200
@@ -45,25 +47,36 @@
 
     <header>
       {%- content_for 'block', id: 'blog-post-title', type: 'text' -%}
-      {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' -%}
-      <div class="nb-article-meta">
-        <div class="nb-article-meta__row">
-          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
-            {{ article.published_at | date: "%b %e, %Y" }}
-          </time>
-          <span aria-hidden="true">•</span>
-          <span>{{ _read_mins }} min read</span>
-        </div>
+
+      <div class="nb-byline">
+        <span class="nb-byline__avatar" aria-hidden="true">
+          {%- if _author_photo != blank -%}
+            {{ _author_photo | image_url: width: 64 | image_tag: alt: '', class: 'nb-byline__avatar-img', sizes: '32px', widths: '32,64' }}
+          {%- else -%}
+            <span class="nb-byline__avatar-placeholder">{{ article.author | slice: 0 | upcase }}</span>
+          {%- endif -%}
+        </span>
+        <span class="nb-byline__author">{{ article.author }}</span>
+        <span class="nb-byline__dot" aria-hidden="true">·</span>
+        <time class="nb-byline__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: "%b %e, %Y" }}
+        </time>
+        <span class="nb-byline__dot" aria-hidden="true">·</span>
+        <button class="nb-byline__action" type="button" data-nb-share-toggle aria-expanded="false" aria-controls="nbShareRow">Share</button>
+        <span class="nb-byline__dot" aria-hidden="true">·</span>
+        <a class="nb-byline__action" href="{{ blog.url }}.atom">Subscribe</a>
+      </div>
+
+      <div class="nb-share" id="nbShareRow" hidden>
+        {% assign _share = article.url | absolute_url | url_encode %}
+        {% assign _text  = article.title | url_encode %}
+        <a class="nb-share__btn" rel="noopener" target="_blank"
+           href="https://www.linkedin.com/sharing/share-offsite/?url={{ _share }}">LinkedIn</a>
+        <a class="nb-share__btn" rel="noopener" target="_blank"
+           href="https://twitter.com/intent/tweet?url={{ _share }}&text={{ _text }}">X</a>
+        <button class="nb-share__btn" type="button" data-copy="{{ article.url | absolute_url }}">Copy link</button>
       </div>
     </header>
-
-    <nav class="nb-crumbs" aria-label="Breadcrumb">
-      <a href="/">Home</a>
-      <span aria-hidden="true">›</span>
-      <a href="{{ blog.url }}">{{ blog.title }}</a>
-      <span aria-hidden="true">›</span>
-      <span aria-current="page">{{ article.title }}</span>
-    </nav>
 
     {% if nb_cover %}
       <figure class="nb-article-hero">
@@ -91,20 +104,7 @@
       </div>
     {% endif %}
 
-    <div class="nb-share">
-      <span class="nb-share__label">Share</span>
-      {% assign _share = article.url | absolute_url | url_encode %}
-      {% assign _text  = article.title | url_encode %}
-      <a class="nb-share__btn" rel="noopener" target="_blank"
-         href="https://www.linkedin.com/sharing/share-offsite/?url={{ _share }}">LinkedIn</a>
-      <a class="nb-share__btn" rel="noopener" target="_blank"
-         href="https://twitter.com/intent/tweet?url={{ _share }}&text={{ _text }}">X</a>
-      <button class="nb-share__btn" type="button" data-copy="{{ article.url | absolute_url }}">Copy link</button>
-    </div>
-
     {%- comment -%} === Author box (uses blog post metafields if present) === {%- endcomment -%}
-    {%- assign _author_photo = article.metafields.custom.author_photo -%}
-    {%- assign _author_bio   = article.metafields.custom.author_bio   | default: '' -%}
     <section class="nb-author">
       <div class="nb-author__media">
         {%- if _author_photo != blank -%}
@@ -220,6 +220,20 @@
 })();
 </script>
 
+<script>
+/* Byline: toggle the share row */
+(function(){
+  document.addEventListener('click', function(e){
+    var toggle = e.target.closest('[data-nb-share-toggle]'); if(!toggle) return;
+    var row = document.getElementById(toggle.getAttribute('aria-controls'));
+    if(!row) return;
+    var open = row.hasAttribute('hidden');
+    if(open){ row.removeAttribute('hidden'); } else { row.setAttribute('hidden',''); }
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }, {passive:true});
+})();
+</script>
+
 <script type="application/ld+json">
   {{ article | structured_data }}
 </script>
@@ -231,45 +245,65 @@
   .nb-masthead{
     width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
     background: var(--nb-ink, #2f3e48);
-    padding: clamp(2rem, 5vw, 3.5rem) 1.25rem;
+    border-top:1px solid rgba(255,255,255,.08); /* keeps this from visually fusing with the site header above it */
+    padding: clamp(3rem, 6vw, 4rem) 1.25rem;
     margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
     text-align:center;
   }
   .nb-masthead__inner{ max-width: var(--normal-content-width); margin:0 auto; }
   .nb-masthead__wordmark{
-    margin:0 0 .75rem; color:#fff; font-size:.8rem; font-weight:700;
-    letter-spacing:.14em; text-transform:uppercase; opacity:.85;
+    margin:0 0 1rem; color:#fff; font-size:.95rem; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase;
   }
   .nb-masthead__category{
-    margin:0 0 .5rem; color: rgba(255,255,255,.7); font-size:.8rem; font-weight:600;
-    letter-spacing:.1em; text-transform:uppercase;
+    margin:0 0 .9rem; color: rgba(255,255,255,.68); font-size:.8rem; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase;
   }
   .nb-masthead__strap{
     margin:0; color: var(--nb-saddle, #7d2921);
     font-family: var(--font-h1--family, var(--font-heading--family));
-    font-style:italic; font-size: clamp(1.1rem, 1rem + 1vw, 1.5rem); line-height:1.5;
+    font-style:italic; font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem); line-height:1.5;
   }
 
   /* Progress */
   .nb-progress{position:sticky;top:0;left:0;right:0;height:3px;background:rgba(0,0,0,.06);z-index:20}
   .nb-progress__bar{width:0;height:100%;background:var(--nb-teal,#10636c);transition:width .12s linear}
 
-  /* Meta row */
-  .nb-article-meta{margin:10px 0 14px}
-  .nb-article-meta__row{display:flex;gap:10px;align-items:center;color:var(--nb-muted,#324247);font-size:.95rem}
-
-  /* H1 — large serif, dominant visual element (Option B), fluid down to mobile */
-  .text-block--blog-post-title,
-  .text-block--blog-post-title h1{
+  /* H1 — large serif, dominant visual element (Option B), fluid down to mobile.
+     Specificity is bumped to beat the theme's own `.text-block.h2 > *` preset rule
+     (the title block's type_preset is "h2", which otherwise wins the cascade). */
+  .text-block.text-block--blog-post-title.h2,
+  .text-block.text-block--blog-post-title.h2 > *{
     font-family: var(--font-h1--family, var(--font-heading--family));
   }
-  .text-block--blog-post-title h1{
+  .text-block.text-block--blog-post-title.h2 > *{
     font-weight:500;
     font-size: clamp(2rem, 1.35rem + 4vw, 4.75rem);
     line-height:1.08;
     letter-spacing:-0.01em;
     color: var(--nb-ink, #2f3e48);
   }
+
+  /* Byline — author, date, Share (toggles the share row below), Subscribe */
+  .nb-byline{
+    margin:14px auto 0; max-width:var(--normal-content-width);
+    display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+    gap:.5rem; color:var(--nb-muted,#51615d); font-size:.95rem;
+  }
+  .nb-byline__avatar{ display:inline-flex; width:28px; height:28px; margin-right:.15rem; }
+  .nb-byline__avatar-img{ width:28px; height:28px; border-radius:50%; object-fit:cover; }
+  .nb-byline__avatar-placeholder{
+    width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
+    background: var(--nb-gainsboro,#e3e4dc); color:var(--nb-ink,#2f3e48); font-weight:700; font-size:.8rem;
+  }
+  .nb-byline__author{ color:var(--nb-ink,#2f3e48); font-weight:600; }
+  .nb-byline__dot{ opacity:.6; }
+  .nb-byline__action{
+    background:none; border:0; padding:0; margin:0; cursor:pointer;
+    color:var(--nb-teal,#10636c); text-decoration:underline; text-underline-offset:3px;
+    font-size:inherit; font-family:inherit;
+  }
+  .nb-byline__action:hover{ color:var(--nb-teal-700,#0f5b62); }
 
   /* Hero (optional featured image) */
   .nb-article-hero{max-width:var(--wide-content-width, 1100px);margin:10px auto 18px}
@@ -315,11 +349,6 @@
   .blog-post-comments-pagination .current, .blog-post-comments-pagination a { display:block; padding: var(--padding-2xs) var(--padding-xs); }
   .blog-post-comments-pagination .current, .blog-post-comments-pagination a:hover { border-bottom: 1px solid var(--color-foreground); }
 
-  /* Breadcrumbs */
-  .nb-crumbs{ max-width:var(--normal-content-width); margin:8px auto 10px; color:#6b7a80; font-size:.92rem; display:flex; gap:8px; flex-wrap:wrap; }
-  .nb-crumbs a{ color:inherit; text-decoration:none; }
-  .nb-crumbs a:hover{ text-decoration:underline; }
-
   /* Tag chips — flattened */
   .nb-article-tags{ max-width:var(--normal-content-width); margin:18px auto 8px; padding-top:10px; border-top:1px solid #eef3f2; display:flex; flex-wrap:wrap; gap:10px; }
   .nb-chip{
@@ -331,9 +360,9 @@
   }
   .nb-chip:hover{ border-color:#d7dedc; }
 
-  /* Share row — flattened */
-  .nb-share{ max-width:var(--normal-content-width); margin:6px auto 16px; display:flex; align-items:center; flex-wrap:wrap; gap:8px 10px; }
-  .nb-share__label{ color:#6b7a80; margin-right:4px; }
+  /* Share row — a small popover revealed by the byline's "Share" toggle */
+  .nb-share{ max-width:var(--normal-content-width); margin:10px auto 0; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px 10px; }
+  .nb-share[hidden]{ display:none; }
   .nb-share__btn{
     display:inline-flex; align-items:center; justify-content:center;
     padding:.45rem .7rem; border-radius:var(--style-border-radius-sm, 8px); border:1px solid #eef3f2;
