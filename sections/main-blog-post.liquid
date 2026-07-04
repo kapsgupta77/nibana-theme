@@ -30,6 +30,11 @@
 
       assign _words     = article.content | strip_html | split: ' ' | size
       assign _read_mins = _words | plus: 199 | divided_by: 200
+
+      assign nb_eyebrow_category = nb_category
+      if nb_eyebrow_category == '' and article.tags.size > 0
+        assign nb_eyebrow_category = article.tags | first
+      endif
     -%}
 
     {%- comment -%} === Masthead (dark band, editorial "reading page" pattern) === {%- endcomment -%}
@@ -46,6 +51,16 @@
     </div>
 
     <header>
+      <div class="nb-eyebrow">
+        {%- if nb_eyebrow_category != '' -%}
+          <span class="nb-eyebrow__cat">{{ nb_eyebrow_category }}</span>
+          <span class="nb-eyebrow__dot" aria-hidden="true">·</span>
+        {%- endif -%}
+        <span class="nb-eyebrow__read">{{ _read_mins }} min read</span>
+        <span class="nb-eyebrow__dot" aria-hidden="true">·</span>
+        <time class="nb-eyebrow__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: "%b %e, %Y" }}</time>
+      </div>
+
       {%- content_for 'block', id: 'blog-post-title', type: 'text' -%}
 
       <div class="nb-byline">
@@ -262,21 +277,35 @@
   .nb-masthead__strap{
     margin:0; color: var(--nb-saddle, #7d2921);
     font-family: var(--font-h1--family, var(--font-heading--family));
-    font-style:italic; font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem); line-height:1.5;
+    font-style:italic; font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem); line-height:1.35;
   }
+
+  /* Eyebrow — category · read time · date, above the H1 */
+  .nb-eyebrow{
+    margin:0 auto 10px; max-width:var(--normal-content-width);
+    color: var(--nb-saddle, #7d2921); font-size:.8rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; text-align:center;
+  }
+  .nb-eyebrow__dot{ opacity:.6; margin:0 .35em; }
 
   /* Progress */
   .nb-progress{position:sticky;top:0;left:0;right:0;height:3px;background:rgba(0,0,0,.06);z-index:20}
   .nb-progress__bar{width:0;height:100%;background:var(--nb-teal,#10636c);transition:width .12s linear}
 
   /* H1 — large serif, dominant visual element (Option B), fluid down to mobile.
-     Specificity is bumped to beat the theme's own `.text-block.h2 > *` preset rule
-     (the title block's type_preset is "h2", which otherwise wins the cascade). */
-  .text-block.text-block--blog-post-title.h2,
-  .text-block.text-block--blog-post-title.h2 > *{
+     Scoped structurally (`header .text-block.h2 h1`, specificity 0,2,2) rather than
+     via the block's static id class (`.text-block--blog-post-title`, previously
+     0,3,0). The class-based override should have won outright against the theme's
+     `.text-block.h2 > *` preset rule (0,2,0), but the title kept rendering in the
+     h2 preset's font regardless — meaning the id-class assumption was wrong (or at
+     least unverifiable without a live render), so this version no longer depends
+     on it: it wins purely on DOM structure inside <header>, where this is the only
+     h2-preset text block. */
+  header .text-block.h2,
+  header .text-block.h2 h1{
     font-family: var(--font-h1--family, var(--font-heading--family));
   }
-  .text-block.text-block--blog-post-title.h2 > *{
+  header .text-block.h2 h1{
     font-weight:500;
     font-size: clamp(2rem, 1.35rem + 4vw, 4.75rem);
     line-height:1.08;
@@ -294,7 +323,7 @@
   .nb-byline__avatar-img{ width:28px; height:28px; border-radius:50%; object-fit:cover; }
   .nb-byline__avatar-placeholder{
     width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
-    background: var(--nb-gainsboro,#e3e4dc); color:var(--nb-ink,#2f3e48); font-weight:700; font-size:.8rem;
+    background: var(--nb-ink,#2f3e48); color:#fff; font-weight:700; font-size:.75rem;
   }
   .nb-byline__author{ color:var(--nb-ink,#2f3e48); font-weight:600; }
   .nb-byline__dot{ opacity:.6; }
