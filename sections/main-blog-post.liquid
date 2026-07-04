@@ -312,10 +312,15 @@
     color: var(--nb-ink, #2f3e48);
   }
 
+  /* Header — extra breathing room before the hero image / body content
+     that follows it as a flex sibling (the flex `gap` setting alone reads
+     as too tight next to the taller header stack below). */
+  header{ margin-bottom: clamp(1.5rem, 3vw, 2rem); }
+
   /* Dek — single display location, under the H1 (Option B) */
   .nb-article-dek{
     max-width: var(--normal-content-width);
-    margin: .75rem auto 0;
+    margin: 1.25rem auto 0;
     text-align:center;
     font-family: var(--font-h1--family, var(--font-heading--family));
     font-style:italic;
@@ -326,7 +331,7 @@
 
   /* Byline — author, date, Share (toggles the share row below), Subscribe */
   .nb-byline{
-    margin:14px auto 0; max-width:var(--normal-content-width);
+    margin:1.75rem auto 0; max-width:var(--normal-content-width);
     display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
     gap:.5rem; color:var(--nb-muted,#51615d); font-size:.95rem;
   }
