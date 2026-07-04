@@ -11,27 +11,27 @@
     case category
       when "Men’s Work"
         assign cat_primary = 'call'
-        assign cat_secondary = 'leadmagnet'
+        assign cat_secondary = 'quiz'
       when "Relationships"
-        assign cat_primary = 'leadmagnet'
+        assign cat_primary = 'quiz'
         assign cat_secondary = 'call'
       when "Emotional Intelligence"
         assign cat_primary = 'quiz'
-        assign cat_secondary = 'leadmagnet'
+        assign cat_secondary = 'quiz'
       when "Leadership"
         assign cat_primary = 'call'
         assign cat_secondary = 'quiz'
       when "Embodiment"
-        assign cat_primary = 'leadmagnet'
+        assign cat_primary = 'quiz'
         assign cat_secondary = 'call'
       when "Sexuality"
         assign cat_primary = 'quiz'
-        assign cat_secondary = 'leadmagnet'
+        assign cat_secondary = 'quiz'
       when "Self-Discovery"
         assign cat_primary = 'quiz'
         assign cat_secondary = 'call'
       else
-        assign cat_primary = 'leadmagnet'
+        assign cat_primary = 'quiz'
         assign cat_secondary = 'call'
     endcase
   endif
@@ -44,8 +44,7 @@
   endif
 
   assign url_call_default = '/pages/book-a-call'
-  assign url_quiz_default = '/quiz'
-  assign url_leadmagnet_default = '/pages/connection-guide'
+  assign url_quiz_default = '/pages/presence-score'
 
   assign url_primary = article.metafields.custom.cta_link | default: article.metafields.custom.cta_primary_url | default: ''
   assign url_secondary = article.metafields.custom.cta_secondary_url | default: ''
@@ -54,10 +53,8 @@
     case primary_type
       when 'call'
         assign url_primary = url_call_default
-      when 'quiz'
+      when 'quiz', 'leadmagnet'
         assign url_primary = url_quiz_default
-      when 'leadmagnet'
-        assign url_primary = url_leadmagnet_default
       else
         assign url_primary = url_call_default
     endcase
@@ -67,35 +64,20 @@
     case secondary_type
       when 'call'
         assign url_secondary = url_call_default
-      when 'quiz'
+      when 'quiz', 'leadmagnet'
         assign url_secondary = url_quiz_default
-      when 'leadmagnet'
-        assign url_secondary = url_leadmagnet_default
       else
         assign url_secondary = url_call_default
     endcase
-  endif
-
-  if primary_type == 'leadmagnet' and url_primary == ''
-    assign primary_type = 'quiz'
-    assign url_primary = url_quiz_default
-  endif
-  if secondary_type == 'leadmagnet' and url_secondary == ''
-    assign secondary_type = 'call'
-    assign url_secondary = url_call_default
   endif
 
   assign copy_heading_call = "Ready for your next chapter?"
   assign copy_body_call = "Let’s map what you want—and the first moves to get there."
   assign copy_button_call = article.metafields.custom.cta_label | default: "Book a private conversation"
 
-  assign copy_heading_quiz = "Take the quick quiz"
-  assign copy_body_quiz = "Get a fast signal on where your energy patterns help—or hinder—connection."
-  assign copy_button_quiz = "Start the quiz"
-
-  assign copy_heading_leadmagnet = "Free guide: Core Beliefs → Freedom"
-  assign copy_body_leadmagnet = "Spot and shift the beliefs that keep you stuck. Practical, concise."
-  assign copy_button_leadmagnet = "Get the guide"
+  assign copy_heading_quiz = "Curious where you actually stand?"
+  assign copy_body_quiz = "Take the free Presence Score assessment—a two-minute read on where you sit between performance and presence."
+  assign copy_button_quiz = "Take the Presence Score"
 
   assign nuance = ''
   if subtopics
@@ -131,6 +113,12 @@
 
   assign cta_type = ''
   if mode == 'mid' or mode == 'top'
+    assign cta_type = 'quiz'
+    assign heading = copy_heading_quiz
+    assign body = copy_body_quiz
+    assign button = copy_button_quiz
+    assign url = url_quiz_default
+  else
     case primary_type
       when 'call'
         assign cta_type = 'call'
@@ -138,39 +126,18 @@
         assign body = copy_body_call
         assign button = copy_button_call
         assign url = url_primary
-      when 'quiz'
+      when 'quiz', 'leadmagnet'
         assign cta_type = 'quiz'
         assign heading = copy_heading_quiz
         assign body = copy_body_quiz
         assign button = copy_button_quiz
         assign url = url_primary
       else
-        assign cta_type = 'leadmagnet'
-        assign heading = copy_heading_leadmagnet
-        assign body = copy_body_leadmagnet
-        assign button = copy_button_leadmagnet
-        assign url = url_primary
-    endcase
-  else
-    case secondary_type
-      when 'call'
         assign cta_type = 'call'
         assign heading = copy_heading_call
         assign body = copy_body_call
         assign button = copy_button_call
-        assign url = url_secondary
-      when 'quiz'
-        assign cta_type = 'quiz'
-        assign heading = copy_heading_quiz
-        assign body = copy_body_quiz
-        assign button = copy_button_quiz
-        assign url = url_secondary
-      else
-        assign cta_type = 'leadmagnet'
-        assign heading = copy_heading_leadmagnet
-        assign body = copy_body_leadmagnet
-        assign button = copy_button_leadmagnet
-        assign url = url_secondary
+        assign url = url_primary
     endcase
   endif
 
