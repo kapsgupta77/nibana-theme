@@ -20,7 +20,7 @@
     </div>
 
     {%- liquid
-      assign nb_dek       = article.metafields.custom.dek | default: ''
+      assign nb_dek       = article.metafields.custom.dek | default: '' | strip
       assign nb_cover     = article.metafields.custom.cover_image
       assign nb_cta_label = article.metafields.custom.cta_label | default: ''
       assign nb_cta_link  = article.metafields.custom.cta_link  | default: ''
@@ -275,9 +275,14 @@
     letter-spacing:.16em; text-transform:uppercase;
   }
   .nb-masthead__strap{
-    margin:0; color: var(--nb-saddle, #7d2921);
+    margin:0;
+    /* var(--nb-saddle) alone is ~1.4:1 against the masthead's dark background —
+       nowhere near legible. Lighten it (mixed toward white, still on-hue) and
+       bump the weight; the plain hex is a fallback for browsers without color-mix(). */
+    color:#be9490;
+    color: color-mix(in srgb, var(--nb-saddle, #7d2921), white 50%);
     font-family: var(--font-h1--family, var(--font-heading--family));
-    font-style:italic; font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem); line-height:1.35;
+    font-style:italic; font-weight:600; font-size: clamp(1.25rem, 1.1rem + .8vw, 1.5rem); line-height:1.35;
   }
 
   /* Eyebrow — category · read time · date, above the H1 */
@@ -363,7 +368,7 @@
   /* Author box — flattened to match homepage's flat system */
   .nb-author{display:grid;grid-template-columns:84px 1fr;gap:16px;align-items:center;margin:26px auto 10px;padding:16px;border:1px solid #e8ecef;border-radius:var(--style-border-radius-sm, 10px);background:#fff;box-shadow:none;max-width:var(--normal-content-width)}
   .nb-author__img{width:84px;height:84px;border-radius:50%;object-fit:cover}
-  .nb-author__placeholder{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:#f2f5f4;color:#67747a;font-weight:800}
+  .nb-author__placeholder{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:var(--nb-ink,#2f3e48);color:#fff;font-weight:800}
   .nb-author__name{margin:0 0 6px;font-weight:800}
   .nb-author__bio{margin:0;color:var(--nb-muted,#324247)}
   @media (max-width:720px){ .nb-author{grid-template-columns:64px 1fr} .nb-author__img,.nb-author__placeholder{width:64px;height:64px} }
