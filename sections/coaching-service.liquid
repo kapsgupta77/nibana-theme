@@ -494,7 +494,7 @@
           <a class="nb-cta nb-cta--xl"
              href="{{ service.cta_link | default: '/pages/book-a-call' }}"
              data-cta="service-hero-cta">
-            {{ service.cta_label | default: 'Book a free 20-min call' }}
+            {{ service.cta_label | default: 'Book a private conversation' }}
           </a>
         </div>
       </div>
@@ -568,7 +568,7 @@
     <div class="nb-grid">
 
   {%- liquid
-    assign btn_label = service.cta_label | default: 'Book a free 20-min call'
+    assign btn_label = service.cta_label | default: 'Book a private conversation'
     assign btn_href  = service.cta_link | default: '/pages/book-a-call'
   -%}
 
