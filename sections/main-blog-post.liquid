@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <header>
+    <header class="nb-article-header">
       <div class="nb-eyebrow">
         {%- if nb_eyebrow_category != '' -%}
           <span class="nb-eyebrow__cat">{{ nb_eyebrow_category }}</span>
@@ -260,12 +260,19 @@
 {% stylesheet %}
   /* === Article polish (Nibana) === */
 
-  /* Masthead — full-width dark band, new "reading page" pattern (Option B) */
+  /* Masthead — full-width dark band, new "reading page" pattern (Option B).
+     The section wrapper is a flex column with its own `gap` (from the section's
+     spacing setting) applied between every direct child, including the 3px
+     sticky progress bar right above this — which otherwise reads as a stray
+     disconnected line floating in a cream gap. Cancel that one gap so the band
+     sits flush under the progress bar; the gap below (margin-bottom here) is
+     unaffected. */
   .nb-masthead{
     width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
     background: var(--nb-masthead-bg, #223238);
     border-top:1px solid rgba(255,255,255,.08); /* keeps this from visually fusing with the site header above it */
     padding: clamp(3rem, 6vw, 4rem) 1.25rem;
+    margin-top: calc(var(--gap, 0px) * -1);
     margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
     text-align:center;
   }
@@ -314,8 +321,11 @@
 
   /* Header — extra breathing room before the hero image / body content
      that follows it as a flex sibling (the flex `gap` setting alone reads
-     as too tight next to the taller header stack below). */
-  header{ margin-bottom: clamp(1.5rem, 3vw, 2rem); }
+     as too tight next to the taller header stack below). Scoped to a class
+     rather than the bare `header` tag — other sections on the site (e.g.
+     testimonials) also use a plain <header> element, and an unscoped tag
+     selector here would leak into any of those rendered on the same page. */
+  .nb-article-header{ margin-bottom: clamp(1.5rem, 3vw, 2rem); }
 
   /* Dek — single display location, under the H1 (Option B) */
   .nb-article-dek{
