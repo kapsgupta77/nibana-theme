@@ -35,7 +35,7 @@
     {%- comment -%} === Masthead (dark band, editorial "reading page" pattern) === {%- endcomment -%}
     <div class="nb-masthead">
       <div class="nb-masthead__inner">
-        <p class="nb-masthead__wordmark">{{ shop.name }}</p>
+        <p class="nb-masthead__tagline">Dare to be sensitive in a desensitised world</p>
         {%- if nb_category != '' -%}
           <p class="nb-masthead__category">{{ nb_category }}</p>
         {%- endif -%}
@@ -244,16 +244,16 @@
   /* Masthead — full-width dark band, new "reading page" pattern (Option B) */
   .nb-masthead{
     width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
-    background: var(--nb-ink, #2f3e48);
+    background: var(--nb-masthead-bg, #223238);
     border-top:1px solid rgba(255,255,255,.08); /* keeps this from visually fusing with the site header above it */
     padding: clamp(3rem, 6vw, 4rem) 1.25rem;
     margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
     text-align:center;
   }
   .nb-masthead__inner{ max-width: var(--normal-content-width); margin:0 auto; }
-  .nb-masthead__wordmark{
-    margin:0 0 1rem; color:#fff; font-size:.95rem; font-weight:700;
-    letter-spacing:.2em; text-transform:uppercase;
+  .nb-masthead__tagline{
+    margin:0 0 1rem; color: rgba(255,255,255,.75); font-size:.9rem; font-weight:500;
+    letter-spacing:.04em; font-style:italic;
   }
   .nb-masthead__category{
     margin:0 0 .9rem; color: rgba(255,255,255,.68); font-size:.8rem; font-weight:600;
