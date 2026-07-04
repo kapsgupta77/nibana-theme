@@ -62,7 +62,7 @@ Also mirrors to:
           <p>Book a free 20-minute discovery call.</p>
           {% liquid
             assign call_url = section.settings.call_link | default: '#'
-            assign call_label = section.settings.call_label | strip | default: 'Book a Free 20-min Call'
+            assign call_label = section.settings.call_label | strip | default: 'Book a private conversation'
             assign call_class = section.settings.cta_call_class | strip
           %}
           <p>
@@ -229,7 +229,7 @@ Also mirrors to:
 
     { "type": "text", "id": "call_heading", "label": "Prefer to talk — heading", "default": "Prefer to talk?" },
     { "type": "text", "id": "call_sub", "label": "Prefer to talk — subtext", "default": "Book a free 20-minute discovery call." },
-    { "type": "text", "id": "call_label", "label": "Call CTA label", "default": "Book a Free 20-min Call" },
+    { "type": "text", "id": "call_label", "label": "Call CTA label", "default": "Book a private conversation" },
     { "type": "url",  "id": "call_link", "label": "Call CTA link" },
 
     { "type": "text", "id": "label_name", "label": "Form label — Name", "default": "Name" },
