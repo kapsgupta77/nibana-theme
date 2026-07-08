@@ -147,6 +147,11 @@
     text-wrap: pretty;
     text-decoration: none;
     padding-block-start: 0.75rem;
+    font-family: var(--font-h1--family, var(--font-heading--family));
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
   }
 
   .blog-post-card__content a:hover,
@@ -163,7 +168,7 @@
   }
 
   /* Blog micro-upgrade: reading minutes on cards */
-  .blog-post-card__meta { color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text)); font-size: var(--font-size--body-sm); }
+  .blog-post-card__meta { color: var(--nb-muted, #51615d); font-size: var(--font-size--body-sm); }
   .blog-post-card__meta > * { display: inline; margin: 0; }
   .blog-post-card__sep { margin: 0 .4em; }
 

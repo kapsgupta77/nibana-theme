@@ -78,7 +78,13 @@
   >
     {% content_for 'blocks' %}
 
-    {%- paginate blog.articles by 12 -%}
+    {%- comment -%}
+      Paginate by 100 so the client-side filter in nb-blog-filter.js operates across
+      the full blog in one page load. Pragmatic fix for current scale (~47 posts).
+      Once the blog meaningfully exceeds ~100 posts, replace with server-side/AJAX
+      filtering rather than raising this number further.
+    {%- endcomment -%}
+    {%- paginate blog.articles by 100 -%}
       <span ref="viewMorePrevious"></span>
       <div ref="grid" class="blog-posts-container" data-last-page="{{ paginate.pages }}">
 
@@ -108,6 +114,7 @@
 
 {% stylesheet %}
 /* ===== Blog hero ===== */
+/* Base (no tone class / blank hero_tone): sage fallback for backward compat */
 .nb-blog-hero{ background:var(--nb-sage,#EAF4F3); padding:clamp(14px,3vw,28px) 0; }
 .nb-blog-hero__inner{
   max-width:min(1160px,94vw); margin-inline:auto;
@@ -119,6 +126,21 @@
 .nb-blog-hero.has-no-media .nb-blog-hero__copy{ display:grid; place-items:center; }
 .nb-blog-hero__title{ margin:0 0 .4rem; }
 .nb-blog-hero__dek{ max-width:60ch; }
+
+/* ===== Tone variants (hero_tone metafield → tone-{value} class) ===== */
+/* ink — dark band matching the individual post page masthead */
+.nb-blog-hero.tone-ink{
+  background: var(--nb-masthead-bg, #223238);
+  color: rgba(255,255,255,.92);
+}
+.nb-blog-hero.tone-ink .nb-blog-hero__title{ color: #fff; }
+.nb-blog-hero.tone-ink .nb-blog-hero__dek{ color: rgba(255,255,255,.75); }
+/* nb-cta on dark bg already reads well (chocolate btn on dark field — same as masthead strap) */
+
+/* pebble / gainsboro — light neutrals from canonical palette */
+.nb-blog-hero.tone-pebble{ background: var(--nb-pebble, #d2cbc8); }
+.nb-blog-hero.tone-gainsboro{ background: var(--nb-gainsboro, #e3e4dc); }
+/* sage is the base rule above (no override needed) */
 
 /* ===== Existing posts grid (unchanged) ===== */
 .blog-posts {
@@ -153,6 +175,30 @@
 .blog-post-item:first-child { --blog-post-card-scale: 1; grid-column: span 6; }
 .blog-post-item { border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20)); padding: 0 1rem 1rem; }
 .blog-post-item:has(.blog-post-card__image-container) { border: none; padding: 0; }
+
+/* ===== Filtered state: uniform equal-width grid, nth-child layout suspended ===== */
+.blog-posts-container.is-filtered .blog-post-item,
+.blog-posts-container.is-filtered .blog-post-item:first-child,
+.blog-posts-container.is-filtered .blog-post-item:nth-child(2),
+.blog-posts-container.is-filtered .blog-post-item:nth-child(3) {
+  --blog-post-card-scale: 0.6;
+  grid-column: span 2;
+}
+.blog-posts-container.is-filtered .blog-post-item:first-child .blog-post-card { flex-direction: column; }
+.blog-posts-container.is-filtered .blog-post-item:first-child .blog-post-card__image-container,
+.blog-posts-container.is-filtered .blog-post-item:first-child:has(.blog-post-card__image-container) .blog-post-card__content {
+  width: 100%;
+  padding-inline-start: 0;
+}
+@media screen and (max-width: 749px) {
+  .blog-posts-container.is-filtered .blog-post-item,
+  .blog-posts-container.is-filtered .blog-post-item:first-child,
+  .blog-posts-container.is-filtered .blog-post-item:nth-child(2),
+  .blog-posts-container.is-filtered .blog-post-item:nth-child(3) {
+    --blog-post-card-scale: 0.5;
+    grid-column: span 6;
+  }
+}
 {% endstylesheet %}
 
 {% schema %}
