@@ -34,10 +34,10 @@
   {%- comment -%} Find a tag that exactly matches one of our known categories (case-insensitive) {%- endcomment -%}
   {%- assign known = "Men’s Work|Relationships|Emotional Intelligence|Leadership|Embodiment|Sexuality|Self-Discovery" | split: "|" -%}
   {%- for t in article.tags -%}
-    {%- assign t_down = t | downcase -%}
+    {%- assign t_norm = t | replace: "’", "'" | downcase -%}
     {%- for k in known -%}
-      {%- assign k_down = k | downcase -%}
-      {%- if t_down == k_down -%}{%- assign cat_fallback = t -%}{%- break -%}{%- endif -%}
+      {%- assign k_norm = k | replace: "’", "'" | downcase -%}
+      {%- if t_norm == k_norm -%}{%- assign cat_fallback = t -%}{%- break -%}{%- endif -%}
     {%- endfor -%}
     {%- if cat_fallback != '' -%}{%- break -%}{%- endif -%}
   {%- endfor -%}

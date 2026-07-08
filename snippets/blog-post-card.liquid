@@ -21,10 +21,10 @@
     if cat == '' and card_article.tags
       assign known = "Men’s Work|Relationships|Emotional Intelligence|Leadership|Embodiment|Sexuality|Self-Discovery" | split: "|"
       for t in card_article.tags
-        assign t_down = t | downcase
+        assign t_norm = t | replace: "’", "'" | downcase
         for k in known
-          assign k_down = k | downcase
-          if t_down == k_down
+          assign k_norm = k | replace: "’", "'" | downcase
+          if t_norm == k_norm
             assign cat_fallback = t
             break
           endif

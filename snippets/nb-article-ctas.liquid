@@ -7,9 +7,10 @@
   assign primary_type = article.metafields.custom.cta_primary_type | default: ''
   assign secondary_type = article.metafields.custom.cta_secondary_type | default: ''
 
-  if primary_type == '' or secondary_type == ''
+  if primary_type == ‘’ or secondary_type == ‘’
+    assign category = category | replace: "’", "'"
     case category
-      when "Men’s Work"
+      when "Men's Work"
         assign cat_primary = 'call'
         assign cat_secondary = 'quiz'
       when "Relationships"
