@@ -70,6 +70,9 @@
     function applyFilters(catSel, topicSel) {
       const catSlug = slugify(catSel);
       const topicSlug = slugify(topicSel);
+      const isFiltered = catSlug !== 'all' || !!topicSlug;
+      const grid = qs('[ref="grid"], .blog-posts-container');
+      if (grid) grid.classList.toggle('is-filtered', isFiltered);
       cardData.forEach((c) => {
         const catOk = (catSlug==='all') || (slugify(c.cat)===catSlug);
         const topicOk = !topicSlug || c.topicsSlug.includes(topicSlug);
