@@ -78,7 +78,13 @@
   >
     {% content_for 'blocks' %}
 
-    {%- paginate blog.articles by 12 -%}
+    {%- comment -%}
+      Paginate by 100 so the client-side filter in nb-blog-filter.js operates across
+      the full blog in one page load. Pragmatic fix for current scale (~47 posts).
+      Once the blog meaningfully exceeds ~100 posts, replace with server-side/AJAX
+      filtering rather than raising this number further.
+    {%- endcomment -%}
+    {%- paginate blog.articles by 100 -%}
       <span ref="viewMorePrevious"></span>
       <div ref="grid" class="blog-posts-container" data-last-page="{{ paginate.pages }}">
 
@@ -153,6 +159,30 @@
 .blog-post-item:first-child { --blog-post-card-scale: 1; grid-column: span 6; }
 .blog-post-item { border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20)); padding: 0 1rem 1rem; }
 .blog-post-item:has(.blog-post-card__image-container) { border: none; padding: 0; }
+
+/* ===== Filtered state: uniform equal-width grid, nth-child layout suspended ===== */
+.blog-posts-container.is-filtered .blog-post-item,
+.blog-posts-container.is-filtered .blog-post-item:first-child,
+.blog-posts-container.is-filtered .blog-post-item:nth-child(2),
+.blog-posts-container.is-filtered .blog-post-item:nth-child(3) {
+  --blog-post-card-scale: 0.6;
+  grid-column: span 2;
+}
+.blog-posts-container.is-filtered .blog-post-item:first-child .blog-post-card { flex-direction: column; }
+.blog-posts-container.is-filtered .blog-post-item:first-child .blog-post-card__image-container,
+.blog-posts-container.is-filtered .blog-post-item:first-child:has(.blog-post-card__image-container) .blog-post-card__content {
+  width: 100%;
+  padding-inline-start: 0;
+}
+@media screen and (max-width: 749px) {
+  .blog-posts-container.is-filtered .blog-post-item,
+  .blog-posts-container.is-filtered .blog-post-item:first-child,
+  .blog-posts-container.is-filtered .blog-post-item:nth-child(2),
+  .blog-posts-container.is-filtered .blog-post-item:nth-child(3) {
+    --blog-post-card-scale: 0.5;
+    grid-column: span 6;
+  }
+}
 {% endstylesheet %}
 
 {% schema %}
