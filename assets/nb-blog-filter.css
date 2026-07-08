@@ -28,10 +28,12 @@
 .nb-chip:hover{ box-shadow: var(--chip-shadow); }
 .nb-chip:active{ transform: translateY(1px); }
 .nb-chip--on{
-  background: #fff;
-  border-color: rgba(0,0,0,.24);
+  background: var(--nb-teal, #10636c);
+  color: #fff;
+  border-color: var(--nb-teal, #10636c);
   box-shadow: var(--chip-shadow-active);
 }
+.nb-chip--on:hover{ background: var(--nb-teal-700, #0f5b62); border-color: var(--nb-teal-700, #0f5b62); }
 
 /* Search field */
 .nb-subtopic-input{
