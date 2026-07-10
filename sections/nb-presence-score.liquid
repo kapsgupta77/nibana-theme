@@ -36,7 +36,7 @@
         <p class="nb-presence-score__eyebrow">Halfway</p>
         <h2>You are halfway there.</h2>
         <p>Where should we send your full breakdown?</p>
-        {% form 'customer', class: 'nb-presence-score__form' %}
+        {% form 'customer', class: 'nb-presence-score__form', target: 'PresenceScoreFrame-{{ section.id }}' %}
           <input type="hidden" name="contact[tags]" value="presence-score-quiz,quiz_started">
           <input type="hidden" name="contact[note]" value="Presence Score quiz started">
           <label class="visually-hidden" for="PresenceEmail-{{ section.id }}">Email address</label>
@@ -59,6 +59,10 @@
     </section>
 
     <section class="nb-presence-score__screen nb-presence-score__results" data-screen="results" hidden data-presence-results></section>
+  </div>
+
+  <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+    <iframe name="PresenceScoreFrame-{{ section.id }}" id="PresenceScoreFrame-{{ section.id }}" title="hidden" tabindex="-1"></iframe>
   </div>
 
   <script>
