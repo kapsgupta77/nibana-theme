@@ -3,406 +3,181 @@
     {
       "id": 1,
       "dimension": "Identity",
-      "prompt": "When you snap, go cold, over-explain, or agree to something you already know you will resent, when do you usually see what is happening?",
+      "prompt": "When you snap, go cold, over-explain, or agree to something you already know you will resent, when do you usually realise what's happening?",
       "options": [
-        {
-          "value": 1,
-          "label": "I rarely see it at all."
-        },
-        {
-          "value": 2,
-          "label": "I usually see it much later."
-        },
-        {
-          "value": 3,
-          "label": "I see it once I have calmed down."
-        },
-        {
-          "value": 4,
-          "label": "I often see it while it is happening."
-        },
-        {
-          "value": 5,
-          "label": "I can usually see it and choose differently."
-        }
+        { "value": 1, "label": "I rarely see it at all." },
+        { "value": 2, "label": "I usually see it much later." },
+        { "value": 3, "label": "I see it once I have calmed down." },
+        { "value": 4, "label": "I often see it while it is happening." },
+        { "value": 5, "label": "I can usually see it and choose differently." }
       ]
     },
     {
       "id": 2,
       "dimension": "Identity",
-      "prompt": "When you look at your ambition, standards, relationship patterns, and daily life, how often can you tell what is genuinely yours and what you inherited?",
+      "prompt": "When you look at your ambition, standards, relationships, and the way you live, how often can you tell what's genuinely yours and what's been shaped by your upbringing or other people's expectations?",
       "options": [
-        {
-          "value": 1,
-          "label": "I rarely question it. I mostly live what was expected."
-        },
-        {
-          "value": 2,
-          "label": "I can see some of it, usually after the fact."
-        },
-        {
-          "value": 3,
-          "label": "I can tell the difference in some areas."
-        },
-        {
-          "value": 4,
-          "label": "I can usually feel what is mine and what is inherited."
-        },
-        {
-          "value": 5,
-          "label": "I can see the inheritance clearly and choose from what is genuinely mine."
-        }
+        { "value": 1, "label": "I rarely question it. I mostly live what was expected." },
+        { "value": 2, "label": "I can see some of it, usually after the fact." },
+        { "value": 3, "label": "I can tell the difference in some areas." },
+        { "value": 4, "label": "I can usually feel what is mine and what has been shaped by my upbringing or other people's expectations." },
+        { "value": 5, "label": "I can see it clearly and choose what is genuinely mine." }
       ]
     },
     {
       "id": 3,
       "dimension": "Identity",
-      "prompt": "When the same difficulty keeps returning, where does your attention usually go first?",
+      "prompt": "When the same kind of problem keeps showing up in your work, relationships, or life, where does your attention usually go first?",
       "options": [
-        {
-          "value": 1,
-          "label": "To what other people are doing wrong."
-        },
-        {
-          "value": 2,
-          "label": "Mostly to blame, frustration, or defence."
-        },
-        {
-          "value": 3,
-          "label": "Some blame, some self-inquiry."
-        },
-        {
-          "value": 4,
-          "label": "To what is mine to see or change."
-        },
-        {
-          "value": 5,
-          "label": "To what is mine, what is theirs, and what reality is showing me."
-        }
+        { "value": 1, "label": "To what other people are doing wrong." },
+        { "value": 2, "label": "Mostly to blame, frustration, or defending myself." },
+        { "value": 3, "label": "Some blame, some self-inquiry." },
+        { "value": 4, "label": "To what is mine to see or change." },
+        { "value": 5, "label": "To what is mine, what is theirs, and what reality is showing me." }
       ]
     },
     {
       "id": 4,
       "dimension": "Identity",
-      "prompt": "When there is no role to fill, no one to impress, and nothing to achieve, how clear are you about who is actually there?",
+      "prompt": "When you stop doing, achieving and looking after everyone else, how comfortable are you simply being yourself?",
       "options": [
-        {
-          "value": 1,
-          "label": "Not clear. It feels uncomfortable."
-        },
-        {
-          "value": 2,
-          "label": "I get glimpses, but I avoid staying there."
-        },
-        {
-          "value": 3,
-          "label": "Somewhat clear."
-        },
-        {
-          "value": 4,
-          "label": "Mostly clear."
-        },
-        {
-          "value": 5,
-          "label": "Clear enough that I do not need performance to feel real."
-        }
+        { "value": 1, "label": "Not comfortable. I don't really know who I am without doing." },
+        { "value": 2, "label": "I get glimpses, but I don't stay there for long." },
+        { "value": 3, "label": "I'm somewhat comfortable simply being myself." },
+        { "value": 4, "label": "I'm mostly comfortable simply being myself." },
+        { "value": 5, "label": "I don't need achievement or performance to know who I am." }
       ]
     },
     {
       "id": 5,
       "dimension": "Presence",
-      "prompt": "When someone says something that stings, how much space is there between what you feel and what you do next?",
+      "prompt": "When someone criticises you, rejects you, or says something that triggers you, how often can you stay with what you're feeling before reacting?",
       "options": [
-        {
-          "value": 1,
-          "label": "Almost none. I react immediately."
-        },
-        {
-          "value": 2,
-          "label": "Very little. I usually realise after."
-        },
-        {
-          "value": 3,
-          "label": "Some. I catch myself occasionally."
-        },
-        {
-          "value": 4,
-          "label": "Usually enough to pause."
-        },
-        {
-          "value": 5,
-          "label": "Enough to feel it, stay present, and choose my response."
-        }
+        { "value": 1, "label": "I react almost immediately." },
+        { "value": 2, "label": "I usually react first and realise later." },
+        { "value": 3, "label": "I sometimes catch myself before reacting." },
+        { "value": 4, "label": "I can usually stay with what I'm feeling before I respond." },
+        { "value": 5, "label": "I can stay present with what I'm feeling and choose my response." }
       ]
     },
     {
       "id": 6,
       "dimension": "Presence",
-      "prompt": "Before a difficult meeting, avoided conversation, or decision that feels wrong, how often do you notice what your body already knows?",
+      "prompt": "Before a difficult conversation, an important decision, or a meeting you're dreading, how often do you notice what's happening in your body?",
       "options": [
-        {
-          "value": 1,
-          "label": "Rarely. I push straight through."
-        },
-        {
-          "value": 2,
-          "label": "Occasionally."
-        },
-        {
-          "value": 3,
-          "label": "Sometimes."
-        },
-        {
-          "value": 4,
-          "label": "Often."
-        },
-        {
-          "value": 5,
-          "label": "Consistently. My body is part of how I read reality."
-        }
+        { "value": 1, "label": "Rarely. I push straight through." },
+        { "value": 2, "label": "Occasionally." },
+        { "value": 3, "label": "Sometimes." },
+        { "value": 4, "label": "Often." },
+        { "value": 5, "label": "Consistently. I trust what my body is telling me and include it in my decisions." }
       ]
     },
     {
       "id": 7,
       "dimension": "Presence",
-      "prompt": "When you sense something unspoken in someone close to you, what do you usually do?",
+      "prompt": "When you can tell something is off with someone close to you, what do you usually do?",
       "options": [
-        {
-          "value": 1,
-          "label": "I miss it or ignore it."
-        },
-        {
-          "value": 2,
-          "label": "I sense something, but avoid naming it."
-        },
-        {
-          "value": 3,
-          "label": "I assume I know what is happening."
-        },
-        {
-          "value": 4,
-          "label": "I stay curious and check rather than assume."
-        },
-        {
-          "value": 5,
-          "label": "I can sense, check cleanly, and let them have their reality."
-        }
+        { "value": 1, "label": "I don't usually notice it, or I ignore it." },
+        { "value": 2, "label": "I notice it, but avoid bringing it up." },
+        { "value": 3, "label": "I usually assume I know what's going on." },
+        { "value": 4, "label": "I stay curious and ask instead of assuming." },
+        { "value": 5, "label": "I ask, stay curious, and let them have their own experience." }
       ]
     },
     {
       "id": 8,
       "dimension": "Presence",
-      "prompt": "In a high-stakes moment, how much of you is genuinely present rather than managing how you are coming across?",
+      "prompt": "When you're being challenged, criticised, or all eyes are on you, how much of your attention goes into managing how you come across instead of simply being yourself?",
       "options": [
-        {
-          "value": 1,
-          "label": "Almost all of me is managing the impression."
-        },
-        {
-          "value": 2,
-          "label": "More managing than being present."
-        },
-        {
-          "value": 3,
-          "label": "About half and half."
-        },
-        {
-          "value": 4,
-          "label": "Mostly present."
-        },
-        {
-          "value": 5,
-          "label": "I can stay real even when I am being watched or challenged."
-        }
+        { "value": 1, "label": "Almost all of my attention goes into managing how I come across." },
+        { "value": 2, "label": "I spend more time managing myself than simply being myself." },
+        { "value": 3, "label": "It's about half and half." },
+        { "value": 4, "label": "I'm mostly myself, even under pressure." },
+        { "value": 5, "label": "I can stay fully myself, even when I'm being watched, challenged or judged." }
       ]
     },
     {
       "id": 9,
       "dimension": "Desire",
-      "prompt": "When you look at what you are chasing now, how much of it comes from genuine desire rather than proving something?",
+      "prompt": "When you look at what you want most in your life right now, how much of it comes from genuine desire rather than trying to prove something?",
       "options": [
-        {
-          "value": 1,
-          "label": "Almost all of it is about proving."
-        },
-        {
-          "value": 2,
-          "label": "More proving than genuine desire."
-        },
-        {
-          "value": 3,
-          "label": "About half and half."
-        },
-        {
-          "value": 4,
-          "label": "Mostly genuine desire."
-        },
-        {
-          "value": 5,
-          "label": "I can feel the difference and choose from what is true."
-        }
+        { "value": 1, "label": "Almost all of it is about proving something." },
+        { "value": 2, "label": "More of it comes from proving than genuine desire." },
+        { "value": 3, "label": "It's about half and half." },
+        { "value": 4, "label": "Most of it comes from genuine desire." },
+        { "value": 5, "label": "I can feel the difference and choose what is genuinely true for me." }
       ]
     },
     {
       "id": 10,
       "dimension": "Desire",
-      "prompt": "In the last month, how much of your time, attention, and energy went toward what you actually want?",
+      "prompt": "Over the past month, how much of your time, attention and energy has gone towards what you genuinely want, rather than what you feel you should be doing?",
       "options": [
-        {
-          "value": 1,
-          "label": "Very little. Most went to obligation, maintenance, or expectation."
-        },
-        {
-          "value": 2,
-          "label": "Some, but less than I would like."
-        },
-        {
-          "value": 3,
-          "label": "About half."
-        },
-        {
-          "value": 4,
-          "label": "Most of it."
-        },
-        {
-          "value": 5,
-          "label": "My time, attention, and energy are increasingly shaped by what is real for me."
-        }
+        { "value": 1, "label": "Very little. Most of my time went towards what I felt I should be doing." },
+        { "value": 2, "label": "Some, but \"should\" still drives more of my life than what I genuinely want." },
+        { "value": 3, "label": "It's about half and half." },
+        { "value": 4, "label": "Most of my time, attention and energy goes towards what I genuinely want." },
+        { "value": 5, "label": "My life is increasingly organised around what I genuinely want, even when it asks more of me than feels comfortable." }
       ]
     },
     {
       "id": 11,
       "dimension": "Desire",
-      "prompt": "When you complain about the pace, the relationship, the work, or the life you have built, what usually happens next?",
+      "prompt": "When you find yourself complaining about your work, a relationship, your health, or your life, what do you usually do with that complaint?",
       "options": [
-        {
-          "value": 1,
-          "label": "Nothing. The complaint repeats."
-        },
-        {
-          "value": 2,
-          "label": "I vent, then return to the same pattern."
-        },
-        {
-          "value": 3,
-          "label": "I sometimes see what the complaint is pointing to."
-        },
-        {
-          "value": 4,
-          "label": "I often use it to find what I actually want or need to face."
-        },
-        {
-          "value": 5,
-          "label": "Complaint quickly becomes information, choice, or action."
-        }
+        { "value": 1, "label": "I keep complaining, but nothing really changes." },
+        { "value": 2, "label": "I vent, feel better for a while, then end up back in the same place." },
+        { "value": 3, "label": "I sometimes realise my complaint is pointing to something deeper." },
+        { "value": 4, "label": "I usually use my complaint to discover what I really want or need to face." },
+        { "value": 5, "label": "I know that behind every complaint is a hidden desire, and I use it to guide my next step." }
       ]
     },
     {
       "id": 12,
       "dimension": "Desire",
-      "prompt": "When life interrupts your plan, what usually happens to your desire?",
+      "prompt": "When life doesn't go the way you planned, what usually happens to what you genuinely want?",
       "options": [
-        {
-          "value": 1,
-          "label": "I lose contact with it and go into survival."
-        },
-        {
-          "value": 2,
-          "label": "I become rigid and try to force the old plan."
-        },
-        {
-          "value": 3,
-          "label": "I adjust, but it costs me a lot."
-        },
-        {
-          "value": 4,
-          "label": "I stay connected to what matters and adapt."
-        },
-        {
-          "value": 5,
-          "label": "I let the interruption reveal a more honest desire."
-        }
+        { "value": 1, "label": "I lose sight of what I want and go into survival mode." },
+        { "value": 2, "label": "I hold on tightly to the original plan, even when it's no longer working." },
+        { "value": 3, "label": "I adapt, but it feels like I've lost something important." },
+        { "value": 4, "label": "I stay connected to what really matters and find another way forward." },
+        { "value": 5, "label": "Life often helps me discover an even more honest version of what I truly want." }
       ]
     },
     {
       "id": 13,
       "dimension": "Aliveness",
-      "prompt": "After a long stretch of high output, what actually brings you back to yourself?",
+      "prompt": "Life moves fast. Between work, other people's needs and your own ambitions, how much of your life do you actually meet as it's happening, rather than being dragged through it or watching it go by?",
       "options": [
-        {
-          "value": 1,
-          "label": "Nothing reliable. I just wait until I recover."
-        },
-        {
-          "value": 2,
-          "label": "Rest helps, but I do not feel truly restored."
-        },
-        {
-          "value": 3,
-          "label": "A few things help, but they are inconsistent."
-        },
-        {
-          "value": 4,
-          "label": "I have practices that reliably restore me."
-        },
-        {
-          "value": 5,
-          "label": "I know how to return to my body, energy, and clarity."
-        }
+        { "value": 1, "label": "Most of the time I'm dragged along or checked out. Life is happening, but I'm not really in it." },
+        { "value": 2, "label": "I catch brief moments of feeling fully engaged, but they don't last." },
+        { "value": 3, "label": "I'm engaged with parts of my life, but a lot of it still passes me by." },
+        { "value": 4, "label": "I'm engaged with most of my life as it happens, not just the parts that are going well." },
+        { "value": 5, "label": "I meet life as it's happening, moment to moment. Engaged, not dragged, not watching from the sidelines." }
       ]
     },
     {
       "id": 14,
       "dimension": "Aliveness",
-      "prompt": "You can probably name the pattern that keeps showing up under pressure. How often does knowing it actually change how you live?",
+      "prompt": "When you look back on a typical week, which of these feels most true?",
       "options": [
-        {
-          "value": 1,
-          "label": "Rarely. Knowing and changing feel separate."
-        },
-        {
-          "value": 2,
-          "label": "Occasionally."
-        },
-        {
-          "value": 3,
-          "label": "Sometimes."
-        },
-        {
-          "value": 4,
-          "label": "Often."
-        },
-        {
-          "value": 5,
-          "label": "Almost always. Insight moves into behaviour, body, and choice."
-        }
+        { "value": 1, "label": "I mostly get through the week." },
+        { "value": 2, "label": "I achieve a lot, but still feel strangely empty, like I can't quite touch the deepest part of myself." },
+        { "value": 3, "label": "Some moments feel meaningful, but I know there's something more available to me." },
+        { "value": 4, "label": "Most weeks feel meaningful and aligned with who I am." },
+        { "value": 5, "label": "By the end of most weeks, what I did and what I actually wanted were the same thing. I feel well used, not used up." }
       ]
     },
     {
       "id": 15,
       "dimension": "Aliveness",
-      "prompt": "What happens to the resentment, grief, unfinished conversations, and old experiences you still carry?",
+      "prompt": "What usually happens to the difficult experiences, emotions, and conversations that remain unfinished in your life?",
       "options": [
-        {
-          "value": 1,
-          "label": "They mostly accumulate."
-        },
-        {
-          "value": 2,
-          "label": "Some fade, but little gets consciously cleared."
-        },
-        {
-          "value": 3,
-          "label": "Some gets worked through over time."
-        },
-        {
-          "value": 4,
-          "label": "Most of it gets faced and moved."
-        },
-        {
-          "value": 5,
-          "label": "I have reliable ways to clear what I carry."
-        }
+        { "value": 1, "label": "I mostly carry them with me. They build up over time." },
+        { "value": 2, "label": "I try to move on, but they often stay with me longer than I'd like." },
+        { "value": 3, "label": "I work through some of them, but others keep resurfacing." },
+        { "value": 4, "label": "I usually find healthy ways to process and complete them." },
+        { "value": 5, "label": "I have reliable practices that help me complete experiences, return to myself, and stay engaged with life." }
       ]
     }
   ]
