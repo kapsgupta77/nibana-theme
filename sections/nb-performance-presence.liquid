@@ -6,7 +6,7 @@
     <div class="nb-pp__method-card">
       <div class="nb-pp__model" role="list" style="--nb-pp-stage-count: {{ section.blocks.size | at_least: 1 }};">
         {% for block in section.blocks %}
-          <article class="nb-pp__stage{% if forloop.last %} nb-pp__stage--arrival{% endif %}" role="listitem" {{ block.shopify_attributes }}>
+          <article class="nb-pp__stage{% if forloop.last %} nb-pp__stage--arrival{% endif %}" {{ block.shopify_attributes }}>
             <span class="nb-pp__index">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
             <span class="nb-pp__dot" aria-hidden="true"></span>
             <div class="nb-pp__stage-copy">
