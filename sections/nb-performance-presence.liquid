@@ -4,18 +4,18 @@
     {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
     <div class="nb-pp__body">{{ section.settings.body }}</div>
     <div class="nb-pp__method-card">
-      <div class="nb-pp__model" role="list" style="--nb-pp-stage-count: {{ section.blocks.size | at_least: 1 }};">
+      <ul class="nb-pp__model" style="--nb-pp-stage-count: {{ section.blocks.size | at_least: 1 }};">
         {% for block in section.blocks %}
-          <article class="nb-pp__stage{% if forloop.last %} nb-pp__stage--arrival{% endif %}" {{ block.shopify_attributes }}>
+          <li class="nb-pp__stage{% if forloop.last %} nb-pp__stage--arrival{% endif %}" {{ block.shopify_attributes }}>
             <span class="nb-pp__index">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
             <span class="nb-pp__dot" aria-hidden="true"></span>
             <div class="nb-pp__stage-copy">
               <h3>{{ block.settings.title }}</h3>
               <p>{{ block.settings.text }}</p>
             </div>
-          </article>
+          </li>
         {% endfor %}
-      </div>
+      </ul>
       {% if section.settings.bridge != blank %}<p class="nb-pp__bridge">{{ section.settings.bridge }}</p>{% endif %}
       <div class="nb-pp__actions">
         {% if section.settings.secondary_cta_label != blank and section.settings.secondary_cta_link != blank %}<a class="nb-pp__text-link" href="{{ section.settings.secondary_cta_link }}">{{ section.settings.secondary_cta_label }}</a>{% endif %}
@@ -34,7 +34,7 @@
 #nb-pp-{{ section.id }} .nb-pp__body p{break-inside:avoid;margin:0 0 1em;}
 #nb-pp-{{ section.id }} .nb-pp__method-card{position:relative;margin:clamp(54px,6.2vw,82px) 0 0;padding:clamp(26px,3.2vw,42px);border:1px solid var(--nb-pp-border);border-radius:clamp(22px,2.2vw,30px);background:color-mix(in oklab,var(--nb-pp-mist),var(--nb-pp-cream) 18%);box-shadow:0 18px 46px rgba(34,50,56,.055);overflow:hidden;}
 #nb-pp-{{ section.id }} .nb-pp__method-card:before{content:"";position:absolute;inset:14px;border:1px solid rgba(16,99,108,.07);border-radius:calc(clamp(22px,2.2vw,30px) - 7px);pointer-events:none;}
-#nb-pp-{{ section.id }} .nb-pp__model{position:relative;display:grid;grid-template-columns:repeat({{ section.blocks.size | at_least: 1 }},minmax(0,1fr));column-gap:clamp(14px,1.45vw,20px);row-gap:0;align-items:stretch;}
+#nb-pp-{{ section.id }} .nb-pp__model{list-style:none;margin:0;padding:0;position:relative;display:grid;grid-template-columns:repeat({{ section.blocks.size | at_least: 1 }},minmax(0,1fr));column-gap:clamp(14px,1.45vw,20px);row-gap:0;align-items:stretch;}
 #nb-pp-{{ section.id }} .nb-pp__model:before{content:"";position:absolute;left:calc(100% / {{ section.blocks.size | at_least: 1 | times: 2 }});right:calc(100% / {{ section.blocks.size | at_least: 1 | times: 2 }});top:31px;height:1px;background:linear-gradient(90deg,rgba(16,99,108,.08),rgba(16,99,108,.34),rgba(16,99,108,.08));}
 #nb-pp-{{ section.id }} .nb-pp__stage{position:relative;display:grid;grid-template-rows:auto auto 1fr;gap:11px;min-height:196px;padding:0;text-align:center;}
 #nb-pp-{{ section.id }} .nb-pp__index{font-family:var(--font-body--family);font-size:1rem;font-weight:700;letter-spacing:.18em;line-height:1;text-transform:uppercase;color:rgba(34,50,56,.43);}
