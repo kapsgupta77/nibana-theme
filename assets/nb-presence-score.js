@@ -44,6 +44,8 @@
     root.querySelector('[data-presence-back-email]')?.addEventListener('click',()=>{ state.index=7; show('quiz'); renderQuestion(); });
     root.querySelector('.nb-presence-score__form')?.addEventListener('submit',onEmail);
     root.querySelector('[data-presence-skip-email]')?.addEventListener('click',skipEmail);
+    root.querySelector('[data-presence-fname]')?.addEventListener('input',function(){ this.setCustomValidity(''); });
+    root.querySelector('[data-presence-lname]')?.addEventListener('input',function(){ this.setCustomValidity(''); });
     function renderQuestion(){
       const q=questions[state.index]; if(!q)return;
       const pct=Math.round((state.index/questions.length)*100); pEl.style.width=pct+'%';
