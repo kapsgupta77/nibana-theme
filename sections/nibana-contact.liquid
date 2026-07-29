@@ -2,7 +2,6 @@
 Contact page: visible Shopify CUSTOMER form (creates/updates customer record) with Nibana styling.
 Also mirrors to:
 - Hidden Shopify CONTACT form (fires store email)
-- Hidden Mailchimp form (parallel subscribe)
 {%- endcomment -%}
 
 {% liquid
@@ -190,23 +189,6 @@ Also mirrors to:
         <iframe id="nbc-email-target" name="nbc-email-target" title="Shopify contact submit"></iframe>
       </div>
 
-      {%- comment -%} HIDDEN: Mailchimp mirror (parallel subscribe) {%- endcomment -%}
-      <form action="https://life.us4.list-manage.com/subscribe/post?u=41960bde0a78c656a84bb759b&amp;id=d3d64ba831"
-            method="post" target="nbc-mc-target" id="nbc-mc" aria-hidden="true"
-            style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
-        <input type="text"   name="FNAME" id="nbc-mc-fname">
-        <input type="text"   name="LNAME" id="nbc-mc-lname">
-        <input type="email"  name="EMAIL" id="nbc-mc-email">
-        <input type="text"   name="PHONE" id="nbc-mc-phone">
-        <input
-          type="hidden"
-          name="group[78632][1]"
-          id="nbc-mc-consent"
-          value="{% if section.settings.optin_checked %}1{% else %}0{% endif %}"
-        >
-        <input type="submit" value="Subscribe">
-      </form>
-      <iframe name="nbc-mc-target" id="nbc-mc-target" title="Mailchimp submit" hidden></iframe>
     </div>
   </div>
 </section>
@@ -257,10 +239,8 @@ Also mirrors to:
     { "type": "text", "id": "subheading_class", "label": "Subheading class", "default": "paragraph" },
     { "type": "text", "id": "block_heading_class", "label": "Panel heading class", "default": "h3" },
 
-    { "type": "checkbox", "id": "enable_debug", "label": "Enable Mailchimp debug badge (temporary)", "default": false, "info": "Enable to surface Shopify contact diagnostics (beacon, fetch, iframe logs) for troubleshooting." },
+    { "type": "checkbox", "id": "enable_debug", "label": "Enable contact debug badge (temporary)", "default": false, "info": "Enable to surface Shopify contact diagnostics (beacon, fetch, iframe logs) for troubleshooting." },
 
-    { "type": "checkbox", "id": "use_mailchimp_flow", "label": "Add contacts to Mailchimp directly on submit", "default": true },
-    { "type": "url",      "id": "mailchimp_action",  "label": "Mailchimp embed form action (Hosted or Embed URL)" },
     { "type": "checkbox", "id": "use_shopify_customer_flow", "label": "Also create a Shopify customer (may be blocked by hCaptcha)", "default": true },
 
     { "type": "text", "id": "max_width", "label": "Max width", "default": "1100px" },
