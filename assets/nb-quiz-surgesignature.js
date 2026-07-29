@@ -1,5 +1,6 @@
 (function(){
   function dl(event, params){ window.dataLayer = window.dataLayer || []; window.dataLayer.push(Object.assign({event}, params||{})); }
+  const NAME_RE = /^[\p{L}\p{M}' .-]{1,50}$/u;
 
   document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('section.nb-quiz.nb-quiz--surgesignature').forEach(function(section){
@@ -311,9 +312,15 @@
   const shopifyForm = document.getElementById('nb-quiz-shopify');
   if (!shopifyForm) return;
 
-  shopifyForm.addEventListener('submit', function () {
-    const fname = document.getElementById('nbq-fname')?.value || '';
-    const lname = document.getElementById('nbq-lname')?.value || '';
+  shopifyForm.addEventListener('submit', function (e) {
+    const fnameEl = document.getElementById('nbq-fname');
+    const lnameEl = document.getElementById('nbq-lname');
+    if (fnameEl) fnameEl.setCustomValidity('');
+    if (lnameEl) lnameEl.setCustomValidity('');
+    const fname = (fnameEl?.value || '').trim();
+    const lname = (lnameEl?.value || '').trim();
+    if (fnameEl && !NAME_RE.test(fname)) { fnameEl.setCustomValidity(fname ? 'Please enter a valid first name.' : 'First name is required.'); fnameEl.reportValidity(); e.preventDefault(); return; }
+    if (lnameEl && !NAME_RE.test(lname)) { lnameEl.setCustomValidity(lname ? 'Please enter a valid last name.' : 'Last name is required.'); lnameEl.reportValidity(); e.preventDefault(); return; }
     const email = document.getElementById('nbq-email')?.value || '';
     const phone = document.getElementById('nbq-phone')?.value || '';
     const consent = !!document.getElementById('nbq-consent')?.checked;

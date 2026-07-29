@@ -1,4 +1,5 @@
 (function(){
+  const NAME_RE = /^[\p{L}\p{M}' .-]{1,50}$/u;
   const cf = document.getElementById('nb-contact-shopify');
   if (!cf) return;
 
@@ -20,9 +21,15 @@
     return el;
   };
 
-  cf.addEventListener('submit', function () {
-    const fname = document.getElementById('nbc-first')?.value || '';
-    const lname = document.getElementById('nbc-last')?.value || '';
+  cf.addEventListener('submit', function (e) {
+    const fnameEl = document.getElementById('nbc-first');
+    const lnameEl = document.getElementById('nbc-last');
+    if (fnameEl) fnameEl.setCustomValidity('');
+    if (lnameEl) lnameEl.setCustomValidity('');
+    const fname = (fnameEl?.value || '').trim();
+    const lname = (lnameEl?.value || '').trim();
+    if (fnameEl && !NAME_RE.test(fname)) { fnameEl.setCustomValidity(fname ? 'Please enter a valid first name.' : 'First name is required.'); fnameEl.reportValidity(); e.preventDefault(); return; }
+    if (lnameEl && !NAME_RE.test(lname)) { lnameEl.setCustomValidity(lname ? 'Please enter a valid last name.' : 'Last name is required.'); lnameEl.reportValidity(); e.preventDefault(); return; }
     const email = document.getElementById('nbc-email')?.value || '';
     const phone = document.getElementById('nbc-phone')?.value || '';
     const reason = document.getElementById('nbc-reason')?.value || '';
