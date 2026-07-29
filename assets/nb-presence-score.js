@@ -1,5 +1,6 @@
 (function(){
-  const KEYS={answers:'nb_presence_score_answers',email:'nb_presence_score_email',result:'nb_presence_score_result',started:'nb_presence_score_started_at'};
+  const KEYS={answers:'nb_presence_score_answers',email:'nb_presence_score_email',firstName:'nb_presence_score_first_name',lastName:'nb_presence_score_last_name',result:'nb_presence_score_result',started:'nb_presence_score_started_at'};
+  const NAME_RE=/^[\p{L}\p{M}' .-]{1,50}$/u;
   const bands={
     Performer:{range:'0–35',stage:'Performance',truth:'You have built the life, but performance is still running too much of it.',headline:'Built the life. Still managed by performance.',copy:['You have learned how to produce, hold things together, and keep moving. That has probably served you. It may also be costing more than you admit.','At this stage, presence is not yet stable because too much of life is still organised around output, image, responsibility, or control. The work is not to become less capable. The work is to see what your capability has been protecting you from feeling.'],primary:'Book a private conversation',primaryKey:'bookCallUrl',secondary:'Take the Surge Signature assessment',secondaryKey:'surgeUrl',tag:'presence-score-performer',stageCopy:'You are in the Performance stage. Life is still organised around output, approval, control, role, success, or image.'},
     Observer:{range:'36–55',stage:'Pattern',truth:'You are no longer only searching. You are beginning to see the pattern.',headline:'Something is missing. The pattern is becoming visible.',copy:['You know performance is not the whole story. You have started to see the gap between the life you have built and the life that would actually feel like yours.','This stage can be uncomfortable because the old performance no longer fully convinces you, but the new way is not stable yet. The work now is to stop treating discomfort as a problem and start reading it as information.'],primary:'Explore the Performance to Presence method',primaryKey:'methodUrl',secondary:'Take the Surge Signature assessment',secondaryKey:'surgeUrl',tag:'presence-score-observer',stageCopy:'You are in the Pattern stage. You can no longer fully believe the performance, but the deeper pattern is still becoming visible.'},
@@ -52,16 +53,24 @@
     }
     function onEmail(e){
       e.preventDefault();
+      const fnameInput=root.querySelector('[data-presence-fname]');
+      const lnameInput=root.querySelector('[data-presence-lname]');
       const input=root.querySelector('[data-presence-email]');
       if(!input)return;
+      if(fnameInput) fnameInput.setCustomValidity('');
+      if(lnameInput) lnameInput.setCustomValidity('');
+      const firstName=fnameInput?fnameInput.value.trim():'';
+      const lastName=lnameInput?lnameInput.value.trim():'';
       const email=input.value.trim();
+      if(fnameInput&&!NAME_RE.test(firstName)){ fnameInput.setCustomValidity(firstName?'Please enter a valid first name.':'First name is required.'); fnameInput.reportValidity(); return; }
+      if(lnameInput&&!NAME_RE.test(lastName)){ lnameInput.setCustomValidity(lastName?'Please enter a valid last name.':'Last name is required.'); lnameInput.reportValidity(); return; }
       if(!input.checkValidity()){ input.reportValidity(); return; }
-      try{localStorage.setItem(KEYS.email,email);}catch(_){}
+      try{localStorage.setItem(KEYS.email,email);localStorage.setItem(KEYS.firstName,firstName);localStorage.setItem(KEYS.lastName,lastName);}catch(_){}
       track('quiz_email_submitted',{email_domain:(email.split('@')[1]||'').toLowerCase()});
       fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email: email, first_name: '', last_name: '', tags: [], consent: true}),
+        body: JSON.stringify({email: email, first_name: firstName, last_name: lastName, tags: [], consent: true}),
       }).catch(() => {});
       continueAfterEmail();
     }
@@ -90,7 +99,7 @@
       fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email: localStorage.getItem(KEYS.email)||'', first_name: '', last_name: '', tags: ['presence-score-quiz', b.tag], consent: true}),
+        body: JSON.stringify({email: localStorage.getItem(KEYS.email)||'', first_name: localStorage.getItem(KEYS.firstName)||'', last_name: localStorage.getItem(KEYS.lastName)||'', tags: ['presence-score-quiz', b.tag], consent: true}),
       }).catch(() => {});
       screens.results.querySelectorAll('[data-cta-label]').forEach(a=>a.addEventListener('click',()=>track('quiz_cta_clicked',Object.assign(resultParams(r),{cta_label:a.dataset.ctaLabel,cta_url:a.dataset.ctaUrl}))));
     }
