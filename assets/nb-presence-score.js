@@ -54,19 +54,18 @@
       qEl.querySelectorAll('[data-value]').forEach(btn=>btn.addEventListener('click',()=>{ state.answers[state.index]=Number(btn.dataset.value); try{localStorage.setItem(KEYS.answers,JSON.stringify(state.answers));}catch(_){} track('quiz_question_answered',{question_number:state.index+1}); if(state.index===7){ show('email'); return; } if(state.index<questions.length-1){ state.index++; renderQuestion(); } else complete(); }));
     }
     function onEmail(e){
-      e.preventDefault();
       const fnameInput=root.querySelector('[data-presence-fname]');
       const lnameInput=root.querySelector('[data-presence-lname]');
       const input=root.querySelector('[data-presence-email]');
-      if(!input)return;
+      if(!input){ e.preventDefault(); return; }
       if(fnameInput) fnameInput.setCustomValidity('');
       if(lnameInput) lnameInput.setCustomValidity('');
       const firstName=fnameInput?fnameInput.value.trim():'';
       const lastName=lnameInput?lnameInput.value.trim():'';
       const email=input.value.trim();
-      if(fnameInput&&!NAME_RE.test(firstName)){ fnameInput.setCustomValidity(firstName?'Please enter a valid first name.':'First name is required.'); fnameInput.reportValidity(); return; }
-      if(lnameInput&&!NAME_RE.test(lastName)){ lnameInput.setCustomValidity(lastName?'Please enter a valid last name.':'Last name is required.'); lnameInput.reportValidity(); return; }
-      if(!input.checkValidity()){ input.reportValidity(); return; }
+      if(fnameInput&&!NAME_RE.test(firstName)){ e.preventDefault(); fnameInput.setCustomValidity(firstName?'Please enter a valid first name.':'First name is required.'); fnameInput.reportValidity(); return; }
+      if(lnameInput&&!NAME_RE.test(lastName)){ e.preventDefault(); lnameInput.setCustomValidity(lastName?'Please enter a valid last name.':'Last name is required.'); lnameInput.reportValidity(); return; }
+      if(!input.checkValidity()){ e.preventDefault(); input.reportValidity(); return; }
       try{localStorage.setItem(KEYS.email,email);localStorage.setItem(KEYS.firstName,firstName);localStorage.setItem(KEYS.lastName,lastName);}catch(_){}
       track('quiz_email_submitted',{email_domain:(email.split('@')[1]||'').toLowerCase()});
       fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
