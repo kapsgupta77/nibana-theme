@@ -307,7 +307,6 @@
         if (!window.__NB_QUIZ_FORM_HOOKED__) {
           window.__NB_QUIZ_FORM_HOOKED__ = true;
 
-// ----- QUIZ: primary Shopify submit + parallel Mailchimp -----
 (function(){
   const shopifyForm = document.getElementById('nb-quiz-shopify');
   if (!shopifyForm) return;
@@ -330,34 +329,6 @@
     ].filter(Boolean).join(', ');
     document.getElementById('nbq-tags').value = tags;
     document.getElementById('nbq-accepts').value = consent ? 'true' : 'false';
-
-    // Submit Mailchimp in parallel
-    const mc = document.getElementById('nbq-mc');
-    if (mc) {
-      if (consent) {
-        document.getElementById('nbq-mc-fname').value = fname;
-        document.getElementById('nbq-mc-lname').value = lname;
-        document.getElementById('nbq-mc-email').value = email;
-        document.getElementById('nbq-mc-phone').value = phone;
-        document.getElementById('nbq-mc-style').value = styleLabel;
-
-        document.getElementById('nbq-mc-acc').checked  = (styleLabel === 'Accelerator');
-        document.getElementById('nbq-mc-stab').checked = (styleLabel === 'Stabiliser');
-        document.getElementById('nbq-mc-def').checked  = (styleLabel === 'Defuser');
-
-        if (mc.requestSubmit) mc.requestSubmit(); else mc.submit();
-      } else {
-        document.getElementById('nbq-mc-fname').value = '';
-        document.getElementById('nbq-mc-lname').value = '';
-        document.getElementById('nbq-mc-email').value = '';
-        document.getElementById('nbq-mc-phone').value = '';
-        document.getElementById('nbq-mc-style').value = '';
-
-        document.getElementById('nbq-mc-acc').checked  = false;
-        document.getElementById('nbq-mc-stab').checked = false;
-        document.getElementById('nbq-mc-def').checked  = false;
-      }
-    }
 
     // Persist for thank-you / rehydration
     try {

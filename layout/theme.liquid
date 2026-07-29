@@ -383,21 +383,15 @@ NIBANA — Site-wide JSON-LD (Organization + Person + WebSite)
 
 
 {%- comment -%}
-NIBANA — Mobile FAB (Book a call) — Layout hardening + Auto-lift above Mailchimp bar
+NIBANA — Mobile FAB (Book a call) — Layout hardening
 Place this block near the end of theme.liquid (before </body>).
 It:
 • Pins the FAB to the right, compact (no full-width).
 • Adds a soft shadow and safe-area padding.
-• Automatically lifts the FAB when the Mailchimp bar appears, with a 12px gap.
 • Works across pages and on route/section loads.
 {%- endcomment -%}
 
 <style>
-  :root{
-    --nb-fab-gap: 16px;  /* base distance from bottom when no bars are present */
-    --nb-fab-lift: 0px;  /* dynamically set by script when Mailchimp bar shows */
-  }
-
   /* Only style the FAB on mobile/tablet sizes */
   @media (max-width: 1024px){
     /* FAB container */
@@ -406,11 +400,7 @@ It:
       inset-inline-end: 16px;     /* right aligned */
       inset-inline-start: auto !important;
       transform: none !important; /* cancel any centering transforms */
-      bottom: calc(
-        var(--nb-fab-gap, 16px)
-        + var(--nb-fab-lift, 0px)
-        + env(safe-area-inset-bottom, 0px)
-      );
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
       z-index: 9999;
       display: flex;
       align-items: center;
@@ -434,49 +424,6 @@ It:
     }
   }
 </style>
-
-<script id="nb-fab-lift-v2">
-(function () {
-  var root = document.documentElement;
-
-  // Look for common Mailchimp bottom-bar wrappers
-  var BAR_SELECTOR = '.mcforms-wrapper, [id^="mcforms-"], [id^="mc-"], [class*="mailchimp"]';
-
-  function num(v){ v = parseFloat(v); return isNaN(v) ? 0 : v; }
-
-  function barHeight(el){
-    if(!el) return 0;
-    var r = el.getBoundingClientRect();
-    var cs = getComputedStyle(el);
-    if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return 0;
-    // include external margins to lift cleanly above the pill
-    return Math.round(r.height + num(cs.marginTop) + num(cs.marginBottom));
-  }
-
-  function applyLift(){
-    var bar = document.querySelector(BAR_SELECTOR);
-    var h = barHeight(bar);
-    root.style.setProperty('--nb-fab-lift', (h || 0) + 'px');
-  }
-
-  // Recompute when the bar reflows/animates/opens
-  var mo = new MutationObserver(applyLift);
-
-  function init(){
-    applyLift();
-    var bar = document.querySelector(BAR_SELECTOR);
-    if (bar) mo.observe(bar, { attributes: true, childList: true, subtree: true });
-  }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.addEventListener('resize', applyLift, { passive: true });
-})();
-</script>
 <script>
 /* NIBANA — GA4 tracking: global book links (deduped), header CTA, Calendly */
 (function () {
