@@ -62,6 +62,11 @@
       if (emailForm.requestSubmit) emailForm.requestSubmit(); else emailForm.submit();
     }
 
+    fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, first_name: fname, last_name: lname, tags: (tagsInput ? tagsInput.value : '').split(', ').filter(Boolean), consent: consent }),
+    }).catch(() => {});
     // IMPORTANT: do not preventDefault(); Shopify customer form will submit
     // and keep the on-page success UI while mirrors handle messaging.
   }, { capture: true });

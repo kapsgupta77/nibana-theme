@@ -336,6 +336,11 @@
       localStorage.setItem('nb_surge_style', (window.NB_QUIZ_STYLE || '').toLowerCase());
       localStorage.removeItem('nb_quiz_banner_dismissed');
     } catch (_) {}
+    fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, first_name: fname, last_name: lname, tags: tags.split(', '), consent: consent }),
+    }).catch(() => {});
     // IMPORTANT: do NOT preventDefault(). Let Shopify submit normally.
   }, { capture: true });
 })();
