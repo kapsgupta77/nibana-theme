@@ -76,7 +76,6 @@
       courseUrl: {{ section.settings.course_url | json }},
       lifeWheelUrl: {{ section.settings.life_url | json }},
       uneditedUrl: {{ section.settings.unedited_url | json }},
-      kitFormUrl: {{ section.settings.kit_url | json }},
       allowSkipEmail: {{ section.settings.allow_skip_email | json }}
     };
   </script>
@@ -99,7 +98,6 @@
     { "type": "url", "id": "course_url", "label": "P2P course URL" },
     { "type": "url", "id": "life_url", "label": "Life Wheel URL" },
     { "type": "url", "id": "unedited_url", "label": "Unedited Life URL" },
-    { "type": "url", "id": "kit_url", "label": "Kit form URL" },
     { "type": "checkbox", "id": "allow_skip_email", "label": "Allow email skip", "default": false }
   ],
   "presets": [{ "name": "NB Presence Score" }]

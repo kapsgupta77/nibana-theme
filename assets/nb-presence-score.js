@@ -58,7 +58,6 @@
       if(!input.checkValidity()){ input.reportValidity(); return; }
       try{localStorage.setItem(KEYS.email,email);}catch(_){}
       track('quiz_email_submitted',{email_domain:(email.split('@')[1]||'').toLowerCase()});
-      submitKit({email,quiz_started:'true'});
       fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -87,7 +86,7 @@
       if(primaryKey==='courseUrl'&&!cfg.courseUrl){primaryLabel='Explore the Performance to Presence method';primaryKey='methodUrl';}
       if(primaryKey==='lifeWheelUrl'&&!cfg.lifeWheelUrl){primaryLabel='Explore the Performance to Presence method';primaryKey='methodUrl';}
       screens.results.innerHTML=`<div class="nb-presence-score__result-hero"><p class="nb-presence-score__eyebrow">Your Presence Score</p><div class="nb-presence-score__number"><span data-count>0</span><small>/100</small></div><h1>The ${esc(r.band)}</h1><p>${esc(b.truth)}</p><div class="nb-presence-score__scorebar"><span style="width:${r.totalScore}%"></span></div></div><div class="nb-presence-score__result-body"><section class="nb-presence-score__card"><p class="nb-presence-score__label">Your place in the work</p><div class="nb-presence-score__journey">${stages.map(s=>`<span class="${b.stage.indexOf(s)>-1?'is-active':''}">${s}</span>`).join('')}</div><p>${esc(b.stageCopy)}</p></section><section class="nb-presence-score__card"><p class="nb-presence-score__label">Your breakdown</p>${dims.map(d=>`<div class="nb-presence-score__dim ${d[0]===r.weakest?'is-lowest':''}"><div><strong>${d[0]}</strong><span>${d[1]}%</span></div><i><b style="width:${d[1]}%"></b></i></div>`).join('')}</section><section class="nb-presence-score__card"><p class="nb-presence-score__label">What this means</p><h2>${esc(b.headline)}</h2>${b.copy.map(p=>`<p>${esc(p)}</p>`).join('')}</section><section class="nb-presence-score__card nb-presence-score__card--lowest"><p class="nb-presence-score__label">Your lowest dimension</p><h2>${esc(w[0])}</h2><p>${esc(w[1])}</p><p>${esc(w[2])}</p></section><section class="nb-presence-score__card nb-presence-score__next"><p class="nb-presence-score__label">Your next step</p><h2>Keep the movement honest.</h2><div>${cta(primaryLabel,primaryKey)}${cta(b.secondary,b.secondaryKey,'nb-presence-score__cta--secondary')}</div></section></div>`;
-      show('results'); animateCount(screens.results.querySelector('[data-count]'),r.totalScore); track('quiz_result_viewed',resultParams(r)); submitKit(Object.assign({email:localStorage.getItem(KEYS.email)||'',quiz_completed:'true',presence_score:r.totalScore,score_band:r.band,p2p_stage:r.stage,weakest_dimension:r.weakest,identity_pct:r.identityPct,presence_pct:r.presencePct,desire_pct:r.desirePct,aliveness_pct:r.alivenessPct,tags:'presence-score-quiz,'+b.tag},{}));
+      show('results'); animateCount(screens.results.querySelector('[data-count]'),r.totalScore); track('quiz_result_viewed',resultParams(r));
       fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -96,6 +95,5 @@
       screens.results.querySelectorAll('[data-cta-label]').forEach(a=>a.addEventListener('click',()=>track('quiz_cta_clicked',Object.assign(resultParams(r),{cta_label:a.dataset.ctaLabel,cta_url:a.dataset.ctaUrl}))));
     }
     function animateCount(el,target){ let n=0, start=performance.now(); function step(t){ n=Math.min(target,Math.round(((t-start)/900)*target)); el.textContent=n; if(n<target)requestAnimationFrame(step); } requestAnimationFrame(step); }
-    function submitKit(payload){ if(!cfg.kitFormUrl)return; const body=new FormData(); Object.keys(payload).forEach(k=>body.append(k,payload[k])); fetch(cfg.kitFormUrl,{method:'POST',mode:'no-cors',body}).catch(()=>{}); }
   }
 })();
