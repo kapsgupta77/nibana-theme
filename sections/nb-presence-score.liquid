@@ -40,10 +40,12 @@
         {% form 'customer', class: 'nb-presence-score__form', target: presence_frame_name %}
           <input type="hidden" name="contact[tags]" value="presence-score-quiz,quiz_started">
           <input type="hidden" name="contact[note]" value="Presence Score quiz started">
-          <label class="visually-hidden" for="PresenceFirstName-{{ section.id }}">First name</label>
-          <input id="PresenceFirstName-{{ section.id }}" type="text" name="contact[first_name]" autocomplete="given-name" placeholder="First name" required data-presence-fname>
-          <label class="visually-hidden" for="PresenceLastName-{{ section.id }}">Last name</label>
-          <input id="PresenceLastName-{{ section.id }}" type="text" name="contact[last_name]" autocomplete="family-name" placeholder="Last name" required data-presence-lname>
+          <div class="nb-presence-score__name-row">
+            <label class="visually-hidden" for="PresenceFirstName-{{ section.id }}">First name</label>
+            <input id="PresenceFirstName-{{ section.id }}" type="text" name="contact[first_name]" autocomplete="given-name" placeholder="First name" required data-presence-fname>
+            <label class="visually-hidden" for="PresenceLastName-{{ section.id }}">Last name</label>
+            <input id="PresenceLastName-{{ section.id }}" type="text" name="contact[last_name]" autocomplete="family-name" placeholder="Last name" required data-presence-lname>
+          </div>
           <label class="visually-hidden" for="PresenceEmail-{{ section.id }}">Email address</label>
           <input id="PresenceEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="Email address" required data-presence-email>
           <button class="nb-presence-score__button" type="submit">Continue to my results</button>
