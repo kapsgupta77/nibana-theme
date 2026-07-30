@@ -36,8 +36,7 @@
         <p class="nb-presence-score__eyebrow">Halfway</p>
         <h2>You are halfway there.</h2>
         <p>Where should we send your full breakdown?</p>
-        {% assign presence_frame_name = 'PresenceScoreFrame-' | append: section.id %}
-        {% form 'customer', class: 'nb-presence-score__form', target: presence_frame_name %}
+        {% form 'customer', class: 'nb-presence-score__form', novalidate: 'novalidate' %}
           <input type="hidden" name="contact[tags]" value="presence-score-quiz,quiz_started">
           <input type="hidden" name="contact[note]" value="Presence Score quiz started">
           <div class="nb-presence-score__name-row">
@@ -49,7 +48,8 @@
           <label class="visually-hidden" for="PresenceEmail-{{ section.id }}">Email address</label>
           <input id="PresenceEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="Email address" required data-presence-email>
           <button class="nb-presence-score__button" type="submit">Continue to my results</button>
-          {% if form.errors %}<div class="nb-presence-score__error">{{ form.errors | default_errors }}</div>{% endif %}
+          {% if form.errors %}<div class="nb-presence-score__error" data-presence-has-errors>{{ form.errors | default_errors }}</div>{% endif %}
+          {% if form.posted_successfully? %}<span data-presence-posted-successfully hidden></span>{% endif %}
         {% endform %}
         {% if section.settings.allow_skip_email %}
           <button class="nb-presence-score__skip" type="button" data-presence-skip-email>Skip for testing</button>
@@ -66,10 +66,6 @@
     </section>
 
     <section class="nb-presence-score__screen nb-presence-score__results" data-screen="results" hidden data-presence-results></section>
-  </div>
-
-  <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
-    <iframe name="{{ presence_frame_name }}" id="{{ presence_frame_name }}" title="hidden" tabindex="-1"></iframe>
   </div>
 
   <script>
