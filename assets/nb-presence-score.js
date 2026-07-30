@@ -43,7 +43,7 @@
     const _errMarker=root.querySelector('[data-presence-has-errors]');
     let _hadFlag=false; try{_hadFlag=localStorage.getItem(KEYS.submitted)==='1';}catch(_){}
     const _qs=new URLSearchParams(window.location.search);
-    const _urlOk=_qs.get('customer_posted')==='true'||_qs.get('form_type')==='customer';
+    const _urlOk=_qs.get('customer_posted')==='true';
     if(_successMarker||_hadFlag||_urlOk){try{localStorage.removeItem(KEYS.submitted);}catch(_){}}
     const _resumeAfterSubmit=!_errMarker&&!!(_successMarker||_hadFlag||_urlOk);
     if(_errMarker){show('email');}
@@ -54,7 +54,11 @@
     root.querySelector('[data-presence-skip-email]')?.addEventListener('click',skipEmail);
     root.querySelector('[data-presence-fname]')?.addEventListener('input',function(){ this.setCustomValidity(''); });
     root.querySelector('[data-presence-lname]')?.addEventListener('input',function(){ this.setCustomValidity(''); });
-    if(_resumeAfterSubmit){state.index=8;show('quiz');renderQuestion();}
+    if(_resumeAfterSubmit){
+      if(hasCompletePriorAnswers()){ state.index=8; show('quiz'); renderQuestion(); }
+      else{ try{localStorage.removeItem(KEYS.submitted);}catch(_){} state.index=0; show('quiz'); renderQuestion(); }
+    }
+    function hasCompletePriorAnswers(){ for(let i=0;i<8;i++){ if(state.answers[i]===undefined||state.answers[i]===null||state.answers[i]==='')return false; } return true; }
     function renderQuestion(){
       const q=questions[state.index]; if(!q)return;
       const pct=Math.round((state.index/questions.length)*100); pEl.style.width=pct+'%';
