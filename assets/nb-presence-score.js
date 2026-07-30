@@ -1,5 +1,5 @@
 (function(){
-  const KEYS={answers:'nb_presence_score_answers',email:'nb_presence_score_email',firstName:'nb_presence_score_first_name',lastName:'nb_presence_score_last_name',result:'nb_presence_score_result',started:'nb_presence_score_started_at'};
+  const KEYS={answers:'nb_presence_score_answers',email:'nb_presence_score_email',firstName:'nb_presence_score_first_name',lastName:'nb_presence_score_last_name',result:'nb_presence_score_result',started:'nb_presence_score_started_at',submitted:'nb_presence_score_submitted'};
   const NAME_RE=/^[\p{L}\p{M}' .-]{1,50}$/u;
   const bands={
     Performer:{range:'0–35',stage:'Performance',truth:'You have built the life, but performance is still running too much of it.',headline:'Built the life. Still managed by performance.',copy:['You have learned how to produce, hold things together, and keep moving. That has probably served you. It may also be costing more than you admit.','At this stage, presence is not yet stable because too much of life is still organised around output, image, responsibility, or control. The work is not to become less capable. The work is to see what your capability has been protecting you from feeling.'],primary:'Book a private conversation',primaryKey:'bookCallUrl',secondary:'Take the Surge Signature assessment',secondaryKey:'surgeUrl',tag:'presence-score-performer',stageCopy:'You are in the Performance stage. Life is still organised around output, approval, control, role, success, or image.'},
@@ -39,6 +39,14 @@
     show('landing');
     const data=await fetch(cfg.dataUrl,{credentials:'same-origin'}).then(r=>r.json()); questions=data.questions||[];
     try{ state.answers=JSON.parse(localStorage.getItem(KEYS.answers)||'[]'); }catch(_){ }
+    const _successMarker=root.querySelector('[data-presence-posted-successfully]');
+    const _errMarker=root.querySelector('[data-presence-has-errors]');
+    let _hadFlag=false; try{_hadFlag=localStorage.getItem(KEYS.submitted)==='1';}catch(_){}
+    const _qs=new URLSearchParams(window.location.search);
+    const _urlOk=_qs.get('customer_posted')==='true'||_qs.get('form_type')==='customer';
+    if(_successMarker||_hadFlag||_urlOk){try{localStorage.removeItem(KEYS.submitted);}catch(_){}}
+    const _resumeAfterSubmit=!_errMarker&&!!(_successMarker||_hadFlag||_urlOk);
+    if(_errMarker){show('email');}
     const start=root.querySelector('[data-presence-start]');
     start&&start.addEventListener('click',()=>{ state={index:0,answers:[]}; try{localStorage.setItem(KEYS.started,new Date().toISOString());localStorage.setItem(KEYS.answers,'[]');}catch(_){} track('quiz_started'); show('quiz'); renderQuestion(); });
     root.querySelector('[data-presence-back-email]')?.addEventListener('click',()=>{ state.index=7; show('quiz'); renderQuestion(); });
@@ -46,6 +54,7 @@
     root.querySelector('[data-presence-skip-email]')?.addEventListener('click',skipEmail);
     root.querySelector('[data-presence-fname]')?.addEventListener('input',function(){ this.setCustomValidity(''); });
     root.querySelector('[data-presence-lname]')?.addEventListener('input',function(){ this.setCustomValidity(''); });
+    if(_resumeAfterSubmit){state.index=8;show('quiz');renderQuestion();}
     function renderQuestion(){
       const q=questions[state.index]; if(!q)return;
       const pct=Math.round((state.index/questions.length)*100); pEl.style.width=pct+'%';
@@ -66,14 +75,14 @@
       if(fnameInput&&!NAME_RE.test(firstName)){ e.preventDefault(); fnameInput.setCustomValidity(firstName?'Please enter a valid first name.':'First name is required.'); fnameInput.reportValidity(); return; }
       if(lnameInput&&!NAME_RE.test(lastName)){ e.preventDefault(); lnameInput.setCustomValidity(lastName?'Please enter a valid last name.':'Last name is required.'); lnameInput.reportValidity(); return; }
       if(!input.checkValidity()){ e.preventDefault(); input.reportValidity(); return; }
-      try{localStorage.setItem(KEYS.email,email);localStorage.setItem(KEYS.firstName,firstName);localStorage.setItem(KEYS.lastName,lastName);}catch(_){}
+      try{localStorage.setItem(KEYS.email,email);localStorage.setItem(KEYS.firstName,firstName);localStorage.setItem(KEYS.lastName,lastName);localStorage.setItem(KEYS.submitted,'1');}catch(_){}
       track('quiz_email_submitted',{email_domain:(email.split('@')[1]||'').toLowerCase()});
       fetch('https://nibana-brevo-sync.nibana.workers.dev/?key=ccda216d6eb89592caad18eeb754697f774263bdfa84666c', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({email: email, first_name: firstName, last_name: lastName, tags: [], consent: true}),
+        keepalive: true,
       }).catch(() => {});
-      continueAfterEmail();
     }
     function skipEmail(){
       if(!cfg.allowSkipEmail)return;
