@@ -14,13 +14,13 @@
       "settings": {
         "color_scheme": "scheme-3",
         "overline": "Private 1:1 coaching · global · zoom",
-        "heading": "For people ready to meet the truth beneath the life they’ve built.",
-        "subheading": "<p>Private coaching for the moments when success, identity, desire, relationships, or purpose start asking for more honesty.</p>",
+        "heading": "When the life you’ve built no longer feels fully alive.",
+        "subheading": "<p>Private coaching to uncover the patterns keeping you stuck and build the capacity to live, work and relate with greater freedom, honesty and aliveness.</p>",
         "primary_label": "Book a private conversation",
         "primary_link": "shopify://pages/book-a-call",
         "secondary_label": "Explore the work",
         "secondary_link": "shopify://pages/transformational-life-coaching",
-        "microcopy": "For people who are done performing a life that no longer feels fully true.",
+        "microcopy": "For people ready to meet the truth beneath the life they’ve built.",
         "image": "shopify://shop_images/kapil-gupta.jpg",
         "image_position": "center center"
       }
@@ -303,12 +303,14 @@
     "final_cta": {
       "type": "nb-cta-banner",
       "settings": {
+        "overline": "",
         "heading": "Ready to meet what is asking for your attention?",
         "body": "<p>If something here speaks to where you are, the next step is a private conversation.</p>",
         "button_label": "Book a private conversation",
         "button_link": "shopify://pages/book-a-call",
         "card_on": false,
         "editorial_style": true,
+        "show_top_divider": false,
         "bg_color": "#223238",
         "text_color": "#f7f1e8",
         "button_color": "#10636c",
