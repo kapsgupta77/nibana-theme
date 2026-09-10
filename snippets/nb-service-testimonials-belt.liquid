@@ -120,13 +120,7 @@ endif
         -%}
         {%- if include and _count < _limit -%}
           {%- assign _count = _count | plus: 1 -%}
-          {% render 'nb-testimonial-card',
-            quote:    entry.quote,
-            name:     entry.name     | default: '',
-            title:    entry.title    | default: '',
-            location: entry.location | default: '',
-            avatar:   entry.avatar,
-            tags:     entry.tags | join: ',' | default: '' %}
+          {% render 'nb-testimonial-card', quote: entry.quote, name: entry.name, default: '', title: entry.title, location: entry.location, avatar: entry.avatar, tags: entry.tags, join: ',' %}
         {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
@@ -154,13 +148,7 @@ endif
       -%}
       {%- if include and _count < _limit -%}
         {%- assign _count = _count | plus: 1 -%}
-        {% render 'nb-testimonial-card',
-          quote:    entry.quote,
-          name:     entry.name     | default: '',
-          title:    entry.title    | default: '',
-          location: entry.location | default: '',
-          avatar:   entry.avatar,
-          tags:     entry.tags | join: ',' | default: '' %}
+        {% render 'nb-testimonial-card', quote: entry.quote, name: entry.name, default: '', title: entry.title, location: entry.location, avatar: entry.avatar, tags: entry.tags, join: ',' %}
       {%- endif -%}
     {%- endfor -%}
   {%- endif -%}
@@ -296,3 +284,34 @@ endif
     </div>
   </section>
 {%- endif -%}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'nb-testimonial-card',
+                quote:    entry.quote,
+                name:     entry.name     | default: '',
+                title:    entry.title    | default: '',
+                location: entry.location | default: '',
+                avatar:   entry.avatar,
+                tags:     entry.tags | join: ',' | default: '' %}
+  to: "{% render 'nb-testimonial-card', quote: entry.quote, name: entry.name, default:
+    '', title: entry.title, location: entry.location, avatar: entry.avatar, tags:
+    entry.tags, join: ',' %}"
+  position: 3373..3555
+- from: |-
+    {% render 'nb-testimonial-card',
+              quote:    entry.quote,
+              name:     entry.name     | default: '',
+              title:    entry.title    | default: '',
+              location: entry.location | default: '',
+              avatar:   entry.avatar,
+              tags:     entry.tags | join: ',' | default: '' %}
+  to: "{% render 'nb-testimonial-card', quote: entry.quote, name: entry.name, default:
+    '', title: entry.title, location: entry.location, avatar: entry.avatar, tags:
+    entry.tags, join: ',' %}"
+  position: 4233..4415
+{% endcomment %}
